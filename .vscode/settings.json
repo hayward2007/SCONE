@@ -1,6 +1,6 @@
 {
     "python.analysis.extraPaths": [
-        "./device",
-        "./fundamenal"
+        "./devices",
+        "./motions"
     ]
 }

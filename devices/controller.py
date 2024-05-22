@@ -21,11 +21,12 @@ class Controller :
         else :
             raise Exception("[CONTROLLER] Failed to set the baudrate");
 
-        for i in self.index :
-            self.set_speed(i, self.speed);
+        for i in Actuator.index :
+            self.set_speed(i, Actuator.speed);
 
     def __del__(self) :
         self.port_handler.closePort();
+        print("[CONTROLLER] Succeeded to close the port");
 
     def set_speed(self, id, speed) :
         self.packet_handler.write2ByteTxRx(self.port_handler, id, 32, speed);
