@@ -230,19 +230,30 @@ def check_path() :
 
 
 if __name__ == "__main__" :
-    # check_path();
-    scone = scone();
-    while True :
+    print("hello")
+    while(True) :
         try :
-            time.sleep(1);
-            # scone.stand_position();
-            # time.sleep(1);
-            # scone.walk_forward_high();
-            # scone.walk_forward();
+            print("hasdf");
+        except Exception as error :
+            print(error);
+            print("[SYSTEM] Executing program");
             exit(1);
-        except KeyboardInterrupt :
-            scone.turn_off();
-            del scone;
-            print("Program terminated");
-            exit(1);
+
+        
+        
+    # check_path();
+    # scone = scone();
+    # while True :
+    #     try :
+    #         time.sleep(1);
+    #         # scone.stand_position();
+    #         # time.sleep(1);
+    #         # scone.walk_forward_high();
+    #         # scone.walk_forward();
+    #         exit(1);
+    #     except KeyboardInterrupt :
+    #         scone.turn_off();
+    #         del scone;
+    #         print("Program terminated");
+    #         exit(1);
 
