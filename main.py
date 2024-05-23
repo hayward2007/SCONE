@@ -6,7 +6,6 @@ import cv2;
 from info import *;
 from getkey import getkey;
 
-
 def onKeyInput(keyQueue) :
     print("[SYSTEM] Ready for key input\n")
     while (True):
@@ -38,7 +37,7 @@ if __name__ == "__main__" :
     while True :
         if keyQueue.qsize() > 0 :
             key = keyQueue.get();
-
+            
             if key == 'h' :
                 printHelp();
             elif key == 'i' :
