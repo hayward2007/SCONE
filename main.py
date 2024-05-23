@@ -6,6 +6,8 @@ import cv2;
 from info import *;
 from getkey import getkey;
 
+from controller import Controller;
+
 def onKeyInput(keyQueue) :
     print("[SYSTEM] Ready for key input\n")
     while (True):
@@ -29,22 +31,22 @@ def printInfo() :
 if __name__ == "__main__" :
     print("[SYSYEM] SCONE Activated\n");
 
-    keyQueue = queue.Queue()
-    keyThread = threading.Thread(target=onKeyInput, args=(keyQueue,))
-    keyThread.daemon = True 
-    keyThread.start();
+    # keyQueue = queue.Queue()
+    # keyThread = threading.Thread(target=onKeyInput, args=(keyQueue,))
+    # keyThread.daemon = True 
+    # keyThread.start();
     
-    while True :
-        if keyQueue.qsize() > 0 :
-            key = keyQueue.get();
+    # while True :
+    #     if keyQueue.qsize() > 0 :
+    #         key = keyQueue.get();
             
-            if key == 'h' :
-                printHelp();
-            elif key == 'i' :
-                printInfo();
-            elif key == 'q':
-                print("Exiting serial terminal.");
-                break;
+    #         if key == 'h' :
+    #             printHelp();
+    #         elif key == 'i' :
+    #             printInfo();
+    #         elif key == 'q':
+    #             print("Exiting serial terminal.");
+    #             break;
 
-        time.sleep(0.01) 
-    print("End.");
+    #     time.sleep(0.01) 
+    # print("End.");
