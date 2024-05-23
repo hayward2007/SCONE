@@ -2,6 +2,8 @@ import threading;
 import queue;
 import time;
 import cv2;
+
+from info import *;
 from getkey import getkey;
 
 
@@ -21,8 +23,8 @@ def printHelp() :
 
 def printInfo() :
     print("[SYSTEM] INFORMATION :");
-    print("\tName : SCONEv2");
-    print("\tVersion : 0.0.2");
+    print(f"\tName : {NAME}");
+    print(f"\tVersion : {VERSION}");
     print("")
 
 if __name__ == "__main__" :
