@@ -4,14 +4,9 @@ import time;
 import cv2;
 from getkey import getkey;
 
-# __CHANGE = 'f';
-# __INFO = 'i';
-# __HELP = 'h';
-__EXIT = 'q';
-
 
 def onKeyInput(keyQueue) :
-    print('Ready for key input:')
+    print("[SYSTEM] Ready for key input\n")
     while (True):
         key = getkey()
         keyQueue.put(key)
@@ -21,27 +16,34 @@ def printHelp() :
     print("\th : print commands, show this list");
     print("\ti : print information & status");
     print("\tf : change stance");
-    print("\t\tex) drive stance -> walk stance")
+    print("\t  ex) drive stance -> walk stance")
+    print("")
 
+def printInfo() :
+    print("[SYSTEM] INFORMATION :");
+    print("\tName : SCONEv2");
+    print("\tVersion : 0.0.2");
+    print("")
 
 if __name__ == "__main__" :
+    print("[SYSYEM] SCONE Activated\n");
 
     keyQueue = queue.Queue()
     keyThread = threading.Thread(target=onKeyInput, args=(keyQueue,))
     keyThread.daemon = True 
-    keyThread.start()
+    keyThread.start();
+    
+    while True :
+        if keyQueue.qsize() > 0 :
+            key = keyQueue.get();
 
-    print("[SYSYEM] SCONE Activated");
-    print("[SYSYEM] Ready for key input");
-    while (True):
-        if (keyQueue.qsize() > 0):
-            key = keyQueue.get()
-            # print("key = {}".format(key))
-            if (key == 'h') :
+            if key == 'h' :
                 printHelp();
-            elif (key == 'q'):
-                print("Exiting serial terminal.")
-                break
+            elif key == 'i' :
+                printInfo();
+            elif key == 'q':
+                print("Exiting serial terminal.");
+                break;
 
         time.sleep(0.01) 
     print("End.");
