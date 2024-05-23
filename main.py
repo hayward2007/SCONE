@@ -1,6 +1,7 @@
 import threading;
 import queue;
 import time;
+import cv2;
 from getkey import getkey;
 
 
@@ -10,15 +11,10 @@ def onKeyInput(keyQueue):
         key = getkey()
         keyQueue.put(key)
 
-
-
 if __name__ == "__main__" :
     EXIT_COMMAND = 'q';
 
-    # print("hello")
-
     keyQueue = queue.Queue()
-
     keyThread = threading.Thread(target=onKeyInput, args=(keyQueue,))
     keyThread.daemon = True 
     keyThread.start()
@@ -30,20 +26,7 @@ if __name__ == "__main__" :
 
             if (key == EXIT_COMMAND):
                 print("Exiting serial terminal.")
-                break            
+                break
 
         time.sleep(0.01) 
-    print("End.")
-
-
-
-
-
-    # while(True) :
-    #     try :
-    #         print("hasdf");
-
-    #     except Exception as error :
-    #         print(error);
-    #         print("[SYSTEM] Executing program");
-    #         exit(1);
+    print("End.");

@@ -226,8 +226,6 @@ def check_path() :
         for i in path :
             sys.path.append(i);
 
-    import device;
-
 
 if __name__ == "__main__" :
     print("hello")
