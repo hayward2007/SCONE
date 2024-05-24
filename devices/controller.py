@@ -53,6 +53,7 @@ class Controller :
             self.packet_handler_2.write1ByteTxRx(self.port_handler, id, Actuator.model.XM.torque_enable, status);
 
     def set_position(self, id, position) :
+        position = position / 360 * 4096 if id % 2 == 1 else 4096 - ( position / 360 * 4096 );
         if self.__is_MX(id) :
             self.packet_handler_1.write2ByteTxRx(self.port_handler, id, Actuator.model.MX.goal_position, position);
         else :
