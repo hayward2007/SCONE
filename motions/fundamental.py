@@ -21,11 +21,11 @@ def initial_position(controller) :
 def center_position(controller) :
     for i in Actuator.index :
         controller.set_torque(i, 1);
-        # controller.set_position(i, Actuator.position.center);
         controller.set_position(i, 180);
 
-# def stand_position(controller) :
-
+def stand_position(controller) :
+    for i in Actuator.middle_index + Actuator.lower_index :
+        controller.set_position(i, 270);
 
 def disable_torque(controller) :
     for i in Actuator.index :

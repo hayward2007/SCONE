@@ -39,13 +39,15 @@ class Controller :
     def set_mode(self, id, mode) :
         self.packet_handler_2.write1ByteTxRx(self.port_handler, id, Actuator.model.XM.operating_mode, mode);
 
-    def set_speed(self, id, speed) :
+    def set_speed(self, id, speed, mode = Actuator.mode.position_control) :
         if self.__is_MX(id) :
             self.packet_handler_1.write2ByteTxRx(self.port_handler, id, Actuator.model.MX.moving_speed, speed);
         else :
-            # moving speed on position control
-            self.packet_handler_2.write4ByteTxRx(self.port_handler, id, Actuator.model.XM.profile_velocity, speed);
-        
+            if mode == Actuator.mode.position_control :
+                self.packet_handler_2.write4ByteTxRx(self.port_handler, id, Actuator.model.XM.profile_velocity, speed);
+            else :
+                self.packet_handler_2.write4ByteTxRx(self.port_handler, id, Actuator.model.XM.goal_velocity, speed);
+
     def set_torque(self, id, status) :
         if self.__is_MX(id) :
             self.packet_handler_1.write1ByteTxRx(self.port_handler, id, Actuator.model.MX.enable_torque, status);
@@ -59,7 +61,7 @@ class Controller :
         else :
             self.packet_handler_2.write4ByteTxRx(self.port_handler, id, Actuator.model.XM.goal_position, int(position));
 
-    # def get_position(self, id) :
-    #     result, data, error = self.packet_handler.read2ByteTxRx(self.port_handler, id, 36);
-    #     print(f"[CONTROLLER] ID : {id} \t Current Position: {result}");
-    #     return result;
+    def get_position(self, id) :
+        result, data, error = self.packet_handler.read2ByteTxRx(self.port_handler, id, 36);
+        print(f"[CONTROLLER] ID : {id} \t Current Position: {result}");
+        return result;
