@@ -29,6 +29,8 @@ class Controller :
             self.set_torque(i, 1);
             self.set_position(i, Actuator.position.center);
 
+        print(f"[CONTROLLER] Actuator speed set to {Actuator.speed}");
+
     def __del__(self) :
         self.port_handler.closePort();
         print("[CONTROLLER] Succeeded to close the port");
