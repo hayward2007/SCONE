@@ -10,7 +10,7 @@ from motions.fundamental import *;
 from devices.actuator import Actuator;
 from devices.controller import Controller;
 
-# controller = Controller();
+controller = Controller();
 
 def on_key_input(keyQueue) :
     print("[SYSTEM] Ready for key input\n")
@@ -38,7 +38,7 @@ def print_info() :
 def remote() :
     keyQueue = queue.Queue()
     keyThread = threading.Thread(target=on_key_input, args=(keyQueue,))
-    keyThread.daemon = True 
+    keyThread.daemon = True; 
     keyThread.start();
     print("[SYSTEM] Remote control activated\n");
     while True :
@@ -61,6 +61,8 @@ def command_line_interface() :
         return;
     elif user_input == "help" :
         print_help();
+    elif user_input == "torque off" :
+        disable_torque(controller);
     else :
         print("[SYSTEM] Invalid command, type 'help' for command list\n");
     command_line_interface();

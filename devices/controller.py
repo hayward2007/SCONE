@@ -1,4 +1,5 @@
 from dynamixel_sdk import *;
+from motions.fundamental import *;
 from devices.actuator import Actuator;
 
 class Controller :
@@ -23,11 +24,11 @@ class Controller :
             print("[CONTROLLER] Succeeded to set the baudrate");
         else :
             raise Exception("[CONTROLLER] Failed to set the baudrate");
-
+        
         for i in Actuator.index :
-            self.set_speed(i, Actuator.speed);
-            self.set_torque(i, 1);
-            self.set_position(i, Actuator.position.center);
+            self.set_speed(i, 10);
+
+        initial_position(self);
 
         print(f"[CONTROLLER] Actuator speed set to {Actuator.speed}");
 

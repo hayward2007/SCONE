@@ -2,10 +2,13 @@ class Actuator :
     speed = 50;
 
     index = [i for i in range(1, 19)];
+    upper_index = range(1, 7);
     upper_right_index = [1, 3, 5];
     upper_left_index = [2, 4, 6];
+    middle_index = range(7, 13);
     middle_right_index = [i + 6 for i in upper_right_index];
     middle_left_index = [i + 6 for i in upper_left_index];
+    lower_index = range(13, 18);
     lower_right_index = [i + 6 for i in middle_right_index];
     lower_left_index = [i + 6 for i in middle_left_index];
 
