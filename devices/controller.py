@@ -46,6 +46,7 @@ class Controller :
             if mode == Actuator.mode.position_control :
                 self.packet_handler_2.write4ByteTxRx(self.port_handler, id, Actuator.model.XM.profile_velocity, speed);
             else :
+                print("dd");
                 self.packet_handler_2.write4ByteTxRx(self.port_handler, id, Actuator.model.XM.goal_velocity, speed);
 
     def set_torque(self, id, status) :

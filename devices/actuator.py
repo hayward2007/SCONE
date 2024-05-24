@@ -21,7 +21,7 @@ class Actuator :
 
     class mode :
         velocity_control = 1;
-        position_control = 2;
+        position_control = 3;
 
     class position :
         start = 0;

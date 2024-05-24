@@ -1,7 +1,7 @@
-from fundamental import *;
+from motions.fundamental import *;
 
 def set_drive_mode(controller) :
-    set_drive_position();
+    set_drive_position(controller);
     for i in Actuator.lower_index :
         controller.set_mode(i, Actuator.mode.velocity_control);
 
