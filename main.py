@@ -2,16 +2,17 @@ import threading;
 import queue;
 import time;
 import cv2;
+
+from info import *;
 from getkey import getkey;
 
-# __CHANGE = 'f';
-# __INFO = 'i';
-# __HELP = 'h';
-__EXIT = 'q';
+from devices.actuator import Actuator;
+from devices.controller import Controller;
 
+controller = Controller();
 
-def onKeyInput(keyQueue) :
-    print('Ready for key input:')
+def on_key_input(keyQueue) :
+    print("[SYSTEM] Ready for key input\n")
     while (True):
         key = getkey()
         keyQueue.put(key)
@@ -29,26 +30,33 @@ def printHelp() :
     print("s : turn right\n");
     # print("\t\tex) drive stance -> walk stance")
 
+def disable_torque() :
+    for id in Actuator.index :
+        controller.set_torque(id, 0);
 
 if __name__ == "__main__" :
+    controller = Controller();
+    
+    print("[SYSYEM] SCONE Activated\n");
 
     keyQueue = queue.Queue()
-    keyThread = threading.Thread(target=onKeyInput, args=(keyQueue,))
+    keyThread = threading.Thread(target=on_key_input, args=(keyQueue,))
     keyThread.daemon = True 
-    keyThread.start()
-
-    print("[SYSYEM] SCONE Activated");
-    # print("[SYSYEM] Ready for key input");
-    printHelp();
-    while (True):
-        if (keyQueue.qsize() > 0):
-            key = keyQueue.get()
-            # print("key = {}".format(key))
-            if (key == 'h') :
-                printHelp();
-            elif (key == 'q'):
-                print("Exiting serial terminal.")
-                break
+    keyThread.start();
+    
+    while True :
+        if keyQueue.qsize() > 0 :
+            key = keyQueue.get();
+            
+            if key == 'h' :
+                print_help();
+            elif key == 'i' :
+                print_info();
+            elif key == 'o' :
+                disable_torque();
+            elif key == 'q':
+                print("Exiting serial terminal.");
+                break;
 
         time.sleep(0.01) 
     print("End.");
