@@ -17,19 +17,18 @@ def on_key_input(keyQueue) :
         key = getkey()
         keyQueue.put(key)
 
-def print_help() :
-    print("[SYSTEM] COMMANDS :");
-    print("\th : print commands, show this list");
-    print("\ti : print information & status");
-    print("\tf : change stance");
-    print("\t  ex) drive stance -> walk stance")
-    print("")
-
-def print_info() :
-    print("[SYSTEM] INFORMATION :");
-    print(f"\tName : {NAME}");
-    print(f"\tVersion : {VERSION}");
-    print("");
+def printHelp() :
+    print("----------- BASICS -----------");
+    print("h : print commands, show this list");
+    print("i : print information & status");
+    print("f : change stance");
+    print("o : disable / enable torque\n");
+    print("---------- MOVEMENTS ----------");
+    print("w : walk forward");
+    print("d : walk backward");
+    print("a : turn left");
+    print("s : turn right\n");
+    # print("\t\tex) drive stance -> walk stance")
 
 def disable_torque() :
     for id in Actuator.index :
