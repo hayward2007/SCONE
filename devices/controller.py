@@ -43,7 +43,9 @@ class Controller :
             self.packet_handler_2.write4ByteTxRx(self.port_handler, id, Actuator.model.XM.profile_velocity, speed);
         
     def set_torque(self, id, status) :
-        self.packet_handler.write1ByteTxRx(self.port_handler, id, 24, status);
+        if self.__is_MX(id) :
+
+            self.packet_handler.write1ByteTxRx(self.port_handler, id, 24, status);
 
     def set_position(self, id, position) :
         self.packet_handler.write2ByteTxRx(self.port_handler, id, 30, position);
