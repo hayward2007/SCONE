@@ -1,6 +1,3 @@
-from controller import Controller;
-from actuator import Actuator;
-
 def set_walk_position() :
     print("asdf");
 

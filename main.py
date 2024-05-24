@@ -13,10 +13,11 @@ from devices.actuator import Actuator;
 from devices.controller import Controller;
 
 controller = Controller();
+remote = False;
 
 def on_key_input(keyQueue) :
     print("[SYSTEM] Ready for key input\n")
-    while (True):
+    while (remote):
         key = getkey()
         keyQueue.put(key)
 
@@ -38,6 +39,7 @@ def print_info() :
     print(f"Version : {VERSION}");
 
 def remote() :
+    remote = True;
     keyQueue = queue.Queue()
     keyThread = threading.Thread(target=on_key_input, args=(keyQueue,))
     keyThread.daemon = True; 
@@ -48,7 +50,6 @@ def remote() :
             key = keyQueue.get();
             if key == 'r' :
                 set_drive_mode(controller);
-                set_drive_position(controller);
             elif key == 'w' :
                 drive_forward(controller);
             elif key == ' ' :
@@ -59,6 +60,7 @@ def remote() :
                 print("[SYSTEM] Exiting serial terminal");
                 break;
         time.sleep(0.01) 
+    remote = False;
 
 def command_line_interface() :
     user_input = input("[SYSTEM] Enter command : ");
