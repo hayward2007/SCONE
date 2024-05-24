@@ -9,7 +9,7 @@ from getkey import getkey;
 from devices.actuator import Actuator;
 from devices.controller import Controller;
 
-controller = Controller();
+# controller = Controller();
 
 def on_key_input(keyQueue) :
     print("[SYSTEM] Ready for key input\n")
@@ -34,22 +34,15 @@ def print_info() :
     print(f"Name : {NAME}");
     print(f"Version : {VERSION}");
 
-def disable_torque() :
-    for id in Actuator.index :
-        controller.set_torque(id, 0);
-
-if __name__ == "__main__" :
-    print("[SYSYEM] SCONE Activated\n");
-
+def remote() :
     keyQueue = queue.Queue()
     keyThread = threading.Thread(target=on_key_input, args=(keyQueue,))
     keyThread.daemon = True 
     keyThread.start();
-    
+    print("[SYSTEM] Remote control activated\n");
     while True :
         if keyQueue.qsize() > 0 :
             key = keyQueue.get();
-            
             if key == 'h' :
                 print_help();
             elif key == 'i' :
@@ -59,7 +52,23 @@ if __name__ == "__main__" :
             elif key == 'q':
                 print("[SYSTEM] Exiting serial terminal");
                 break;
-
         time.sleep(0.01) 
-    print("[SYSYEM] Bye.\n");
 
+def disable_torque() :
+    for id in Actuator.index :
+        controller.set_torque(id, 0);
+
+def command_line_interface() :
+    user_input = input("[SYSTEM] Enter command : ");
+    if user_input == "quit" or user_input == "exit" :
+        return;
+    elif user_input == "help" :
+        print_help();
+    else :
+        print("[SYSTEM] Invalid command, type 'help' for command list\n");
+    command_line_interface();
+
+if __name__ == "__main__" :
+    print("[SYSYEM] SCONE Activated\n");
+    command_line_interface();
+    print("[SYSYEM] Bye.\n");
