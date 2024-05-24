@@ -6,6 +6,7 @@ import cv2;
 from info import *;
 from getkey import getkey;
 
+from motions.fundamental import *;
 from devices.actuator import Actuator;
 from devices.controller import Controller;
 
@@ -53,10 +54,6 @@ def remote() :
                 print("[SYSTEM] Exiting serial terminal");
                 break;
         time.sleep(0.01) 
-
-def disable_torque() :
-    for id in Actuator.index :
-        controller.set_torque(id, 0);
 
 def command_line_interface() :
     user_input = input("[SYSTEM] Enter command : ");
