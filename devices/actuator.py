@@ -15,8 +15,6 @@ class Actuator :
         start = 0;
         center = 2048;
         end = 4096;
-<<<<<<< HEAD
-
     class model :
         class MX :
             protocol_version = 1.0;
@@ -34,5 +32,3 @@ class Actuator :
             goal_position = 116;
             goal_velocity = 104;
             torque_enable = 64;
-=======
->>>>>>> origin/fundamental-raspberry-pi
