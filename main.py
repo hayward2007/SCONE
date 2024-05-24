@@ -6,6 +6,8 @@ import cv2;
 from info import *;
 from getkey import getkey;
 
+from motions.walk import *;
+from motions.drive import *;
 from motions.fundamental import *;
 from devices.actuator import Actuator;
 from devices.controller import Controller;
@@ -44,10 +46,13 @@ def remote() :
     while True :
         if keyQueue.qsize() > 0 :
             key = keyQueue.get();
-            if key == 'h' :
-                print_help();
-            elif key == 'i' :
-                print_info();
+            if key == 'r' :
+                set_drive_mode(controller);
+                set_drive_position(controller);
+            elif key == 'w' :
+                drive_forward(controller);
+            elif key == ' ' :
+                drive_stop(controller);
             elif key == 'o' :
                 disable_torque();
             elif key == 'q':
@@ -61,6 +66,10 @@ def command_line_interface() :
         return;
     elif user_input == "help" :
         print_help();
+    elif user_input == "info" :
+        print_info();
+    elif user_input == "remote" :
+        remote();
     elif user_input == "torque off" :
         disable_torque(controller);
     else :

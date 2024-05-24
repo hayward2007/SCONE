@@ -11,7 +11,7 @@ def set_drive_position(controller) :
 
 def drive_forward(controller) :
     for i in Actuator.lower_index :
-        controller.set_speed(i, 50, mode = Actuator.mode.velocity_control);
+        controller.set_speed(i, 10, mode = Actuator.mode.velocity_control);
 
 def drive_backward() :
     print("asdf");
@@ -21,3 +21,7 @@ def drive_left() :
 
 def drive_right() :
     print("asdf");
+
+def drive_stop(controller) :
+    for i in Actuator.lower_index :
+        controller.set_speed(i, 0, mode = Actuator.mode.velocity_control);
