@@ -17,11 +17,17 @@ def onKeyInput(keyQueue) :
         keyQueue.put(key)
 
 def printHelp() :
-    print("[SYSTEM] COMMANDS :");
-    print("\th : print commands, show this list");
-    print("\ti : print information & status");
-    print("\tf : change stance");
-    print("\t\tex) drive stance -> walk stance")
+    print("----------- BASICS -----------");
+    print("h : print commands, show this list");
+    print("i : print information & status");
+    print("f : change stance");
+    print("o : disable / enable torque\n");
+    print("---------- MOVEMENTS ----------");
+    print("w : walk forward");
+    print("d : walk backward");
+    print("a : turn left");
+    print("s : turn right\n");
+    # print("\t\tex) drive stance -> walk stance")
 
 
 if __name__ == "__main__" :
@@ -32,7 +38,8 @@ if __name__ == "__main__" :
     keyThread.start()
 
     print("[SYSYEM] SCONE Activated");
-    print("[SYSYEM] Ready for key input");
+    # print("[SYSYEM] Ready for key input");
+    printHelp();
     while (True):
         if (keyQueue.qsize() > 0):
             key = keyQueue.get()
