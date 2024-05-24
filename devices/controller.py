@@ -25,7 +25,6 @@ class Controller :
             raise Exception("[CONTROLLER] Failed to set the baudrate");
 
         for i in Actuator.index :
-            print(self.__is_MX(i));
             self.set_speed(i, Actuator.speed);
             self.set_torque(i, 1);
             self.set_position(i, Actuator.position.center);
