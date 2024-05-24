@@ -19,7 +19,7 @@ class Controller :
         else :
             raise Exception("[CONTROLLER] Failed to open the port");
 
-        if self.port.setBaudRate(self.__BAUDRATE) :
+        if self.port_handler.setBaudRate(self.__BAUDRATE) :
             print("[CONTROLLER] Succeeded to set the baudrate");
         else :
             raise Exception("[CONTROLLER] Failed to set the baudrate");
