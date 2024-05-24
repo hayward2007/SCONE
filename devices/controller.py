@@ -27,6 +27,7 @@ class Controller :
         for i in Actuator.index :
             print(self.__is_MX(i));
             self.set_speed(i, Actuator.speed);
+            self.set_torque(i, 1);
 
     def __del__(self) :
         self.port_handler.closePort();
@@ -44,8 +45,9 @@ class Controller :
         
     def set_torque(self, id, status) :
         if self.__is_MX(id) :
-
-            self.packet_handler.write1ByteTxRx(self.port_handler, id, 24, status);
+            self.packet_handler1.write1ByteTxRx(self.port_handler, id, Actuator.model.MX.enable_torque, status);
+        else :
+            self.packet_handler_2.write1ByteTxRx(self.port_handler, id, Actuator.model.XM.torque_enable, status);
 
     def set_position(self, id, position) :
         self.packet_handler.write2ByteTxRx(self.port_handler, id, 30, position);
