@@ -5,8 +5,8 @@ import cv2;
 
 from info import *;
 from getkey import getkey;
-
-from controller import Controller;
+from devices.controller import Controller;
+from devices.actuator import Actuator;
 
 def onKeyInput(keyQueue) :
     print("[SYSTEM] Ready for key input\n")
@@ -29,7 +29,12 @@ def printInfo() :
     print("")
 
 if __name__ == "__main__" :
+    controller = Controller();
+
     print("[SYSYEM] SCONE Activated\n");
+
+    for i in Actuator.index :
+        controller.set_position(i, Actuator.position.center);
 
     # keyQueue = queue.Queue()
     # keyThread = threading.Thread(target=onKeyInput, args=(keyQueue,))

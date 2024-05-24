@@ -1,5 +1,5 @@
 from dynamixel_sdk import *;
-from actuator import Actuator;
+from devices.actuator import Actuator;
 
 class Controller :
     __BAUDRATE = 1000000;
@@ -23,6 +23,8 @@ class Controller :
 
         for i in Actuator.index :
             self.set_speed(i, Actuator.speed);
+
+        print(f"[CONTROLLER] Actuator speed set to {Actuator.speed}");
 
     def __del__(self) :
         self.port_handler.closePort();

@@ -1,5 +1,5 @@
 class Actuator :
-    speed = 100;
+    speed = 50;
 
     index = [i for i in range(1, 19)];
     upper_right_index = [1, 4, 5];
