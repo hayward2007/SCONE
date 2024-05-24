@@ -45,7 +45,7 @@ class Controller :
         
     def set_torque(self, id, status) :
         if self.__is_MX(id) :
-            self.packet_handler1.write1ByteTxRx(self.port_handler, id, Actuator.model.MX.enable_torque, status);
+            self.packet_handler_1.write1ByteTxRx(self.port_handler, id, Actuator.model.MX.enable_torque, status);
         else :
             self.packet_handler_2.write1ByteTxRx(self.port_handler, id, Actuator.model.XM.torque_enable, status);
 
