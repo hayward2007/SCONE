@@ -55,9 +55,9 @@ class Controller :
     def set_position(self, id, position) :
         position = position / 360 * 4096 if id % 2 == 1 else 4096 - ( position / 360 * 4096 );
         if self.__is_MX(id) :
-            self.packet_handler_1.write2ByteTxRx(self.port_handler, id, Actuator.model.MX.goal_position, position);
+            self.packet_handler_1.write2ByteTxRx(self.port_handler, id, Actuator.model.MX.goal_position, int(position));
         else :
-            self.packet_handler_2.write4ByteTxRx(self.port_handler, id, Actuator.model.XM.goal_position, position);
+            self.packet_handler_2.write4ByteTxRx(self.port_handler, id, Actuator.model.XM.goal_position, int(position));
 
     # def get_position(self, id) :
     #     result, data, error = self.packet_handler.read2ByteTxRx(self.port_handler, id, 36);
