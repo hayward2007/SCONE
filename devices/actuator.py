@@ -2,10 +2,19 @@ class Actuator :
     speed = 50;
 
     index = [i for i in range(1, 19)];
-    upper_right_index = [1, 4, 5];
-    upper_left_index = [2, 3, 6];
+    upper_right_index = [1, 3, 5];
+    upper_left_index = [2, 4, 6];
     middle_right_index = [i + 6 for i in upper_right_index];
     middle_left_index = [i + 6 for i in upper_left_index];
+    lower_right_index = [i + 6 for i in middle_right_index];
+    lower_left_index = [i + 6 for i in middle_left_index];
+
+    upper_diagonal_right_index = [1, 4, 5];
+    upper_diagonal_left_index = [2, 3, 6];
+    middle_diagonal_right_index = [i + 6 for i in upper_diagonal_right_index];
+    middle_diagonal_left_index = [i + 6 for i in upper_diagonal_left_index];
+    lower_diagonal_right_index = [i + 6 for i in middle_diagonal_right_index];
+    lower_diagonal_left_index = [i + 6 for i in middle_diagonal_left_index];
 
     class mode :
         velocity_control = 1;
@@ -15,8 +24,6 @@ class Actuator :
         start = 0;
         center = 2048;
         end = 4096;
-<<<<<<< HEAD
-
     class model :
         class MX :
             protocol_version = 1.0;
@@ -34,5 +41,3 @@ class Actuator :
             goal_position = 116;
             goal_velocity = 104;
             torque_enable = 64;
-=======
->>>>>>> origin/fundamental-raspberry-pi

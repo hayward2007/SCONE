@@ -17,26 +17,28 @@ def on_key_input(keyQueue) :
         key = getkey()
         keyQueue.put(key)
 
-def printHelp() :
+def print_help() :
     print("----------- BASICS -----------");
     print("h : print commands, show this list");
     print("i : print information & status");
     print("f : change stance");
+    print("  ex) drive stance -> walk stance")
     print("o : disable / enable torque\n");
     print("---------- MOVEMENTS ----------");
     print("w : walk forward");
     print("d : walk backward");
     print("a : turn left");
     print("s : turn right\n");
-    # print("\t\tex) drive stance -> walk stance")
+
+def print_info() :
+    print(f"Name : {NAME}");
+    print(f"Version : {VERSION}");
 
 def disable_torque() :
     for id in Actuator.index :
         controller.set_torque(id, 0);
 
 if __name__ == "__main__" :
-    controller = Controller();
-    
     print("[SYSYEM] SCONE Activated\n");
 
     keyQueue = queue.Queue()
@@ -55,8 +57,9 @@ if __name__ == "__main__" :
             elif key == 'o' :
                 disable_torque();
             elif key == 'q':
-                print("Exiting serial terminal.");
+                print("[SYSTEM] Exiting serial terminal");
                 break;
 
         time.sleep(0.01) 
-    print("End.");
+    print("[SYSYEM] Bye.\n");
+
