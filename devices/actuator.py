@@ -1,5 +1,5 @@
 class Actuator :
-    speed = 100;
+    speed = 50;
 
     index = [i for i in range(1, 19)];
     upper_right_index = [1, 4, 5];
@@ -15,6 +15,7 @@ class Actuator :
         start = 0;
         center = 2048;
         end = 4096;
+<<<<<<< HEAD
 
     class model :
         class MX :
@@ -33,3 +34,5 @@ class Actuator :
             goal_position = 116;
             goal_velocity = 104;
             torque_enable = 64;
+=======
+>>>>>>> origin/fundamental-raspberry-pi
