@@ -3,8 +3,8 @@ from devices.actuator import Actuator;
 def initial_position(controller) :
     position = [ 2048 - 512, 2048 + 512, 2048, 2048, 2048 + 512, 2048 - 512 ];
     center_position(controller);
-    # for i in range(0, 6) :
-    #     controller.set_position(i + 1, position[i]);
+    for i in Actuator.middle_index + Actuator.lower_index :
+        controller.set_position(i, 270);
 
     # for i in Actuator.middle_right_index :
     #     controller.set_position(i, Actuator.position.center + 512);
