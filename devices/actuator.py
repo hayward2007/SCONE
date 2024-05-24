@@ -11,3 +11,20 @@ class Actuator :
         start = 0;
         center = 2048;
         end = 4096;
+
+    class model :
+        class MX :
+            protocol_version = 1.0;
+            present_position = 36;
+            goal_position = 30;
+            enable_torque = 24;
+            moving_speed = 32;
+        
+        class XM :
+            protocol_version = 2.0;
+            present_position = 132;
+            present_velocity = 128;
+            operating_mode = 11;
+            goal_position = 116;
+            goal_velocity = 104;
+            torque_enable = 64;
