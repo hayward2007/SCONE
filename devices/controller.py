@@ -38,6 +38,10 @@ class Controller :
     
     def set_mode(self, id, mode) :
         self.packet_handler_2.write1ByteTxRx(self.port_handler, id, Actuator.model.XM.operating_mode, mode);
+    
+    def get_mode(self, id) :
+        print(self.packet_handler_2.read1ByteTxRx(self.port_handler, id, Actuator.model.XM.operating_mode));
+    
 
     def set_speed(self, id, speed, mode = Actuator.mode.position_control) :
         if self.__is_MX(id) :

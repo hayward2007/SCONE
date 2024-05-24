@@ -4,6 +4,7 @@ def set_drive_mode(controller) :
     set_drive_position(controller);
     for i in Actuator.lower_index :
         controller.set_mode(i, Actuator.mode.velocity_control);
+        controller.set_torque(i, 1);
 
 def set_drive_position(controller) :
     stand_position(controller);
