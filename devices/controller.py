@@ -1,10 +1,13 @@
 from dynamixel_sdk import *;
-from actuator import Actuator;
+from devices.actuator import Actuator;
 
 class Controller :
     __BAUDRATE = 1000000;
     __DEVICE_NAME = "/dev/ttyUSB0";
     __PROTOCOL_VERSION = 2.0;
+
+    def __is_MX(self, id) :
+        return id <= 6;
 
     def __init__(self) :
         print("[CONTROLLER] Initializing...");
@@ -22,6 +25,7 @@ class Controller :
             raise Exception("[CONTROLLER] Failed to set the baudrate");
 
         for i in Actuator.index :
+            print(self.__is_MX(i));
             self.set_speed(i, Actuator.speed);
 
     def __del__(self) :
@@ -29,7 +33,7 @@ class Controller :
         print("[CONTROLLER] Succeeded to close the port");
 
     def set_speed(self, id, speed) :
-        self.packet_handler.write2ByteTxRx(self.port_handler, id, 32, speed);
+        self.packet_handler.write2ByteTxRx(self.port_handler, id, Actuator.model.MX.moving_speed if self.__is_MX(id) else Actuator.model.XM.goal_velocity, speed);
         
     def set_torque(self, id, status) :
         self.packet_handler.write1ByteTxRx(self.port_handler, id, 24, status);

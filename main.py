@@ -6,7 +6,7 @@ import cv2;
 from info import *;
 from getkey import getkey;
 
-from controller import Controller;
+from devices.controller import Controller;
 
 def onKeyInput(keyQueue) :
     print("[SYSTEM] Ready for key input\n")
@@ -29,6 +29,8 @@ def printInfo() :
     print("")
 
 if __name__ == "__main__" :
+    controller = Controller();
+    
     print("[SYSYEM] SCONE Activated\n");
 
     # keyQueue = queue.Queue()
