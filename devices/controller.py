@@ -28,6 +28,7 @@ class Controller :
             print(self.__is_MX(i));
             self.set_speed(i, Actuator.speed);
             self.set_torque(i, 1);
+            self.set_position(i, Actuator.position.center);
 
     def __del__(self) :
         self.port_handler.closePort();
@@ -50,7 +51,10 @@ class Controller :
             self.packet_handler_2.write1ByteTxRx(self.port_handler, id, Actuator.model.XM.torque_enable, status);
 
     def set_position(self, id, position) :
-        self.packet_handler.write2ByteTxRx(self.port_handler, id, 30, position);
+        if self.__is_MX(id) :
+            self.packet_handler_1.write2ByteTxRx(self.port_handler, id, Actuator.model.MX.goal_position, position);
+        else :
+            self.packet_handler_2.write4ByteTxRx(self.port_handler, id, Actuator.model.XM.goal_position, position);
 
     def get_position(self, id) :
         result, data, error = self.packet_handler.read2ByteTxRx(self.port_handler, id, 36);
