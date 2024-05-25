@@ -92,7 +92,7 @@ def command_line_interface() :
         drive_forward(controller);
     
     elif user_input == "turn right" :
-        set_drive_mode(controller);
+        turn_right(controller);
     
     elif user_input == "turn left" :
         turn_left(controller);

@@ -32,7 +32,7 @@ class Controller :
 
         initial_position(self);
 
-        time.sleep(5);
+        time.sleep(3);
 
         for i in Actuator.index :
             self.set_speed(i, 100);
