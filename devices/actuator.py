@@ -19,10 +19,6 @@ class Actuator :
     lower_diagonal_right_index = [i + 6 for i in middle_diagonal_right_index];
     lower_diagonal_left_index = [i + 6 for i in middle_diagonal_left_index];
 
-    class mode :
-        velocity_control = 1;
-        position_control = 3;
-
     class position :
         start = 0;
         center = 2048;

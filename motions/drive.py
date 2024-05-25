@@ -4,12 +4,8 @@ from motions.fundamental import *;
 def set_drive_mode(controller) :
     set_drive_position(controller);
     time.sleep(10);
-    print("fin");
     for i in Actuator.lower_index :
         controller.set_raw_position(i, 1048575);
-        # controller.set_mode(i, 1);
-        # controller.set_torque(i, 0);
-        # controller.get_mode(i);
 
 def set_drive_position(controller) :
     stand_position(controller);

@@ -38,6 +38,10 @@ def print_info() :
     print(f"Name : {NAME}");
     print(f"Version : {VERSION}");
 
+def get_position(controller) :
+    for i in Actuator.index :
+        controller.get_position(i);
+
 def remote() :
     remote = True;
     keyQueue = queue.Queue()
@@ -72,6 +76,8 @@ def command_line_interface() :
         print_info();
     elif user_input == "remote" :
         remote();
+    elif user_input == "position" :
+        get_position(controller);
     elif user_input == "torque off" :
         disable_torque(controller);
     else :
