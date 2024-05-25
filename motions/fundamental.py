@@ -1,7 +1,7 @@
 from devices.actuator import Actuator;
 
 def initial_position(controller) :
-    position = [ 120, 120, 180, 180, 240, 240 ];
+    position = [ 135, 135, 180, 180, 225, 225 ];
     center_position(controller);
 
     for i in Actuator.upper_index :
@@ -11,7 +11,7 @@ def initial_position(controller) :
         controller.set_position(i, 240);
 
     for i in Actuator.lower_index :
-        controller.set_position(i, 120);
+        controller.set_position(i, 255);
 
 def center_position(controller) :
     for i in Actuator.index :
