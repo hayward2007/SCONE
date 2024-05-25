@@ -1,3 +1,5 @@
+import time;
+
 from dynamixel_sdk import *;
 from motions.fundamental import *;
 from devices.actuator import Actuator;
@@ -29,6 +31,11 @@ class Controller :
             self.set_speed(i, 10);
 
         initial_position(self);
+
+        time.sleep(5);
+
+        for i in Actuator.index :
+            self.set_speed(i, 100);
 
         print(f"[CONTROLLER] Actuator speed set to {Actuator.speed}");
 

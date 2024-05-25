@@ -76,6 +76,10 @@ def command_line_interface() :
         print_info();
     elif user_input == "remote" :
         remote();
+    elif user_input == "turn right" :
+        turn_right(controller);
+    elif user_input == "turn left" :
+        turn_left(controller);
     elif user_input == "position" :
         get_position(controller);
     elif user_input == "torque off" :
