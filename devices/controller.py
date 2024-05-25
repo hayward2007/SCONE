@@ -36,6 +36,7 @@ class Controller :
 
         for i in Actuator.index :
             self.set_speed(i, 100);
+            self.set_acceleration(i, 20);
 
         print(f"[CONTROLLER] Actuator speed set to {Actuator.speed}");
 
@@ -55,6 +56,10 @@ class Controller :
             self.packet_handler_1.write2ByteTxRx(self.port_handler, id, Actuator.model.MX.moving_speed, speed);
         else :
             self.packet_handler_2.write4ByteTxRx(self.port_handler, id, Actuator.model.XM.profile_velocity, speed);
+
+    def set_acceleration(self, id, value) :
+        if not self.__is_MX(id) :
+            self.packet_handler_2.write4ByteTxRx(self.port_handler, id, Actuator.model.XM.profile_acceleration, value);
 
     def set_torque(self, id, status) :
         if self.__is_MX(id) :

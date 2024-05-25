@@ -33,6 +33,7 @@ class Actuator :
         
         class XM :
             protocol_version = 2.0;
+            profile_acceleration = 108;
             present_position = 132;
             present_velocity = 128;
             profile_velocity = 112;
