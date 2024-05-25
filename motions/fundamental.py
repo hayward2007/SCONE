@@ -1,22 +1,17 @@
 from devices.actuator import Actuator;
 
 def initial_position(controller) :
-    position = [ 2048 - 512, 2048 + 512, 2048, 2048, 2048 + 512, 2048 - 512 ];
+    position = [ 120, 120, 180, 180, 240, 240 ];
     center_position(controller);
+
+    for i in Actuator.upper_index :
+        controller.set_position(i, position[i - 1]);
+    
     for i in Actuator.middle_index + Actuator.lower_index :
-        controller.set_position(i, 270);
+        controller.set_position(i, 240);
 
-    # for i in Actuator.middle_right_index :
-    #     controller.set_position(i, Actuator.position.center + 512);
-
-    # for i in Actuator.middle_left_index :
-    #     controller.set_position(i, Actuator.position.center - 512);
-
-    # for i in Actuator.lower_right_index :
-    #     controller.set_position(i, Actuator.position.center + 512);
-
-    # for i in Actuator.lower_left_index :
-    #     controller.set_position(i, Actuator.position.center - 512);
+    for i in Actuator.lower_index :
+        controller.set_position(i, 120);
 
 def center_position(controller) :
     for i in Actuator.index :

@@ -45,7 +45,7 @@ def remote() :
     keyThread.daemon = True; 
     keyThread.start();
     print("[SYSTEM] Remote control activated\n");
-    while True :
+    while remote :
         if keyQueue.qsize() > 0 :
             key = keyQueue.get();
             if key == 'r' :
