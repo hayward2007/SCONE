@@ -8,6 +8,7 @@ from getkey import getkey;
 
 from motions.walk import *;
 from motions.drive import *;
+from motions.stair import *;
 from devices.actuator import *;
 from devices.controller import *;
 from motions.fundamental import *;
@@ -90,6 +91,15 @@ def command_line_interface() :
     
     elif user_input == "drive forward" :
         drive_forward(controller);
+    
+    elif user_input == "drive stop" :
+        drive_stop(controller);
+    
+    elif user_input == "stair mode" :
+        set_stair_mode(controller);
+    
+    elif user_input == "climb stair" :
+        climb_stair(controller);
     
     elif user_input == "turn right" :
         turn_right(controller);
