@@ -66,6 +66,12 @@ class Controller :
         else :
             self.packet_handler_2.write4ByteTxRx(self.port_handler, id, Actuator.model.XM.goal_position, int(position));
 
+    def set_raw_position(self, id, position) :
+        if self.__is_MX(id) :
+            self.packet_handler_1.write2ByteTxRx(self.port_handler, id, Actuator.model.MX.goal_position, int(position));
+        else :
+            self.packet_handler_2.write4ByteTxRx(self.port_handler, id, Actuator.model.XM.goal_position, int(position));
+
     def get_position(self, id) :
         result, data, error = self.packet_handler.read2ByteTxRx(self.port_handler, id, 36);
         print(f"[CONTROLLER] ID : {id} \t Current Position: {result}");
