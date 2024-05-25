@@ -1,9 +1,9 @@
-import time
-from devices.actuator import Actuator
-from motions.fundamental import Fundamental;
+import time;
+from devices.actuator import *;
+from motions.fundamental import *;
 
-def set_walk_position() :
-    print("asdf");
+def set_walk_mode() :
+    initial_position();
 
 def hold_dignoal_right_index(controller) :
     for i in Actuator.middle_diagonal_right_index :
@@ -73,22 +73,26 @@ def __walk_forward_loop(controller) :
     hold_dignoal_right_index(controller);
     time.sleep(0.5);
     
+    controller.set_all_speed(controller, 100);
     for i in Actuator.upper_diagonal_right_index :
         controller.set_position(i, Fundamental.upper_initial_position[i - 1] - 30);
     for i in Actuator.upper_diagonal_left_index :
         controller.set_position(i, Fundamental.upper_initial_position[i - 1] + 30);
     time.sleep(0.5);
 
+    controller.set_all_speed(controller, 25);
     release_dignoal_right_index(controller);
     hold_dignoal_left_index(controller);
     time.sleep(0.5);
 
+    controller.set_all_speed(controller, 100);
     for i in Actuator.upper_diagonal_right_index :
         controller.set_position(i, Fundamental.upper_initial_position[i - 1] + 30);
     for i in Actuator.upper_diagonal_left_index :
         controller.set_position(i, Fundamental.upper_initial_position[i - 1] - 30);
     time.sleep(0.5);
 
+    controller.set_all_speed(controller, 25);
     release_dignoal_left_index(controller);
     __walk_forward_loop(controller);
 

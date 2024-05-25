@@ -8,9 +8,9 @@ from getkey import getkey;
 
 from motions.walk import *;
 from motions.drive import *;
+from devices.actuator import *;
+from devices.controller import *;
 from motions.fundamental import *;
-from devices.actuator import Actuator;
-from devices.controller import Controller;
 
 controller = Controller();
 remote = False;
@@ -42,29 +42,29 @@ def get_position(controller) :
     for i in Actuator.index :
         controller.get_position(i);
 
-def remote() :
-    remote = True;
-    keyQueue = queue.Queue()
-    keyThread = threading.Thread(target=on_key_input, args=(keyQueue,))
-    keyThread.daemon = True; 
-    keyThread.start();
-    print("[SYSTEM] Remote control activated\n");
-    while remote :
-        if keyQueue.qsize() > 0 :
-            key = keyQueue.get();
-            if key == 'r' :
-                set_drive_mode(controller);
-            elif key == 'w' :
-                drive_forward(controller);
-            elif key == ' ' :
-                drive_stop(controller);
-            elif key == 'o' :
-                disable_torque();
-            elif key == 'q':
-                print("[SYSTEM] Exiting serial terminal");
-                break;
-        time.sleep(0.01) 
-    remote = False;
+# def remote() :
+#     remote = True;
+#     keyQueue = queue.Queue()
+#     keyThread = threading.Thread(target=on_key_input, args=(keyQueue,))
+#     keyThread.daemon = True; 
+#     keyThread.start();
+#     print("[SYSTEM] Remote control activated\n");
+#     while remote :
+#         if keyQueue.qsize() > 0 :
+#             key = keyQueue.get();
+#             if key == 'r' :
+#                 set_drive_mode(controller);
+#             elif key == 'w' :
+#                 drive_forward(controller);
+#             elif key == ' ' :
+#                 drive_stop(controller);
+#             elif key == 'o' :
+#                 disable_torque();
+#             elif key == 'q':
+#                 print("[SYSTEM] Exiting serial terminal");
+#                 break;
+#         time.sleep(0.01) 
+#     remote = False;
 
 def command_line_interface() :
     user_input = input("[SYSTEM] Enter command : ");
@@ -72,22 +72,40 @@ def command_line_interface() :
         return;
     elif user_input == "help" :
         print_help();
+    
     elif user_input == "info" :
         print_info();
-    elif user_input == "remote" :
-        remote();
+    
+    # elif user_input == "remote" :
+    #     remote();
+
+    elif user_input == "walk mode" :
+        set_walk_mode(controller);
+
     elif user_input == "walk forward" :
         walk_forward(controller);
+    
+    elif user_input == "drive mode" :
+        set_drive_mode(controller);
+    
+    elif user_input == "drive forward" :
+        drive_forward(controller);
+    
     elif user_input == "turn right" :
-        turn_right(controller);
+        set_drive_mode(controller);
+    
     elif user_input == "turn left" :
         turn_left(controller);
+    
     elif user_input == "position" :
         get_position(controller);
+    
     elif user_input == "torque off" :
         disable_torque(controller);
+    
     else :
         print("[SYSTEM] Invalid command, type 'help' for command list\n");
+    
     command_line_interface();
 
 if __name__ == "__main__" :

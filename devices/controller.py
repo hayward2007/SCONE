@@ -56,6 +56,10 @@ class Controller :
             self.packet_handler_1.write2ByteTxRx(self.port_handler, id, Actuator.model.MX.moving_speed, speed);
         else :
             self.packet_handler_2.write4ByteTxRx(self.port_handler, id, Actuator.model.XM.profile_velocity, speed);
+    
+    def set_all_speed(self, speed) :
+        for i in Actuator.index :
+            self.set_speed(i, speed);
 
     def set_acceleration(self, id, value) :
         if not self.__is_MX(id) :

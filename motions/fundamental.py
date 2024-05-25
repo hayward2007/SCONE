@@ -1,4 +1,4 @@
-from devices.actuator import Actuator;
+from devices.actuator import *;
 
 class Fundamental :
     upper_initial_position = [ 135, 135, 180, 180, 225, 225 ];

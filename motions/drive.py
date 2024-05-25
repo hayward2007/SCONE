@@ -2,19 +2,16 @@ import time;
 from motions.fundamental import *;
 
 def set_drive_mode(controller) :
-    set_drive_position(controller);
-    time.sleep(10);
+    for i in Actuator.upper_index :
+        controller.set_position(i, 180);
     for i in Actuator.lower_index :
-        controller.set_raw_position(i, 1048575);
-
-def set_drive_position(controller) :
-    stand_position(controller);
-    controller.set_position(Actuator.lower_right_index[1], 90);
-    controller.set_position(Actuator.lower_left_index[1], 90);
+        controller.set_position(i, 270);
+        if i == 3 or i == 4 :
+            controller.set_position(i, 90);
 
 def drive_forward(controller) :
     for i in Actuator.lower_index :
-        controller.set_speed(i, 10, mode = Actuator.mode.velocity_control);
+        controller.set_raw_position(i, 1048575);
 
 def drive_backward() :
     print("asdf");
