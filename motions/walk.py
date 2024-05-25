@@ -7,26 +7,90 @@ def set_walk_position() :
 
 def hold_dignoal_right_index(controller) :
     for i in Actuator.middle_diagonal_right_index :
-        controller.set_position(i, 225);
-        controller.set_position(i + 6, 240);
+        controller.set_position(i, Fundamental.middle_initial_position - 15);
+        controller.set_position(i + 6, Fundamental.lower_initial_position - 15);
 
 def hold_dignoal_left_index(controller) :
     for i in Actuator.middle_diagonal_left_index :
-        controller.set_position(i, 225);
-        controller.set_position(i + 6, 240);
+        controller.set_position(i, Fundamental.middle_initial_position - 15);
+        controller.set_position(i + 6, Fundamental.lower_initial_position - 15);
 
 def release_dignoal_right_index(controller) :
     for i in Actuator.middle_diagonal_right_index :
-        controller.set_position(i, 240);
-        controller.set_position(i + 6, 255);
+        controller.set_position(i, Fundamental.middle_initial_position);
+        controller.set_position(i + 6, Fundamental.lower_initial_position);
 
 def release_dignoal_left_index(controller) :
     for i in Actuator.middle_diagonal_left_index :
-        controller.set_position(i, 240);
-        controller.set_position(i + 6, 255);
+        controller.set_position(i, Fundamental.middle_initial_position);
+        controller.set_position(i + 6, Fundamental.lower_initial_position);
 
-def walk_forward() :
-    print("asdf");
+def walk_forward(controller) :
+    __walk_forward_loop(controller);
+    __walk_forward_right_end(controller);
+
+def __walk_forward_right_end(controller) :
+    hold_dignoal_right_index(controller);
+    time.sleep(0.2);
+    
+    for i in Actuator.upper_diagonal_right_index :
+        controller.set_position(i, Fundamental.upper_initial_position[i - 1] - 30);
+    for i in Actuator.upper_diagonal_left_index :
+        controller.set_position(i, Fundamental.upper_initial_position[i - 1] + 30);
+    time.sleep(0.5);
+
+    release_dignoal_right_index(controller);
+    hold_dignoal_left_index(controller);
+    time.sleep(0.2);
+
+    for i in Actuator.upper_index :
+        controller.set_position(i, Fundamental.upper_initial_position[i - 1]);
+    time.sleep(0.5);
+
+    release_dignoal_left_index(controller);
+
+def __initial_to_walk_forward_left(controller) :
+    hold_dignoal_left_index(controller);
+    time.sleep(0.2);
+    
+    for i in Actuator.upper_diagonal_left_index :
+        controller.set_position(i, Fundamental.upper_initial_position[i - 1] - 30);
+    for i in Actuator.upper_diagonal_right_index :
+        controller.set_position(i, Fundamental.upper_initial_position[i - 1] + 30);
+    time.sleep(0.5);
+
+    release_dignoal_left_index(controller);
+    hold_dignoal_right_index(controller);
+    time.sleep(0.2);
+
+    for i in Actuator.upper_index :
+        controller.set_position(i, Fundamental.upper_initial_position[i - 1]);
+    time.sleep(0.5);
+
+    release_dignoal_right_index(controller);
+
+def __walk_forward_loop(controller) :
+    hold_dignoal_right_index(controller);
+    time.sleep(0.2);
+    
+    for i in Actuator.upper_diagonal_right_index :
+        controller.set_position(i, Fundamental.upper_initial_position[i - 1] - 30);
+    for i in Actuator.upper_diagonal_left_index :
+        controller.set_position(i, Fundamental.upper_initial_position[i - 1] + 30);
+    time.sleep(0.5);
+
+    release_dignoal_right_index(controller);
+    hold_dignoal_left_index(controller);
+    time.sleep(0.2);
+
+    for i in Actuator.upper_diagonal_right_index :
+        controller.set_position(i, Fundamental.upper_initial_position[i - 1] + 30);
+    for i in Actuator.upper_diagonal_left_index :
+        controller.set_position(i, Fundamental.upper_initial_position[i - 1] - 30);
+    time.sleep(0.5);
+
+    release_dignoal_left_index(controller);
+    __walk_forward_loop(controller);
 
 def walk_backward() :
     print("asdf");
@@ -57,10 +121,9 @@ def turn_right(controller) :
 
     release_dignoal_left_index(controller);
 
-
 def turn_left(controller) :
     hold_dignoal_left_index(controller);
-    time.sleep(0.5);
+    time.sleep(0.2);
     
     for i in Actuator.upper_diagonal_left_index :
         controller.set_position(i, Fundamental.upper_initial_position[i - 1] - 30);
@@ -70,7 +133,7 @@ def turn_left(controller) :
 
     release_dignoal_left_index(controller);
     hold_dignoal_right_index(controller);
-    time.sleep(0.5);
+    time.sleep(0.2);
 
     for i in Actuator.upper_index :
         controller.set_position(i, Fundamental.upper_initial_position[i - 1]);
