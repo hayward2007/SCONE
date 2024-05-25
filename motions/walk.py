@@ -108,11 +108,13 @@ def walk_right() :
 def turn_right(controller) :
     hold_dignoal_right_index(controller);
     time.sleep(0.2);
-    
-    for i in Actuator.upper_diagonal_right_index :
-        controller.set_position(i, Fundamental.upper_initial_position[i - 1] - 30);
-    for i in Actuator.upper_diagonal_left_index :
-        controller.set_position(i, Fundamental.upper_initial_position[i - 1] + 30);
+
+    controller.set_position(Actuator.upper_diagonal_right_index[0], Fundamental.upper_initial_position[Actuator.upper_diagonal_right_index[0] - 1] - 20);
+    controller.set_position(Actuator.upper_diagonal_right_index[1], Fundamental.upper_initial_position[Actuator.upper_diagonal_left_index[1] - 1] + 20);
+    controller.set_position(Actuator.upper_diagonal_right_index[2], Fundamental.upper_initial_position[Actuator.upper_diagonal_right_index[2] - 1] - 20);
+    controller.set_position(Actuator.upper_diagonal_left_index[0], Fundamental.upper_initial_position[Actuator.upper_diagonal_left_index[0] - 1] + 20);
+    controller.set_position(Actuator.upper_diagonal_left_index[1], Fundamental.upper_initial_position[Actuator.upper_diagonal_left_index[1] - 1] - 20);
+    controller.set_position(Actuator.upper_diagonal_left_index[2], Fundamental.upper_initial_position[Actuator.upper_diagonal_left_index[2] - 1] + 20);
     time.sleep(0.5);
 
     release_dignoal_right_index(controller);
@@ -128,11 +130,13 @@ def turn_right(controller) :
 def turn_left(controller) :
     hold_dignoal_left_index(controller);
     time.sleep(0.2);
-    
-    for i in Actuator.upper_diagonal_left_index :
-        controller.set_position(i, Fundamental.upper_initial_position[i - 1] - 30);
-    for i in Actuator.upper_diagonal_right_index :
-        controller.set_position(i, Fundamental.upper_initial_position[i - 1] + 30);
+
+    controller.set_position(Actuator.upper_diagonal_left_index[0], Fundamental.upper_initial_position[Actuator.upper_diagonal_left_index[0] - 1] + 20);
+    controller.set_position(Actuator.upper_diagonal_left_index[1], Fundamental.upper_initial_position[Actuator.upper_diagonal_left_index[1] - 1] - 20);
+    controller.set_position(Actuator.upper_diagonal_left_index[2], Fundamental.upper_initial_position[Actuator.upper_diagonal_left_index[2] - 1] + 20);
+    controller.set_position(Actuator.upper_diagonal_right_index[0], Fundamental.upper_initial_position[Actuator.upper_diagonal_right_index[0] - 1] - 20);
+    controller.set_position(Actuator.upper_diagonal_right_index[1], Fundamental.upper_initial_position[Actuator.upper_diagonal_right_index[1] - 1] + 20);
+    controller.set_position(Actuator.upper_diagonal_right_index[2], Fundamental.upper_initial_position[Actuator.upper_diagonal_right_index[2] - 1] - 20);
     time.sleep(0.5);
 
     release_dignoal_left_index(controller);
