@@ -49,26 +49,6 @@ def __walk_forward_right_end(controller) :
 
     release_dignoal_left_index(controller);
 
-def __initial_to_walk_forward_left(controller) :
-    hold_dignoal_left_index(controller);
-    time.sleep(0.2);
-    
-    for i in Actuator.upper_diagonal_left_index :
-        controller.set_position(i, Fundamental.upper_initial_position[i - 1] - 30);
-    for i in Actuator.upper_diagonal_right_index :
-        controller.set_position(i, Fundamental.upper_initial_position[i - 1] + 30);
-    time.sleep(0.5);
-
-    release_dignoal_left_index(controller);
-    hold_dignoal_right_index(controller);
-    time.sleep(0.2);
-
-    for i in Actuator.upper_index :
-        controller.set_position(i, Fundamental.upper_initial_position[i - 1]);
-    time.sleep(0.5);
-
-    release_dignoal_right_index(controller);
-
 def __walk_forward_loop(controller) :
     hold_dignoal_right_index(controller);
     time.sleep(0.5);

@@ -13,7 +13,7 @@ from devices.actuator import *;
 from devices.controller import *;
 from motions.fundamental import *;
 
-controller = Controller();
+# controller = Controller();
 remote = False;
 
 def on_key_input(keyQueue) :
@@ -112,6 +112,21 @@ def command_line_interface() :
     
     elif user_input == "torque off" :
         disable_torque(controller);
+    
+    elif user_input == "set" :
+        print("[SYSTEM] Set?");
+        print(" 1. Torque");
+        print(" 2. Position");
+        print(" 3. Speed\n");
+        print("");
+        additional_user_input = input(" >");
+
+
+    elif user_input == "get" :
+        print("[SYSTEM] Get?");
+        print(" 1. Torque");
+        print(" 2. Position");
+        print(" 3. Speed");
     
     else :
         print("[SYSTEM] Invalid command, type 'help' for command list\n");
