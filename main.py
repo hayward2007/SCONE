@@ -67,7 +67,28 @@ def get_position(controller) :
 #         time.sleep(0.01) 
 #     remote = False;
 
-def command_line_interface() :
+
+
+
+def cli() :
+    def cli_set() :
+        def scone() :
+            print("Asdf");
+        
+        def actuator() :
+            print("asdf");
+        
+        print("[SYSTEM] Set?");
+        print(" 1. SCONE");
+        print(" 2. Actuator");
+        user_input = input();
+
+        if user_input == 1 or user_input == "SCONE" :
+            print(" 1. Torque");
+        elif user_input == 2 or user_input.capitalize == "ACTUATOR" :
+            print(" 2. Position");
+        print(" 3. Speed\n");
+
     user_input = input("[SYSTEM] Enter command : ");
     if user_input == "quit" or user_input == "exit" :
         return;
@@ -114,13 +135,7 @@ def command_line_interface() :
         disable_torque(controller);
     
     elif user_input == "set" :
-        print("[SYSTEM] Set?");
-        print(" 1. Torque");
-        print(" 2. Position");
-        print(" 3. Speed\n");
-        print("");
-        additional_user_input = input(" >");
-
+        cli_set();
 
     elif user_input == "get" :
         print("[SYSTEM] Get?");
@@ -131,9 +146,11 @@ def command_line_interface() :
     else :
         print("[SYSTEM] Invalid command, type 'help' for command list\n");
     
-    command_line_interface();
+    cli();
 
 if __name__ == "__main__" :
     print("[SYSYEM] SCONE Activated\n");
-    command_line_interface();
+    cli();
     print("[SYSYEM] Bye.\n");
+
+
