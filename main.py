@@ -10,7 +10,7 @@ from devices.controller import *;
 from motions.fundamental import *;
 
 
-status = Status.INITIALIZING;
+# status = Status.INITIALIZING;
 controller = Controller();
 
 def cli() :
@@ -92,7 +92,7 @@ def cli() :
         print("");
     
     def cli_remote() :
-        global status;
+        # global status;
         remote_input = "";
         remote = True;
     
@@ -103,9 +103,11 @@ def cli() :
                 remote = False;
                 return;
             elif remote_input == "w" :
-                status = Status.WALKING;
+                walk_forward(controller);
+                # status = Status.WALKING;
+                print("asdf");
             elif remote_input == "a" :
-                status = Status.STANDBY;
+                # status = Status.STANDBY;
                 turn_left(controller);
             elif remote_input == "s" :
                 print("s");
@@ -144,7 +146,7 @@ def cli() :
     cli();
 
 if __name__ == "__main__" :
-    status = Status.STANDBY;
+    # status = Status.STANDBY;
     print("[SYSYEM] SCONE Activated\n");
     cli();
     print("[SYSYEM] Bye.\n");
