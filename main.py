@@ -1,5 +1,5 @@
 import threading, time;
-from msvcrt import getch;
+from getch import getch;
 
 from info import *;
 from motions.walk import *;
