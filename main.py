@@ -47,11 +47,11 @@ def cli() :
         return;
 
     def cli_set() :
-        def scone() :
+        def set_posture() :
             print("Asdf");
         
-        def actuator() :
-            def speed() :
+        def set_actuator() :
+            def set_speed() :
                 print("[SYSTEM] Set actuator speed?");
                 print(" 1. Slow");
                 print(" 2. Normal");
@@ -69,15 +69,15 @@ def cli() :
         print("[SYSTEM] Set?");
         print(" 1. SCONE");
         print(" 2. Actuator");
-        print(" 3. Return");
+        print(" 3. Exit");
         print("");
 
         user_input = cli_input();
 
         if user_input == "1" or user_input.lower == "scone" :
-            scone();
+            set_posture();
         elif user_input == "2" or user_input.lower == "actuator" :
-            actuator();
+            set_actuator();
         elif is_return(user_input) :
             return;
         else :
@@ -85,11 +85,72 @@ def cli() :
             cli_set();
     
     def cli_get() :
+        def get_torque() :
+            asdf
+
+        def get_position() :
+            def get_all_position() :    
+                for i in Actuator.index :
+                    controller.get_position(i);
+            
+            def get_one_position() :
+                print("[SYSTEM] Enter actuator id");
+                print("");
+                controller.get_position(int(cli_input()));
+        
+            print("[SYSTEM] Get position?");
+            print(" 1. All");
+            print(" 2. One");
+        
+            user_input = cli_input();
+        
+            if user_input == "1" or user_input.lower == "all" :
+                get_all_position();
+            elif user_input == "2" or user_input.lower == "one" :
+                get_one_position();
+
+        def get_speed() :
+            def get_all_speed() :
+                for i in Actuator.index :
+                    controller.get_speed(i);
+            
+            def get_one_speed() :
+                print("[SYSTEM] Enter actuator id");
+                print("");
+                controller.get_speed(int(cli_input()));
+            
+            print("[SYSTEM] Get speed?");
+            print(" 1. All");
+            print(" 2. One");
+            print(" 3. Exit");
+            print("");
+
+            user_input = cli_input();
+
+            if user_input == "1" or user_input.lower == "all" :
+                get_all_speed();
+            elif user_input == "2" or user_input.lower == "one" :
+                get_one_speed();
+
+
         print("[SYSTEM] Get?");
         print(" 1. Torque");
         print(" 2. Position");
         print(" 3. Speed");
+        print(" 4. Exit");
         print("");
+    
+        if user_input == "1" or user_input.lower == "torque" :  
+            get_torque();
+        elif user_input == "2" or user_input.lower == "position" :
+            get_position();
+        elif user_input == "3" or user_input.lower == "speed" :
+            get_speed();
+        elif is_return(user_input) :
+            return;
+        else :
+            no_command();
+            cli_set();
     
     def cli_remote() :
         # global status;
