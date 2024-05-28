@@ -11,10 +11,15 @@ def set_drive_mode(controller) :
 
 def drive_forward(controller) :
     for i in Actuator.lower_index :
-        controller.set_speed(i, 100);
+        controller.set_speed(i, 200);
     
     for i in Actuator.lower_index :
         controller.set_raw_position(i, 1048575);
+
+    time.sleep(4);
+
+    for i in Actuator.lower_index :
+        controller.set_speed(i, 0);
 
 def drive_backward() :
     print("asdf");

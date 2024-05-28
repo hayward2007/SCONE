@@ -35,7 +35,7 @@ class Controller :
         time.sleep(3);
 
         for i in Actuator.index :
-            self.set_speed(i, 20);
+            self.set_speed(i, 100);
             self.set_acceleration(i, 20);
 
         print(f"[CONTROLLER] Actuator speed set to {Actuator.speed}");
