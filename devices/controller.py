@@ -27,7 +27,7 @@ class Controller :
         else :
             raise Exception("[CONTROLLER] Failed to set the baudrate");
         
-        initial_position(self);
+        start_position(self);
 
         for i in Actuator.index :
             self.set_speed(i, 100);

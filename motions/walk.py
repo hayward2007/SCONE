@@ -85,7 +85,7 @@ def walk_left() :
 def walk_right() :
     print("asdf");
 
-def turn_left(controller) :
+async def turn_left(controller) :
     hold_dignoal_right_index(controller);
     time.sleep(0.5);
 
@@ -107,7 +107,7 @@ def turn_left(controller) :
 
     release_dignoal_left_index(controller);
 
-def turn_right(controller) :
+async def turn_right(controller) :
     hold_dignoal_left_index(controller);
     time.sleep(0.5);
 

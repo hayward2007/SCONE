@@ -1,4 +1,5 @@
-import threading, time;
+import time;
+from enum import Enum;
 from getch import getch;
 
 from info import *;
@@ -91,7 +92,14 @@ def cli() :
         print("");
     
     def cli_remote() :
+        class scone_status(Enum) :
+            STANDBY = 0;
+            WALKING = 1;
+            DRIVING = 2;
+            CLIMBING = 3;
+        
         remote_input = "";
+        remote_status = scone_status.STANDBY;
         remote = True;
     
         while remote :
@@ -101,15 +109,13 @@ def cli() :
                 remote = False;
                 return;
             elif remote_input == "w" :
-                print("w");
+                remote_status = scone_status.WALKING;
             elif remote_input == "a" :
-                print("a");
+                turn_left(controller);
             elif remote_input == "s" :
                 print("s");
             elif remote_input == "d" :
-                print("d");
-            elif remote_input == " " :
-                print(" ");
+                turn_right(controller);
             else :
                 print("Invalid command");
                 print("");
