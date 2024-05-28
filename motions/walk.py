@@ -1,4 +1,6 @@
 import time;
+
+from main import status;
 from devices.actuator import *;
 from motions.fundamental import *;
 
@@ -27,7 +29,6 @@ def release_dignoal_left_index(controller) :
 
 def walk_forward(controller) :
     __walk_forward_loop(controller);
-    __walk_forward_right_end(controller);
 
 def __walk_forward_right_end(controller) :
     hold_dignoal_right_index(controller);
@@ -74,7 +75,11 @@ def __walk_forward_loop(controller) :
 
     controller.set_all_speed(25);
     release_dignoal_left_index(controller);
-    __walk_forward_loop(controller);
+
+    if status == Status.WALKING :
+        __walk_forward_loop(controller);
+    else :
+        __walk_forward_right_end(controller);
 
 def walk_backward() :
     print("asdf");

@@ -1,5 +1,4 @@
 import time;
-from enum import Enum;
 from getch import getch;
 
 from info import *;
@@ -11,6 +10,7 @@ from devices.controller import *;
 from motions.fundamental import *;
 
 
+status = Status.INITIALIZING;
 controller = Controller();
 
 def cli() :
@@ -92,14 +92,8 @@ def cli() :
         print("");
     
     def cli_remote() :
-        class scone_status(Enum) :
-            STANDBY = 0;
-            WALKING = 1;
-            DRIVING = 2;
-            CLIMBING = 3;
-        
+        global status;
         remote_input = "";
-        remote_status = scone_status.STANDBY;
         remote = True;
     
         while remote :
@@ -109,8 +103,9 @@ def cli() :
                 remote = False;
                 return;
             elif remote_input == "w" :
-                remote_status = scone_status.WALKING;
+                status = Status.WALKING;
             elif remote_input == "a" :
+                status = Status.STANDBY;
                 turn_left(controller);
             elif remote_input == "s" :
                 print("s");
@@ -149,6 +144,7 @@ def cli() :
     cli();
 
 if __name__ == "__main__" :
+    status = Status.STANDBY;
     print("[SYSYEM] SCONE Activated\n");
     cli();
     print("[SYSYEM] Bye.\n");

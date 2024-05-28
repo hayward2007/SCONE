@@ -1,4 +1,5 @@
 import time;
+from enum import Enum;
 
 from devices.actuator import *;
 
@@ -6,6 +7,13 @@ class Fundamental :
     upper_initial_position = [ 135, 135, 180, 180, 225, 225 ];
     middle_initial_position = 240;
     lower_initial_position = 255;
+
+class Status(Enum) :
+    INITIALIZING = 0;
+    STANDBY = 1;
+    WALKING = 2;
+    DRIVING = 3;
+    CLIMBING = 4;
 
 def initial_position(controller) :
     enable_torque(controller);
