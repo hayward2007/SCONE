@@ -134,6 +134,7 @@ def cli() :
         cli_remote();
         
     elif is_return(user_input) :
+        end_position(controller);
         return;
     
     else :

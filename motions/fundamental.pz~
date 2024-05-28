@@ -26,10 +26,8 @@ def initial_position(controller) :
     time.sleep(1);
 
 def end_position(controller) :
-    controller.set_all_speed(45);
-    for i in Actuator.middle_index :
-        controller.set_position(i, 165);
-    time.sleep(1.5);
+    for i in Acutator.middle_index :
+        controller.set_position(i, Actuator.position.center);
     disable_torque(controller);
 
 def center_position(controller) :
