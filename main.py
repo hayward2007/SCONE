@@ -86,7 +86,7 @@ def cli() :
     
     def cli_get() :
         def get_torque() :
-            asdf
+            print("asdf");
 
         def get_position() :
             def get_all_position() :    
@@ -139,6 +139,8 @@ def cli() :
         print(" 3. Speed");
         print(" 4. Exit");
         print("");
+
+        user_input = cli_input();
     
         if user_input == "1" or user_input.lower == "torque" :  
             get_torque();
@@ -150,7 +152,7 @@ def cli() :
             return;
         else :
             no_command();
-            cli_set();
+            cli_get();
     
     def cli_remote() :
         # global status;
