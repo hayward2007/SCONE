@@ -86,7 +86,7 @@ def cli() :
     
     def cli_get() :
         def get_torque() :
-            print("asdf");
+            asdf
 
         def get_position() :
             def get_all_position() :    
@@ -139,8 +139,6 @@ def cli() :
         print(" 3. Speed");
         print(" 4. Exit");
         print("");
-
-        user_input = cli_input();
     
         if user_input == "1" or user_input.lower == "torque" :  
             get_torque();
@@ -152,7 +150,7 @@ def cli() :
             return;
         else :
             no_command();
-            cli_get();
+            cli_set();
     
     def cli_remote() :
         # global status;
@@ -198,6 +196,21 @@ def cli() :
     
     elif user_input == "remote" :
         cli_remote();
+    
+    elif user_input == "drive mode" :
+        set_drive_mode(controller);
+
+    elif user_input == "walk mode" : 
+        set_walk_mode(controller);
+    
+    elif user_input == "stair mode" :
+        set_stair_mode(controller);
+    
+    elif user_input == "walk" : 
+        walk_forward(controller);
+    
+    elif user_input == "drive" :
+        drive_forward(controller);
         
     elif is_return(user_input) :
         end_position(controller);
