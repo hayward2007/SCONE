@@ -1,5 +1,5 @@
 import time;
-from getch import getch;
+# from getch import getch;
 
 from info import *;
 from motions.walk import *;
@@ -139,6 +139,8 @@ def cli() :
         print(" 3. Speed");
         print(" 4. Exit");
         print("");
+
+        user_input = cli_input();
     
         if user_input == "1" or user_input.lower == "torque" :  
             get_torque();
@@ -150,7 +152,7 @@ def cli() :
             return;
         else :
             no_command();
-            cli_set();
+            cli_get();
     
     def cli_remote() :
         # global status;
@@ -197,20 +199,29 @@ def cli() :
     elif user_input == "remote" :
         cli_remote();
     
+    elif user_input == "right" :
+        turn_right(controller);
+
+    elif user_input == "left" :
+        turn_left(controller);
+    
     elif user_input == "drive mode" :
         set_drive_mode(controller);
+    
+    elif user_input == "drive" :
+        drive_forward(controller);
 
     elif user_input == "walk mode" : 
         set_walk_mode(controller);
+
+    elif user_input == "walk" : 
+        walk_forward(controller);
     
     elif user_input == "stair mode" :
         set_stair_mode(controller);
     
-    elif user_input == "walk" : 
-        walk_forward(controller);
-    
-    elif user_input == "drive" :
-        drive_forward(controller);
+    elif user_input == "climb" :
+        climb_stair(controller);
         
     elif is_return(user_input) :
         end_position(controller);

@@ -35,8 +35,10 @@ def start_position(controller) :
     for i in Actuator.upper_index :
         controller.set_position(i, Fundamental.upper_initial_position[i - 1]);
     for i in Actuator.lower_index :
+        controller.set_speed(i, 150);
         controller.set_position(i, Fundamental.lower_initial_position);
     time.sleep(0.5);
+    controller.set_all_speed(50);
     for i in Actuator.middle_index + Actuator.lower_index :
         controller.set_position(i, Fundamental.middle_initial_position);
     time.sleep(1);
