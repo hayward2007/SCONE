@@ -30,6 +30,11 @@ class Controller :
         start_position(self);
 
         for i in Actuator.index :
+            self.set_torque(i, 0);
+            self.set_mode(i, 3);
+            self.set_torque(i, 1);
+
+        for i in Actuator.index :
             self.set_speed(i, 100);
             self.set_acceleration(i, 20);
 
