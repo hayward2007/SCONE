@@ -1,4 +1,7 @@
+import time;
+
 from dynamixel_sdk import *;
+from motions.fundamental import *;
 from devices.actuator import Actuator;
 
 class Controller :
@@ -23,11 +26,12 @@ class Controller :
             print("[CONTROLLER] Succeeded to set the baudrate");
         else :
             raise Exception("[CONTROLLER] Failed to set the baudrate");
+        
+        start_position(self);
 
         for i in Actuator.index :
-            self.set_speed(i, Actuator.speed);
-            self.set_torque(i, 1);
-            self.set_position(i, Actuator.position.center);
+            self.set_speed(i, 100);
+            self.set_acceleration(i, 20);
 
         print(f"[CONTROLLER] Actuator speed set to {Actuator.speed}");
 
@@ -37,14 +41,25 @@ class Controller :
     
     def set_mode(self, id, mode) :
         self.packet_handler_2.write1ByteTxRx(self.port_handler, id, Actuator.model.XM.operating_mode, mode);
+    
+    def get_mode(self, id) :
+        print(self.packet_handler_2.read1ByteTxRx(self.port_handler, id, Actuator.model.XM.operating_mode));
+    
 
     def set_speed(self, id, speed) :
         if self.__is_MX(id) :
             self.packet_handler_1.write2ByteTxRx(self.port_handler, id, Actuator.model.MX.moving_speed, speed);
         else :
-            # moving speed on position control
             self.packet_handler_2.write4ByteTxRx(self.port_handler, id, Actuator.model.XM.profile_velocity, speed);
-        
+    
+    def set_all_speed(self, speed) :
+        for i in Actuator.index :
+            self.set_speed(i, speed);
+
+    def set_acceleration(self, id, value) :
+        if not self.__is_MX(id) :
+            self.packet_handler_2.write4ByteTxRx(self.port_handler, id, Actuator.model.XM.profile_acceleration, value);
+
     def set_torque(self, id, status) :
         if self.__is_MX(id) :
             self.packet_handler_1.write1ByteTxRx(self.port_handler, id, Actuator.model.MX.enable_torque, status);
@@ -52,12 +67,22 @@ class Controller :
             self.packet_handler_2.write1ByteTxRx(self.port_handler, id, Actuator.model.XM.torque_enable, status);
 
     def set_position(self, id, position) :
+        position = position / 360 * 4096 if id % 2 == 1 else 4096 - ( position / 360 * 4096 );
         if self.__is_MX(id) :
-            self.packet_handler_1.write2ByteTxRx(self.port_handler, id, Actuator.model.MX.goal_position, position);
+            self.packet_handler_1.write2ByteTxRx(self.port_handler, id, Actuator.model.MX.goal_position, int(position));
         else :
-            self.packet_handler_2.write4ByteTxRx(self.port_handler, id, Actuator.model.XM.goal_position, position);
+            self.packet_handler_2.write4ByteTxRx(self.port_handler, id, Actuator.model.XM.goal_position, int(position));
 
-    # def get_position(self, id) :
-    #     result, data, error = self.packet_handler.read2ByteTxRx(self.port_handler, id, 36);
-    #     print(f"[CONTROLLER] ID : {id} \t Current Position: {result}");
-    #     return result;
+    def set_raw_position(self, id, position) :
+        if self.__is_MX(id) :
+            self.packet_handler_1.write2ByteTxRx(self.port_handler, id, Actuator.model.MX.goal_position, int(position));
+        else :
+            self.packet_handler_2.write4ByteTxRx(self.port_handler, id, Actuator.model.XM.goal_position, int(position));
+
+    def get_position(self, id) :
+        if self.__is_MX(id) :
+            result, error, _ = self.packet_handler_1.read2ByteTxRx(self.port_handler, id, Actuator.model.MX.present_position);
+        else :
+            result, error, _ = self.packet_handler_2.read4ByteTxRx(self.port_handler, id, Actuator.model.XM.present_position);
+        print(f"[CONTROLLER] ID : {id} \t Current Position: {result}");
+        return result;
