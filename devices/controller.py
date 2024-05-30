@@ -73,11 +73,15 @@ class Controller :
         if not self.__is_MX(id) :
             self.packet_handler_2.write4ByteTxRx(self.port_handler, id, Actuator.model.XM.address.profile_acceleration, acceleration);
 
-    def set_torque(self, id: int, status: int) :
+    def set_torque(self, id: int, torque: int) :
         if self.__is_MX(id) :
-            self.packet_handler_1.write1ByteTxRx(self.port_handler, id, Actuator.model.MX.address.enable_torque, status);
+            self.packet_handler_1.write1ByteTxRx(self.port_handler, id, Actuator.model.MX.address.enable_torque, torque);
         else :
-            self.packet_handler_2.write1ByteTxRx(self.port_handler, id, Actuator.model.XM.address.torque_enable, status);
+            self.packet_handler_2.write1ByteTxRx(self.port_handler, id, Actuator.model.XM.address.torque_enable, torque);
+    
+    def set_all_torque(self, torque: int) :
+        for i in Actuator.index :
+            self.set_torque(i, torque);
 
     def set_position(self, id: int, position) :
         position = int(position / 360 * 4096 if id % 2 == 1 else 4096 - ( position / 360 * 4096 ));
