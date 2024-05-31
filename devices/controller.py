@@ -36,7 +36,7 @@ class Controller :
             self.set_speed(i, 100);
             self.set_acceleration(i, 20);
 
-        print(f"[CONTROLLER] Actuator speed set to {Actuator.speed}");
+        print(f"[CONTROLLER] Actuator speed set to {Actuator.walking_speed}");
 
     def __del__(self) :
         self.port_handler.closePort();
@@ -61,7 +61,7 @@ class Controller :
 
     def set_speed(self, id: int, speed: int) :
         if self.__is_MX(id) :
-            self.packet_handler_1.write2ByteTxRx(self.port_handler, id, Actuator.model.address.MX.moving_speed, speed);
+            self.packet_handler_1.write2ByteTxRx(self.port_handler, id, Actuator.model.MX.address.moving_speed, speed);
         else :
             self.packet_handler_2.write4ByteTxRx(self.port_handler, id, Actuator.model.XM.address.profile_velocity, speed);
     
