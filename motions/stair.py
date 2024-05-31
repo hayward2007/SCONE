@@ -1,5 +1,5 @@
-from motions.fundamental import *;
 from motions.drive import *;
+from motions.fundamental import *;
 
 def set_stair_mode(controller) :
     for i in Actuator.upper_index :

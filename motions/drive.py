@@ -1,6 +1,11 @@
 from motions.fundamental import *;
 
 def set_drive_mode(controller) :
+    for i in Actuator.index :
+        controller.set_torque(i, 0);
+        controller.set_mode(i, 4);
+        controller.set_torque(i, 1);
+
     for i in Actuator.upper_index :
         controller.set_position(i, 180);
     for i in Actuator.lower_index :
@@ -16,10 +21,15 @@ def drive_forward(controller) :
     for i in Actuator.lower_index :
         controller.set_raw_position(i, 1048575);
 
-    time.sleep(4);
+    time.sleep(2);
 
     for i in Actuator.lower_index :
         controller.set_speed(i, 0);
+
+    for i in Actuator.index :
+        controller.set_torque(i, 0);
+        controller.set_mode(i, 3);
+        controller.set_torque(i, 1);
 
 def drive_backward() :
     print("asdf");

@@ -1,5 +1,4 @@
 import time;
-from enum import Enum;
 
 from devices.actuator import *;
 
@@ -8,7 +7,7 @@ class Fundamental :
     middle_initial_position = 240;
     lower_initial_position = 255;
 
-class Status(Enum) :
+class Status :
     INITIALIZING = 0;
     STANDBY = 1;
     WALKING = 2;
