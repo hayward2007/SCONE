@@ -32,16 +32,16 @@ class Actuator :
     
     class model :
         class MX :
+            protocol_version = 1.0;
             class address :
-                protocol_version = 1.0;
                 present_position = 36;
                 goal_position = 30;
                 enable_torque = 24;
                 moving_speed = 32;
         
         class XM :
+            protocol_version = 2.0;
             class address :
-                protocol_version = 2.0;
                 profile_acceleration = 108;
                 present_position = 132;
                 present_velocity = 128;
