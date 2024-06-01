@@ -1,6 +1,4 @@
 import time;
-# from getch import getch;
-
 from motions.walk import *;
 from motions.drive import *;
 from motions.stair import *;
@@ -85,7 +83,25 @@ def cli() :
     
     def cli_get() :
         def get_torque() :
-            asdf
+            def get_all_torque() :
+                for i in Actuator.index :
+                    controller.get_torque(i);
+            
+            def get_one_torque() :
+                print("[SYSTEM] Enter actuator id");
+                print("");
+                controller.get_torque(int(cli_input()));
+            
+            print("[SYSTEM] Get torque?");
+            print(" 1. All");
+            print(" 2. One");
+        
+            user_input = cli_input();
+
+            if user_input == "1" or user_input.lower == "all" :
+                get_all_torque();
+            elif user_input == "2" or user_input.lower == "one" :
+                get_one_torque();
 
         def get_position() :
             def get_all_position() :    
