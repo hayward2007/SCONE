@@ -12,8 +12,8 @@ class Controller :
     def __init__(self) :
         print("[CONTROLLER] Initializing...");
         self.port_handler = PortHandler(self.__DEVICE_NAME);
-        self.packet_handler_1 = PacketHandler(Actuator.model.MX.address.protocol_version);
-        self.packet_handler_2 = PacketHandler(Actuator.model.XM.address.protocol_version);
+        self.packet_handler_1 = PacketHandler(Actuator.model.MX.protocol_version);
+        self.packet_handler_2 = PacketHandler(Actuator.model.XM.protocol_version);
 
         if self.port_handler.openPort() :
             print("[CONTROLLER] Succeeded to open the port");
