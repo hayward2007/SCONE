@@ -1,7 +1,6 @@
 import time;
 # from getch import getch;
 
-from info import *;
 from motions.walk import *;
 from motions.drive import *;
 from motions.stair import *;
@@ -41,8 +40,8 @@ def cli() :
     
     def print_info() :
         print("[SYSTEM] Information");
-        print(f"  name : {NAME}");
-        print(f"  version : {VERSION}");
+        # print(f"  name : {NAME}");
+        # print(f"  version : {VERSION}");
         print("");
         return;
 
