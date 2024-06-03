@@ -38,8 +38,8 @@ def cli() :
     
     def print_info() :
         print("[SYSTEM] Information");
-        # print(f"  name : {NAME}");
-        # print(f"  version : {VERSION}");
+        print(f"  name : SCONE v2");
+        print(f"  version : 2.0.0");
         print("");
         return;
 
@@ -48,12 +48,45 @@ def cli() :
             print("Asdf");
         
         def set_actuator() :
+            def set_torque() :
+                print("[SYSTEM] Set actuator torque?");
+                print(" 1. On");
+                print(" 2. Off");
+                print(" 3. Exit");
+                print("");
+            
+                user_input = cli_input();
+
+                if user_input == "1" or user_input.lower() == "on" :
+                    print("[SYSTEM] Enter actuator id");
+                    print("");
+                    controller.set_torque(int(cli_input()), True);
+                elif user_input == "2" or user_input.lower() == "off" :
+                    print("[SYSTEM] Enter actuator id");
+                    print("");
+                    controller.set_torque(int(cli_input()), False);
+                elif is_return(user_input) :
+                    return;
+                else :
+                    no_command();
+                    cli_set();
+            
+            def set_position() :
+                print("[SYSTEM] Set actuator position?");
+                print(" 1. Standby");
+                print(" 2. Walk");
+                print(" 3. Drive");
+                print(" 4. Stair");
+                print(" 5. Exit");
+                print("");
+            
+                # user_input = cli_input();
+
+            
             def set_speed() :
                 print("[SYSTEM] Set actuator speed?");
-                print(" 1. Slow");
+                print(" 1. All");
                 print(" 2. Normal");
-                print(" 3. Fast");
-                print(" 4. Custom");
                 print(" 5. Exit");
                 print("");
 
@@ -62,6 +95,20 @@ def cli() :
             print(" 2. Position");
             print(" 3. Speed");
             print("");
+        
+            user_input = cli_input();
+
+            if user_input == "1" or user_input.lower() == "torque" :
+                set_torque();
+            elif user_input == "2" or user_input.lower() == "position" :
+                set_position();
+            elif user_input == "3" or user_input.lower() == "speed" :
+                set_speed();
+            elif is_return(user_input) :
+                return;
+            else :
+                no_command();
+                cli_set();
         
         print("[SYSTEM] Set?");
         print(" 1. SCONE");
