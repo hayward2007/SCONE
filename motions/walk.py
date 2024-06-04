@@ -139,3 +139,19 @@ def turn_right(controller) :
     time.sleep(0.5);
 
     release_dignoal_right_index(controller);
+
+
+def set_low_walk_mode(controller) :
+    low_initial_position(controller);
+
+def low_walk_forward(controller) :
+    for i in Actuator.middle_diagonal_left_index :
+        controller.set_position(i, 165);
+
+    time.sleep(0.3);
+
+    controller.set_position(1, 165);
+    controller.set_position(4, 210);
+    controller.set_position(18, 210);
+
+    time.sleep(0.3);

@@ -1,7 +1,6 @@
 import time;
 
 from devices.actuator import *;
-from devices.controller import Controller;
 
 class Fundamental :
     upper_initial_position = [ 135, 135, 180, 180, 225, 225 ];
@@ -15,7 +14,15 @@ class Status :
     DRIVING = 3;
     CLIMBING = 4;
 
-def initial_position(controller: Controller) :
+def low_initial_position(controller) :
+    for i in Actuator.upper_index :
+        controller.set_position(i, Fundamental.upper_initial_position[i - 1]);
+    for i in Actuator.middle_index :
+        controller.set_position(i, 160);
+    for i in Actuator.lower_index :
+        controller.set_position(i, 165);
+
+def initial_position(controller) :
     enable_torque(controller);
     controller.set_all_speed(30);
     for i in Actuator.middle_index :
@@ -26,11 +33,24 @@ def initial_position(controller: Controller) :
         controller.set_position(i, Fundamental.lower_initial_position);
     time.sleep(2);
 
-def low_initial_position(controller: Controller) :
+def low_start_position(controller) :
     enable_torque(controller);
-    controller.set_all_speed(30);
+    controller.set_all_speed(50);
+    for i in Actuator.middle_index :
+        controller.set_position(i, Fundamental.middle_initial_position - 105);
+    time.sleep(0.5);
+    for i in Actuator.upper_index :
+        controller.set_position(i, Fundamental.upper_initial_position[i - 1]);
+    for i in Actuator.lower_index :
+        controller.set_speed(i, 150);
+        controller.set_position(i, 195);
+    time.sleep(0.7);
+    controller.set_all_speed(50);
+    for i in Actuator.middle_index :
+        controller.set_position(i, 160);
+    time.sleep(1);
 
-def start_position(controller: Controller) :
+def start_position(controller) :
     enable_torque(controller);
     controller.set_all_speed(50);
     for i in Actuator.middle_index :
@@ -47,26 +67,33 @@ def start_position(controller: Controller) :
         controller.set_position(i, Fundamental.middle_initial_position);
     time.sleep(1);
 
-def end_position(controller: Controller) :
+def low_end_position(controller) :
+    controller.set_all_speed(45);
+    for i in Actuator.middle_index :
+        controller.set_position(i, 150);
+    time.sleep(1.5);
+    disable_torque(controller);
+
+def end_position(controller) :
     controller.set_all_speed(45);
     for i in Actuator.middle_index :
         controller.set_position(i, 165);
     time.sleep(1.5);
     disable_torque(controller);
 
-def center_position(controller: Controller) :
+def center_position(controller) :
     for i in Actuator.index :
         controller.set_torque(i, 1);
         controller.set_position(i, 180);
 
-def stand_position(controller: Controller) :
+def stand_position(controller) :
     for i in Actuator.middle_index + Actuator.lower_index :
         controller.set_position(i, 270);
 
-def disable_torque(controller: Controller) :
+def disable_torque(controller) :
     for i in Actuator.index :
         controller.set_torque(i, 0);
 
-def enable_torque(controller: Controller) :
+def enable_torque(controller) :
     for i in Actuator.index :
         controller.set_torque(i, 1);

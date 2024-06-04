@@ -6,7 +6,6 @@ from devices.actuator import *;
 from devices.controller import *;
 from motions.fundamental import *;
 
-
 # status = Status.INITIALIZING;
 controller = Controller();
 
@@ -284,10 +283,17 @@ def cli() :
     
     elif user_input == "climb" :
         climb_stair(controller);
+    
+    elif user_input == "low walk mode" :
+        set_low_walk_mode(controller);
+    
+    elif user_input == "walk low" :
+        low_walk_forward(controller);
         
     elif is_return(user_input) :
-        end_position(controller);
+        low_end_position(controller);
         return;
+        # end_position(controller);
     
     else :
         no_command();
