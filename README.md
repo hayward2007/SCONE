@@ -4,5 +4,5 @@ Six-legged robot Capable Of rotating motioN ( Enhanced )
 
 ![Eco-friendly deliver SCONE Poster](./references/Eco-friendly%20deliver%20SCONE%20Poster.jpg)
 
-Please check the [reference folder](./references/) for more information.
+Please check the [reference folder](./references/) for more information.  
 made by & all copyrights to **Kim Hyoung Seok** a.k.a **Hayward Kim**
