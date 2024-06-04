@@ -1,5 +1,5 @@
 # SCONE v2
-Six-legged robot Capable Of rotating motioN ( Enhanced )
+Six-legged robot Capable Of rotating motioN ( Enhanced )  
 회전운동이 가능한 6족 로봇, 스콘
 
 ![Eco-friendly deliver SCONE Poster](./references/Eco-friendly%20deliver%20SCONE%20Poster.jpg)
