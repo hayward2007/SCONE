@@ -4,6 +4,9 @@ from ..core import *;
 from ..provider import *;
 
 class Walk(Mode) :
+    __starting_middle_position = 105;
+    __ending_middle_position = 150;
+
     # the moving degree of each step
     __moving_degree = 15;
 
@@ -31,7 +34,7 @@ class Walk(Mode) :
         self.controller.set_all_speed(self.safety_speed);
 
         for i in Actuator.middle_index :
-            self.controller.set_position(i, self.middle_initial_position - 30);
+            self.controller.set_position(i, self.__starting_middle_position);
         time.sleep(0.5);
 
         for i in Actuator.upper_index :
@@ -47,6 +50,13 @@ class Walk(Mode) :
         time.sleep(1);
 
         self.controller.set_all_speed(self.walking_speed);
+    
+    def __del__(self) :
+        for i in Actuator.middle_index :
+            self.controller.set_speed(i, self.safety_speed);
+            self.controller.set_position(i, self.__ending_middle_position);
+        time.sleep(3);
+        self.controller.disable_torque();
     
     def __hold_dignoal_left(self) :
         for i in Actuator.middle_diagonal_left_index :
