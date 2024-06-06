@@ -1,5 +1,5 @@
-from core import *;
 from dynamixel_sdk import *;
+from .actuator import Actuator;
 
 class Controller :
     __BAUDRATE = 1000000;
@@ -70,7 +70,7 @@ class Controller :
             self.packet_handler_1.write1ByteTxRx(self.port_handler, id, Actuator.model.MX.address.enable_torque, torque);
         else :
             self.packet_handler_2.write1ByteTxRx(self.port_handler, id, Actuator.model.XM.address.torque_enable, torque);
-        print(f"[CONTROLLER] Actuator ID : {id} \t [SET] Torque turned {"on" if torque == 1 else "off"}");
+        print(f"[CONTROLLER] Actuator ID : {id} \t [SET] Torque turned {'on' if torque == 1 else 'off'}");
     
     def set_all_torque(self, torque: int) :
         for i in Actuator.index :

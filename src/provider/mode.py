@@ -1,4 +1,4 @@
-from core import Controller;
+from ..core import Controller;
 
 class Mode :
     __default_initial_position = [ 180 for _ in range(6) ];

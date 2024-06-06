@@ -1,3 +1,1 @@
-from core import *;
-from util import *;
-from provider import *;
+from .SCONE import SCONE as SCONE;

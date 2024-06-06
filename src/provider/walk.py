@@ -1,6 +1,6 @@
 from time import *;
-from core import *;
-from provider import *;
+from ..core import *;
+from ..provider import *;
 
 class Walk(Mode) :
     # the moving degree of each step

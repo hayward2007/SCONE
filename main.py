@@ -307,8 +307,8 @@
 #     print("[SYSYEM] Bye.\n");
 
 
-import src;
+# import src.SCONE;
+from src import SCONE;
 
 if __name__ == "__main__" :
-    SCONE = src.SCONE();
-    # SCONE.
+    scone = SCONE();
