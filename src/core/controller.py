@@ -1,5 +1,4 @@
 from core import *;
-
 from dynamixel_sdk import *;
 
 class Controller :
