@@ -1,8 +1,4 @@
 class Actuator :
-    # safety_speed = 50;
-    # walking_speed = 100;
-    # driving_speed = 200;
-
     index = [i for i in range(1, 19)];
     upper_index = [i for i in range(1, 7)];
     upper_right_index = [1, 3, 5];
@@ -13,7 +9,6 @@ class Actuator :
     lower_index = [i for i in range(13, 19)];
     lower_right_index = [i + 6 for i in middle_right_index];
     lower_left_index = [i + 6 for i in middle_left_index];
-
     upper_diagonal_right_index = [1, 4, 5];
     upper_diagonal_left_index = [2, 3, 6];
     middle_diagonal_right_index = [i + 6 for i in upper_diagonal_right_index];
