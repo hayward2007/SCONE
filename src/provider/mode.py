@@ -1,5 +1,3 @@
-from ..core import Controller;
-
 class Mode :
     __default_upper_position = [ 180 for _ in range(6) ];
     __default_middle_position = 180;
@@ -16,3 +14,5 @@ class Mode :
         self.walking_speed = self.__default_speed;
         self.driving_speed = self.__default_speed;
         self.climbing_speed = self.__default_speed;
+
+        self.controller = None;

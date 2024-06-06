@@ -1,4 +1,5 @@
-from time import *;
+import time;
+
 from ..core import *;
 from ..provider import *;
 
@@ -6,23 +7,22 @@ class Walk(Mode) :
     # the moving degree of each step
     __moving_degree = 20;
 
-    def __init__(self, controller: Controller) :
-        super().__init__();
-        self.controller = controller;
+    def __init__(self, mode: Mode) :
+        self = mode;
 
         # initialize position
         self.controller.enable_torque();
         self.controller.set_all_speed(50);
 
         for i in Actuator.middle_index :
-            self.controller.set_position(i, self.middle_initial_position - 105);
+            self.controller.set_position(i, self.middle_initial_position - 30);
         time.sleep(0.5);
 
         for i in Actuator.upper_index :
             self.controller.set_position(i, self.upper_initial_position[i - 1]);
         for i in Actuator.lower_index :
             self.controller.set_speed(i, 150);
-            self.controller.set_position(i, 195);
+            self.controller.set_position(i, self.lower_initial_position);
         time.sleep(0.7);
 
         self.controller.set_all_speed(50);
