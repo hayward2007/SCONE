@@ -6,8 +6,9 @@ class Walk(Mode) :
     # the moving degree of each step
     __moving_degree = 20;
 
-    def __init__(self) :
+    def __init__(self, controller: Controller) :
         super().__init__();
+        self.controller = controller;
 
         # initialize position
         self.controller.enable_torque();

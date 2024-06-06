@@ -28,10 +28,10 @@ class SCONE :
             self.walking_speed = 100;
             self.driving_speed = 150;
             self.climbing_speed = 200;
-    
-            self.walk = Walk(self);
+
+            self.controller = controller;
+            self.walk = Walk(self.controller);
 
     def __init__(self) :
         self.controller = Controller();
-        # self.mode = Mode(self.controller);
-        self.sport = SCONE.Sport(self.mode);
+        self.sport = SCONE.Sport(self.controller);
