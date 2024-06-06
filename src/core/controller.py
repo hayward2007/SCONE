@@ -36,10 +36,6 @@ class Controller :
         self.port_handler.closePort();
         print("[CONTROLLER] Succeeded to close the port");
     
-    def set_all_mode(self, mode: int) :
-        for i in Actuator.lower_index :
-            self.set_mode(i, mode);
-    
     def set_mode(self, id: int, mode: int) :
         if id in Actuator.lower_index :
             self.set_torque(id, Actuator.torque.off);
@@ -47,12 +43,12 @@ class Controller :
             self.set_torque(id, Actuator.torque.on);
             print(f"[CONTROLLER] Actuator ID : {id} \t [SET] Mode set to {mode}");
     
+    def set_all_mode(self, mode: int) :
+        for i in Actuator.lower_index :
+            self.set_mode(i, mode);
+    
     def get_mode(self, id: int) :
         print(self.packet_handler_2.read1ByteTxRx(self.port_handler, id, Actuator.model.XM.address.operating_mode));
-    
-    def set_all_speed(self, speed: int) :
-        for i in Actuator.index :
-            self.set_speed(i, speed);
 
     def set_speed(self, id: int, speed: int) :
         if self.__is_MX(id) :
@@ -60,15 +56,15 @@ class Controller :
         else :
             self.packet_handler_2.write4ByteTxRx(self.port_handler, id, Actuator.model.XM.address.profile_velocity, speed);
         print(f"[CONTROLLER] Actuator ID : {id} \t [SET] Speed set to {speed}");
+    
+    def set_all_speed(self, speed: int) :
+        for i in Actuator.index :
+            self.set_speed(i, speed);
 
     def set_acceleration(self, id: int, acceleration: int) :
         if not self.__is_MX(id) :
             self.packet_handler_2.write4ByteTxRx(self.port_handler, id, Actuator.model.XM.address.profile_acceleration, acceleration);
             print(f"[CONTROLLER] Actuator ID : {id} \t [SET] Acceleration set to {acceleration}");
-    
-    def set_all_torque(self, torque: int) :
-        for i in Actuator.index :
-            self.set_torque(i, torque);
 
     def set_torque(self, id: int, torque: int) :
         if self.__is_MX(id) :
@@ -76,6 +72,18 @@ class Controller :
         else :
             self.packet_handler_2.write1ByteTxRx(self.port_handler, id, Actuator.model.XM.address.torque_enable, torque);
         print(f"[CONTROLLER] Actuator ID : {id} \t [SET] Torque turned {"on" if torque == 1 else "off"}");
+    
+    def set_all_torque(self, torque: int) :
+        for i in Actuator.index :
+            self.set_torque(i, torque);
+    
+    def enable_torque(self) :
+        for i in Actuator.index :
+            self.set_torque(i, Actuator.torque.on);
+    
+    def disable_torque(self) :
+        for i in Actuator.index :
+            self.set_torque(i, Actuator.torque.off);
 
     def set_position(self, id: int, position) :
         position = int(position / 360 * 4096 if id % 2 == 1 else 4096 - ( position / 360 * 4096 ));

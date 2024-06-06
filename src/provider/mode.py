@@ -1,3 +1,5 @@
+from core import Controller;
+
 class Mode :
     __default_initial_position = [ 180 for _ in range(6) ];
     # upper_initial_position = __default_initial_position;
@@ -10,7 +12,9 @@ class Mode :
     # driving_speed = __default_speed;
     # climbing_speed = __default_speed;
 
-    def __init__(self) :
+    def __init__(self, controller: Controller) :
+        self.controller = controller;
+
         # self.upper_initial_position = Mode.upper_initial_position;
         # self.middle_initial_position = Mode.middle_initial_position;
         # self.lower_initial_position = Mode.lower_initial_position;

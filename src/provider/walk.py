@@ -6,9 +6,29 @@ class Walk(Mode) :
     # the moving degree of each step
     __moving_degree = 20;
 
-    def __init__(self, controller: Controller) :
+    def __init__(self) :
         super().__init__();
-        self.controller = controller;
+
+        # initialize position
+        self.controller.enable_torque();
+        self.controller.set_all_speed(50);
+
+        for i in Actuator.middle_index :
+            self.controller.set_position(i, self.middle_initial_position - 105);
+        time.sleep(0.5);
+
+        for i in Actuator.upper_index :
+            self.controller.set_position(i, self.upper_initial_position[i - 1]);
+        for i in Actuator.lower_index :
+            self.controller.set_speed(i, 150);
+            self.controller.set_position(i, 195);
+        time.sleep(0.7);
+
+        self.controller.set_all_speed(50);
+        for i in Actuator.middle_index :
+            self.controller.set_position(i, self.middle_initial_position);
+        time.sleep(1);
+
         self.controller.set_all_speed(self.walking_speed);
     
     def __hold_dignoal_left(self) :
