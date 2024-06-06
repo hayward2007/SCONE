@@ -5,7 +5,7 @@ from ..provider import *;
 
 class Walk(Mode) :
     # the moving degree of each step
-    __moving_degree = 20;
+    __moving_degree = 15;
 
     def __init__(self, mode: Mode) :
         # sync
@@ -18,6 +18,13 @@ class Walk(Mode) :
         self.boost_speed = mode.boost_speed;
         self.safety_speed = mode.safety_speed;
         self.walking_speed = mode.walking_speed;
+
+        # initialize operating mode
+        for i in Actuator.index :
+            self.controller.set_torque(i, Actuator.torque.off);
+            self.controller.set_mode(i, Actuator.model.XM.operating_mode.position);
+            self.controller.set_acceleration(i, 20);
+        time.sleep(0.1);
 
         # initialize position
         self.controller.enable_torque();
@@ -86,42 +93,42 @@ class Walk(Mode) :
     def backward(self) :
         pass;
 
-    def left(self) :
+    def right(self) :
         self.__hold_dignoal_left();
-        time.sleep(0.3);
+        time.sleep(0.05);
 
         for i in Actuator.upper_diagonal_left_index :
-            self.controller.set_position(i, self.upper_initial_position[i - 1] - self.__moving_degree);
+            self.controller.set_position(i, self.upper_initial_position[i - 1] - self.__moving_degree * ( 1 if i % 2 == 1 else -1 ));
         for i in Actuator.upper_diagonal_right_index :
-            self.controller.set_position(i, self.upper_initial_position[i - 1] + self.__moving_degree);
-        time.sleep(0.5);
+            self.controller.set_position(i, self.upper_initial_position[i - 1] + self.__moving_degree * ( 1 if i % 2 == 1 else -1 ));
+        time.sleep(0.05);
     
         self.__release_dignoal_left();
         self.__hold_dignoal_right();
-        time.sleep(0.3);
+        time.sleep(0.05);
     
         for i in Actuator.upper_index :
             self.controller.set_position(i, self.upper_initial_position[i - 1]);
-        time.sleep(0.5);
+        time.sleep(0.05);
     
         self.__release_dignoal_right();
 
-    def right(self) :
+    def left(self) :
         self.__hold_dignoal_right();
-        time.sleep(0.3);
+        time.sleep(0.05);
 
         for i in Actuator.upper_diagonal_right_index :
-            self.controller.set_position(i, self.upper_initial_position[i - 1] - self.__moving_degree);
+            self.controller.set_position(i, self.upper_initial_position[i - 1] + self.__moving_degree * ( 1 if i % 2 == 1 else -1 ));
         for i in Actuator.upper_diagonal_left_index :
-            self.controller.set_position(i, self.upper_initial_position[i - 1] + self.__moving_degree);
-        time.sleep(0.5);
+            self.controller.set_position(i, self.upper_initial_position[i - 1] - self.__moving_degree * ( 1 if i % 2 == 1 else -1 ));
+        time.sleep(0.05);
     
         self.__release_dignoal_right();
         self.__hold_dignoal_left();
-        time.sleep(0.3);
+        time.sleep(0.05);
     
         for i in Actuator.upper_index :
             self.controller.set_position(i, self.upper_initial_position[i - 1]);
-        time.sleep(0.5);
-
+        time.sleep(0.05);
+    
         self.__release_dignoal_left();

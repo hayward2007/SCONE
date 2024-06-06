@@ -22,7 +22,7 @@ class SCONE :
     class Sport(Mode) :
         def __init__(self, controller: Controller) :
             self.upper_initial_position = [ 135, 135, 180, 180, 225, 225 ];
-            self.middle_initial_position = 160;
+            self.middle_initial_position = 165;
             self.lower_initial_position = 195;
 
             self.boost_speed = 150;
@@ -34,7 +34,12 @@ class SCONE :
             self.controller = controller;
             self.walk = Walk(self);
 
-            self.walk.forward();
+            # self.walk.forward();
+            self.walk.left();
+            self.walk.left();
+            self.walk.left();
+        
+            time.sleep(4);
     
         def __del__(self) :
             for i in Actuator.middle_index :

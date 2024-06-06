@@ -23,13 +23,6 @@ class Controller :
             print("[CONTROLLER] Succeeded to set the baudrate");
         else :
             raise Exception("[CONTROLLER] Failed to set the baudrate");
-        
-        # for i in Actuator.index :
-        #     self.set_torque(i, 0);
-        #     self.set_mode(i, 3);
-        #     self.set_torque(i, 1);
-        #     self.set_speed(i, 100);
-        #     self.set_acceleration(i, 20);
 
     def __del__(self) :
         self.port_handler.closePort();
