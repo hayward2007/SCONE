@@ -9,5 +9,7 @@ class Sport(Mode) :
         self.lower_initial_position = 255;
 
         self.safety_speed = 50;
-        self.walk_speed = 100;
+        self.walking_speed = 100;
+        self.driving_speed = 150;
+        self.climbing_speed = 200;
         

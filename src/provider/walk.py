@@ -6,6 +6,7 @@ class Walk(Mode) :
     def __init__(self, controller: Controller) :
         super().__init__();
         self.controller = controller;
+        self.controller.set_all_speed(self.walking_speed);
     
     def __hold_dignoal_left(self) :
         for i in Actuator.upper_diagonal_left_index :
@@ -28,7 +29,8 @@ class Walk(Mode) :
         time.sleep(0.5);
 
     def forward(self) :
-        asdf
+        self.__hold_dignoal_left();
+        time.sleep(0.5);
 
     def backward(self) :
         asdf
