@@ -1,5 +1,3 @@
-import time;
-
 from dynamixel_sdk import *;
 from .actuator import Actuator;
 
@@ -34,11 +32,6 @@ class Controller :
         #     self.set_acceleration(i, 20);
 
     def __del__(self) :
-        for i in Actuator.middle_index :
-            self.set_speed(i, 30);
-            self.set_position(i, 150);
-        time.sleep(0.5);
-        self.disable_torque();
         self.port_handler.closePort();
         print("[CONTROLLER] Succeeded to close the port");
     

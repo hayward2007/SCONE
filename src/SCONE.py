@@ -1,3 +1,5 @@
+import time;
+
 from .core import *;
 from .provider import *;
 
@@ -35,7 +37,11 @@ class SCONE :
             self.walk.forward();
     
         def __del__(self) :
-            pass;
+            for i in Actuator.middle_index :
+                self.controller.set_speed(i, 30);
+                self.controller.set_position(i, 150);
+            time.sleep(1);
+            self.controller.disable_torque();
 
     def __init__(self) :
         self.controller = Controller();
