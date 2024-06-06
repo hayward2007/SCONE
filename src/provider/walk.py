@@ -8,11 +8,20 @@ class Walk(Mode) :
     __moving_degree = 20;
 
     def __init__(self, mode: Mode) :
-        self = mode;
+        # sync
+        self.controller = mode.controller;
+
+        self.upper_initial_position = mode.upper_initial_position;
+        self.middle_initial_position = mode.middle_initial_position;
+        self.lower_initial_position = mode.lower_initial_position;
+
+        self.boost_speed = mode.boost_speed;
+        self.safety_speed = mode.safety_speed;
+        self.walking_speed = mode.walking_speed;
 
         # initialize position
         self.controller.enable_torque();
-        self.controller.set_all_speed(50);
+        self.controller.set_all_speed(self.safety_speed);
 
         for i in Actuator.middle_index :
             self.controller.set_position(i, self.middle_initial_position - 30);
@@ -21,11 +30,11 @@ class Walk(Mode) :
         for i in Actuator.upper_index :
             self.controller.set_position(i, self.upper_initial_position[i - 1]);
         for i in Actuator.lower_index :
-            self.controller.set_speed(i, 150);
+            self.controller.set_speed(i, self.boost_speed);
             self.controller.set_position(i, self.lower_initial_position);
         time.sleep(0.7);
 
-        self.controller.set_all_speed(50);
+        self.controller.set_all_speed(self.safety_speed);
         for i in Actuator.middle_index :
             self.controller.set_position(i, self.middle_initial_position);
         time.sleep(1);
@@ -33,28 +42,30 @@ class Walk(Mode) :
         self.controller.set_all_speed(self.walking_speed);
     
     def __hold_dignoal_left(self) :
-        for i in Actuator.upper_diagonal_left_index :
+        for i in Actuator.middle_diagonal_left_index :
+            self.controller.set_speed(i, self.safety_speed);
             self.controller.set_position(i, self.middle_initial_position - 15);
         time.sleep(0.5);
     
     def __hold_dignoal_right(self) :
-        for i in Actuator.upper_diagonal_right_index :
+        for i in Actuator.middle_diagonal_right_index :
+            self.controller.set_speed(i, self.safety_speed);
             self.controller.set_position(i, self.middle_initial_position - 15);
         time.sleep(0.5);
 
     def __release_dignoal_left(self) :
-        for i in Actuator.upper_diagonal_left_index :
+        for i in Actuator.middle_diagonal_left_index :
             self.controller.set_position(i, self.middle_initial_position);
         time.sleep(0.5);
 
     def __release_dignoal_right(self) :
-        for i in Actuator.upper_diagonal_right_index :
+        for i in Actuator.middle_diagonal_right_index :
             self.controller.set_position(i, self.middle_initial_position);
         time.sleep(0.5);
 
     def forward(self) :
         self.__hold_dignoal_left();
-        time.sleep(0.3);
+        time.sleep(0.1);
     
         for i in Actuator.upper_diagonal_left_index :
             self.controller.set_position(i, self.upper_initial_position[i - 1] - self.__moving_degree);
@@ -64,7 +75,7 @@ class Walk(Mode) :
     
         self.__release_dignoal_left();
         self.__hold_dignoal_right();
-        time.sleep(0.3);
+        time.sleep(0.1);
     
         for i in Actuator.upper_index :
             self.controller.set_position(i, self.upper_initial_position[i - 1]);
