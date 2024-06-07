@@ -1,10 +1,12 @@
 import time;
 
-from ..core import *;
-from ..provider import *;
+# from ..core import *;
+from .. import core, provider;
+# from .mode import Mode;
+# from .climb import Climb;
 
-class Drive(Mode) :
-    def __init__(self, mode: Mode) :
+class Drive(provider.Mode) :
+    def __init__(self, mode: provider.Mode) :
         # sync
         self.controller = mode.controller;
 
@@ -16,3 +18,10 @@ class Drive(Mode) :
         self.safety_speed = mode.safety_speed;
         self.walking_speed = mode.walking_speed;
         self.driving_speed = mode.driving_speed;
+        self.climbing_speed = mode.climbing_speed;
+
+    def __del__(self) :
+        pass;
+
+    def change_mode(self) :
+        return provider.Climb(self);
