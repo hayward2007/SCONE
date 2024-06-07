@@ -1,4 +1,6 @@
+import time
 from enum import Enum
+from getch import getch;
 from InquirerPy import prompt;
 
 from .core import *;
@@ -57,13 +59,11 @@ class SCONE :
                 "choices": ["Remote", "Change Mode", "Actuator Settings", "System Settings", "Shutdown"],
             }];
 
-            # self.__change_mode();
-
             task = "Change Mode";
         
             while task != "Shutdown" :
                 if task == "Remote" :
-                    print("[SCONE] Remote Control".ljust(35, " "));
+                    self.__remote();
                 elif task == "Change Mode" :
                     self.__change_mode();
                 elif task == "Actuator Settings" :
@@ -72,6 +72,44 @@ class SCONE :
                     self.__system_settings();
                 
                 task = prompt(questions)[0];
+        
+        def __remote(self) :
+            # changing operating mode ( pressing r ) has a sequence
+            # Walk -> Drive -> Climb -> Walk -> Drive -> Climb ...
+            print("[SCONE] Remote Control".ljust(35, " "));
+
+            key = getch();
+
+            while key != 'q' :
+                key = getch();
+                print(key);
+
+                # if key == 'w' :
+                #     self.__set_status(self.__Status.WALKING_FORWARD);
+                #     self.operate.walk.forward();
+                # elif key == 's' :
+                #     self.__set_status(self.__Status.WALKING_BACKWARD);
+                #     self.operate.walk.backward();
+                # elif key == 'a' :
+                #     if self.status == self.__Status.WALKING_LEFT :
+                #         continue;
+                    
+                #     self.__set_status(self.__Status.WALKING_LEFT);
+                #     self.operate.walk.left();
+                #     self.__set_status(self.__Status.WALKING_STANCE);
+                
+                # elif key == 'd' :
+                #     if self.status == self.__Status.WALKING_RIGHT :
+                #         continue;
+                    
+                #     self.__set_status(self.__Status.WALKING_RIGHT);
+                #     self.operate.walk.right();
+                #     self.__set_status(self.__Status.WALKING_STANCE);
+                
+                # elif key = 'r' :
+                    
+
+                time.sleep(0.1);
         
         def __change_mode(self) :
             questions = [{
@@ -138,7 +176,7 @@ class SCONE :
             self.climbing_speed = 200;
 
             self.controller = controller;
-            self.walk = Walk(self);
+            self.mode = Walk(self);
 
     class Sport(Mode) :
         def __init__(self, controller: Controller) :
@@ -153,7 +191,7 @@ class SCONE :
             self.climbing_speed = 200;
 
             self.controller = controller;
-            self.walk = Walk(self);
+            self.mode = Walk(self);
 
     def __init__(self) :
         self.Cli();
