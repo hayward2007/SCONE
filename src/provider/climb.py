@@ -18,6 +18,7 @@ class Climb(provider.Mode) :
         self.safety_speed = mode.safety_speed;
         self.walking_speed = mode.walking_speed;
         self.driving_speed = mode.driving_speed;
+        self.climbing_speed = mode.climbing_speed;
 
     def __del__(self) :
         pass;

@@ -28,17 +28,27 @@ class Walk(provider.Mode) :
             self.__hold_dignoal_left();
             time.sleep(0.05);
 
+            for i in Actuator.lower_diagonal_left_index :
+                self.controller.set_speed(i, self.boost_speed);
+                self.controller.set_position(i, self.lower_initial_position);
+            time.sleep(0.3);
+
             for i in Actuator.upper_diagonal_left_index :
                 self.controller.set_position(i, self.upper_initial_position[i - 1]);
-            time.sleep(0.05);
+            time.sleep(0.5);
             
             self.__release_dignoal_left();
             self.__hold_dignoal_right();
             time.sleep(0.05);
 
+            for i in Actuator.lower_diagonal_right_index :
+                self.controller.set_speed(i, self.boost_speed);
+                self.controller.set_position(i, self.lower_initial_position);
+            time.sleep(0.3);
+
             for i in Actuator.upper_diagonal_right_index :
                 self.controller.set_position(i, self.upper_initial_position[i - 1]);
-            time.sleep(0.05);
+            time.sleep(0.5);
             
             self.__release_dignoal_right();
             time.sleep(0.05);
@@ -136,19 +146,32 @@ class Walk(provider.Mode) :
         self.__hold_dignoal_left();
         time.sleep(0.05);
 
+        for i in Actuator.lower_diagonal_left_index :
+            self.controller.set_speed(i, self.boost_speed);
+            self.controller.set_raw_position(i, Actuator.position.center if i % 2 == 1 else 0);
+        time.sleep(0.3);
+
         for i in Actuator.upper_diagonal_left_index :
             self.controller.set_raw_position(i, Actuator.position.center);
-        time.sleep(0.05);
+        time.sleep(0.5);
         
         self.__release_dignoal_left();
         self.__hold_dignoal_right();
         time.sleep(0.05);
 
+        for i in Actuator.lower_diagonal_right_index :
+            self.controller.set_speed(i, self.boost_speed);
+            self.controller.set_raw_position(i, Actuator.position.center if i % 2 == 0 else 0);
+        time.sleep(0.3);
+
         for i in Actuator.upper_diagonal_right_index :
             self.controller.set_raw_position(i, Actuator.position.center);
-        time.sleep(0.05);
+        time.sleep(0.5);
 
         self.__release_dignoal_right();
         time.sleep(0.05);
+
+        for i in Actuator.middle_index :
+            self.controller.set_raw_position(i, Actuator.position.center);
 
         return provider.Drive(self);
