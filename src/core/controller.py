@@ -70,12 +70,10 @@ class Controller :
             self.set_torque(i, torque);
     
     def enable_torque(self) :
-        for i in Actuator.index :
-            self.set_torque(i, Actuator.torque.on);
+        self.set_all_torque(Actuator.torque.on);
     
     def disable_torque(self) :
-        for i in Actuator.index :
-            self.set_torque(i, Actuator.torque.off);
+        self.set_all_torque(Actuator.torque.off);
 
     def set_position(self, id: int, position) :
         position = int(position / 360 * 4096 if id % 2 == 1 else 4096 - ( position / 360 * 4096 ));

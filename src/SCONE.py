@@ -53,26 +53,26 @@ class SCONE :
             CLIMB = 3;
 
         def __init__(self) :
-            self.status = self.__Status.Initializing;
+            self.status = self.__Status.INITIALIZING;
 
             self.controller = Controller();
             mode = prompt(self.__Command.mode);
 
             if mode[0] == "Standard" :
-                self.standard = self.Standard(self.controller);
+                self.standard = SCONE.Standard(self.controller);
             elif mode[0] == "Sport" :
-                self.sport = self.Sport(self.controller);
+                self.sport = SCONE.Sport(self.controller);
             
             self.__set_operating_mode(self.__Operating_Mode.WALK);
             self.__set_status(self.__Status.WALKING_STANCE);
     
         def __set_status(self, status: __Status) :
             self.status = status;
-            print(f"\n[SCONE] Status \t [SET] {str(status)}\n");
+            print(f"[SCONE] Status \t [SET] {str(status)}\n");
     
         def __set_operating_mode(self, operating_mode: __Operating_Mode) :
             self.operating_mode = operating_mode;
-            print(f"\n[SCONE] Operating Mode \t [SET] {str(operating_mode)}\n");
+            print(f"[SCONE] Operating Mode \t [SET] {str(operating_mode)}\n");
     
     # operating modes
     class Standard(Mode) :
