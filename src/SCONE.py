@@ -73,7 +73,7 @@ class SCONE :
         
             while task[0] != "Shutdown" :
                 if task[0] == "Remote" :
-                    print("[SCONE] Remote Control");
+                    print("[SCONE] Remote Control".ljust(35, " "));
                 elif task[0] == "Change Mode" :
                     self.__set_mode(prompt(self.__Command.mode)[0]);
                 
@@ -88,17 +88,17 @@ class SCONE :
                 self.mode = self.__Mode.SPORT;
                 self.operate = SCONE.Sport(self.controller);
             
-            print(f"[SCONE] Mode \t [SET] {str(mode)}");
+            print("[SCONE] Mode".ljust(35, " ") + f"[SET] {str(mode)}".ljust(35, " "));
             self.__set_operating_mode(self.__Operating_Mode.WALK);
             self.__set_status(self.__Status.WALKING_STANCE);
         
         def __set_status(self, status: __Status) :
             self.status = status;
-            print(f"[SCONE] Status \t [SET] {str(status)}");
+            print("[SCONE] Status".ljust(35, " ") + f"[SET] {str(status)}".ljust(35, " "));
     
         def __set_operating_mode(self, operating_mode: __Operating_Mode) :
             self.operating_mode = operating_mode;
-            print(f"[SCONE] Operating Mode \t [SET] {str(operating_mode)}");
+            print("[SCONE] Operating Mode".ljust(35, " ") + f"[SET] {str(operating_mode)}".ljust(35, " "));
     
     # operating modes
     class Standard(Mode) :
