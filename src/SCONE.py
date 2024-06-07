@@ -7,6 +7,25 @@ from .provider import *;
 
 class SCONE :
     class Cli :
+        class __Command :
+            commands = [{
+                "type": "list",
+                "message": "What do you want to do?",
+                "choices": ["Start", "Stop", "Exit"],
+            }];
+
+            operating_mode = [{
+                "type": "list",
+                "message": "What operating mode do you want to use?",
+                "choices": ["Walk", "Drive", "Climb"],
+            }];
+
+            mode = [{
+                "type": "list",
+                "message": "What mode do you want to use?",
+                "choices": ["Standard", "Sport"],
+            }];
+
         class __Status(Enum) :
             INITIALIZING = 0;
 
@@ -37,18 +56,11 @@ class SCONE :
             self.status = self.__Status.Initializing;
 
             self.controller = Controller();
-            questions = [
-                {
-                    "type": "list",
-                    "message": "What mode do you want to use?",
-                    "choices": ["Standard", "Sport"],
-                },
-            ]
-            result = prompt(questions);
+            mode = prompt(self.__Command.mode);
 
-            if result[0] == "Standard" :
+            if mode[0] == "Standard" :
                 self.standard = self.Standard(self.controller);
-            elif result[0] == "Sport" :
+            elif mode[0] == "Sport" :
                 self.sport = self.Sport(self.controller);
             
             self.__set_operating_mode(self.__Operating_Mode.WALK);
