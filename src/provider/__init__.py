@@ -2,5 +2,5 @@
 
 from .mode import Mode as Mode;
 from .walk import Walk as Walk;
-# from .drive import Drive as Drive;
-# from .climb import Climb as Climb;
+from .drive import Drive as Drive;
+from .climb import Climb as Climb;

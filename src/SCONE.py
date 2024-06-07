@@ -44,6 +44,50 @@ class SCONE :
             self.controller = Controller();
             self.__cli();
         
+        def __del__(self) :
+            self.__end_position();
+
+        def __start_position(self) :
+            __starting_middle_position = 135;
+
+            # initialize operating mode
+            for i in Actuator.index :
+                self.controller.set_torque(i, Actuator.torque.off);
+                self.controller.set_mode(i, Actuator.model.XM.operating_mode.position);
+                self.controller.set_acceleration(i, 20);
+            time.sleep(0.1);
+
+            # initialize position
+            self.controller.enable_torque();
+            self.controller.set_all_speed(self.operate.safety_speed);
+
+            for i in Actuator.middle_index :
+                self.controller.set_position(i, __starting_middle_position);
+            time.sleep(0.5);
+
+            for i in Actuator.upper_index :
+                self.controller.set_position(i, self.operate.upper_initial_position[i - 1]);
+            for i in Actuator.lower_index :
+                self.controller.set_speed(i, self.operate.boost_speed);
+                self.controller.set_position(i, self.operate.lower_initial_position);
+            time.sleep(0.7);
+
+            self.controller.set_all_speed(self.operate.safety_speed);
+            for i in Actuator.middle_index :
+                self.controller.set_position(i, self.operate.middle_initial_position);
+            time.sleep(1);
+
+            self.controller.set_all_speed(self.operate.walking_speed);
+        
+        def __end_position(self) :
+            __ending_middle_position = 150;
+
+            for i in Actuator.middle_index :
+                self.controller.set_speed(i, self.operate.safety_speed);
+                self.controller.set_position(i, __ending_middle_position);
+            time.sleep(1);
+            self.controller.disable_torque();
+        
         def __set_status(self, status: __Status) :
             self.status = status;
             print("[SCONE] Status".ljust(35, " ") + f"[SET] {str(status)}".ljust(35, " "));
@@ -59,7 +103,10 @@ class SCONE :
                 "choices": ["Remote", "Change Mode", "Actuator Settings", "System Settings", "Shutdown"],
             }];
 
-            task = "Change Mode";
+            self.__change_mode();
+            self.__start_position();
+
+            task = prompt(questions)[0];
         
             while task != "Shutdown" :
                 if task == "Remote" :
@@ -74,41 +121,59 @@ class SCONE :
                 task = prompt(questions)[0];
         
         def __remote(self) :
-            # changing operating mode ( pressing r ) has a sequence
-            # Walk -> Drive -> Climb -> Walk -> Drive -> Climb ...
             print("[SCONE] Remote Control".ljust(35, " "));
 
             key = getch();
 
             while key != 'q' :
                 key = getch();
-                print(key);
 
-                # if key == 'w' :
-                #     self.__set_status(self.__Status.WALKING_FORWARD);
-                #     self.operate.walk.forward();
-                # elif key == 's' :
-                #     self.__set_status(self.__Status.WALKING_BACKWARD);
-                #     self.operate.walk.backward();
-                # elif key == 'a' :
-                #     if self.status == self.__Status.WALKING_LEFT :
-                #         continue;
-                    
-                #     self.__set_status(self.__Status.WALKING_LEFT);
-                #     self.operate.walk.left();
-                #     self.__set_status(self.__Status.WALKING_STANCE);
+                if key == 'w' :
+                    self.__set_status(self.__Status.WALKING_FORWARD);
+                    self.operate.mode.forward();
                 
-                # elif key == 'd' :
-                #     if self.status == self.__Status.WALKING_RIGHT :
-                #         continue;
-                    
-                #     self.__set_status(self.__Status.WALKING_RIGHT);
-                #     self.operate.walk.right();
-                #     self.__set_status(self.__Status.WALKING_STANCE);
+                elif key == 's' :
+                    self.__set_status(self.__Status.WALKING_BACKWARD);
+                    self.operate.mode.backward();
                 
-                # elif key = 'r' :
+                elif key == 'a' :
+                    if self.status == self.__Status.WALKING_LEFT :
+                        continue;
                     
+                    self.__set_status(self.__Status.WALKING_LEFT);
+                    self.operate.mode.left();
+                    self.__set_status(self.__Status.WALKING_STANCE);
+                
+                elif key == 'd' :
+                    if self.status == self.__Status.WALKING_RIGHT :
+                        continue;
 
+                    self.__set_status(self.__Status.WALKING_RIGHT);
+                    self.operate.mode.right();
+                    self.__set_status(self.__Status.WALKING_STANCE);
+                
+                elif key == 'r' :
+                    # changing operating mode ( pressing r ) has a sequence
+                    # Walk -> Drive -> Climb -> Walk -> Drive -> Climb ...
+
+                    if self.operating_mode == self.__Operating_Mode.WALK :
+                        self.__set_operating_mode(self.__Operating_Mode.DRIVE);
+                        self.operate.mode = Drive(self.operate);
+                        self.__set_status(self.__Status.DRIVING_STANCE);
+
+                    elif self.operating_mode == self.__Operating_Mode.DRIVE :
+                        self.__set_operating_mode(self.__Operating_Mode.CLIMB);
+                        self.operate.mode = Climb(self.operate);
+                        self.__set_status(self.__Status.CLIMBING_STANCE);
+                
+                    elif self.operating_mode == self.__Operating_Mode.CLIMB :
+                        self.__set_operating_mode(self.__Operating_Mode.WALK);
+                        self.operate.mode = Walk(self.operate);
+                        self.__set_status(self.__Status.WALKING_STANCE);
+                
+                else :
+                    print("[SCONE] Invalid command, press h for help".ljust(35, " "));
+                
                 time.sleep(0.1);
         
         def __change_mode(self) :
@@ -139,13 +204,13 @@ class SCONE :
                 "choices": ["System Information", "Return"],
             }];
     
-            task = prompt(questions);
+            task = prompt(questions)[0];
 
-            while task[0] != "Return" :
-                if task[0] == "System Information" :
+            while task != "Return" :
+                if task == "System Information" :
                     print("[SCONE] System Information".ljust(35, " "));
                 
-                task = prompt(questions);
+                task = prompt(questions)[0];
     
         def __system_settings(self) :
             questions = [{
@@ -154,13 +219,13 @@ class SCONE :
                 "choices": ["System Information", "Return"],
             }];
     
-            task = prompt(questions);
+            task = prompt(questions)[0];
 
-            while task[0] != "Return" :
-                if task[0] == "System Information" :
+            while task != "Return" :
+                if task == "System Information" :
                     print("[SCONE] System Information".ljust(35, " "));
                 
-                task = prompt(questions);
+                task = prompt(questions)[0];
     
     # operating modes
     class Standard(Mode) :
