@@ -61,13 +61,13 @@ class Walk(Mode) :
     def __hold_dignoal_left(self) :
         for i in Actuator.middle_diagonal_left_index :
             self.controller.set_speed(i, self.safety_speed);
-            self.controller.set_position(i, self.middle_initial_position - 15);
+            self.controller.set_position(i, self.middle_initial_position - self.__moving_degree);
         time.sleep(0.5);
     
     def __hold_dignoal_right(self) :
         for i in Actuator.middle_diagonal_right_index :
             self.controller.set_speed(i, self.safety_speed);
-            self.controller.set_position(i, self.middle_initial_position - 15);
+            self.controller.set_position(i, self.middle_initial_position - self.__moving_degree);
         time.sleep(0.5);
 
     def __release_dignoal_left(self) :

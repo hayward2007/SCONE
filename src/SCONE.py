@@ -1,14 +1,67 @@
 import time;
+from enum import Enum
 from InquirerPy import prompt;
-# from enum import Enum
 
 from .core import *;
 from .provider import *;
 
 class SCONE :
-    # class __Status(Enum) :
-        # Walk_Standard = 0;
+    class Cli :
+        class __Status(Enum) :
+            INITIALIZING = 0;
+
+            WALKING_STANCE = 11;
+            WALKING_FORWARD = 12;
+            WALKING_BACKWARD = 13;
+            WALKING_LEFT = 14;
+            WALKING_RIGHT = 15;
+
+            DRIVING_STANCE = 21;
+            DRIVING_FORWARD = 22;
+            DRIVING_BACKWARD = 23;
+            DRIVING_LEFT = 24;
+            DRIVING_RIGHT = 25;
+
+            CLIMBING_STANCE = 31;
+            CLIMBING_FORWARD = 32;
+            CLIMBING_BACKWARD = 33;
+            CLIMBING_LEFT = 34;
+            CLIMBING_RIGHT = 35;
         
+        class __Operating_Mode(Enum) :
+            WALK = 1;
+            DRIVE = 2;
+            CLIMB = 3;
+
+        def __init__(self) :
+            self.status = self.__Status.Initializing;
+
+            self.controller = Controller();
+            questions = [
+                {
+                    "type": "list",
+                    "message": "What mode do you want to use?",
+                    "choices": ["Standard", "Sport"],
+                },
+            ]
+            result = prompt(questions);
+
+            if result[0] == "Standard" :
+                self.standard = self.Standard(self.controller);
+            elif result[0] == "Sport" :
+                self.sport = self.Sport(self.controller);
+            
+            self.__set_operating_mode(self.__Operating_Mode.WALK);
+            self.__set_status(self.__Status.WALKING_STANCE);
+    
+        def __set_status(self, status: __Status) :
+            self.status = status;
+            print(f"\n[SCONE] Status \t [SET] {str(status)}\n");
+    
+        def __set_operating_mode(self, operating_mode: __Operating_Mode) :
+            self.operating_mode = operating_mode;
+            print(f"\n[SCONE] Operating Mode \t [SET] {str(operating_mode)}\n");
+    
     # operating modes
     class Standard(Mode) :
         def __init__(self, controller: Controller) :
@@ -45,21 +98,4 @@ class SCONE :
             time.sleep(3);
 
     def __init__(self) :
-        # initialize controller
-        self.controller = Controller();
-
-        questions = [
-        # {"type": "input", "message": "What's your name:", "name": "name"},
-            {
-                "type": "list",
-                "message": "What mode do you want to use?",
-                "choices": ["Standard", "Sport"],
-            },
-            # {"type": "confirm", "message": "Confirm?"},
-        ]
-        result = prompt(questions);
-
-        if result[0] == "Standard" :
-            self.standard = SCONE.Standard(self.controller);
-        elif result[0] == "Sport" :
-            self.sport = SCONE.Sport(self.controller);
+        self.Cli();
