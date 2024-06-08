@@ -145,12 +145,18 @@ class SCONE :
                     self.__set_status(self.__Status.WALKING_STANCE);
                 
                 elif key == 'd' :
-                    if self.status == self.__Status.WALKING_RIGHT :
+                    if self.status.value % 10 != 1 :
                         continue;
-
-                    self.__set_status(self.__Status.WALKING_RIGHT);
-                    self.operate.mode.right();
-                    self.__set_status(self.__Status.WALKING_STANCE);
+                    
+                    elif int(self.status.value / 10) == 1 :
+                        self.__set_status(self.__Status.WALKING_RIGHT);
+                        self.operate.mode.right();
+                        self.__set_status(self.__Status.WALKING_STANCE);
+                
+                    elif int(self.status.value / 10) == 2 :
+                        self.__set_status(self.__Status.DRIVING_RIGHT);
+                        self.operate.mode.right();
+                        self.__set_status(self.__Status.DRIVING_STANCE);
                 
                 elif key == 'r' :
                     # changing operating mode ( pressing r ) has a sequence
@@ -158,20 +164,14 @@ class SCONE :
 
                     self.operate.mode = self.operate.mode.change_mode();
 
-                    # if self.operating_mode == self.__Operating_Mode.WALK :
-                    #     self.__set_operating_mode(self.__Operating_Mode.DRIVE);
-                    #     self.operate.mode = Drive(self.operate);
-                    #     self.__set_status(self.__Status.DRIVING_STANCE);
-
-                    # elif self.operating_mode == self.__Operating_Mode.DRIVE :
-                    #     self.__set_operating_mode(self.__Operating_Mode.CLIMB);
-                    #     self.operate.mode = Climb(self.operate);
-                    #     self.__set_status(self.__Status.CLIMBING_STANCE);
-                
-                    # elif self.operating_mode == self.__Operating_Mode.CLIMB :
-                    #     self.__set_operating_mode(self.__Operating_Mode.WALK);
-                    #     self.operate.mode = Walk(self.operate);
-                    #     self.__set_status(self.__Status.WALKING_STANCE);
+                    if self.operating_mode == self.__Operating_Mode.WALK :
+                        self.__set_operating_mode(self.__Operating_Mode.DRIVE);
+                    
+                    elif self.operating_mode == self.__Operating_Mode.DRIVE :
+                        self.__set_operating_mode(self.__Operating_Mode.CLIMB);
+                    
+                    elif self.operating_mode == self.__Operating_Mode.CLIMB :
+                        self.__set_operating_mode(self.__Operating_Mode.WALK);
                 
                 else :
                     print("[SCONE] Invalid command, press h for help".ljust(35, " "));

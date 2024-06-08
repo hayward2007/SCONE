@@ -21,6 +21,8 @@ class Walk(provider.Mode) :
         self.climbing_speed = mode.climbing_speed;
     
         if not is_initial :
+            self.controller.set_all_mode(Actuator.model.XM.operating_mode.position);
+
             for i in Actuator.middle_index :
                 self.controller.set_position(i, self.middle_initial_position);
             time.sleep(0.05);

@@ -42,11 +42,11 @@ class Controller :
     def get_mode(self, id: int) :
         print(self.packet_handler_2.read1ByteTxRx(self.port_handler, id, Actuator.model.XM.address.operating_mode));
 
-    def set_speed(self, id: int, speed: int) :
+    def set_speed(self, id: int, speed: int, address: int = Actuator.model.XM.address.profile_velocity) :
         if self.__is_MX(id) :
             self.packet_handler_1.write2ByteTxRx(self.port_handler, id, Actuator.model.MX.address.moving_speed, speed);
         else :
-            self.packet_handler_2.write4ByteTxRx(self.port_handler, id, Actuator.model.XM.address.profile_velocity, speed);
+            self.packet_handler_2.write4ByteTxRx(self.port_handler, id, address, speed);
         print(f"[CONTROLLER] Actuator ID : {id}".ljust(35, " ") + f"[SET] Speed set to {speed}".ljust(35, " "));
     
     def set_all_speed(self, speed: int) :
