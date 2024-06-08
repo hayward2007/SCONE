@@ -32,8 +32,8 @@ class Controller :
         if id in Actuator.lower_index :
             self.set_torque(id, Actuator.torque.off);
             result = self.packet_handler_2.write1ByteTxRx(self.port_handler, id, Actuator.model.XM.address.operating_mode, mode);
+            print(f"[CONTROLLER] Actuator ID : {id}".ljust(35, " ") + f"[SET] Mode set to {mode}".ljust(35, " "));
             self.set_torque(id, Actuator.torque.on);
-            print(f"[CONTROLLER] Actuator ID : {id} \t [SET] Mode set to {mode}");
     
     def set_all_mode(self, mode: int) :
         for i in Actuator.lower_index :
@@ -42,12 +42,12 @@ class Controller :
     def get_mode(self, id: int) :
         print(self.packet_handler_2.read1ByteTxRx(self.port_handler, id, Actuator.model.XM.address.operating_mode));
 
-    def set_speed(self, id: int, speed: int) :
+    def set_speed(self, id: int, speed: int, address: int = Actuator.model.XM.address.profile_velocity) :
         if self.__is_MX(id) :
             self.packet_handler_1.write2ByteTxRx(self.port_handler, id, Actuator.model.MX.address.moving_speed, speed);
         else :
-            self.packet_handler_2.write4ByteTxRx(self.port_handler, id, Actuator.model.XM.address.profile_velocity, speed);
-        print(f"[CONTROLLER] Actuator ID : {id} \t [SET] Speed set to {speed}");
+            self.packet_handler_2.write4ByteTxRx(self.port_handler, id, address, speed);
+        print(f"[CONTROLLER] Actuator ID : {id}".ljust(35, " ") + f"[SET] Speed set to {speed}".ljust(35, " "));
     
     def set_all_speed(self, speed: int) :
         for i in Actuator.index :
@@ -56,14 +56,14 @@ class Controller :
     def set_acceleration(self, id: int, acceleration: int) :
         if not self.__is_MX(id) :
             self.packet_handler_2.write4ByteTxRx(self.port_handler, id, Actuator.model.XM.address.profile_acceleration, acceleration);
-            print(f"[CONTROLLER] Actuator ID : {id} \t [SET] Acceleration set to {acceleration}");
+            print(f"[CONTROLLER] Actuator ID : {id}".ljust(35, " ") + f"[SET] Acceleration set to {acceleration}".ljust(35, " "));
 
     def set_torque(self, id: int, torque: int) :
         if self.__is_MX(id) :
             self.packet_handler_1.write1ByteTxRx(self.port_handler, id, Actuator.model.MX.address.enable_torque, torque);
         else :
             self.packet_handler_2.write1ByteTxRx(self.port_handler, id, Actuator.model.XM.address.torque_enable, torque);
-        print(f"[CONTROLLER] Actuator ID : {id} \t [SET] Torque turned {'on' if torque == 1 else 'off'}");
+        print(f"[CONTROLLER] Actuator ID : {id}".ljust(35, " ") + f"[SET] Torque turned {'on' if torque == 1 else 'off'}".ljust(35, " "));
     
     def set_all_torque(self, torque: int) :
         for i in Actuator.index :
@@ -81,19 +81,19 @@ class Controller :
             self.packet_handler_1.write2ByteTxRx(self.port_handler, id, Actuator.model.MX.address.goal_position, position);
         else :
             self.packet_handler_2.write4ByteTxRx(self.port_handler, id, Actuator.model.XM.address.goal_position, position);
-        print(f"[CONTROLLER] Actuator ID : {id} \t [SET] Position set to {position} degrees");
+        print(f"[CONTROLLER] Actuator ID : {id}".ljust(35, " ") + f"[SET] Position set to {position} degrees".ljust(35, " "));
 
     def set_raw_position(self, id: int, position: int) :
         if self.__is_MX(id) :
             self.packet_handler_1.write2ByteTxRx(self.port_handler, id, Actuator.model.MX.address.goal_position, position);
         else :
             self.packet_handler_2.write4ByteTxRx(self.port_handler, id, Actuator.model.XM.address.goal_position, position);
-        print(f"[CONTROLLER] Actuator ID : {id} \t [SET] Position set to {position}");
+        print(f"[CONTROLLER] Actuator ID : {id}".ljust(35, " ") + f"[SET] Position set to {position}".ljust(35, " "));
 
     def get_position(self, id: int) :
         if self.__is_MX(id) :
             result, error, _ = self.packet_handler_1.read2ByteTxRx(self.port_handler, id, Actuator.model.MX.address.present_position);
         else :
             result, error, _ = self.packet_handler_2.read4ByteTxRx(self.port_handler, id, Actuator.model.XM.address.present_position);
-        print(f"[CONTROLLER] Actuator ID : {id} \t [GET] Current Position: {result}");
+        print(f"[CONTROLLER] Actuator ID : {id}".ljust(35, " ") + f"[GET] Current Position: {result}".ljust(35, " "));
         return result;

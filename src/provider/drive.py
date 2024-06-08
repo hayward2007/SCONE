@@ -1,10 +1,10 @@
 import time;
 
 from ..core import *;
-from ..provider import *;
+from .. import provider;
 
-class Drive(Mode) :
-    def __init__(self, mode: Mode) :
+class Drive(provider.Mode) :
+    def __init__(self, mode: provider.Mode) :
         # sync
         self.controller = mode.controller;
 
@@ -15,32 +15,29 @@ class Drive(Mode) :
         self.boost_speed = mode.boost_speed;
         self.safety_speed = mode.safety_speed;
         self.walking_speed = mode.walking_speed;
+        self.driving_speed = mode.driving_speed;
+        self.climbing_speed = mode.climbing_speed;
 
-        # initialize operating mode
-        for i in Actuator.index :
-            self.controller.set_torque(i, Actuator.torque.off);
-            self.controller.set_mode(i, Actuator.model.XM.operating_mode.position);
-            self.controller.set_acceleration(i, 20);
-        time.sleep(0.1);
+        self.controller.set_all_mode(Actuator.model.XM.operating_mode.velocity);
 
-        # initialize position
-        self.controller.enable_torque();
-        self.controller.set_all_speed(self.safety_speed);
-
-        for i in Actuator.middle_index :
-            self.controller.set_position(i, self.__starting_middle_position);
-        time.sleep(0.5);
-
-        for i in Actuator.upper_index :
-            self.controller.set_position(i, self.upper_initial_position[i - 1]);
+    def __del__(self) :
+        pass;
+    
+    def left(self) :
         for i in Actuator.lower_index :
-            self.controller.set_speed(i, self.boost_speed);
-            self.controller.set_position(i, self.lower_initial_position);
-        time.sleep(0.7);
-
-        self.controller.set_all_speed(self.safety_speed);
-        for i in Actuator.middle_index :
-            self.controller.set_position(i, self.middle_initial_position);
+            self.controller.set_speed(i, - self.driving_speed, address = Actuator.model.XM.address.goal_velocity);
         time.sleep(1);
+    
+        for i in Actuator.lower_index :
+            self.controller.set_speed(i, 0, address = Actuator.model.XM.address.goal_velocity);
+    
+    def right(self) :
+        for i in Actuator.lower_index :
+            self.controller.set_speed(i, self.driving_speed, address = Actuator.model.XM.address.goal_velocity);
+        time.sleep(1);
+    
+        for i in Actuator.lower_index :
+            self.controller.set_speed(i, 0, address = Actuator.model.XM.address.goal_velocity);
 
-        self.controller.set_all_speed(self.walking_speed);
+    def change_mode(self) :
+        return provider.Climb(self);
