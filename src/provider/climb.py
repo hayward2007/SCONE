@@ -2,12 +2,9 @@ import time;
 
 from ..core import *;
 from .. import core, provider;
-# from .mode import Mode;
-# from .walk import Walk;
 
 class Climb(provider.Mode) :
     def __init__(self, mode: provider.Mode) :
-        # sync
         self.controller = mode.controller;
 
         self.upper_initial_position = mode.upper_initial_position;
