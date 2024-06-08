@@ -32,8 +32,8 @@ class Controller :
         if id in Actuator.lower_index :
             self.set_torque(id, Actuator.torque.off);
             result = self.packet_handler_2.write1ByteTxRx(self.port_handler, id, Actuator.model.XM.address.operating_mode, mode);
-            self.set_torque(id, Actuator.torque.on);
             print(f"[CONTROLLER] Actuator ID : {id}".ljust(35, " ") + f"[SET] Mode set to {mode}".ljust(35, " "));
+            self.set_torque(id, Actuator.torque.on);
     
     def set_all_mode(self, mode: int) :
         for i in Actuator.lower_index :
