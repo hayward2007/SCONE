@@ -1,7 +1,7 @@
 import time;
 
 from ..core import *;
-from .. import core, provider;
+from .. import provider;
 
 class Climb(provider.Mode) :
     def __init__(self, mode: provider.Mode) :
@@ -46,6 +46,7 @@ class Climb(provider.Mode) :
             self.controller.set_raw_position(i, Actuator.position.center);
         time.sleep(0.5);
     
+    def __left_stance(self) :
         for i in Actuator.lower_index :
             self.controller.set_speed(i, self.safety_speed);
             self.controller.set_position(i, 270);
@@ -53,9 +54,37 @@ class Climb(provider.Mode) :
             self.controller.set_position(i, 270);
         time.sleep(1);
 
+        self.controller.set_all_mode(Actuator.model.XM.operating_mode.velocity);
+    
+    def __right_stance(self) :
+        for i in Actuator.lower_index :
+            self.controller.set_speed(i, self.safety_speed);
+            self.controller.set_position(i, 90);
+        for i in Actuator.middle_left_index :
+            self.controller.set_position(i, 90);
+        time.sleep(1);
 
-    def __del__(self) :
-        pass;
+        self.controller.set_all_mode(Actuator.model.XM.operating_mode.velocity);
+    
+    def left(self) :
+        self.__left_stance();
+
+        for i in Actuator.lower_index :
+            self.controller.set_speed(i, self.climbing_speed);
+        time.sleep(1);
+    
+        for i in Actuator.lower_index :
+            self.controller.set_speed(i, 0);
+    
+    def right(self) :
+        self.__right_stance();
+
+        for i in Actuator.middle_right_index :
+            self.controller.set_speed(i, self.climbing_speed);
+        time.sleep(1);
+    
+        for i in Actuator.middle_right_index :
+            self.controller.set_speed(i, 0);
 
     def change_mode(self) :
         return provider.Walk(self);
