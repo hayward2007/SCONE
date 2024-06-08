@@ -152,6 +152,11 @@ class SCONE :
                         self.operate.mode.left();
                         self.__set_status(self.__Status.DRIVING_STANCE);
                 
+                    elif self.operating_mode == self.__Operating_Mode.CLIMB :
+                        self.__set_status(self.__Status.CLIMBING_LEFT);
+                        self.operate.mode.left();
+                        self.__set_status(self.__Status.CLIMBING_STANCE);
+                
                 elif key == 'd' :
                     if self.status.value % 10 != 1 :
                         continue;
@@ -166,10 +171,14 @@ class SCONE :
                         self.operate.mode.right();
                         self.__set_status(self.__Status.DRIVING_STANCE);
                 
+                    elif self.operating_mode == self.__Operating_Mode.CLIMB :
+                        self.__set_status(self.__Status.CLIMBING_RIGHT);
+                        self.operate.mode.right();
+                        self.__set_status(self.__Status.CLIMBING_STANCE);
+                
                 elif key == 'r' :
                     # changing operating mode ( pressing r ) has a sequence
                     # Walk -> Drive -> Climb -> Walk -> Drive -> Climb ...
-
                     self.operate.mode = self.operate.mode.change_mode();
 
                     if self.operating_mode == self.__Operating_Mode.WALK :

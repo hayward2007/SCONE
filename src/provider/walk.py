@@ -61,10 +61,6 @@ class Walk(provider.Mode) :
             self.__release_dignoal_right();
             time.sleep(0.05);
     
-    def __del__(self) :
-        pass;
-
-    
     def __hold_dignoal_left(self) :
         for i in Actuator.middle_diagonal_left_index :
             self.controller.set_speed(i, self.safety_speed);
@@ -108,7 +104,24 @@ class Walk(provider.Mode) :
         self.__release_dignoal_right();
 
     def backward(self) :
-        pass;
+        self.__hold_dignoal_right();
+        time.sleep(0.1);
+    
+        for i in Actuator.upper_diagonal_right_index :
+            self.controller.set_position(i, self.upper_initial_position[i - 1] + self.__moving_degree);
+        for i in Actuator.upper_diagonal_left_index :
+            self.controller.set_position(i, self.upper_initial_position[i - 1] - self.__moving_degree);
+        time.sleep(0.5);
+    
+        self.__release_dignoal_right();
+        self.__hold_dignoal_left();
+        time.sleep(0.1);
+    
+        for i in Actuator.upper_index :
+            self.controller.set_position(i, self.upper_initial_position[i - 1]);
+        time.sleep(0.5);
+    
+        self.__release_dignoal_left();
 
     def right(self) :
         self.__hold_dignoal_left();
