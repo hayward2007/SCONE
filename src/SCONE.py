@@ -140,12 +140,12 @@ class SCONE :
                     if self.status.value % 10 != 1 :
                         continue;
                     
-                    elif int(self.status.value / 10) == 1 :
+                    elif self.operating_mode == self.__Operating_Mode.WALK :
                         self.__set_status(self.__Status.WALKING_LEFT);
                         self.operate.mode.left();
                         self.__set_status(self.__Status.WALKING_STANCE);
                 
-                    elif int(self.status.value / 10) == 2 :
+                    elif self.operating_mode == self.__Operating_Mode.DRIVE :
                         self.__set_status(self.__Status.DRIVING_LEFT);
                         self.operate.mode.left();
                         self.__set_status(self.__Status.DRIVING_STANCE);
@@ -154,12 +154,12 @@ class SCONE :
                     if self.status.value % 10 != 1 :
                         continue;
                     
-                    elif int(self.status.value / 10) == 1 :
+                    elif self.operating_mode == self.__Operating_Mode.WALK :
                         self.__set_status(self.__Status.WALKING_RIGHT);
                         self.operate.mode.right();
                         self.__set_status(self.__Status.WALKING_STANCE);
                 
-                    elif int(self.status.value / 10) == 2 :
+                    elif self.operating_mode == self.__Operating_Mode.DRIVE :
                         self.__set_status(self.__Status.DRIVING_RIGHT);
                         self.operate.mode.right();
                         self.__set_status(self.__Status.DRIVING_STANCE);
