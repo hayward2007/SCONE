@@ -131,10 +131,12 @@ class SCONE :
                 if key == 'w' :
                     self.__set_status(self.__Status.WALKING_FORWARD);
                     self.operate.mode.forward();
+                    self.__set_status(self.__Status.WALKING_STANCE);
                 
                 elif key == 's' :
                     self.__set_status(self.__Status.WALKING_BACKWARD);
                     self.operate.mode.backward();
+                    self.__set_status(self.__Status.WALKING_STANCE);
                 
                 elif key == 'a' :
                     if self.status.value % 10 != 1 :

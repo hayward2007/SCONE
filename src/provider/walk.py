@@ -5,7 +5,7 @@ from .. import provider;
 
 class Walk(provider.Mode) :
     # the moving degree of each step
-    __moving_degree = 15;
+    __moving_degree = 20;
 
     def __init__(self, mode: provider.Mode, is_initial: bool = False) :
         self.controller = mode.controller;
