@@ -21,28 +21,40 @@ class Climb(provider.Mode) :
         self.climbing_speed = mode.climbing_speed;
     
         self.controller.set_all_mode(Actuator.model.XM.operating_mode.position);
+        self.controller.set_all_speed(self.safety_speed);
 
         for i in Actuator.middle_diagonal_left_index :
             self.controller.set_position(i, self.middle_initial_position - 20);
-        time.sleep(0.05);
+        time.sleep(0.5);
 
         for i in Actuator.lower_diagonal_left_index :
-            self.controller.set_position(i, Actuator.position.center);
-        time.sleep(0.3);
+            self.controller.set_speed(i, self.boost_speed);
+            self.controller.set_raw_position(i, Actuator.position.center);
+        time.sleep(0.5);
     
         for i in Actuator.middle_diagonal_left_index :
-            self.controller.set_position(i, self.middle_initial_position);
+            self.controller.set_raw_position(i, Actuator.position.center);
+        time.sleep(0.5);
+
         for i in Actuator.middle_diagonal_right_index :
             self.controller.set_position(i, self.middle_initial_position - 20);
-        time.sleep(0.05);
+        time.sleep(0.5);
     
         for i in Actuator.lower_diagonal_right_index :
-            self.controller.set_position(i, Actuator.position.center);
-        time.sleep(0.3);
+            self.controller.set_speed(i, self.boost_speed);
+            self.controller.set_raw_position(i, Actuator.position.center);
+        time.sleep(0.5);
     
         for i in Actuator.middle_diagonal_right_index :
-            self.controller.set_position(i, self.middle_initial_position);
-        time.sleep(0.05);
+            self.controller.set_raw_position(i, Actuator.position.center);
+        time.sleep(0.5);
+    
+        for i in Actuator.lower_index :
+            self.controller.set_speed(i, self.safety_speed);
+            self.controller.set_position(i, 270);
+        for i in Actuator.middle_right_index :
+            self.controller.set_position(i, 270);
+        time.sleep(1);
 
 
     def __del__(self) :

@@ -22,10 +22,16 @@ class Walk(provider.Mode) :
     
         if not is_initial :
             self.controller.set_all_mode(Actuator.model.XM.operating_mode.position);
+            self.controller.set_all_speed(self.safety_speed);
 
-            for i in Actuator.middle_index :
-                self.controller.set_position(i, self.middle_initial_position);
-            time.sleep(0.05);
+            for i in Actuator.lower_index :
+                self.controller.set_speed(i, self.safety_speed);
+                self.controller.set_position(i, 180);
+            for i in Actuator.middle_right_index :
+                self.controller.set_position(i, 180);
+            time.sleep(1);
+
+            self.controller.set_all_speed(self.walking_speed);
 
             self.__hold_dignoal_left();
             time.sleep(0.05);
