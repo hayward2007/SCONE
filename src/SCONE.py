@@ -272,7 +272,7 @@ class SCONE :
             self.safety_speed = 50;
             self.walking_speed = 100;
             self.driving_speed = 150;
-            self.climbing_speed = 200;
+            self.climbing_speed = 100;
 
             self.controller = controller;
             self.mode = Walk(self, is_initial = True);

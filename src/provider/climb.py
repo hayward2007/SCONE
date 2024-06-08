@@ -52,7 +52,7 @@ class Climb(provider.Mode) :
         for i in Actuator.lower_index :
             self.controller.set_speed(i, self.safety_speed);
             self.controller.set_position(i, 180);
-        for i in Actuator.middle_right_index :
+        for i in Actuator.middle_index :
             self.controller.set_position(i, 180);
         time.sleep(1);
 
