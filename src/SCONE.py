@@ -137,12 +137,18 @@ class SCONE :
                     self.operate.mode.backward();
                 
                 elif key == 'a' :
-                    if self.status == self.__Status.WALKING_LEFT :
+                    if self.status.value % 10 != 1 :
                         continue;
                     
-                    self.__set_status(self.__Status.WALKING_LEFT);
-                    self.operate.mode.left();
-                    self.__set_status(self.__Status.WALKING_STANCE);
+                    elif int(self.status.value / 10) == 1 :
+                        self.__set_status(self.__Status.WALKING_LEFT);
+                        self.operate.mode.left();
+                        self.__set_status(self.__Status.WALKING_STANCE);
+                
+                    elif int(self.status.value / 10) == 2 :
+                        self.__set_status(self.__Status.DRIVING_LEFT);
+                        self.operate.mode.left();
+                        self.__set_status(self.__Status.DRIVING_STANCE);
                 
                 elif key == 'd' :
                     if self.status.value % 10 != 1 :

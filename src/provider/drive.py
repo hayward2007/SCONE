@@ -26,7 +26,7 @@ class Drive(provider.Mode) :
     def left(self) :
         for i in Actuator.lower_index :
             self.controller.set_speed(i, - self.driving_speed, Actuator.model.XM.operating_mode.velocity);
-        time.sleep(0.5);
+        time.sleep(1);
     
         for i in Actuator.lower_index :
             self.controller.set_speed(i, 0, Actuator.model.XM.operating_mode.velocity);
@@ -34,7 +34,7 @@ class Drive(provider.Mode) :
     def right(self) :
         for i in Actuator.lower_index :
             self.controller.set_speed(i, self.driving_speed, address = Actuator.model.XM.address.goal_velocity);
-        time.sleep(0.5);
+        time.sleep(1);
     
         for i in Actuator.lower_index :
             self.controller.set_speed(i, 0, address = Actuator.model.XM.address.goal_velocity);
