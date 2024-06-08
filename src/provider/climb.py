@@ -82,7 +82,7 @@ class Climb(provider.Mode) :
 
         for i in Actuator.lower_index :
             self.controller.set_speed(i, - self.climbing_speed, address = Actuator.model.XM.address.goal_velocity);
-        time.sleep(1);
+        time.sleep(2.5);
     
         for i in Actuator.lower_index :
             self.controller.set_speed(i, 0, address = Actuator.model.XM.address.goal_velocity);
@@ -94,7 +94,7 @@ class Climb(provider.Mode) :
 
         for i in Actuator.lower_index :
             self.controller.set_speed(i, self.climbing_speed, address = Actuator.model.XM.address.goal_velocity);
-        time.sleep(1);
+        time.sleep(2.5);
     
         for i in Actuator.lower_index :
             self.controller.set_speed(i, 0, address = Actuator.model.XM.address.goal_velocity);
