@@ -19,6 +19,31 @@ class Climb(provider.Mode) :
         self.walking_speed = mode.walking_speed;
         self.driving_speed = mode.driving_speed;
         self.climbing_speed = mode.climbing_speed;
+    
+        self.controller.set_all_mode(Actuator.model.XM.operating_mode.position);
+
+        for i in Actuator.middle_diagonal_left_index :
+            self.controller.set_position(i, self.middle_initial_position - 20);
+        time.sleep(0.05);
+
+        for i in Actuator.lower_diagonal_left_index :
+            self.controller.set_position(i, Actuator.position.center);
+        time.sleep(0.3);
+    
+        for i in Actuator.middle_diagonal_left_index :
+            self.controller.set_position(i, self.middle_initial_position);
+        for i in Actuator.middle_diagonal_right_index :
+            self.controller.set_position(i, self.middle_initial_position - 20);
+        time.sleep(0.05);
+    
+        for i in Actuator.lower_diagonal_right_index :
+            self.controller.set_position(i, Actuator.position.center);
+        time.sleep(0.3);
+    
+        for i in Actuator.middle_diagonal_right_index :
+            self.controller.set_position(i, self.middle_initial_position);
+        time.sleep(0.05);
+
 
     def __del__(self) :
         pass;
