@@ -46,6 +46,17 @@ class Climb(provider.Mode) :
             self.controller.set_raw_position(i, Actuator.position.center);
         time.sleep(0.5);
     
+    def __default_stance(self) :
+        self.controller.set_all_mode(Actuator.model.XM.operating_mode.position);
+
+        for i in Actuator.lower_index :
+            self.controller.set_speed(i, self.safety_speed);
+            self.controller.set_position(i, 180);
+        for i in Actuator.middle_right_index :
+            self.controller.set_position(i, 180);
+        time.sleep(1);
+
+    
     def __left_stance(self) :
         for i in Actuator.lower_index :
             self.controller.set_speed(i, self.safety_speed);
@@ -76,6 +87,8 @@ class Climb(provider.Mode) :
         for i in Actuator.lower_index :
             self.controller.set_speed(i, 0, address = Actuator.model.XM.address.goal_velocity);
     
+        self.__default_stance();
+    
     def right(self) :
         self.__right_stance();
 
@@ -85,6 +98,8 @@ class Climb(provider.Mode) :
     
         for i in Actuator.lower_index :
             self.controller.set_speed(i, 0, address = Actuator.model.XM.address.goal_velocity);
+    
+        self.__default_stance();
 
     def change_mode(self) :
         return provider.Walk(self);
