@@ -220,7 +220,7 @@ class SCONE :
             questions = [{
                 "type": "list",
                 "message": "What task you want to execute?",
-                "choices": ["System Information", "Return"],
+                "choices": ["Set Torque", "Set Speed", "Set Poistion", "Set Operating Mode", "Get Torque", "Get Speed", "Get Position", "Get Operating Mode", "Return"],
             }];
     
             task = prompt(questions)[0];
@@ -228,6 +228,30 @@ class SCONE :
             while task != "Return" :
                 if task == "System Information" :
                     print("[SCONE] System Information".ljust(35, " "));
+                
+                elif task == "Set Torque" :
+                    print("[SCONE] Set Torque".ljust(35, " "));
+                
+                elif task == "Set Speed" :
+                    print("[SCONE] Set Speed".ljust(35, " "));
+                
+                elif task == "Set Position" :
+                    print("[SCONE] Set Position".ljust(35, " "));
+                
+                elif task == "Set Operating Mode" :
+                    print("[SCONE] Set Operating Mode".ljust(35, " "));
+                
+                elif task == "Get Torque" :
+                    print("[SCONE] Get Torque".ljust(35, " "));
+                
+                elif task == "Get Speed" :
+                    print("[SCONE] Get Speed".ljust(35, " "));
+                
+                elif task == "Get Position" :
+                    print("[SCONE] Get Position".ljust(35, " "));
+                
+                elif task == "Get Operating Mode" :
+                    print("[SCONE] Get Operating Mode".ljust(35, " "));
                 
                 task = prompt(questions)[0];
     
