@@ -1,35 +1,64 @@
-"""SCONE package root exports.
+"""SCONE implementation package."""
 
-Keep the package import surface lightweight and lazy to avoid circular imports
-between the package root, locomotion, and simulation layers.
-"""
-
-from __future__ import annotations
+from .main import RobotCommand, RobotStatus, SCONE, UnsupportedCommandError
 
 __all__ = [
+    "JointAngles",
+    "GaitConfig",
+    "GaitSample",
+    "LegKinematics",
+    "NonRLWalk",
+    "PhoenixTripodGait",
+    "RobotCommand",
+    "RobotKinematics",
+    "RobotStatus",
     "SCONE",
-    "Actuator",
-    "Controller",
-    "Mode",
-    "Walk",
-    "Drive",
-    "Climb",
-    "MuJoCoController",
-    "MotionRunner",
+    "SCONEKinematics",
+    "UnsupportedCommandError",
+    "VelocityCommand",
 ]
 
 
 def __getattr__(name: str):
-    if name == "SCONE":
-        from .SCONE import SCONE
-        return SCONE
-    if name in {"Actuator", "Controller"}:
-        from .hardware import Actuator, Controller
-        return {"Actuator": Actuator, "Controller": Controller}[name]
-    if name in {"Mode", "Walk", "Drive", "Climb"}:
-        from .locomotion import Climb, Drive, Mode, Walk
-        return {"Mode": Mode, "Walk": Walk, "Drive": Drive, "Climb": Climb}[name]
-    if name in {"MuJoCoController", "MotionRunner"}:
-        from .simulation import MotionRunner, MuJoCoController
-        return {"MuJoCoController": MuJoCoController, "MotionRunner": MotionRunner}[name]
+    if name in {
+        "GaitConfig",
+        "GaitSample",
+        "NonRLWalk",
+        "PhoenixTripodGait",
+        "VelocityCommand",
+    }:
+        from .locomotion import (
+            GaitConfig,
+            GaitSample,
+            NonRLWalk,
+            PhoenixTripodGait,
+            VelocityCommand,
+        )
+
+        return {
+            "GaitConfig": GaitConfig,
+            "GaitSample": GaitSample,
+            "NonRLWalk": NonRLWalk,
+            "PhoenixTripodGait": PhoenixTripodGait,
+            "VelocityCommand": VelocityCommand,
+        }[name]
+    if name in {
+        "JointAngles",
+        "LegKinematics",
+        "RobotKinematics",
+        "SCONEKinematics",
+    }:
+        from .kinematics import (
+            JointAngles,
+            LegKinematics,
+            RobotKinematics,
+            SCONEKinematics,
+        )
+
+        return {
+            "JointAngles": JointAngles,
+            "LegKinematics": LegKinematics,
+            "RobotKinematics": RobotKinematics,
+            "SCONEKinematics": SCONEKinematics,
+        }[name]
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

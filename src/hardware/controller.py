@@ -1,107 +1,268 @@
-from dynamixel_sdk import *;
-from .actuator import Actuator;
+"""DYNAMIXEL-backed implementation of the SCONE controller API."""
 
-class Controller :
-    __BAUDRATE = 1000000;
-    # __DEVICE_NAME = "/dev/ttyUSB0";
-    __DEVICE_NAME = "/dev/cu.usbserial-FTBIHSYW";
-    
+from __future__ import annotations
 
-    def __is_MX(self, id: int) :
-        return id <= 6;
+import os
+from collections import defaultdict
+from collections.abc import Iterable, Mapping
 
-    def __init__(self) :
-        print("[CONTROLLER] Initializing...");
-        self.port_handler = PortHandler(self.__DEVICE_NAME);
-        self.packet_handler_1 = PacketHandler(Actuator.model.MX.protocol_version);
-        self.packet_handler_2 = PacketHandler(Actuator.model.XM.protocol_version);
+from dynamixel_sdk import GroupSyncWrite, PacketHandler, PortHandler
 
-        if self.port_handler.openPort() :
-            print("[CONTROLLER] Succeeded to open the port");
-        else :
-            raise Exception("[CONTROLLER] Failed to open the port");
+from .actuator import Actuator, model_for_id
+from .actuator_control_table import Register
+from .config import (
+    DEFAULT_BAUDRATE as _DEFAULT_BAUDRATE,
+    DEFAULT_DEVICE_NAME as _DEFAULT_DEVICE_NAME,
+)
 
-        if self.port_handler.setBaudRate(self.__BAUDRATE) :
-            print("[CONTROLLER] Succeeded to set the baudrate");
-        else :
-            raise Exception("[CONTROLLER] Failed to set the baudrate");
 
-    def __del__(self) :
-        self.port_handler.closePort();
-        print("[CONTROLLER] Succeeded to close the port");
-    
-    def set_mode(self, id: int, mode: int) :
-        if id in Actuator.lower_index :
-            self.set_torque(id, Actuator.torque.off);
-            result = self.packet_handler_2.write1ByteTxRx(self.port_handler, id, Actuator.model.XM.address.operating_mode, mode);
-            print(f"[CONTROLLER] Actuator ID : {id}".ljust(35, " ") + f"[SET] Mode set to {mode}".ljust(35, " "));
-            self.set_torque(id, Actuator.torque.on);
-    
-    def set_all_mode(self, mode: int) :
-        for i in Actuator.lower_index :
-            self.set_mode(i, mode);
-    
-    def get_mode(self, id: int) :
-        print(self.packet_handler_2.read1ByteTxRx(self.port_handler, id, Actuator.model.XM.address.operating_mode));
+class ControllerError(RuntimeError):
+    pass
 
-    def set_speed(self, id: int, speed: int, address: int = Actuator.model.XM.address.profile_velocity) :
-        if self.__is_MX(id) :
-            self.packet_handler_1.write2ByteTxRx(self.port_handler, id, Actuator.model.MX.address.moving_speed, speed);
-        else :
-            self.packet_handler_2.write4ByteTxRx(self.port_handler, id, address, speed);
-        print(f"[CONTROLLER] Actuator ID : {id}".ljust(35, " ") + f"[SET] Speed set to {speed}".ljust(35, " "));
-    
-    def set_all_speed(self, speed: int) :
-        for i in Actuator.index :
-            self.set_speed(i, speed);
 
-    def set_acceleration(self, id: int, acceleration: int) :
-        if not self.__is_MX(id) :
-            self.packet_handler_2.write4ByteTxRx(self.port_handler, id, Actuator.model.XM.address.profile_acceleration, acceleration);
-            print(f"[CONTROLLER] Actuator ID : {id}".ljust(35, " ") + f"[SET] Acceleration set to {acceleration}".ljust(35, " "));
+class Controller:
+    """Control the physical SCONE DYNAMIXEL bus.
 
-    def set_torque(self, id: int, torque: int) :
-        if self.__is_MX(id) :
-            self.packet_handler_1.write1ByteTxRx(self.port_handler, id, Actuator.model.MX.address.enable_torque, torque);
-        else :
-            self.packet_handler_2.write1ByteTxRx(self.port_handler, id, Actuator.model.XM.address.torque_enable, torque);
-        print(f"[CONTROLLER] Actuator ID : {id}".ljust(35, " ") + f"[SET] Torque turned {'on' if torque == 1 else 'off'}".ljust(35, " "));
-    
-    def set_all_torque(self, torque: int) :
-        for i in Actuator.index :
-            self.set_torque(i, torque);
-    
-    def enable_torque(self) :
-        self.set_all_torque(Actuator.torque.on);
-    
-    def disable_torque(self) :
-        self.set_all_torque(Actuator.torque.off);
+    All register selection goes through :mod:`actuator_control_table`. Public
+    motion code therefore works in terms of positions, speeds, and groups,
+    without knowing protocol versions or register addresses.
+    """
+
+    DEFAULT_BAUDRATE = _DEFAULT_BAUDRATE
+    DEFAULT_DEVICE_NAME = _DEFAULT_DEVICE_NAME
+
+    def __init__(
+        self,
+        device_name: str | None = None,
+        *,
+        baudrate: int = DEFAULT_BAUDRATE,
+        verbose: bool = True,
+    ) -> None:
+        self.device_name = device_name or os.getenv(
+            "SCONE_DEVICE", self.DEFAULT_DEVICE_NAME
+        )
+        self.baudrate = baudrate
+        self.verbose = verbose
+        self._closed = False
+        self._port_open = False
+        self.port_handler = PortHandler(self.device_name)
+        self._packet_handlers = {
+            1.0: PacketHandler(1.0),
+            2.0: PacketHandler(2.0),
+        }
+
+        self._log(f"opening {self.device_name}")
+        try:
+            opened = self.port_handler.openPort()
+        except Exception as error:
+            self._closed = True
+            raise ControllerError(
+                f"failed to open controller port: {self.device_name} ({error})"
+            ) from error
+        if not opened:
+            self._closed = True
+            raise ControllerError(f"failed to open controller port: {self.device_name}")
+        self._port_open = True
+        if not self.port_handler.setBaudRate(self.baudrate):
+            self.close()
+            raise ControllerError(f"failed to set controller baudrate: {self.baudrate}")
+        self._log(f"ready at {self.baudrate:,} baud")
+
+    def _log(self, message: str) -> None:
+        if self.verbose:
+            print(f"[HARDWARE] {message}")
 
     @staticmethod
-    def degrees_to_raw(position) :
-        # Unified direction convention for every actuator:
-        # 0 = CCW limit, 2048 = center, 4096 = CW limit.
-        return int(position / 360 * 4096);
+    def _validate_id(motor_id: int) -> None:
+        model_for_id(motor_id)
 
-    def set_position(self, id: int, position) :
-        position = self.degrees_to_raw(position);
-        if self.__is_MX(id) :
-            self.packet_handler_1.write2ByteTxRx(self.port_handler, id, Actuator.model.MX.address.goal_position, position);
-        else :
-            self.packet_handler_2.write4ByteTxRx(self.port_handler, id, Actuator.model.XM.address.goal_position, position);
-        print(f"[CONTROLLER] Actuator ID : {id}".ljust(35, " ") + f"[SET] Position set to {position} degrees".ljust(35, " "));
+    def _handler(self, motor_id: int):
+        return self._packet_handlers[model_for_id(motor_id).protocol_version]
 
-    def set_raw_position(self, id: int, position: int) :
-        if self.__is_MX(id) :
-            self.packet_handler_1.write2ByteTxRx(self.port_handler, id, Actuator.model.MX.address.goal_position, position);
-        else :
-            self.packet_handler_2.write4ByteTxRx(self.port_handler, id, Actuator.model.XM.address.goal_position, position);
-        print(f"[CONTROLLER] Actuator ID : {id}".ljust(35, " ") + f"[SET] Position set to {position}".ljust(35, " "));
+    def _check(self, motor_id: int, comm_result: int, device_error: int) -> None:
+        handler = self._handler(motor_id)
+        if comm_result != 0:
+            raise ControllerError(
+                f"ID {motor_id}: {handler.getTxRxResult(comm_result)}"
+            )
+        if device_error:
+            raise ControllerError(
+                f"ID {motor_id}: {handler.getRxPacketError(device_error)}"
+            )
 
-    def get_position(self, id: int) :
-        if self.__is_MX(id) :
-            result, error, _ = self.packet_handler_1.read2ByteTxRx(self.port_handler, id, Actuator.model.MX.address.present_position);
-        else :
-            result, error, _ = self.packet_handler_2.read4ByteTxRx(self.port_handler, id, Actuator.model.XM.address.present_position);
-        print(f"[CONTROLLER] Actuator ID : {id}".ljust(35, " ") + f"[GET] Current Position: {result}".ljust(35, " "));
-        return result;
+    def _write(self, motor_id: int, register: Register, value: int) -> None:
+        self._validate_id(motor_id)
+        method = getattr(self._handler(motor_id), f"write{register.size}ByteTxRx")
+        comm_result, device_error = method(
+            self.port_handler, motor_id, register.address, int(value)
+        )
+        self._check(motor_id, comm_result, device_error)
+
+    def _read(self, motor_id: int, register: Register) -> int:
+        self._validate_id(motor_id)
+        method = getattr(self._handler(motor_id), f"read{register.size}ByteTxRx")
+        value, comm_result, device_error = method(
+            self.port_handler, motor_id, register.address
+        )
+        self._check(motor_id, comm_result, device_error)
+        return int(value)
+
+    def _sync_write(self, values: Mapping[int, int], register_name: str) -> None:
+        """Write one logical register to multiple motors, grouped by model."""
+
+        grouped: dict[tuple[float, Register], dict[int, int]] = defaultdict(dict)
+        for motor_id, value in values.items():
+            model = model_for_id(motor_id)
+            register = getattr(model.table, register_name)
+            if register is None:
+                raise ControllerError(
+                    f"{model.name} does not support register {register_name!r}"
+                )
+            grouped[(model.protocol_version, register)][motor_id] = int(value)
+
+        for (protocol, register), group in grouped.items():
+            writer = GroupSyncWrite(
+                self.port_handler,
+                self._packet_handlers[protocol],
+                register.address,
+                register.size,
+            )
+            try:
+                mask = (1 << (register.size * 8)) - 1
+                for motor_id, value in group.items():
+                    payload = (value & mask).to_bytes(register.size, "little")
+                    if not writer.addParam(motor_id, payload):
+                        raise ControllerError(
+                            f"failed to queue sync write for actuator ID {motor_id}"
+                        )
+                comm_result = writer.txPacket()
+                if comm_result != 0:
+                    handler = self._packet_handlers[protocol]
+                    raise ControllerError(handler.getTxRxResult(comm_result))
+            finally:
+                writer.clearParam()
+
+    def set_mode(self, motor_id: int, mode: int) -> None:
+        table = model_for_id(motor_id).table
+        if table.operating_mode is None:
+            return
+        self.set_torque(motor_id, Actuator.Torque.OFF)
+        self._write(motor_id, table.operating_mode, mode)
+        self.set_torque(motor_id, Actuator.Torque.ON)
+        self._log(f"ID {motor_id:02d}: operating mode -> {mode}")
+
+    def set_all_mode(self, mode: int) -> None:
+        # Only the distal wheel motors switch between position and velocity.
+        for motor_id in Actuator.Index.LOWER:
+            self.set_mode(motor_id, mode)
+
+    def get_mode(self, motor_id: int) -> int | None:
+        register = model_for_id(motor_id).table.operating_mode
+        return None if register is None else self._read(motor_id, register)
+
+    def set_speed(self, motor_id: int, speed: int) -> None:
+        table = model_for_id(motor_id).table
+        register = table.moving_speed or table.profile_velocity
+        if register is None:
+            raise ControllerError(f"ID {motor_id} has no profile speed register")
+        self._write(motor_id, register, speed)
+
+    def set_speeds(self, speeds: Mapping[int, int]) -> None:
+        mx = {
+            motor_id: value
+            for motor_id, value in speeds.items()
+            if motor_id in Actuator.Index.UPPER
+        }
+        xm = {
+            motor_id: value
+            for motor_id, value in speeds.items()
+            if motor_id in Actuator.Index.XM
+        }
+        if mx:
+            self._sync_write(mx, "moving_speed")
+        if xm:
+            self._sync_write(xm, "profile_velocity")
+
+    def set_all_speed(self, speed: int) -> None:
+        self.set_speeds({motor_id: speed for motor_id in Actuator.Index.ALL})
+
+    def set_velocity(self, motor_id: int, velocity: int) -> None:
+        register = model_for_id(motor_id).table.goal_velocity
+        if register is None:
+            raise ControllerError(f"ID {motor_id} does not support velocity mode")
+        self._write(motor_id, register, velocity)
+
+    def set_velocities(self, velocities: Mapping[int, int]) -> None:
+        self._sync_write(velocities, "goal_velocity")
+
+    def set_acceleration(self, motor_id: int, acceleration: int) -> None:
+        register = model_for_id(motor_id).table.profile_acceleration
+        if register is not None:
+            self._write(motor_id, register, acceleration)
+
+    def set_accelerations(self, accelerations: Mapping[int, int]) -> None:
+        supported = {
+            motor_id: value
+            for motor_id, value in accelerations.items()
+            if model_for_id(motor_id).table.profile_acceleration is not None
+        }
+        if supported:
+            self._sync_write(supported, "profile_acceleration")
+
+    def set_torque(self, motor_id: int, torque: int) -> None:
+        self._write(motor_id, model_for_id(motor_id).table.torque_enable, torque)
+
+    def set_torques(self, motor_ids: Iterable[int], torque: int) -> None:
+        self._sync_write(
+            {motor_id: torque for motor_id in motor_ids}, "torque_enable"
+        )
+
+    def enable_torque(self) -> None:
+        self.set_torques(Actuator.Index.ALL, Actuator.Torque.ON)
+
+    def disable_torque(self) -> None:
+        self.set_torques(Actuator.Index.ALL, Actuator.Torque.OFF)
+
+    @staticmethod
+    def degrees_to_raw(position: float) -> int:
+        return int(position / 360.0 * Actuator.Position.END)
+
+    def set_position(self, motor_id: int, position: float) -> None:
+        self.set_raw_position(motor_id, self.degrees_to_raw(position))
+
+    def set_positions(self, positions: Mapping[int, float]) -> None:
+        self.set_raw_positions(
+            {
+                motor_id: self.degrees_to_raw(value)
+                for motor_id, value in positions.items()
+            }
+        )
+
+    def set_raw_position(self, motor_id: int, position: int) -> None:
+        self._write(motor_id, model_for_id(motor_id).table.goal_position, position)
+
+    def set_raw_positions(self, positions: Mapping[int, int]) -> None:
+        self._sync_write(positions, "goal_position")
+
+    def get_position(self, motor_id: int) -> int:
+        value = self._read(motor_id, model_for_id(motor_id).table.present_position)
+        self._log(f"ID {motor_id:02d}: position -> {value}")
+        return value
+
+    def close(self) -> None:
+        if self._closed:
+            return
+        self._closed = True
+        if self._port_open:
+            self.port_handler.closePort()
+            self._port_open = False
+        self._log("controller port closed")
+
+    def __enter__(self) -> "Controller":
+        return self
+
+    def __exit__(self, *_: object) -> None:
+        self.close()
+
+
+__all__ = ["Controller", "ControllerError"]

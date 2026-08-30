@@ -1,472 +1,96 @@
-class ActuatorControlTable:
-    UNIT_NUMBER: int = 0
-    PROTOCOL_VERSION: float = 0.0
+"""DYNAMIXEL model metadata used by the SCONE hardware adapter.
 
-    class Address:
-        MODEL_NUMBER: int = 0
-        FIRMWARE_VERSION: int = 0
-        ID: int = 0
-        BAUD_RATE: int = 0
-        RETURN_DELAY_TIME: int = 0
-        DRIVE_MODE: int = 0
-        OPERATING_MODE: int = 0
-        SECONDARY_ID: int = 0
-        PROTOCOL_TYPE: int = 0
-        HOMING_OFFSET: int = 0
-        MOVING_THRESHOLD: int = 0
-        TEMPERATURE_LIMIT: int = 0
-        MAX_VOLTAGE_LIMIT: int = 0
-        MIN_VOLTAGE_LIMIT: int = 0
-        PWM_LIMIT: int = 0
-        CURRENT_LIMIT: int = 0
-        VELOCITY_LIMIT: int = 0
-        MAX_POSITION_LIMIT: int = 0
-        MIN_POSITION_LIMIT: int = 0
-        STARTUP_CONFIGURATION: int = 0
-        SHUTDOWN: int = 0
-        TORQUE_ENABLE: int = 0
-        LED: int = 0
-        STATUS_RETURN_LEVEL: int = 0
-        REGISTERED_INSTRUCTION: int = 0
-        HARDWARE_ERROR_STATUS: int = 0
-        VELOCITY_I_GAIN: int = 0
-        VELOCITY_P_GAIN: int = 0
-        POSITION_D_GAIN: int = 0
-        POSITION_I_GAIN: int = 0
-        POSITION_P_GAIN: int = 0
-        FEEDFORWARD_2ND_GAIN: int = 0
-        FEEDFORWARD_1ST_GAIN: int = 0
-        BUS_WATCHDOG: int = 0
-        GOAL_PWM: int = 0
-        GOAL_CURRENT: int = 0
-        GOAL_VELOCITY: int = 0
-        PROFILE_ACCELERATION: int = 0
-        PROFILE_VELOCITY: int = 0
-        GOAL_POSITION: int = 0
-        REALTIME_TICK: int = 0
-        MOVING: int = 0
-        MOVING_STATUS: int = 0
-        PRESENT_PWM: int = 0
-        PRESENT_CURRENT: int = 0
-        PRESENT_VELOCITY: int = 0
-        PRESENT_POSITION: int = 0
-        VELOCITY_TRAJECTORY: int = 0
-        POSITION_TRAJECTORY: int = 0
-        PRESENT_INPUT_VOLTAGE: int = 0
-        PRESENT_TEMPERATURE: int = 0
-        BACKUP_READY: int = 0
-        INDIRECT_ADDRESS_1: int = 0
-        INDIRECT_ADDRESS_2: int = 0
-        INDIRECT_ADDRESS_3: int = 0
-        INDIRECT_ADDRESS_4: int = 0
-        INDIRECT_ADDRESS_5: int = 0
-        INDIRECT_ADDRESS_6: int = 0
-        INDIRECT_ADDRESS_7: int = 0
-        INDIRECT_ADDRESS_8: int = 0
-        INDIRECT_ADDRESS_9: int = 0
-        INDIRECT_ADDRESS_10: int = 0
-        INDIRECT_ADDRESS_11: int = 0
-        INDIRECT_ADDRESS_12: int = 0
-        INDIRECT_ADDRESS_13: int = 0
-        INDIRECT_ADDRESS_14: int = 0
-        INDIRECT_ADDRESS_15: int = 0
-        INDIRECT_ADDRESS_16: int = 0
-        INDIRECT_ADDRESS_17: int = 0
-        INDIRECT_ADDRESS_18: int = 0
-        INDIRECT_ADDRESS_19: int = 0
-        INDIRECT_ADDRESS_20: int = 0
-        INDIRECT_ADDRESS_21: int = 0
-        INDIRECT_ADDRESS_22: int = 0
-        INDIRECT_ADDRESS_23: int = 0
-        INDIRECT_ADDRESS_24: int = 0
-        INDIRECT_ADDRESS_25: int = 0
-        INDIRECT_ADDRESS_26: int = 0
-        INDIRECT_ADDRESS_27: int = 0
-        INDIRECT_ADDRESS_28: int = 0
-        INDIRECT_DATA_1: int = 0
-        INDIRECT_DATA_2: int = 0
-        INDIRECT_DATA_3: int = 0
-        INDIRECT_DATA_4: int = 0
-        INDIRECT_DATA_5: int = 0
-        INDIRECT_DATA_6: int = 0
-        INDIRECT_DATA_7: int = 0
-        INDIRECT_DATA_8: int = 0
-        INDIRECT_DATA_9: int = 0
-        INDIRECT_DATA_10: int = 0
-        INDIRECT_DATA_11: int = 0
-        INDIRECT_DATA_12: int = 0
-        INDIRECT_DATA_13: int = 0
-        INDIRECT_DATA_14: int = 0
-        INDIRECT_DATA_15: int = 0
-        INDIRECT_DATA_16: int = 0
-        INDIRECT_DATA_17: int = 0
-        INDIRECT_DATA_18: int = 0
-        INDIRECT_DATA_19: int = 0
-        INDIRECT_DATA_20: int = 0
-        INDIRECT_DATA_21: int = 0
-        INDIRECT_DATA_22: int = 0
-        INDIRECT_DATA_23: int = 0
-        INDIRECT_DATA_24: int = 0
-        INDIRECT_DATA_25: int = 0
-        INDIRECT_DATA_26: int = 0
-        INDIRECT_DATA_27: int = 0
-        INDIRECT_DATA_28: int = 0
+Only registers used by this project are defined here. Keeping address and
+byte width together prevents model-specific magic numbers from spreading.
+"""
 
-    class Size:
-        MODEL_NUMBER: int = 0
-        FIRMWARE_VERSION: int = 0
-        ID: int = 0
-        BAUD_RATE: int = 0
-        RETURN_DELAY_TIME: int = 0
-        DRIVE_MODE: int = 0
-        OPERATING_MODE: int = 0
-        SECONDARY_ID: int = 0
-        PROTOCOL_TYPE: int = 0
-        HOMING_OFFSET: int = 0
-        MOVING_THRESHOLD: int = 0
-        TEMPERATURE_LIMIT: int = 0
-        MAX_VOLTAGE_LIMIT: int = 0
-        MIN_VOLTAGE_LIMIT: int = 0
-        PWM_LIMIT: int = 0
-        CURRENT_LIMIT: int = 0
-        VELOCITY_LIMIT: int = 0
-        MAX_POSITION_LIMIT: int = 0
-        MIN_POSITION_LIMIT: int = 0
-        STARTUP_CONFIGURATION: int = 0
-        SHUTDOWN: int = 0
-        TORQUE_ENABLE: int = 0
-        LED: int = 0
-        STATUS_RETURN_LEVEL: int = 0
-        REGISTERED_INSTRUCTION: int = 0
-        HARDWARE_ERROR_STATUS: int = 0
-        VELOCITY_I_GAIN: int = 0
-        VELOCITY_P_GAIN: int = 0
-        POSITION_D_GAIN: int = 0
-        POSITION_I_GAIN: int = 0
-        POSITION_P_GAIN: int = 0
-        FEEDFORWARD_2ND_GAIN: int = 0
-        FEEDFORWARD_1ST_GAIN: int = 0
-        BUS_WATCHDOG: int = 0
-        GOAL_PWM: int = 0
-        GOAL_CURRENT: int = 0
-        GOAL_VELOCITY: int = 0
-        PROFILE_ACCELERATION: int = 0
-        PROFILE_VELOCITY: int = 0
-        GOAL_POSITION: int = 0
-        REALTIME_TICK: int = 0
-        MOVING: int = 0
-        MOVING_STATUS: int = 0
-        PRESENT_PWM: int = 0
-        PRESENT_CURRENT: int = 0
-        PRESENT_VELOCITY: int = 0
-        PRESENT_POSITION: int = 0
-        VELOCITY_TRAJECTORY: int = 0
-        POSITION_TRAJECTORY: int = 0
-        PRESENT_INPUT_VOLTAGE: int = 0
-        PRESENT_TEMPERATURE: int = 0
-        BACKUP_READY: int = 0
+from __future__ import annotations
+
+from dataclasses import dataclass
+from enum import IntEnum
 
 
-class MX28_AT(ActuatorControlTable):
-    UNIT_NUMBER = 4096
-    PROTOCOL_VERSION = 1.0
-
-    class Address:
-        MODEL_NUMBER = 0
-        FIRMWARE_VERSION = 2
-        ID = 3
-        BAUD_RATE = 4
-        RETURN_DELAY_TIME = 5
-        CW_ANGLE_LIMIT = 6
-        CCW_ANGLE_LIMIT = 8
-        TEMPERATURE_LIMIT = 11
-        MIN_VOLTAGE_LIMIT = 12
-        MAX_VOLTAGE_LIMIT = 13
-        MAX_TORQUE = 14
-        STATUS_RETURN_LEVEL = 16
-        ALARM_LED = 17
-        SHUTDOWN = 18
-        MULTI_TURN_OFFSET = 20
-        RESOLUTION_DIVIDER = 22
-        TORQUE_ENABLE = 24
-        LED = 25
-        D_GAIN = 26
-        I_GAIN = 27
-        P_GAIN = 28
-        GOAL_POSITION = 30
-        MOVING_SPEED = 32
-        TORQUE_LIMIT = 34
-        PRESENT_POSITION = 36
-        PRESENT_SPEED = 38
-        PRESENT_LOAD = 40
-        PRESENT_VOLTAGE = 42
-        PRESENT_TEMPERATURE = 43
-        REGISTERED = 44
-        MOVING = 46
-        LOCK = 47
-        PUNCH = 48
-        REALTIME_TICK = 50
-        GOAL_ACCELERATION = 73
-
-    class Size:
-        MODEL_NUMBER = 2
-        FIRMWARE_VERSION = 1
-        ID = 1
-        BAUD_RATE = 1
-        RETURN_DELAY_TIME = 1
-        CW_ANGLE_LIMIT = 2
-        CCW_ANGLE_LIMIT = 2
-        TEMPERATURE_LIMIT = 1
-        MIN_VOLTAGE_LIMIT = 1
-        MAX_VOLTAGE_LIMIT = 1
-        MAX_TORQUE = 2
-        STATUS_RETURN_LEVEL = 1
-        ALARM_LED = 1
-        SHUTDOWN = 1
-        MULTI_TURN_OFFSET = 2
-        RESOLUTION_DIVIDER = 1
-        TORQUE_ENABLE = 1
-        LED = 1
-        D_GAIN = 1
-        I_GAIN = 1
-        P_GAIN = 1
-        GOAL_POSITION = 2
-        MOVING_SPEED = 2
-        TORQUE_LIMIT = 2
-        PRESENT_POSITION = 2
-        PRESENT_SPEED = 2
-        PRESENT_LOAD = 2
-        PRESENT_VOLTAGE = 1
-        PRESENT_TEMPERATURE = 1
-        REGISTERED = 1
-        MOVING = 1
-        LOCK = 1
-        PUNCH = 2
-        REALTIME_TICK = 2
-        GOAL_ACCELERATION = 1
+@dataclass(frozen=True)
+class Register:
+    address: int
+    size: int
 
 
-class XM430_W350T(ActuatorControlTable):
-    UNIT_NUMBER = 1020
-    PROTOCOL_VERSION = 2.0
-
-    class Address:
-        MODEL_NUMBER = 0
-        FIRMWARE_VERSION = 2
-        ID = 7
-        BAUD_RATE = 8
-        RETURN_DELAY_TIME = 9
-        DRIVE_MODE = 10
-        OPERATING_MODE = 11
-        SECONDARY_ID = 12
-        PROTOCOL_TYPE = 13
-        HOMING_OFFSET = 20
-        MOVING_THRESHOLD = 24
-        TEMPERATURE_LIMIT = 31
-        MAX_VOLTAGE_LIMIT = 32
-        MIN_VOLTAGE_LIMIT = 34
-        PWM_LIMIT = 36
-        CURRENT_LIMIT = 38
-        VELOCITY_LIMIT = 44
-        MAX_POSITION_LIMIT = 48
-        MIN_POSITION_LIMIT = 52
-        STARTUP_CONFIGURATION = 60
-        SHUTDOWN = 63
-        TORQUE_ENABLE = 64
-        LED = 65
-        STATUS_RETURN_LEVEL = 68
-        REGISTERED_INSTRUCTION = 69
-        HARDWARE_ERROR_STATUS = 70
-        VELOCITY_I_GAIN = 76
-        VELOCITY_P_GAIN = 78
-        POSITION_D_GAIN = 80
-        POSITION_I_GAIN = 82
-        POSITION_P_GAIN = 84
-        FEEDFORWARD_2ND_GAIN = 88
-        FEEDFORWARD_1ST_GAIN = 90
-        BUS_WATCHDOG = 98
-        GOAL_PWM = 100
-        GOAL_CURRENT = 102
-        GOAL_VELOCITY = 104
-        PROFILE_ACCELERATION = 108
-        PROFILE_VELOCITY = 112
-        GOAL_POSITION = 116
-        REALTIME_TICK = 120
-        MOVING = 122
-        MOVING_STATUS = 123
-        PRESENT_PWM = 124
-        PRESENT_CURRENT = 126
-        PRESENT_VELOCITY = 128
-        PRESENT_POSITION = 132
-        VELOCITY_TRAJECTORY = 136
-        POSITION_TRAJECTORY = 140
-        PRESENT_INPUT_VOLTAGE = 144
-        PRESENT_TEMPERATURE = 146
-        BACKUP_READY = 147
-
-    class Size:
-        MODEL_NUMBER = 2
-        FIRMWARE_VERSION = 1
-        ID = 1
-        BAUD_RATE = 1
-        RETURN_DELAY_TIME = 1
-        DRIVE_MODE = 1
-        OPERATING_MODE = 1
-        SECONDARY_ID = 1
-        PROTOCOL_TYPE = 1
-        HOMING_OFFSET = 4
-        MOVING_THRESHOLD = 4
-        TEMPERATURE_LIMIT = 1
-        MAX_VOLTAGE_LIMIT = 2
-        MIN_VOLTAGE_LIMIT = 2
-        PWM_LIMIT = 2
-        CURRENT_LIMIT = 2
-        VELOCITY_LIMIT = 4
-        MAX_POSITION_LIMIT = 4
-        MIN_POSITION_LIMIT = 4
-        STARTUP_CONFIGURATION = 1
-        SHUTDOWN = 1
-        TORQUE_ENABLE = 1
-        LED = 1
-        STATUS_RETURN_LEVEL = 1
-        REGISTERED_INSTRUCTION = 1
-        HARDWARE_ERROR_STATUS = 1
-        VELOCITY_I_GAIN = 2
-        VELOCITY_P_GAIN = 2
-        POSITION_D_GAIN = 2
-        POSITION_I_GAIN = 2
-        POSITION_P_GAIN = 2
-        FEEDFORWARD_2ND_GAIN = 2
-        FEEDFORWARD_1ST_GAIN = 2
-        BUS_WATCHDOG = 1
-        GOAL_PWM = 2
-        GOAL_CURRENT = 2
-        GOAL_VELOCITY = 4
-        PROFILE_ACCELERATION = 4
-        PROFILE_VELOCITY = 4
-        GOAL_POSITION = 4
-        REALTIME_TICK = 2
-        MOVING = 1
-        MOVING_STATUS = 1
-        PRESENT_PWM = 2
-        PRESENT_CURRENT = 2
-        PRESENT_VELOCITY = 4
-        PRESENT_POSITION = 4
-        VELOCITY_TRAJECTORY = 4
-        POSITION_TRAJECTORY = 4
-        PRESENT_INPUT_VOLTAGE = 2
-        PRESENT_TEMPERATURE = 1
-        BACKUP_READY = 1
+@dataclass(frozen=True)
+class ControlTable:
+    torque_enable: Register
+    goal_position: Register
+    present_position: Register
+    moving_speed: Register | None = None
+    operating_mode: Register | None = None
+    goal_velocity: Register | None = None
+    present_velocity: Register | None = None
+    profile_velocity: Register | None = None
+    profile_acceleration: Register | None = None
 
 
-class XM430_W210T(ActuatorControlTable):
-    UNIT_NUMBER = 1030
-    PROTOCOL_VERSION = 2.0
+@dataclass(frozen=True)
+class ActuatorModel:
+    name: str
+    model_number: int
+    protocol_version: float
+    position_resolution: int
+    table: ControlTable
 
-    class Address:
-        MODEL_NUMBER = 0
-        FIRMWARE_VERSION = 2
-        ID = 7
-        BAUD_RATE = 8
-        RETURN_DELAY_TIME = 9
-        DRIVE_MODE = 10
-        OPERATING_MODE = 11
-        SECONDARY_ID = 12
-        PROTOCOL_TYPE = 13
-        HOMING_OFFSET = 20
-        MOVING_THRESHOLD = 24
-        TEMPERATURE_LIMIT = 31
-        MAX_VOLTAGE_LIMIT = 32
-        MIN_VOLTAGE_LIMIT = 34
-        PWM_LIMIT = 36
-        CURRENT_LIMIT = 38
-        VELOCITY_LIMIT = 44
-        MAX_POSITION_LIMIT = 48
-        MIN_POSITION_LIMIT = 52
-        STARTUP_CONFIGURATION = 60
-        SHUTDOWN = 63
-        TORQUE_ENABLE = 64
-        LED = 65
-        STATUS_RETURN_LEVEL = 68
-        REGISTERED_INSTRUCTION = 69
-        HARDWARE_ERROR_STATUS = 70
-        VELOCITY_I_GAIN = 76
-        VELOCITY_P_GAIN = 78
-        POSITION_D_GAIN = 80
-        POSITION_I_GAIN = 82
-        POSITION_P_GAIN = 84
-        FEEDFORWARD_2ND_GAIN = 88
-        FEEDFORWARD_1ST_GAIN = 90
-        BUS_WATCHDOG = 98
-        GOAL_PWM = 100
-        GOAL_CURRENT = 102
-        GOAL_VELOCITY = 104
-        PROFILE_ACCELERATION = 108
-        PROFILE_VELOCITY = 112
-        GOAL_POSITION = 116
-        REALTIME_TICK = 120
-        MOVING = 122
-        MOVING_STATUS = 123
-        PRESENT_PWM = 124
-        PRESENT_CURRENT = 126
-        PRESENT_VELOCITY = 128
-        PRESENT_POSITION = 132
-        VELOCITY_TRAJECTORY = 136
-        POSITION_TRAJECTORY = 140
-        PRESENT_INPUT_VOLTAGE = 144
-        PRESENT_TEMPERATURE = 146
-        BACKUP_READY = 147
 
-    class Size:
-        MODEL_NUMBER = 2
-        FIRMWARE_VERSION = 1
-        ID = 1
-        BAUD_RATE = 1
-        RETURN_DELAY_TIME = 1
-        DRIVE_MODE = 1
-        OPERATING_MODE = 1
-        SECONDARY_ID = 1
-        PROTOCOL_TYPE = 1
-        HOMING_OFFSET = 4
-        MOVING_THRESHOLD = 4
-        TEMPERATURE_LIMIT = 1
-        MAX_VOLTAGE_LIMIT = 2
-        MIN_VOLTAGE_LIMIT = 2
-        PWM_LIMIT = 2
-        CURRENT_LIMIT = 2
-        VELOCITY_LIMIT = 4
-        MAX_POSITION_LIMIT = 4
-        MIN_POSITION_LIMIT = 4
-        STARTUP_CONFIGURATION = 1
-        SHUTDOWN = 1
-        TORQUE_ENABLE = 1
-        LED = 1
-        STATUS_RETURN_LEVEL = 1
-        REGISTERED_INSTRUCTION = 1
-        HARDWARE_ERROR_STATUS = 1
-        VELOCITY_I_GAIN = 2
-        VELOCITY_P_GAIN = 2
-        POSITION_D_GAIN = 2
-        POSITION_I_GAIN = 2
-        POSITION_P_GAIN = 2
-        FEEDFORWARD_2ND_GAIN = 2
-        FEEDFORWARD_1ST_GAIN = 2
-        BUS_WATCHDOG = 1
-        GOAL_PWM = 2
-        GOAL_CURRENT = 2
-        GOAL_VELOCITY = 4
-        PROFILE_ACCELERATION = 4
-        PROFILE_VELOCITY = 4
-        GOAL_POSITION = 4
-        REALTIME_TICK = 2
-        MOVING = 1
-        MOVING_STATUS = 1
-        PRESENT_PWM = 2
-        PRESENT_CURRENT = 2
-        PRESENT_VELOCITY = 4
-        PRESENT_POSITION = 4
-        VELOCITY_TRAJECTORY = 4
-        POSITION_TRAJECTORY = 4
-        PRESENT_INPUT_VOLTAGE = 2
-        PRESENT_TEMPERATURE = 1
-        BACKUP_READY = 1
+class OperatingMode(IntEnum):
+    VELOCITY = 1
+    POSITION = 3
+    EXTENDED_POSITION = 4
+
+
+MX28_AT = ActuatorModel(
+    name="MX-28AT",
+    model_number=29,
+    protocol_version=1.0,
+    position_resolution=4096,
+    table=ControlTable(
+        torque_enable=Register(24, 1),
+        goal_position=Register(30, 2),
+        moving_speed=Register(32, 2),
+        present_position=Register(36, 2),
+    ),
+)
+
+_XM430_TABLE = ControlTable(
+    operating_mode=Register(11, 1),
+    torque_enable=Register(64, 1),
+    goal_velocity=Register(104, 4),
+    profile_acceleration=Register(108, 4),
+    profile_velocity=Register(112, 4),
+    goal_position=Register(116, 4),
+    present_velocity=Register(128, 4),
+    present_position=Register(132, 4),
+)
+
+XM430_W350T = ActuatorModel(
+    name="XM430-W350-T",
+    model_number=1020,
+    protocol_version=2.0,
+    position_resolution=4096,
+    table=_XM430_TABLE,
+)
+
+XM430_W210T = ActuatorModel(
+    name="XM430-W210-T",
+    model_number=1030,
+    protocol_version=2.0,
+    position_resolution=4096,
+    table=_XM430_TABLE,
+)
+
+
+__all__ = [
+    "ActuatorModel",
+    "ControlTable",
+    "MX28_AT",
+    "OperatingMode",
+    "Register",
+    "XM430_W210T",
+    "XM430_W350T",
+]
