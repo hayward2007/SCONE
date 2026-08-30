@@ -158,7 +158,7 @@ checkpoints/
 tensorboard/
 wandb/
 mlruns/
-/src/reinforce_learning/remote_watch/
+/src/rl/remote_watch/
 events.out.tfevents.*
 *.monitor.csv
 

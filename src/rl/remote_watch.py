@@ -6,7 +6,7 @@ policy used by a local MuJoCo environment.
 
 Example::
 
-    mjpython remote_watch.py \
+    mjpython -m src.rl.remote_watch \
         --host ssh.hayward.kim \
         --checkpoint-dir '~/Developer/SCONE/runs/scone_walk_easy/checkpoints' \
         --command 0.25 0.0 0.0
@@ -31,12 +31,20 @@ from typing import Protocol
 import numpy as np
 from stable_baselines3 import PPO
 
-from src.reinforce_learning.walk_learn import CURRICULUM_RANGES, DEFAULT_MODEL_PATH, SconeWalkEnv
+from .walk_learn import CURRICULUM_RANGES, DEFAULT_MODEL_PATH, SconeWalkEnv
+from src.simulation.terrain import TERRAIN_CHOICES, TerrainType
 
 
 CHECKPOINT_NAME = re.compile(r"^(?P<prefix>.+)_(?P<steps>[0-9]+)_steps\.zip$")
-SAFE_SSH_HOST = re.compile(r"^[A-Za-z0-9_.@-]+$")
+SAFE_SSH_HOST = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.@-]*$")
 SAFE_PREFIX = re.compile(r"^[A-Za-z0-9_.-]+$")
+
+# The original policy used 68 observations. Heading-error sin/cos were later
+# appended, producing the current 70-observation environment. Because they are
+# appended at the end, old policies can still be replayed by presenting the
+# first 68 values; no network weights need to be modified for visualization.
+LEGACY_OBSERVATION_SHAPE = (68,)
+CURRENT_OBSERVATION_SHAPE = (70,)
 
 
 @dataclass(frozen=True)
@@ -186,12 +194,14 @@ def mirror_checkpoint(
     source: CheckpointSource,
     candidate: CheckpointCandidate,
     cache_dir: Path,
+    *,
+    refresh: bool = False,
 ) -> Path:
     """Download, validate, then atomically publish a checkpoint locally."""
 
     cache_dir.mkdir(parents=True, exist_ok=True)
     destination = cache_dir / Path(candidate.source_path).name
-    if destination.exists():
+    if destination.exists() and not refresh:
         try:
             _validate_ppo_zip(destination)
             return destination
@@ -260,10 +270,15 @@ class CheckpointPoller:
 
 def _load_policy(path: Path, env: SconeWalkEnv, device: str) -> PPO:
     policy = PPO.load(path, device=device)
-    if policy.observation_space.shape != env.observation_space.shape:
+    observation_shape = policy.observation_space.shape
+    supported_shapes = {
+        env.observation_space.shape,
+        LEGACY_OBSERVATION_SHAPE,
+    }
+    if observation_shape not in supported_shapes:
         raise ValueError(
-            "checkpoint observation shape does not match this walk_learn.py: "
-            f"{policy.observation_space.shape} != {env.observation_space.shape}"
+            "unsupported checkpoint observation shape: "
+            f"{observation_shape}; expected one of {sorted(supported_shapes)}"
         )
     if policy.action_space.shape != env.action_space.shape:
         raise ValueError(
@@ -271,6 +286,22 @@ def _load_policy(path: Path, env: SconeWalkEnv, device: str) -> PPO:
             f"{policy.action_space.shape} != {env.action_space.shape}"
         )
     return policy
+
+
+def _observation_for_policy(policy: PPO, observation: np.ndarray) -> np.ndarray:
+    """Adapt the current observation to a replay-only legacy policy input."""
+
+    expected_shape = policy.observation_space.shape
+    if expected_shape == observation.shape:
+        return observation
+    if (
+        expected_shape == LEGACY_OBSERVATION_SHAPE
+        and observation.shape == CURRENT_OBSERVATION_SHAPE
+    ):
+        return observation[: LEGACY_OBSERVATION_SHAPE[0]]
+    raise ValueError(
+        f"cannot adapt observation {observation.shape} to policy {expected_shape}"
+    )
 
 
 def _newest_update(
@@ -302,6 +333,8 @@ def run_viewer(args: argparse.Namespace, source: CheckpointSource) -> int:
         curriculum=args.curriculum,
         fixed_command=args.command,
         render_mode="human",
+        terrain=args.terrain,
+        terrain_seed=args.terrain_seed,
     )
     observation, _ = env.reset(seed=args.seed)
     zero_action = np.zeros(env.action_space.shape, dtype=np.float32)
@@ -332,15 +365,25 @@ def run_viewer(args: argparse.Namespace, source: CheckpointSource) -> int:
                 else:
                     policy = next_policy
                     active_step = step
+                    compatibility = (
+                        " (legacy 68-observation compatibility mode)"
+                        if policy.observation_space.shape
+                        == LEGACY_OBSERVATION_SHAPE
+                        else ""
+                    )
                     print(
-                        f"[remote-watch] now replaying step {active_step:,}",
+                        f"[remote-watch] now replaying step {active_step:,}"
+                        f"{compatibility}",
                         flush=True,
                     )
 
             if policy is None:
                 action = zero_action
             else:
-                action, _ = policy.predict(observation, deterministic=True)
+                policy_observation = _observation_for_policy(policy, observation)
+                action, _ = policy.predict(
+                    policy_observation, deterministic=True
+                )
             observation, _, terminated, truncated, _ = env.step(action)
             if terminated or truncated:
                 observation, _ = env.reset()
@@ -385,6 +428,12 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--poll-interval", type=float, default=5.0)
     parser.add_argument("--cache-dir", type=Path, default=Path("runs/remote_watch"))
     parser.add_argument("--model", type=Path, default=DEFAULT_MODEL_PATH)
+    parser.add_argument(
+        "--terrain",
+        choices=TERRAIN_CHOICES,
+        default=TerrainType.FLAT.value,
+    )
+    parser.add_argument("--terrain-seed", type=int, default=7)
     parser.add_argument(
         "--curriculum", choices=tuple(CURRICULUM_RANGES), default="full"
     )

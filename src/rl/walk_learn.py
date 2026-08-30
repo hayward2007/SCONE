@@ -12,15 +12,15 @@ Examples
 --------
 Run API and numerical checks without training::
 
-    python walk_learn.py check --steps 500
+    python -m src.rl.walk_learn check --steps 500
 
 Train a first forward-only PPO policy::
 
-    python walk_learn.py train --curriculum easy --timesteps 1000000
+    python -m src.rl.walk_learn train --curriculum easy --timesteps 1000000
 
 Preview a saved policy at a fixed body-frame velocity command::
 
-    mjpython walk_learn.py enjoy runs/scone_walk/final_model.zip \
+    mjpython -m src.rl.walk_learn enjoy runs/scone_walk/final_model.zip \
         --command 0.25 0.0 0.0
 """
 
@@ -44,8 +44,10 @@ from stable_baselines3.common.env_checker import check_env
 from stable_baselines3.common.vec_env import DummyVecEnv, VecMonitor
 
 from src.hardware.actuator import Actuator
-from src.simulation.controller import MuJoCoController
-from src.simulation.pid import spec_for_motor_id
+from src.simulation.core.controller import MuJoCoController
+from src.simulation.core.model import load_model
+from src.simulation.core.pid import spec_for_motor_id
+from src.simulation.terrain import TERRAIN_CHOICES, TerrainType
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -131,6 +133,8 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         render_mode: str | None = None,
         reward_config: RewardConfig | None = None,
         walk_config: WalkConfig | None = None,
+        terrain: TerrainType | str = TerrainType.FLAT,
+        terrain_seed: int = 7,
     ) -> None:
         super().__init__()
         if curriculum not in CURRICULUM_RANGES:
@@ -155,8 +159,14 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         self.render_mode = render_mode
         self.reward_config = reward_config or RewardConfig()
         self.walk_config = walk_config or WalkConfig()
+        self.terrain = TerrainType.parse(terrain)
+        self.terrain_seed = terrain_seed
 
-        self.model = mujoco.MjModel.from_xml_path(str(self.model_path))
+        self.model = load_model(
+            self.model_path,
+            terrain=self.terrain,
+            terrain_seed=terrain_seed,
+        )
         self.model.opt.timestep = self.walk_config.physics_timestep
         self.data = mujoco.MjData(self.model)
         self.controller: MuJoCoController
@@ -179,6 +189,15 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         )
         if self.floor_geom_id < 0:
             raise ValueError("walk learning requires simulation_floor")
+        self.ground_geom_ids = {self.floor_geom_id}
+        for geom_id in range(self.model.ngeom):
+            name = mujoco.mj_id2name(
+                self.model,
+                mujoco.mjtObj.mjOBJ_GEOM,
+                geom_id,
+            )
+            if name and name.startswith("terrain_"):
+                self.ground_geom_ids.add(geom_id)
 
         self.tire_geom_ids: set[int] = set()
         self.tire_geom_to_body: dict[int, int] = {}
@@ -233,6 +252,31 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         self._jacobian_rotation = np.zeros((3, self.model.nv), dtype=np.float64)
         self._contact_force = np.zeros(6, dtype=np.float64)
         self._body_velocity = np.zeros(6, dtype=np.float64)
+
+    def set_velocity_command(
+        self, command: np.ndarray | list[float] | tuple[float, float, float]
+    ) -> np.ndarray:
+        """Set the live ``[vx, vy, yaw_rate]`` command used on the next step.
+
+        Manual commands use the full observation normalization range, which is
+        also the range used by the full curriculum. A checkpoint trained only
+        on an easier curriculum may not track lateral or yaw commands well,
+        but the environment still exposes all three command axes consistently.
+        """
+
+        parsed = np.asarray(command, dtype=np.float64)
+        if parsed.shape != (3,):
+            raise ValueError("velocity command must contain [vx, vy, yaw_rate]")
+        if not np.all(np.isfinite(parsed)):
+            raise ValueError("velocity command must contain only finite values")
+        clipped = np.clip(
+            parsed,
+            -OBSERVATION_COMMAND_SCALE,
+            OBSERVATION_COMMAND_SCALE,
+        )
+        self.fixed_command = clipped.copy()
+        self._command_target[:] = clipped
+        return clipped.copy()
 
     def _sample_command(self) -> np.ndarray:
         if self.fixed_command is not None:
@@ -433,9 +477,9 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
             contact = self.data.contact[contact_index]
             geom1 = int(contact.geom1)
             geom2 = int(contact.geom2)
-            if geom1 == self.floor_geom_id and geom2 in self.tire_geom_ids:
+            if geom1 in self.ground_geom_ids and geom2 in self.tire_geom_ids:
                 tire_geom = geom2
-            elif geom2 == self.floor_geom_id and geom1 in self.tire_geom_ids:
+            elif geom2 in self.ground_geom_ids and geom1 in self.tire_geom_ids:
                 tire_geom = geom1
             else:
                 continue
@@ -469,9 +513,9 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
             contact = self.data.contact[contact_index]
             geom1 = int(contact.geom1)
             geom2 = int(contact.geom2)
-            if geom1 == self.floor_geom_id:
+            if geom1 in self.ground_geom_ids:
                 other = geom2
-            elif geom2 == self.floor_geom_id:
+            elif geom2 in self.ground_geom_ids:
                 other = geom1
             else:
                 continue
@@ -745,17 +789,26 @@ def _build_env(
     curriculum: str,
     fixed_command: list[float] | None = None,
     render_mode: str | None = None,
+    terrain: TerrainType | str = TerrainType.FLAT,
+    terrain_seed: int = 7,
 ) -> SconeWalkEnv:
     return SconeWalkEnv(
         model_path,
         curriculum=curriculum,
         fixed_command=fixed_command,
         render_mode=render_mode,
+        terrain=terrain,
+        terrain_seed=terrain_seed,
     )
 
 
 def run_check(args: argparse.Namespace) -> int:
-    env = _build_env(args.model, args.curriculum)
+    env = _build_env(
+        args.model,
+        args.curriculum,
+        terrain=args.terrain,
+        terrain_seed=args.terrain_seed,
+    )
     check_env(env, warn=True, skip_render_check=True)
     observation, _ = env.reset(seed=args.seed)
     totals: dict[str, float] = {}
@@ -791,8 +844,15 @@ def run_train(args: argparse.Namespace) -> int:
     run_dir.mkdir(parents=True, exist_ok=True)
 
     factories = [
-        (lambda: _build_env(args.model, args.curriculum))
-        for _ in range(args.num_envs)
+        (
+            lambda environment_index=environment_index: _build_env(
+                args.model,
+                args.curriculum,
+                terrain=args.terrain,
+                terrain_seed=args.terrain_seed + environment_index,
+            )
+        )
+        for environment_index in range(args.num_envs)
     ]
     vec_env = VecMonitor(
         DummyVecEnv(factories), filename=str(run_dir / "monitor.csv")
@@ -857,6 +917,8 @@ def run_enjoy(args: argparse.Namespace) -> int:
         args.curriculum,
         fixed_command=args.command,
         render_mode="human",
+        terrain=args.terrain,
+        terrain_seed=args.terrain_seed,
     )
     model = PPO.load(args.checkpoint, env=env, device=args.device)
     observation, _ = env.reset(seed=args.seed)
@@ -888,6 +950,18 @@ def build_parser() -> argparse.ArgumentParser:
         type=Path,
         default=DEFAULT_MODEL_PATH,
         help="MJCF path (default: model.xml)",
+    )
+    parser.add_argument(
+        "--terrain",
+        choices=TERRAIN_CHOICES,
+        default=TerrainType.FLAT.value,
+        help="procedural terrain preset",
+    )
+    parser.add_argument(
+        "--terrain-seed",
+        type=int,
+        default=7,
+        help="base seed; vectorized training offsets it per environment",
     )
     subparsers = parser.add_subparsers(dest="command_name", required=True)
 
