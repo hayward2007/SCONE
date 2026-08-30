@@ -1,13 +1,14 @@
 import time;
 
-from ..core import *;
-from .. import provider;
+from src.hardware.actuator import Actuator;
+from src.hardware import *;
+from src import locomotion;
 
-class Walk(provider.Mode) :
+class Walk(locomotion.Mode) :
     # the moving degree of each step
     __moving_degree = 20;
 
-    def __init__(self, mode: provider.Mode, is_initial: bool = False) :
+    def __init__(self, mode: locomotion.Mode, is_initial: bool = False) :
         self.controller = mode.controller;
 
         self.upper_initial_position = mode.upper_initial_position;
@@ -185,4 +186,4 @@ class Walk(provider.Mode) :
         for i in Actuator.middle_index :
             self.controller.set_raw_position(i, Actuator.position.center);
 
-        return provider.Drive(self);
+        return locomotion.Drive(self);

@@ -1,4 +1,5 @@
-from ..core import *;
+from src.hardware import *;
+from src.hardware.controller import Controller;
 
 class Mode :
     __default_upper_position = [ 180 for _ in range(6) ];

@@ -3,8 +3,8 @@ from enum import Enum
 from getch import getch;
 from InquirerPy import prompt;
 
-from .core import *;
-from .provider import *;
+from .hardware import *;
+from .locomotion import *;
 
 # You can use SCONE class as a SCONE api however SCONE.Cli is for my personal use
 class SCONE :
@@ -54,9 +54,9 @@ class SCONE :
             __starting_middle_position = 135;
 
             # initialize operating mode
-            for i in Actuator.index :
-                self.controller.set_torque(i, Actuator.torque.off);
-                self.controller.set_mode(i, Actuator.model.XM.operating_mode.position);
+            for i in Actuator.Index.ALL :
+                self.controller.set_torque(i, Actuator.Torque.OFF);
+                self.controller.set_mode(i, Actuator.Model.XM.OperatingMode.POSITION);
                 self.controller.set_acceleration(i, 20);
             time.sleep(0.1);
 
@@ -64,19 +64,19 @@ class SCONE :
             self.controller.enable_torque();
             self.controller.set_all_speed(self.operate.safety_speed);
 
-            for i in Actuator.middle_index :
+            for i in Actuator.Index.MIDDLE :
                 self.controller.set_position(i, __starting_middle_position);
             time.sleep(0.5);
 
-            for i in Actuator.upper_index :
+            for i in Actuator.Index.UPPER :
                 self.controller.set_position(i, self.operate.upper_initial_position[i - 1]);
-            for i in Actuator.lower_index :
+            for i in Actuator.Index.LOWER :
                 self.controller.set_speed(i, self.operate.boost_speed);
                 self.controller.set_position(i, self.operate.lower_initial_position);
             time.sleep(0.7);
 
             self.controller.set_all_speed(self.operate.safety_speed);
-            for i in Actuator.middle_index :
+            for i in Actuator.Index.MIDDLE :
                 self.controller.set_position(i, self.operate.middle_initial_position);
             time.sleep(1);
 
@@ -85,7 +85,7 @@ class SCONE :
         def __end_position(self) :
             __ending_middle_position = 150;
 
-            for i in Actuator.middle_index :
+            for i in Actuator.Index.MIDDLE :
                 self.controller.set_speed(i, self.operate.safety_speed);
                 self.controller.set_position(i, __ending_middle_position);
             time.sleep(1);

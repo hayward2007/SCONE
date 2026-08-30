@@ -1,10 +1,11 @@
 import time;
 
-from ..core import *;
-from .. import provider;
+from src.hardware.actuator import Actuator;
+from src.hardware import *;
+from src import locomotion;
 
-class Drive(provider.Mode) :
-    def __init__(self, mode: provider.Mode) :
+class Drive(locomotion.Mode) :
+    def __init__(self, mode: locomotion.Mode) :
         # sync
         self.controller = mode.controller;
 
@@ -40,4 +41,4 @@ class Drive(provider.Mode) :
             self.controller.set_speed(i, 0, address = Actuator.model.XM.address.goal_velocity);
 
     def change_mode(self) :
-        return provider.Climb(self);
+        return locomotion.Climb(self);

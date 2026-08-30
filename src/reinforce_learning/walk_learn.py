@@ -43,13 +43,13 @@ from stable_baselines3.common.callbacks import BaseCallback, CheckpointCallback
 from stable_baselines3.common.env_checker import check_env
 from stable_baselines3.common.vec_env import DummyVecEnv, VecMonitor
 
-from src.core.actuator import Actuator
+from src.hardware.actuator import Actuator
 from src.simulation.controller import MuJoCoController
 from src.simulation.pid import spec_for_motor_id
 
 
-PROJECT_ROOT = Path(__file__).resolve().parent
-DEFAULT_MODEL_PATH = PROJECT_ROOT / "model.xml"
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+DEFAULT_MODEL_PATH = PROJECT_ROOT / "assets" / "model.xml"
 
 
 @dataclass(frozen=True)
@@ -62,7 +62,8 @@ class RewardConfig:
     """
 
     linear_velocity_sigma: float = 0.25       # m/s
-    yaw_velocity_sigma: float = 0.50          # rad/s
+    yaw_velocity_sigma: float = 0.15          # rad/s
+    heading_error_sigma: float = 0.60         # rad
     projected_gravity_sigma: float = 0.25
     height_sigma: float = 0.05                # m
     vertical_velocity_sigma: float = 0.30     # m/s
@@ -74,11 +75,12 @@ class RewardConfig:
 
     velocity_weight: float = 2.0
     yaw_weight: float = 1.0
+    heading_weight: float = 0.75
     upright_weight: float = 0.5
     height_weight: float = 0.2
     oscillation_weight: float = 0.1
     action_rate_weight: float = 0.02
-    action_magnitude_weight: float = 0.10
+    action_magnitude_weight: float = 0.25
     current_weight: float = 0.02
     slip_weight: float = 0.1
     joint_limit_weight: float = 0.2
@@ -211,9 +213,9 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         self.action_space = spaces.Box(-1.0, 1.0, shape=(18,), dtype=np.float32)
         # base linear velocity 3, angular velocity 3, projected gravity 3,
         # joint position 18, joint velocity 18, previous action 18, command 3,
-        # gait phase sin/cos 2 = 68 values.
+        # gait phase sin/cos 2, heading error sin/cos 2 = 70 values.
         self.observation_space = spaces.Box(
-            low=-np.inf, high=np.inf, shape=(68,), dtype=np.float32
+            low=-np.inf, high=np.inf, shape=(70,), dtype=np.float32
         )
 
         self._phase = 0.0
@@ -221,6 +223,8 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         self._next_command_step = 0
         self._command = np.zeros(3, dtype=np.float64)
         self._command_target = np.zeros(3, dtype=np.float64)
+        self._heading = 0.0
+        self._target_heading = 0.0
         self._last_action = np.zeros(18, dtype=np.float64)
         self._reference_height = 0.0
         self._viewer: Any | None = None
@@ -300,9 +304,9 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         # when its stride offset is negative (verified from root displacement).
         vx_scale = float(np.clip(-self._command[0] / 0.50, -1.0, 1.0))
         yaw_scale = float(np.clip(self._command[2] / 0.80, -1.0, 1.0))
-        tripod_a = set(Actuator.upper_diagonal_left_index)   # {2, 3, 6}
+        tripod_a = set(Actuator.Index.UPPER_DIAGONAL_LEFT)   # {2, 3, 6}
 
-        for motor_id in Actuator.upper_index:
+        for motor_id in Actuator.Index.UPPER:
             tripod_sign = -1.0 if motor_id in tripod_a else 1.0
             side_sign = 1.0 if motor_id % 2 == 1 else -1.0
             command_scale = float(
@@ -320,7 +324,7 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         # lift the two groups, with zero lift velocity at maximum clearance.
         lift_a = max(0.0, phase_sine) * activity
         lift_b = max(0.0, -phase_sine) * activity
-        for upper_motor_id in Actuator.upper_index:
+        for upper_motor_id in Actuator.Index.UPPER:
             middle_motor_id = upper_motor_id + 6
             lift = lift_a if upper_motor_id in tripod_a else lift_b
             reference[middle_motor_id - 1] -= (
@@ -346,11 +350,11 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
 
     def _joint_state(self) -> tuple[np.ndarray, np.ndarray]:
         positions = np.array(
-            [self.controller._joint_position(i) for i in Actuator.index],
+            [self.controller._joint_position(i) for i in Actuator.Index.ALL],
             dtype=np.float64,
         )
         velocities = np.array(
-            [self.controller._joint_velocity(i) for i in Actuator.index],
+            [self.controller._joint_velocity(i) for i in Actuator.Index.ALL],
             dtype=np.float64,
         )
         return positions, velocities
@@ -374,9 +378,19 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         projected_gravity = world_from_body.T @ np.array([0.0, 0.0, -1.0])
         return linear_velocity, angular_velocity, projected_gravity
 
+    def _heading_yaw(self) -> float:
+        world_from_body = self.data.xmat[self.root_body_id].reshape(3, 3)
+        return float(math.atan2(world_from_body[1, 0], world_from_body[0, 0]))
+
+    def _heading_error(self, current_heading: float | None = None) -> float:
+        heading = self._heading_yaw() if current_heading is None else current_heading
+        error = heading - self._target_heading
+        return float(math.atan2(math.sin(error), math.cos(error)))
+
     def _observation(self) -> np.ndarray:
         linear_velocity, angular_velocity, gravity = self._base_state()
         joint_position, joint_velocity = self._joint_state()
+        heading_error = self._heading_error()
         observation = np.concatenate(
             [
                 linear_velocity / 2.0,
@@ -390,6 +404,8 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
                     [
                         math.sin(2.0 * math.pi * self._phase),
                         math.cos(2.0 * math.pi * self._phase),
+                        math.sin(heading_error),
+                        math.cos(heading_error),
                     ]
                 ),
             ]
@@ -469,7 +485,7 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
 
     def _normalized_current_penalty(self) -> float:
         normalized_currents = []
-        for motor_id in Actuator.index:
+        for motor_id in Actuator.Index.ALL:
             actuator_id = int(self.controller._actuator_ids[motor_id])
             voltage = float(self.data.ctrl[actuator_id])
             velocity = self.controller._joint_velocity(motor_id)
@@ -492,6 +508,10 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         )
         yaw_error = float(angular_velocity[2] - self._command[2])
         yaw_tracking = math.exp(-(yaw_error**2) / reward.yaw_velocity_sigma**2)
+        heading_error = self._heading_error()
+        heading_tracking = math.exp(
+            -(heading_error**2) / reward.heading_error_sigma**2
+        )
         upright = math.exp(
             -float(gravity[:2] @ gravity[:2]) / reward.projected_gravity_sigma**2
         )
@@ -517,9 +537,29 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         forbidden_collision = self._forbidden_floor_collision()
         collision_penalty = float(forbidden_collision)
 
-        weighted_terms = {
-            "velocity": reward.velocity_weight * linear_tracking * self.control_dt,
+        velocity_term = reward.velocity_weight * linear_tracking * self.control_dt
+        direction_term = (
+            reward.yaw_weight * yaw_tracking * self.control_dt
+            + reward.heading_weight * heading_tracking * self.control_dt
+        )
+        stability_term = (
+            reward.upright_weight * upright * self.control_dt
+            - reward.height_weight * height_penalty * self.control_dt
+            - reward.oscillation_weight * oscillation_penalty * self.control_dt
+            - reward.slip_weight * slip_penalty * self.control_dt
+            - reward.joint_limit_weight * joint_limit_penalty * self.control_dt
+            - reward.collision_weight * collision_penalty * self.control_dt
+        )
+        damping_term = (
+            -reward.action_rate_weight * action_rate_penalty * self.control_dt
+            - reward.action_magnitude_weight * action_magnitude_penalty * self.control_dt
+            - reward.current_weight * current_penalty * self.control_dt
+        )
+
+        raw_terms = {
+            "velocity": velocity_term,
             "yaw": reward.yaw_weight * yaw_tracking * self.control_dt,
+            "heading": reward.heading_weight * heading_tracking * self.control_dt,
             "upright": reward.upright_weight * upright * self.control_dt,
             "height": -reward.height_weight * height_penalty * self.control_dt,
             "oscillation": -reward.oscillation_weight * oscillation_penalty * self.control_dt,
@@ -531,6 +571,13 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
             "slip": -reward.slip_weight * slip_penalty * self.control_dt,
             "joint_limit": -reward.joint_limit_weight * joint_limit_penalty * self.control_dt,
             "collision": -reward.collision_weight * collision_penalty * self.control_dt,
+        }
+        weighted_terms = {
+            **raw_terms,
+            "velocity": velocity_term,
+            "direction": direction_term,
+            "stability": stability_term,
+            "damping": damping_term,
         }
 
         finite = bool(
@@ -552,6 +599,8 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
             "vx": float(linear_velocity[0]),
             "vy": float(linear_velocity[1]),
             "yaw_rate": float(angular_velocity[2]),
+            "heading_error": heading_error,
+            "target_heading": self._target_heading,
             "height": root_height,
             "stance_contacts": stance_contacts,
             "forbidden_collision": forbidden_collision,
@@ -582,6 +631,8 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         self._last_action.fill(0.0)
         self._command.fill(0.0)
         self._command_target = self._sample_command()
+        self._heading = self._heading_yaw()
+        self._target_heading = self._heading
         self._schedule_next_command()
         if self.fixed_command is not None:
             self._command[:] = self.fixed_command
@@ -609,6 +660,7 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
     ) -> tuple[np.ndarray, float, bool, bool, dict[str, Any]]:
         action64 = np.clip(np.asarray(action, dtype=np.float64), -1.0, 1.0)
         self._update_command()
+        self._target_heading += self._command[2] * self.control_dt
         self._advance_phase()
         self._apply_action(action64)
 

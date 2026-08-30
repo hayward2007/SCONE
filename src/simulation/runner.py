@@ -8,7 +8,7 @@ import time
 from collections.abc import Callable
 
 from ..SCONE import SCONE
-from ..core.actuator import Actuator
+from ..hardware.actuator import Actuator
 from .controller import MuJoCoController
 
 
@@ -119,9 +119,9 @@ class MotionRunner:
         """
 
         restore_velocity_mode = self.mode_name == "Drive"
-        for motor_id in Actuator.index:
+        for motor_id in Actuator.Index.ALL:
             self.controller.set_mode(
-                motor_id, Actuator.model.XM.operating_mode.position
+                motor_id, Actuator.Model.XM.OperatingMode.POSITION
             )
             self.controller.set_acceleration(motor_id, 20)
         time.sleep(0.1)
@@ -129,26 +129,26 @@ class MotionRunner:
         self.controller.enable_torque()
         self.controller.set_all_speed(self.operate.safety_speed)
 
-        for motor_id in Actuator.middle_index:
+        for motor_id in Actuator.Index.MIDDLE:
             self.controller.set_position(motor_id, self._STARTING_MIDDLE_POSITION)
         time.sleep(0.5)
 
-        for motor_id in Actuator.upper_index:
+        for motor_id in Actuator.Index.UPPER:
             self.controller.set_position(
                 motor_id, self.operate.upper_initial_position[motor_id - 1]
             )
-        for motor_id in Actuator.lower_index:
+        for motor_id in Actuator.Index.LOWER:
             self.controller.set_speed(motor_id, self.operate.boost_speed)
             self.controller.set_position(motor_id, self.operate.lower_initial_position)
         time.sleep(0.7)
 
         self.controller.set_all_speed(self.operate.safety_speed)
-        for motor_id in Actuator.middle_index:
+        for motor_id in Actuator.Index.MIDDLE:
             self.controller.set_position(motor_id, self.operate.middle_initial_position)
         time.sleep(1.0)
         self.controller.set_all_speed(self.operate.walking_speed)
         if restore_velocity_mode:
-            self.controller.set_all_mode(Actuator.model.XM.operating_mode.velocity)
+            self.controller.set_all_mode(Actuator.Model.XM.OperatingMode.VELOCITY)
         self._inspection_centered = False
         print(f"[SIM] home complete ({self.profile}/{self.mode_name})")
 
@@ -159,11 +159,11 @@ class MotionRunner:
             self.home()
             return
 
-        self.controller.set_all_mode(Actuator.model.XM.operating_mode.position)
+        self.controller.set_all_mode(Actuator.Model.XM.OperatingMode.POSITION)
         self.controller.enable_torque()
         self.controller.set_all_speed(self.operate.safety_speed)
-        for motor_id in Actuator.index:
-            self.controller.set_raw_position(motor_id, Actuator.position.center)
+        for motor_id in Actuator.Index.ALL:
+            self.controller.set_raw_position(motor_id, Actuator.Position.CENTER)
         self._inspection_centered = True
         print("[SIM] inspection pose: all actuator raw positions -> 2048")
 

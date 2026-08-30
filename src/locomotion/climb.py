@@ -1,10 +1,11 @@
-import time;
+import time
 
-from ..core import *;
-from .. import provider;
+from src.hardware.actuator import Actuator;
+from src.hardware import *;
+from src import locomotion;
 
-class Climb(provider.Mode) :
-    def __init__(self, mode: provider.Mode) :
+class Climb(locomotion.Mode) :
+    def __init__(self, mode: locomotion.Mode) :
         self.controller = mode.controller;
 
         self.upper_initial_position = mode.upper_initial_position;
@@ -102,4 +103,4 @@ class Climb(provider.Mode) :
         self.__default_stance();
 
     def change_mode(self) :
-        return provider.Walk(self);
+        return locomotion.Walk(self);

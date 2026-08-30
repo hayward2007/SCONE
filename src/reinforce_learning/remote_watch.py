@@ -31,7 +31,7 @@ from typing import Protocol
 import numpy as np
 from stable_baselines3 import PPO
 
-from walk_learn import CURRICULUM_RANGES, DEFAULT_MODEL_PATH, SconeWalkEnv
+from src.reinforce_learning.walk_learn import CURRICULUM_RANGES, DEFAULT_MODEL_PATH, SconeWalkEnv
 
 
 CHECKPOINT_NAME = re.compile(r"^(?P<prefix>.+)_(?P<steps>[0-9]+)_steps\.zip$")

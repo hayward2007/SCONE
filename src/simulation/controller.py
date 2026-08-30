@@ -9,7 +9,7 @@ from collections.abc import Sequence
 import mujoco
 import numpy as np
 
-from ..core.actuator import Actuator
+from ..hardware.actuator import Actuator
 from .pid import DCMotorPID, default_gains_for_motor_id, spec_for_motor_id
 
 
