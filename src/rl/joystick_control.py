@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import threading
 import time
+from collections.abc import Sequence
 from pathlib import Path
 
 from src.cli import JoystickLimits, run_velocity_joystick_cli
@@ -11,6 +12,7 @@ from src.locomotion import VelocityCommand
 from src.simulation.terrain import TerrainType
 
 from .remote_watch import _load_policy, _observation_for_policy, _validate_ppo_zip
+from .stance import SPORT_STANDING_DEGREES
 from .walk_learn import (
     DEFAULT_MODEL_PATH,
     OBSERVATION_COMMAND_SCALE,
@@ -41,6 +43,7 @@ def run_rl_joystick(
     terrain_seed: int = 7,
     device: str = "auto",
     seed: int = 7,
+    standing_pose_degrees: Sequence[float] = SPORT_STANDING_DEGREES,
 ) -> None:
     """Run a PPO policy whose command is supplied by the common CLI joystick."""
 
@@ -53,6 +56,7 @@ def run_rl_joystick(
         walk_config=WalkConfig(episode_seconds=24.0 * 60.0 * 60.0),
         terrain=terrain,
         terrain_seed=terrain_seed,
+        standing_pose_degrees=standing_pose_degrees,
     )
     policy = _load_policy(checkpoint_path, env, device)
     observation, _ = env.reset(seed=seed)

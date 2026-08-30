@@ -15,10 +15,17 @@ import shlex
 import shutil
 import subprocess
 import sys
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Sequence
+
+from .stance import (
+    SPORT_STANDING_DEGREES,
+    STANDARD_STANDING_DEGREES,
+    UPPER_STANDING_DEGREES,
+    validate_standing_pose,
+)
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -77,6 +84,8 @@ class TrainingConfig:
     terrain_seed: int = 7
     seed: int = 0
     device: str = "auto"
+    standing_pose_name: str = "sport"
+    standing_pose_degrees: tuple[float, ...] = SPORT_STANDING_DEGREES
 
     def __post_init__(self) -> None:
         if self.task not in TRAINING_TASKS:
@@ -92,6 +101,13 @@ class TrainingConfig:
         for name in ("timesteps", "num_envs", "checkpoint_every", "keep_checkpoints"):
             if getattr(self, name) < 1:
                 raise ValueError(f"{name} must be at least 1")
+        if not self.standing_pose_name.strip():
+            raise ValueError("standing_pose_name cannot be empty")
+        object.__setattr__(
+            self,
+            "standing_pose_degrees",
+            validate_standing_pose(self.standing_pose_degrees),
+        )
 
     @property
     def task_spec(self) -> TrainingTask:
@@ -131,6 +147,14 @@ class RemoteJob:
     created_at: str = ""
     terrain: str = "flat"
     terrain_seed: int = 7
+    curriculum: str = "easy"
+    num_envs: int = 4
+    checkpoint_every: int = 100_000
+    keep_checkpoints: int = 10
+    seed: int = 0
+    device: str = "auto"
+    standing_pose_name: str = "sport"
+    standing_pose_degrees: tuple[float, ...] = SPORT_STANDING_DEGREES
 
     def __post_init__(self) -> None:
         RemoteSettings(host=self.host, project_dir=self.project_dir, port=self.port)
@@ -140,6 +164,18 @@ class RemoteJob:
             raise ValueError(f"unknown training task: {self.task}")
         if self.terrain not in {value for value, _ in TERRAIN_OPTIONS}:
             raise ValueError(f"unknown terrain: {self.terrain}")
+        if self.curriculum not in {"easy", "medium", "full"}:
+            raise ValueError(f"unknown curriculum: {self.curriculum}")
+        for name in ("num_envs", "checkpoint_every", "keep_checkpoints"):
+            if getattr(self, name) < 1:
+                raise ValueError(f"{name} must be at least 1")
+        if not self.standing_pose_name.strip():
+            raise ValueError("standing_pose_name cannot be empty")
+        object.__setattr__(
+            self,
+            "standing_pose_degrees",
+            validate_standing_pose(self.standing_pose_degrees),
+        )
 
     @property
     def settings(self) -> RemoteSettings:
@@ -213,6 +249,8 @@ def build_training_arguments(config: TrainingConfig) -> list[str]:
         config.terrain,
         "--terrain-seed",
         str(config.terrain_seed),
+        "--standing-pose-degrees",
+        *(f"{degrees:g}" for degrees in config.standing_pose_degrees),
         "train",
         "--curriculum",
         config.curriculum,
@@ -256,6 +294,8 @@ def build_remote_launch_command(config: TrainingConfig, settings: RemoteSettings
             f'printf "remote run already exists; reset it first: %s\\n" {run_dir} >&2;',
             "exit 23; fi;",
             f"mkdir -p {run_dir}/checkpoints || exit 21;",
+            f'printf "1\\n" > {run_dir}/graceful_stop.enabled;',
+            f'printf "running\\n" > {run_dir}/train.state;',
             "scone_python=.venv/bin/python;",
             '[ -x "$scone_python" ] || exit 42;',
             "nohup env PYTHONPATH=. PYTHONUNBUFFERED=1",
@@ -263,6 +303,66 @@ def build_remote_launch_command(config: TrainingConfig, settings: RemoteSettings
             f"> {run_dir}/train.log 2>&1 < /dev/null &",
             "scone_pid=$!;",
             f'printf "%s\\n" "$scone_pid" > {run_dir}/train.pid;',
+            'printf "%s\\n" "$scone_pid"',
+        ]
+    )
+
+
+def build_remote_resume_command(
+    config: TrainingConfig,
+    settings: RemoteSettings,
+    resume_checkpoint: str,
+) -> str:
+    """Return a detached command that continues an existing remote run."""
+
+    project = _remote_path_expression(settings.project_dir)
+    run_dir = shlex.quote(config.relative_run_dir)
+    resume_path = _remote_path_expression(resume_checkpoint)
+    train_command = [
+        '"$scone_python"',
+        "-m",
+        shlex.quote(config.task_spec.module),
+        *(shlex.quote(argument) for argument in build_training_arguments(config)),
+        "--resume",
+        '"$scone_resume"',
+    ]
+    return " ".join(
+        [
+            f"cd {project} || exit 20;",
+            f"scone_run={run_dir};",
+            f"scone_resume={resume_path};",
+            'if [ ! -d "$scone_run" ]; then',
+            'printf "remote run directory not found: %s\\n" "$scone_run" >&2;',
+            "exit 24; fi;",
+            'if [ -f "$scone_run/train.pid" ]; then',
+            'scone_old_pid=$(cat "$scone_run/train.pid");',
+            'if kill -0 "$scone_old_pid" 2>/dev/null; then',
+            'printf "remote training is already running (PID %s)\\n" '
+            '"$scone_old_pid" >&2;',
+            "exit 25; fi; fi;",
+            'if [ ! -f "$scone_resume" ]; then',
+            'printf "resume checkpoint not found: %s\\n" '
+            '"$scone_resume" >&2;',
+            "exit 26; fi;",
+            'mkdir -p "$scone_run/checkpoints" || exit 21;',
+            'printf "1\\n" > "$scone_run/graceful_stop.enabled";',
+            'case "$scone_resume" in',
+            '"$scone_run"/*) '
+            'scone_pointer=${scone_resume#"$scone_run"/} ;;',
+            '*) scone_pointer="$scone_resume" ;;',
+            "esac;",
+            'printf "%s\\n" "$scone_pointer" '
+            '> "$scone_run/resume.checkpoint";',
+            'printf "running\\n" > "$scone_run/train.state";',
+            "scone_python=.venv/bin/python;",
+            '[ -x "$scone_python" ] || exit 42;',
+            'printf "\\n[RL] 이어서 학습을 시작합니다: %s\\n" '
+            '"$scone_resume" >> "$scone_run/train.log";',
+            "nohup env PYTHONPATH=. PYTHONUNBUFFERED=1",
+            *train_command,
+            '>> "$scone_run/train.log" 2>&1 < /dev/null &',
+            "scone_pid=$!;",
+            'printf "%s\\n" "$scone_pid" > "$scone_run/train.pid";',
             'printf "%s\\n" "$scone_pid"',
         ]
     )
@@ -435,6 +535,7 @@ def run_environment_check(
     terrain: str,
     steps: int,
     random_actions: bool,
+    standing_pose_degrees: Sequence[float] = SPORT_STANDING_DEGREES,
 ) -> int:
     """Run the environment/reward smoke check before committing to training."""
 
@@ -444,6 +545,8 @@ def run_environment_check(
         "src.rl.walk_learn",
         "--terrain",
         terrain,
+        "--standing-pose-degrees",
+        *(f"{degrees:g}" for degrees in standing_pose_degrees),
         "check",
         "--curriculum",
         curriculum,
@@ -495,6 +598,14 @@ def start_remote_training(
         created_at=datetime.now().astimezone().isoformat(timespec="seconds"),
         terrain=config.terrain,
         terrain_seed=config.terrain_seed,
+        curriculum=config.curriculum,
+        num_envs=config.num_envs,
+        checkpoint_every=config.checkpoint_every,
+        keep_checkpoints=config.keep_checkpoints,
+        seed=config.seed,
+        device=config.device,
+        standing_pose_name=config.standing_pose_name,
+        standing_pose_degrees=config.standing_pose_degrees,
     )
     _save_remote_job(job)
     return job
@@ -514,11 +625,18 @@ def remote_job_status(job: RemoteJob, *, log_lines: int = 20) -> str:
             "else",
             'scone_pid=$(cat "$scone_run/train.pid");',
             'if kill -0 "$scone_pid" 2>/dev/null; then scone_state=실행중;',
+            'elif [ -f "$scone_run/train.state" ] &&',
+            '[ "$(cat "$scone_run/train.state")" = paused ]; then',
+            "scone_state=일시정지됨;",
             "else scone_state=종료됨; fi;",
             'printf "상태: %s (PID %s)\\n" "$scone_state" "$scone_pid";',
             "fi;",
             'if [ -f "$scone_run/final_model.zip" ]; then',
             'printf "최종 모델: 저장됨\\n";',
+            "fi;",
+            'if [ -s "$scone_run/resume.checkpoint" ]; then',
+            'printf "이어하기 체크포인트: %s\\n" '
+            '"$(sed -n \'1p\' "$scone_run/resume.checkpoint")";',
             "fi;",
             f'if [ -f "$scone_run/train.log" ]; then tail -n {int(log_lines)} "$scone_run/train.log"; fi',
         ]
@@ -542,6 +660,44 @@ def remote_job_is_running(job: RemoteJob) -> bool:
     )
     result = _run_ssh(job.settings, _remote_job_command(job, body))
     return result.stdout.strip() == "running"
+
+
+def build_remote_pause_command(
+    job: RemoteJob,
+    *,
+    has_resume_checkpoint: bool,
+) -> str:
+    """Build a graceful, non-forcing stop command for a remote trainer."""
+
+    ready_flag = "1" if has_resume_checkpoint else "0"
+    body = " ".join(
+        [
+            'if [ ! -f "$scone_run/train.pid" ]; then',
+            'printf "remote training PID file not found\\n" >&2;',
+            "exit 24; fi;",
+            'scone_pid=$(cat "$scone_run/train.pid");',
+            'if ! kill -0 "$scone_pid" 2>/dev/null; then',
+            'printf "remote training is not running (PID %s)\\n" '
+            '"$scone_pid" >&2;',
+            "exit 25; fi;",
+            f'if [ ! -f "$scone_run/graceful_stop.enabled" ] && '
+            f'[ {ready_flag} != 1 ]; then',
+            'printf "no safe resume checkpoint exists yet; pause cancelled\\n" >&2;',
+            "exit 34; fi;",
+            'kill -TERM "$scone_pid" || exit 30;',
+            "scone_wait=0;",
+            'while kill -0 "$scone_pid" 2>/dev/null && '
+            '[ "$scone_wait" -lt 300 ]; do',
+            "sleep 0.2; scone_wait=$((scone_wait + 1)); done;",
+            'if kill -0 "$scone_pid" 2>/dev/null; then',
+            'printf "remote training did not stop within 60 seconds; '
+            'no forced kill was sent\\n" >&2;',
+            "exit 31; fi;",
+            'printf "paused\\n" > "$scone_run/train.state";',
+            'printf "paused\\n"',
+        ]
+    )
+    return _remote_job_command(job, body)
 
 
 def build_remote_reset_command(job: RemoteJob, *, stop_running: bool) -> str:
@@ -568,8 +724,8 @@ def build_remote_reset_command(job: RemoteJob, *, stop_running: bool) -> str:
             "exit 30; fi;",
             'kill "$scone_pid";',
             "scone_wait=0;",
-            'while kill -0 "$scone_pid" 2>/dev/null && [ "$scone_wait" -lt 50 ]; do',
-            "sleep 0.1; scone_wait=$((scone_wait + 1)); done;",
+            'while kill -0 "$scone_pid" 2>/dev/null && [ "$scone_wait" -lt 300 ]; do',
+            "sleep 0.2; scone_wait=$((scone_wait + 1)); done;",
             'if kill -0 "$scone_pid" 2>/dev/null; then',
             'printf "remote training did not stop; reset cancelled\\n" >&2;',
             "exit 31; fi; fi;",
@@ -588,7 +744,7 @@ def reset_remote_run(job: RemoteJob, *, stop_running: bool = False) -> str:
     result = _run_ssh(
         job.settings,
         build_remote_reset_command(job, stop_running=stop_running),
-        timeout=45,
+        timeout=75,
     )
     backup_path = result.stdout.strip().splitlines()
     if not backup_path:
@@ -604,6 +760,134 @@ def _remote_existing_file(settings: RemoteSettings, remote_path: str) -> str | N
     )
     path = result.stdout.strip()
     return path or None
+
+
+def _remote_resume_pointer(job: RemoteJob) -> str | None:
+    body = " ".join(
+        [
+            'if [ -s "$scone_run/resume.checkpoint" ]; then',
+            'scone_pointer=$(sed -n \'1p\' "$scone_run/resume.checkpoint");',
+            'case "$scone_pointer" in',
+            '/*) scone_checkpoint="$scone_pointer" ;;',
+            '*) scone_checkpoint="$scone_run/$scone_pointer" ;;',
+            "esac;",
+            'if [ -f "$scone_checkpoint" ]; then',
+            'printf "%s\\n" "$scone_checkpoint"; fi; fi',
+        ]
+    )
+    result = _run_ssh(job.settings, _remote_job_command(job, body))
+    checkpoint = result.stdout.strip()
+    return checkpoint or None
+
+
+def find_remote_resume_checkpoint(job: RemoteJob) -> str | None:
+    """Return the exact remote policy file that should be resumed."""
+
+    pointer = _remote_resume_pointer(job)
+    if pointer is not None:
+        return pointer
+
+    from .remote_watch import SSHCheckpointSource
+
+    remote_run = f"{job.project_dir.rstrip('/')}/{job.relative_run_dir}"
+    source = SSHCheckpointSource(
+        job.host,
+        f"{remote_run}/checkpoints",
+        port=job.port,
+    )
+    candidate = source.latest(job.task_spec.checkpoint_prefix)
+    if candidate is not None:
+        return candidate.source_path
+
+    return _remote_existing_file(
+        job.settings,
+        f"{remote_run}/final_model.zip",
+    )
+
+
+def pause_remote_training(job: RemoteJob) -> str:
+    """Gracefully pause a trainer and return its resumable checkpoint path."""
+
+    fallback = find_remote_resume_checkpoint(job)
+    _run_ssh(
+        job.settings,
+        build_remote_pause_command(
+            job,
+            has_resume_checkpoint=fallback is not None,
+        ),
+        timeout=75,
+    )
+    checkpoint = find_remote_resume_checkpoint(job) or fallback
+    if checkpoint is None:
+        raise RuntimeError(
+            "학습은 중지됐지만 이어서 사용할 체크포인트를 찾지 못했습니다."
+        )
+    _save_remote_job(replace(job, pid=None))
+    return checkpoint
+
+
+def resume_remote_training(
+    job: RemoteJob,
+    *,
+    additional_timesteps: int,
+    sync_code: bool,
+    install_missing_dependencies: bool = True,
+) -> tuple[RemoteJob, str]:
+    """Continue a stopped job in the same run directory and log files."""
+
+    if additional_timesteps < 1:
+        raise ValueError("additional_timesteps must be at least 1")
+    if remote_job_is_running(job):
+        raise RuntimeError(f"{job.run_name} 학습은 이미 실행 중입니다.")
+
+    if sync_code:
+        sync_project_to_remote(job.settings)
+    else:
+        check_command = (
+            f"test -f "
+            f"{_remote_path_expression(job.project_dir + '/src/rl/walk_learn.py')}"
+        )
+        _run_ssh(job.settings, check_command)
+    ensure_remote_dependencies(
+        job.settings,
+        install_missing=install_missing_dependencies,
+    )
+
+    checkpoint = find_remote_resume_checkpoint(job)
+    if checkpoint is None:
+        raise FileNotFoundError(
+            f"{job.host}:{job.project_dir}/{job.relative_run_dir} 에 "
+            "이어갈 체크포인트가 없습니다."
+        )
+    config = TrainingConfig(
+        task=job.task,
+        run_name=job.run_name,
+        curriculum=job.curriculum,
+        timesteps=additional_timesteps,
+        num_envs=job.num_envs,
+        checkpoint_every=job.checkpoint_every,
+        keep_checkpoints=job.keep_checkpoints,
+        terrain=job.terrain,
+        terrain_seed=job.terrain_seed,
+        seed=job.seed,
+        device=job.device,
+        standing_pose_name=job.standing_pose_name,
+        standing_pose_degrees=job.standing_pose_degrees,
+    )
+    result = _run_ssh(
+        job.settings,
+        build_remote_resume_command(config, job.settings, checkpoint),
+        timeout=45,
+    )
+    try:
+        pid = int(result.stdout.strip().splitlines()[-1])
+    except (IndexError, ValueError) as exc:
+        raise RuntimeError(
+            f"remote trainer did not return a PID: {result.stdout!r}"
+        ) from exc
+    resumed_job = replace(job, pid=pid)
+    _save_remote_job(resumed_job)
+    return resumed_job, checkpoint
 
 
 def download_remote_artifacts(job: RemoteJob) -> list[Path]:
@@ -669,6 +953,7 @@ def view_local_model(
     episodes: int = 3,
     terrain: str = "flat",
     terrain_seed: int = 7,
+    standing_pose_degrees: Sequence[float] = SPORT_STANDING_DEGREES,
 ) -> int:
     from .remote_watch import _validate_ppo_zip
 
@@ -683,6 +968,8 @@ def view_local_model(
         terrain,
         "--terrain-seed",
         str(terrain_seed),
+        "--standing-pose-degrees",
+        *(f"{degrees:g}" for degrees in standing_pose_degrees),
         "enjoy",
         str(checkpoint),
         "--command",
@@ -712,6 +999,8 @@ def watch_remote_job(job: RemoteJob) -> int:
         job.terrain,
         "--terrain-seed",
         str(job.terrain_seed),
+        "--standing-pose-degrees",
+        *(f"{degrees:g}" for degrees in job.standing_pose_degrees),
     ]
     if job.port is not None:
         process.extend(["--port", str(job.port)])
@@ -760,6 +1049,55 @@ def _inquirer() -> tuple[Any, Any]:
     return inquirer, Choice
 
 
+def prompt_standing_pose() -> tuple[str, tuple[float, ...]]:
+    """Interactively choose the nominal RL body posture."""
+
+    inquirer, Choice = _inquirer()
+    selection = inquirer.select(
+        message="RL 기본 자세(몸체 높이)를 선택하세요.",
+        choices=[
+            Choice(
+                value="standard",
+                name="높은 자세 · Standard (중간 240°, 아래 255°) · 추천",
+            ),
+            Choice(
+                value="sport",
+                name="낮은 자세 · Sport (중간 170°, 아래 195°) · 기존 RL",
+            ),
+            Choice(
+                value="custom",
+                name="사용자 정의 · 중간/아래 관절 각도 직접 입력",
+            ),
+        ],
+        default="standard",
+    ).execute()
+    if selection == "standard":
+        return "standard", STANDARD_STANDING_DEGREES
+    if selection == "sport":
+        return "sport", SPORT_STANDING_DEGREES
+
+    middle = float(
+        inquirer.number(
+            message="중간 관절(ID 7~12) 기준 각도",
+            default=240.0,
+            min_allowed=0.0,
+            max_allowed=360.0,
+            float_allowed=True,
+        ).execute()
+    )
+    lower = float(
+        inquirer.number(
+            message="아래 관절(ID 13~18) 기준 각도",
+            default=255.0,
+            min_allowed=0.0,
+            max_allowed=360.0,
+            float_allowed=True,
+        ).execute()
+    )
+    pose = UPPER_STANDING_DEGREES + (middle,) * 6 + (lower,) * 6
+    return f"custom(M={middle:g},L={lower:g})", validate_standing_pose(pose)
+
+
 def _prompt_training_config() -> TrainingConfig:
     inquirer, Choice = _inquirer()
     task = inquirer.select(
@@ -780,6 +1118,7 @@ def _prompt_training_config() -> TrainingConfig:
         choices=[Choice(value=value, name=label) for value, label in TERRAIN_OPTIONS],
         default="flat",
     ).execute()
+    standing_pose_name, standing_pose_degrees = prompt_standing_pose()
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     run_name = inquirer.text(
         message="실행 이름을 입력하세요.",
@@ -830,6 +1169,8 @@ def _prompt_training_config() -> TrainingConfig:
         keep_checkpoints=keep_checkpoints,
         terrain=terrain,
         device=device,
+        standing_pose_name=standing_pose_name,
+        standing_pose_degrees=standing_pose_degrees,
     )
 
 
@@ -861,12 +1202,15 @@ def _manual_remote_job() -> RemoteJob:
         choices=[Choice(value=value, name=label) for value, label in TERRAIN_OPTIONS],
         default="flat",
     ).execute()
+    standing_pose_name, standing_pose_degrees = prompt_standing_pose()
     return RemoteJob(
         host=settings.host,
         project_dir=settings.project_dir,
         port=settings.port,
         run_name=run_name,
         terrain=terrain,
+        standing_pose_name=standing_pose_name,
+        standing_pose_degrees=standing_pose_degrees,
     )
 
 
@@ -875,14 +1219,20 @@ def _prompt_remote_job(message: str) -> RemoteJob:
     jobs = _load_remote_jobs()
     choices = [
         Choice(
-            value=job,
+            # InquirerPy normalizes dataclass choice values with ``asdict``.
+            # Keep the UI value scalar and recover the RemoteJob ourselves.
+            value=index,
             name=f"{job.run_name} · {job.host} · {job.created_at or '시간 미상'}",
         )
-        for job in jobs
+        for index, job in enumerate(jobs)
     ]
-    choices.append(Choice(value=None, name="기록에 없는 실행 직접 입력"))
+    choices.append(Choice(value=-1, name="기록에 없는 실행 직접 입력"))
     selected = inquirer.select(message=message, choices=choices).execute()
-    return _manual_remote_job() if selected is None else selected
+    if selected == -1:
+        return _manual_remote_job()
+    if not isinstance(selected, int) or not 0 <= selected < len(jobs):
+        raise ValueError(f"유효하지 않은 원격 학습 선택값입니다: {selected!r}")
+    return jobs[selected]
 
 
 def _prompt_local_model() -> Path | None:
@@ -913,7 +1263,8 @@ def _start_training_flow() -> None:
     ).execute()
     print(
         f"\n[RL] {config.task_spec.label} / {config.curriculum} / "
-        f"지형 {config.terrain} / {config.timesteps:,} timestep / 실행명 {config.run_name}"
+        f"지형 {config.terrain} / 자세 {config.standing_pose_name} / "
+        f"{config.timesteps:,} timestep / 실행명 {config.run_name}"
     )
     if not inquirer.confirm(message="이 설정으로 시작할까요?", default=True).execute():
         return
@@ -959,6 +1310,7 @@ def _environment_check_flow() -> None:
         choices=[Choice(value=value, name=label) for value, label in TERRAIN_OPTIONS],
         default="flat",
     ).execute()
+    standing_pose_name, standing_pose_degrees = prompt_standing_pose()
     steps = int(
         inquirer.number(
             message="몇 policy step을 검사할까요?",
@@ -975,6 +1327,7 @@ def _environment_check_flow() -> None:
         terrain=terrain,
         steps=steps,
         random_actions=random_actions,
+        standing_pose_degrees=standing_pose_degrees,
     )
     if result != 0:
         raise RuntimeError(f"학습 환경 테스트가 exit code {result}로 실패했습니다")
@@ -994,11 +1347,85 @@ def _view_model_flow() -> None:
         choices=[Choice(value=value, name=label) for value, label in TERRAIN_OPTIONS],
         default="flat",
     ).execute()
+    standing_pose_name, standing_pose_degrees = prompt_standing_pose()
+    print(f"[RL] 재생 기본 자세: {standing_pose_name}")
     view_local_model(
         checkpoint,
         command=(vx, vy, yaw),
         episodes=episodes,
         terrain=terrain,
+        standing_pose_degrees=standing_pose_degrees,
+    )
+
+
+def _pause_remote_flow() -> None:
+    inquirer, _ = _inquirer()
+    job = _prompt_remote_job("어떤 원격 학습을 일시정지할까요?")
+    if not remote_job_is_running(job):
+        print(f"\n[RL] {job.run_name} 학습은 이미 중지되어 있습니다.\n")
+        return
+    if not inquirer.confirm(
+        message=(
+            f"{job.run_name} 학습을 안전하게 중지하고 이어하기 "
+            "체크포인트를 남길까요?"
+        ),
+        default=True,
+    ).execute():
+        return
+
+    checkpoint = pause_remote_training(job)
+    print("\n[RL] 원격 학습을 일시정지했습니다.")
+    print(f"     이어하기 체크포인트: {job.host}:{checkpoint}")
+    print("     `원격 학습 이어하기`에서 같은 실행을 계속할 수 있습니다.\n")
+
+
+def _resume_remote_flow() -> None:
+    inquirer, _ = _inquirer()
+    job = _prompt_remote_job("어떤 원격 학습을 이어서 진행할까요?")
+    if remote_job_is_running(job):
+        print(f"\n[RL] {job.run_name} 학습은 이미 실행 중입니다.\n")
+        return
+
+    print(
+        f"\n[RL] 저장된 설정: {job.curriculum} / 지형 {job.terrain} / "
+        f"자세 {job.standing_pose_name} / 병렬 환경 {job.num_envs}개 / "
+        f"체크포인트 {job.checkpoint_every:,} step마다"
+    )
+    if not inquirer.confirm(
+        message=(
+            "기존 체크포인트와 보상함수·관측 구조가 호환되나요? "
+            "바꿨다면 이어하기 대신 원격 초기화 후 새 학습을 사용하세요."
+        ),
+        default=True,
+    ).execute():
+        return
+    additional_timesteps = int(
+        inquirer.number(
+            message="추가로 몇 timestep을 학습할까요?",
+            default=1_000_000,
+            min_allowed=1,
+        ).execute()
+    )
+    sync_code = inquirer.confirm(
+        message="이어가기 전에 현재 로컬 코드를 원격 프로젝트로 동기화할까요?",
+        default=True,
+    ).execute()
+    install_dependencies = inquirer.confirm(
+        message="원격 Python 3.12/RL 의존성을 확인하고 필요하면 준비할까요?",
+        default=True,
+    ).execute()
+    resumed_job, checkpoint = resume_remote_training(
+        job,
+        additional_timesteps=additional_timesteps,
+        sync_code=sync_code,
+        install_missing_dependencies=install_dependencies,
+    )
+    print(f"\n[RL] 원격 학습을 이어서 시작했습니다 (PID {resumed_job.pid}).")
+    print(f"     시작 체크포인트: {resumed_job.host}:{checkpoint}")
+    print(f"     추가 학습량: {additional_timesteps:,} timestep")
+    print(
+        f"     로그: {resumed_job.host}:{resumed_job.project_dir}/"
+        f"{resumed_job.relative_run_dir}/train.log\n"
     )
 
 
@@ -1053,10 +1480,15 @@ def main() -> int:
                     Choice(value="check", name="학습 환경/보상 스모크 테스트"),
                     Choice(value="start", name="새 학습 시작"),
                     Choice(value="status", name="원격 학습 상태와 로그 보기"),
+                    Choice(value="pause", name="원격 학습 일시정지"),
+                    Choice(value="resume", name="원격 학습 이어하기"),
                     Choice(value="download", name="원격 최신 체크포인트 내려받기"),
                     Choice(value="watch", name="원격 학습을 내려받으며 실시간 보기"),
                     Choice(value="view", name="로컬에 저장된 모델 보기"),
-                    Choice(value="reset", name="원격 실행/체크포인트 초기화"),
+                    Choice(
+                        value="reset",
+                        name="원격 실행/체크포인트 완전 초기화 (새 학습)",
+                    ),
                     Choice(value="quit", name="돌아가기"),
                 ],
             ).execute()
@@ -1069,6 +1501,10 @@ def main() -> int:
             elif action == "status":
                 job = _prompt_remote_job("어떤 원격 학습을 확인할까요?")
                 print(f"\n{remote_job_status(job)}\n")
+            elif action == "pause":
+                _pause_remote_flow()
+            elif action == "resume":
+                _resume_remote_flow()
             elif action == "download":
                 job = _prompt_remote_job("어떤 원격 학습을 내려받을까요?")
                 paths = download_remote_artifacts(job)

@@ -485,16 +485,25 @@ def main() -> int:
                 )
 
                 control = select_simulation_control()
-                checkpoint = (
-                    select_rl_checkpoint() if control.value == "rl" else None
-                )
+                if control.value == "rl":
+                    checkpoint = select_rl_checkpoint()
+                    from .rl.inquiry import prompt_standing_pose
+
+                    stance_name, rl_standing_pose = prompt_standing_pose()
+                    print(f"[RL] 시뮬레이션 기본 자세: {stance_name}")
+                else:
+                    checkpoint = None
+                    rl_standing_pose = None
                 profile = "sport" if control.value == "rl" else _select_profile()
-                run(
+                run_arguments = dict(
                     profile=profile,
                     terrain=select_terrain(),
                     control=control,
                     checkpoint=checkpoint,
                 )
+                if rl_standing_pose is not None:
+                    run_arguments["rl_standing_pose_degrees"] = rl_standing_pose
+                run(**run_arguments)
             elif action == "hardware":
                 _run_hardware(probe, _select_profile())
             elif action == "rediscover":

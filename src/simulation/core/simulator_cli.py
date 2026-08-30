@@ -8,6 +8,7 @@ from typing import Any
 
 from .cli_bridge import SimulationControl, run
 from .model import DEFAULT_MODEL_PATH
+from ...rl.stance import SPORT_STANDING_DEGREES
 from ..terrain import TERRAIN_CHOICES, TERRAIN_LABELS, TerrainType
 
 
@@ -40,6 +41,13 @@ def build_parser() -> argparse.ArgumentParser:
         help="PPO checkpoint required by --control rl",
     )
     parser.add_argument("--rl-device", default="auto")
+    parser.add_argument(
+        "--rl-standing-pose-degrees",
+        type=float,
+        nargs=18,
+        metavar="DEG",
+        default=SPORT_STANDING_DEGREES,
+    )
     parser.add_argument("--verbose", action="store_true")
     return parser
 
@@ -61,6 +69,7 @@ def main(argv: list[str] | None = None) -> int:
         control=args.control,
         checkpoint=args.checkpoint,
         rl_device=args.rl_device,
+        rl_standing_pose_degrees=args.rl_standing_pose_degrees,
         verbose=args.verbose,
     )
     return 0

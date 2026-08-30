@@ -29,10 +29,11 @@ from __future__ import annotations
 import argparse
 import math
 import re
+import signal
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable, Sequence
 
 import gymnasium as gym
 import mujoco
@@ -44,6 +45,8 @@ from stable_baselines3.common.env_checker import check_env
 from stable_baselines3.common.vec_env import DummyVecEnv, VecMonitor
 
 from src.hardware.actuator import Actuator
+from src.rl.policy_compat import load_compatible_policy, observation_for_policy
+from src.rl.stance import SPORT_STANDING_DEGREES, validate_standing_pose
 from src.simulation.core.controller import MuJoCoController
 from src.simulation.core.model import load_model
 from src.simulation.core.pid import spec_for_motor_id
@@ -135,6 +138,7 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         walk_config: WalkConfig | None = None,
         terrain: TerrainType | str = TerrainType.FLAT,
         terrain_seed: int = 7,
+        standing_pose_degrees: Sequence[float] | None = None,
     ) -> None:
         super().__init__()
         if curriculum not in CURRICULUM_RANGES:
@@ -210,10 +214,14 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
             self.tire_geom_ids.add(geom_id)
             self.tire_geom_to_body[geom_id] = int(self.model.geom_bodyid[geom_id])
 
-        # Sport profile from SCONE.Sport. It is kept local so creating
-        # an environment never opens the real DYNAMIXEL serial controller.
-        self.default_degrees = np.array(
-            [135, 135, 180, 180, 225, 225] + [170] * 6 + [195] * 6,
+        # Keep posture data local to the simulated environment; selecting an
+        # RL stance must never open or command the physical controller.
+        self.default_degrees = np.asarray(
+            validate_standing_pose(
+                SPORT_STANDING_DEGREES
+                if standing_pose_degrees is None
+                else standing_pose_degrees
+            ),
             dtype=np.float64,
         )
         self.default_radians = np.array(
@@ -760,6 +768,30 @@ class RewardTermsCallback(BaseCallback):
         return True
 
 
+class GracefulStopCallback(BaseCallback):
+    """Finish ``learn`` cleanly when SIGINT or SIGTERM requests a pause."""
+
+    def __init__(self, stop_requested: Callable[[], bool]) -> None:
+        super().__init__()
+        self.stop_requested = stop_requested
+
+    def _on_step(self) -> bool:
+        return not self.stop_requested()
+
+
+def _write_resume_pointer(run_dir: Path, checkpoint: Path) -> None:
+    """Atomically record the exact checkpoint that a resume should load."""
+
+    try:
+        stored_path = checkpoint.relative_to(run_dir)
+    except ValueError:
+        stored_path = checkpoint
+    pointer = run_dir / "resume.checkpoint"
+    temporary = pointer.with_suffix(".tmp")
+    temporary.write_text(f"{stored_path}\n", encoding="utf-8")
+    temporary.replace(pointer)
+
+
 class PruningCheckpointCallback(CheckpointCallback):
     """Save PPO checkpoints and retain only the newest files."""
 
@@ -772,6 +804,12 @@ class PruningCheckpointCallback(CheckpointCallback):
     def _on_step(self) -> bool:
         result = super()._on_step()
         if self.n_calls % self.save_freq == 0:
+            saved_checkpoint = (
+                Path(self.save_path)
+                / f"{self.name_prefix}_{self.num_timesteps}_steps.zip"
+            )
+            if saved_checkpoint.is_file():
+                _write_resume_pointer(Path(self.save_path).parent, saved_checkpoint)
             checkpoints: list[tuple[int, Path]] = []
             pattern = f"{self.name_prefix}_*_steps.zip"
             for path in Path(self.save_path).glob(pattern):
@@ -791,6 +829,7 @@ def _build_env(
     render_mode: str | None = None,
     terrain: TerrainType | str = TerrainType.FLAT,
     terrain_seed: int = 7,
+    standing_pose_degrees: Sequence[float] = SPORT_STANDING_DEGREES,
 ) -> SconeWalkEnv:
     return SconeWalkEnv(
         model_path,
@@ -799,6 +838,7 @@ def _build_env(
         render_mode=render_mode,
         terrain=terrain,
         terrain_seed=terrain_seed,
+        standing_pose_degrees=standing_pose_degrees,
     )
 
 
@@ -808,6 +848,7 @@ def run_check(args: argparse.Namespace) -> int:
         args.curriculum,
         terrain=args.terrain,
         terrain_seed=args.terrain_seed,
+        standing_pose_degrees=args.standing_pose_degrees,
     )
     check_env(env, warn=True, skip_render_check=True)
     observation, _ = env.reset(seed=args.seed)
@@ -850,12 +891,18 @@ def run_train(args: argparse.Namespace) -> int:
                 args.curriculum,
                 terrain=args.terrain,
                 terrain_seed=args.terrain_seed + environment_index,
+                standing_pose_degrees=args.standing_pose_degrees,
             )
         )
         for environment_index in range(args.num_envs)
     ]
+    monitor_name = (
+        "monitor.csv"
+        if args.resume is None
+        else f"monitor_resume_{time.strftime('%Y%m%d_%H%M%S')}.csv"
+    )
     vec_env = VecMonitor(
-        DummyVecEnv(factories), filename=str(run_dir / "monitor.csv")
+        DummyVecEnv(factories), filename=str(run_dir / monitor_name)
     )
     checkpoint = PruningCheckpointCallback(
         save_freq=max(1, args.checkpoint_every // args.num_envs),
@@ -863,7 +910,23 @@ def run_train(args: argparse.Namespace) -> int:
         name_prefix="scone_walk",
         keep_last=args.keep_checkpoints,
     )
-    callbacks = [checkpoint, RewardTermsCallback()]
+    stop_requested = False
+
+    def request_stop(signum: int, _frame: Any) -> None:
+        nonlocal stop_requested
+        if not stop_requested:
+            print(
+                f"[RL] signal {signum} received; finishing the current step "
+                "and saving a resume checkpoint...",
+                flush=True,
+            )
+        stop_requested = True
+
+    callbacks = [
+        checkpoint,
+        RewardTermsCallback(),
+        GracefulStopCallback(lambda: stop_requested),
+    ]
 
     tensorboard_log = (
         None
@@ -898,16 +961,24 @@ def run_train(args: argparse.Namespace) -> int:
             tensorboard_log=tensorboard_log,
         )
         reset_num_timesteps = False
+    previous_signal_handlers = {
+        signum: signal.signal(signum, request_stop)
+        for signum in (signal.SIGINT, signal.SIGTERM)
+    }
     try:
         model.learn(
             total_timesteps=args.timesteps,
             callback=callbacks,
             reset_num_timesteps=reset_num_timesteps,
         )
-        model.save(run_dir / "final_model")
+        final_model = run_dir / "final_model.zip"
+        model.save(final_model)
+        _write_resume_pointer(run_dir, final_model)
     finally:
+        for signum, previous_handler in previous_signal_handlers.items():
+            signal.signal(signum, previous_handler)
         vec_env.close()
-    print(f"saved trained policy to {run_dir / 'final_model.zip'}")
+    print(f"saved trained policy to {final_model}")
     return 0
 
 
@@ -919,14 +990,16 @@ def run_enjoy(args: argparse.Namespace) -> int:
         render_mode="human",
         terrain=args.terrain,
         terrain_seed=args.terrain_seed,
+        standing_pose_degrees=args.standing_pose_degrees,
     )
-    model = PPO.load(args.checkpoint, env=env, device=args.device)
+    model = load_compatible_policy(args.checkpoint, env, args.device)
     observation, _ = env.reset(seed=args.seed)
     episodes = 0
     try:
         while episodes < args.episodes:
             frame_start = time.perf_counter()
-            action, _ = model.predict(observation, deterministic=True)
+            policy_observation = observation_for_policy(model, observation)
+            action, _ = model.predict(policy_observation, deterministic=True)
             observation, _, terminated, truncated, _ = env.step(action)
             if terminated or truncated:
                 episodes += 1
@@ -962,6 +1035,17 @@ def build_parser() -> argparse.ArgumentParser:
         type=int,
         default=7,
         help="base seed; vectorized training offsets it per environment",
+    )
+    parser.add_argument(
+        "--standing-pose-degrees",
+        type=float,
+        nargs=18,
+        metavar="DEG",
+        default=SPORT_STANDING_DEGREES,
+        help=(
+            "standing motor degrees for actuator IDs 1..18 "
+            "(default: legacy Sport RL stance)"
+        ),
     )
     subparsers = parser.add_subparsers(dest="command_name", required=True)
 

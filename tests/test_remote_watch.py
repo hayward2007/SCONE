@@ -5,6 +5,7 @@ import unittest
 import zipfile
 from pathlib import Path
 from types import SimpleNamespace
+from unittest.mock import patch
 
 import numpy as np
 
@@ -13,10 +14,54 @@ from src.rl.remote_watch import (
     _observation_for_policy,
     mirror_checkpoint,
 )
-from src.rl.walk_learn import SconeWalkEnv
+from src.rl.policy_compat import load_compatible_policy
+from src.rl.walk_learn import (
+    GracefulStopCallback,
+    SconeWalkEnv,
+    _write_resume_pointer,
+)
 
 
 class RemoteWatchCompatibilityTests(unittest.TestCase):
+    def test_graceful_stop_callback_stops_only_after_request(self) -> None:
+        requested = False
+        callback = GracefulStopCallback(lambda: requested)
+
+        self.assertTrue(callback._on_step())
+        requested = True
+        self.assertFalse(callback._on_step())
+
+    def test_resume_pointer_is_relative_and_atomically_published(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            run_dir = Path(temporary_directory)
+            checkpoint = run_dir / "checkpoints" / "scone_walk_100_steps.zip"
+            checkpoint.parent.mkdir()
+            checkpoint.touch()
+
+            _write_resume_pointer(run_dir, checkpoint)
+
+            self.assertEqual(
+                (run_dir / "resume.checkpoint").read_text(encoding="utf-8"),
+                "checkpoints/scone_walk_100_steps.zip\n",
+            )
+            self.assertFalse((run_dir / "resume.tmp").exists())
+
+    def test_legacy_policy_load_does_not_bind_current_environment(self) -> None:
+        policy = SimpleNamespace(
+            observation_space=SimpleNamespace(shape=(68,)),
+            action_space=SimpleNamespace(shape=(18,)),
+        )
+        env = SimpleNamespace(
+            observation_space=SimpleNamespace(shape=(70,)),
+            action_space=SimpleNamespace(shape=(18,)),
+        )
+
+        with patch("src.rl.policy_compat.PPO.load", return_value=policy) as load:
+            loaded = load_compatible_policy(Path("legacy.zip"), env, "cpu")
+
+        self.assertIs(loaded, policy)
+        load.assert_called_once_with(Path("legacy.zip"), device="cpu")
+
     def test_live_velocity_command_clips_to_policy_observation_range(self) -> None:
         env = SconeWalkEnv(fixed_command=[0.0, 0.0, 0.0])
         try:

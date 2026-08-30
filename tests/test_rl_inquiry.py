@@ -8,14 +8,40 @@ from src.rl.inquiry import (
     RemoteJob,
     RemoteSettings,
     TrainingConfig,
+    _prompt_remote_job,
     _remote_path_expression,
     build_remote_dependency_check_command,
     build_remote_dependency_install_command,
     build_remote_launch_command,
+    build_remote_pause_command,
     build_remote_reset_command,
+    build_remote_resume_command,
     build_training_arguments,
     ensure_remote_dependencies,
 )
+
+
+class _FakeChoice:
+    def __init__(self, *, value, name: str) -> None:
+        self.value = value
+        self.name = name
+
+
+class _FakeQuestion:
+    def __init__(self, value) -> None:
+        self.value = value
+
+    def execute(self):
+        return self.value
+
+
+class _FakeInquirer:
+    def __init__(self) -> None:
+        self.choices = []
+
+    def select(self, *, message: str, choices):
+        self.choices = choices
+        return _FakeQuestion(choices[0].value)
 
 
 class RLInquiryCommandTests(unittest.TestCase):
@@ -62,7 +88,52 @@ class RLInquiryCommandTests(unittest.TestCase):
         self.assertIn("reset it first", command)
         self.assertIn("exit 23", command)
         self.assertIn("rmdir runs/walk_easy_test/checkpoints", command)
+        self.assertIn("graceful_stop.enabled", command)
+        self.assertIn("train.state", command)
         self.assertNotIn("import gymnasium", command)
+
+    def test_remote_pause_is_graceful_and_never_forces_process_exit(self) -> None:
+        job = RemoteJob(
+            host="ssh.hayward.kim",
+            project_dir="~/Developer/SCONE",
+            run_name="walk_easy_test",
+        )
+
+        command = build_remote_pause_command(
+            job,
+            has_resume_checkpoint=True,
+        )
+
+        self.assertIn('kill -TERM "$scone_pid"', command)
+        self.assertIn('printf "paused\\n" > "$scone_run/train.state"', command)
+        self.assertNotIn("kill -KILL", command)
+        self.assertNotIn("rm ", command)
+        self.assertEqual(
+            subprocess.run(["sh", "-n", "-c", command], check=False).returncode,
+            0,
+        )
+
+    def test_remote_resume_appends_log_and_uses_same_run_directory(self) -> None:
+        settings = RemoteSettings(
+            host="ssh.hayward.kim",
+            project_dir="~/Developer/SCONE",
+        )
+        command = build_remote_resume_command(
+            self.config,
+            settings,
+            "~/Developer/SCONE/runs/walk_easy_test/final_model.zip",
+        )
+
+        self.assertIn('scone_run=runs/walk_easy_test', command)
+        self.assertIn('--resume "$scone_resume"', command)
+        self.assertIn('>> "$scone_run/train.log"', command)
+        self.assertIn('> "$scone_run/resume.checkpoint"', command)
+        self.assertIn("remote training is already running", command)
+        self.assertNotIn('> runs/walk_easy_test/train.log 2>&1', command)
+        self.assertEqual(
+            subprocess.run(["sh", "-n", "-c", command], check=False).returncode,
+            0,
+        )
 
     def test_remote_dependencies_use_project_virtual_environment(self) -> None:
         settings = RemoteSettings(
@@ -133,6 +204,26 @@ class RLInquiryCommandTests(unittest.TestCase):
         self.assertIn('mv -- "$scone_run" "$scone_backup"', command)
         self.assertIn("exit 30", command)
         self.assertNotIn("rm ", command)
+
+    def test_remote_job_prompt_uses_scalar_choice_and_returns_job(self) -> None:
+        job = RemoteJob(
+            host="ssh.hayward.kim",
+            project_dir="~/Developer/SCONE",
+            run_name="walk_easy_test",
+        )
+        fake_inquirer = _FakeInquirer()
+
+        with (
+            patch(
+                "src.rl.inquiry._inquirer",
+                return_value=(fake_inquirer, _FakeChoice),
+            ),
+            patch("src.rl.inquiry._load_remote_jobs", return_value=[job]),
+        ):
+            selected = _prompt_remote_job("choose")
+
+        self.assertIs(selected, job)
+        self.assertEqual(fake_inquirer.choices[0].value, 0)
 
 
 if __name__ == "__main__":

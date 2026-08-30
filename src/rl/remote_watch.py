@@ -31,6 +31,12 @@ from typing import Protocol
 import numpy as np
 from stable_baselines3 import PPO
 
+from .policy_compat import (
+    LEGACY_OBSERVATION_SHAPE,
+    load_compatible_policy as _load_policy,
+    observation_for_policy as _observation_for_policy,
+)
+from .stance import SPORT_STANDING_DEGREES
 from .walk_learn import CURRICULUM_RANGES, DEFAULT_MODEL_PATH, SconeWalkEnv
 from src.simulation.terrain import TERRAIN_CHOICES, TerrainType
 
@@ -38,14 +44,6 @@ from src.simulation.terrain import TERRAIN_CHOICES, TerrainType
 CHECKPOINT_NAME = re.compile(r"^(?P<prefix>.+)_(?P<steps>[0-9]+)_steps\.zip$")
 SAFE_SSH_HOST = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.@-]*$")
 SAFE_PREFIX = re.compile(r"^[A-Za-z0-9_.-]+$")
-
-# The original policy used 68 observations. Heading-error sin/cos were later
-# appended, producing the current 70-observation environment. Because they are
-# appended at the end, old policies can still be replayed by presenting the
-# first 68 values; no network weights need to be modified for visualization.
-LEGACY_OBSERVATION_SHAPE = (68,)
-CURRENT_OBSERVATION_SHAPE = (70,)
-
 
 @dataclass(frozen=True)
 class CheckpointCandidate:
@@ -268,42 +266,6 @@ class CheckpointPoller:
             self._stop.wait(self.poll_interval)
 
 
-def _load_policy(path: Path, env: SconeWalkEnv, device: str) -> PPO:
-    policy = PPO.load(path, device=device)
-    observation_shape = policy.observation_space.shape
-    supported_shapes = {
-        env.observation_space.shape,
-        LEGACY_OBSERVATION_SHAPE,
-    }
-    if observation_shape not in supported_shapes:
-        raise ValueError(
-            "unsupported checkpoint observation shape: "
-            f"{observation_shape}; expected one of {sorted(supported_shapes)}"
-        )
-    if policy.action_space.shape != env.action_space.shape:
-        raise ValueError(
-            "checkpoint action shape does not match this walk_learn.py: "
-            f"{policy.action_space.shape} != {env.action_space.shape}"
-        )
-    return policy
-
-
-def _observation_for_policy(policy: PPO, observation: np.ndarray) -> np.ndarray:
-    """Adapt the current observation to a replay-only legacy policy input."""
-
-    expected_shape = policy.observation_space.shape
-    if expected_shape == observation.shape:
-        return observation
-    if (
-        expected_shape == LEGACY_OBSERVATION_SHAPE
-        and observation.shape == CURRENT_OBSERVATION_SHAPE
-    ):
-        return observation[: LEGACY_OBSERVATION_SHAPE[0]]
-    raise ValueError(
-        f"cannot adapt observation {observation.shape} to policy {expected_shape}"
-    )
-
-
 def _newest_update(
     updates: queue.SimpleQueue[tuple[int, Path]],
 ) -> tuple[int, Path] | None:
@@ -335,6 +297,7 @@ def run_viewer(args: argparse.Namespace, source: CheckpointSource) -> int:
         render_mode="human",
         terrain=args.terrain,
         terrain_seed=args.terrain_seed,
+        standing_pose_degrees=args.standing_pose_degrees,
     )
     observation, _ = env.reset(seed=args.seed)
     zero_action = np.zeros(env.action_space.shape, dtype=np.float32)
@@ -434,6 +397,13 @@ def build_parser() -> argparse.ArgumentParser:
         default=TerrainType.FLAT.value,
     )
     parser.add_argument("--terrain-seed", type=int, default=7)
+    parser.add_argument(
+        "--standing-pose-degrees",
+        type=float,
+        nargs=18,
+        metavar="DEG",
+        default=SPORT_STANDING_DEGREES,
+    )
     parser.add_argument(
         "--curriculum", choices=tuple(CURRICULUM_RANGES), default="full"
     )

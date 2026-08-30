@@ -5,6 +5,7 @@ from __future__ import annotations
 import sys
 import threading
 import time
+from collections.abc import Sequence
 from enum import Enum
 from pathlib import Path
 
@@ -13,6 +14,7 @@ import mujoco.viewer
 
 from ...cli import run_joystick_cli, run_legacy_joystick_cli
 from ...main import SCONE
+from ...rl.stance import SPORT_STANDING_DEGREES
 from .controller import MuJoCoController
 from .model import DEFAULT_MODEL_PATH, load_model
 from ..terrain import TerrainType
@@ -46,6 +48,7 @@ def run(
     control: SimulationControl | str = SimulationControl.NON_RL,
     checkpoint: str | Path | None = None,
     rl_device: str = "auto",
+    rl_standing_pose_degrees: Sequence[float] = SPORT_STANDING_DEGREES,
     verbose: bool = False,
 ) -> None:
     """Open one viewer while terminal input drives the shared robot API.
@@ -67,6 +70,7 @@ def run(
             terrain=selected_terrain,
             terrain_seed=terrain_seed,
             device=rl_device,
+            standing_pose_degrees=rl_standing_pose_degrees,
         )
         return
 
