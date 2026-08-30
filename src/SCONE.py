@@ -39,9 +39,12 @@ class SCONE :
             DRIVE = 2;
             CLIMB = 3;
 
-        def __init__(self) :
+        def __init__(self, controller=None) :
             self.status = self.__Status.INITIALIZING;
-            self.controller = Controller();
+            # Real hardware by default; pass a MuJoCoController (or anything
+            # else implementing the same Controller API) to drive this exact
+            # CLI against a simulation instead, unchanged otherwise.
+            self.controller = controller if controller is not None else Controller();
             self.__cli();
         
         def __del__(self) :
@@ -301,5 +304,5 @@ class SCONE :
             self.controller = controller;
             self.mode = Walk(self, is_initial = True);
 
-    def __init__(self) :
-        self.Cli();
+    def __init__(self, controller=None) :
+        self.Cli(controller);

@@ -3,7 +3,9 @@ from .actuator import Actuator;
 
 class Controller :
     __BAUDRATE = 1000000;
-    __DEVICE_NAME = "/dev/ttyUSB0";
+    # __DEVICE_NAME = "/dev/ttyUSB0";
+    __DEVICE_NAME = "/dev/cu.usbserial-FTBIHSYW";
+    
 
     def __is_MX(self, id: int) :
         return id <= 6;
@@ -75,8 +77,14 @@ class Controller :
     def disable_torque(self) :
         self.set_all_torque(Actuator.torque.off);
 
+    @staticmethod
+    def degrees_to_raw(position) :
+        # Unified direction convention for every actuator:
+        # 0 = CCW limit, 2048 = center, 4096 = CW limit.
+        return int(position / 360 * 4096);
+
     def set_position(self, id: int, position) :
-        position = int(position / 360 * 4096 if id % 2 == 1 else 4096 - ( position / 360 * 4096 ));
+        position = self.degrees_to_raw(position);
         if self.__is_MX(id) :
             self.packet_handler_1.write2ByteTxRx(self.port_handler, id, Actuator.model.MX.address.goal_position, position);
         else :

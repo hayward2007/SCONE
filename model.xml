@@ -1,0 +1,433 @@
+<mujoco model="SCONEv2-v19">
+    <compiler angle="radian" eulerseq="XYZ" inertiafromgeom="false" />
+    <option timestep="0.002" integrator="implicitfast" />
+    <default>
+        <!--
+          Leg-number inspection colors, grouped by physical side instead of
+          by leg index, so a mirrored pair reads as "warm vs. cool" at a
+          glance: L1/L3/L5 (right) = red/orange/yellow, L2/L4/L6 (left) =
+          green/blue/navy.
+        -->
+        <default class="leg_L1">
+            <geom rgba="0.90 0.10 0.10 1" />
+        </default>
+        <default class="leg_L3">
+            <geom rgba="1.00 0.45 0.05 1" />
+        </default>
+        <default class="leg_L5">
+            <geom rgba="1.00 0.90 0.10 1" />
+        </default>
+        <default class="leg_L2">
+            <geom rgba="0.10 0.75 0.25 1" />
+        </default>
+        <default class="leg_L4">
+            <geom rgba="0.10 0.35 1.00 1" />
+        </default>
+        <default class="leg_L6">
+            <geom rgba="0.05 0.10 0.45 1" />
+        </default>
+
+        <!--
+          DYNAMIXEL electromechanical model, at 12V.
+          "nominal" = "voltage stall_torque no_load_speed(rad/s)"; the
+          compiler derives the motor constant K = voltage/no_load_speed and
+          terminal resistance R = K*voltage/stall_torque (MuJoCo XML
+          reference, actuator/dcmotor). This reproduces the motor's real
+          torque-speed line (torque droops with speed via back-EMF) instead
+          of a position PD hard-clipped at a fixed forcerange.
+            MX-28AT:      stall=2.5 N*m, no-load=55 rpm -> K=2.083 R=10.00
+            XM430-W350-T: stall=4.1 N*m, no-load=46 rpm -> K=2.491 R=7.291
+            XM430-W210-T: stall=3.0 N*m, no-load=77 rpm -> K=1.488 R=5.953
+          "saturation" is set to each motor's official stall torque (matches
+          the ROBOTIS e-manual spec used in "nominal" above), not a
+          conservative continuous-duty derating: the dcmotor's own K/R
+          torque-speed line already makes high torque only available at low
+          speed (verified against the official XM430-W350-T
+          torque/speed/current/efficiency performance graph; ROBOTIS notes
+          that graph's own tested range tops out below true stall torque,
+          not because the motor can't produce more, only because that's as
+          far as they measured). A saturation cap below stall was tried
+          first and caused a real failure: recovering the leg from a loaded
+          transient stance needed more torque than that conservative cap
+          allowed, and the joint got stuck partway. Real bursts up to stall
+          are normal Dynamixel operation (that's what stall rating means);
+          sustained stall-torque holding is what to watch for as
+          unrealistic if an RL policy learns to exploit it. Inductance/
+          thermal/cogging/lugre are left at their disabling defaults (0) for
+          now; add them once real step-response data is available to tune
+          against.
+          input="voltage" (the default) means data.ctrl is a raw terminal
+          voltage, not a target angle. src/simulation/pid.py supplies the
+          outer position/velocity PID that converts a target angle into
+          this voltage; see SCONE_RL.md for the full derivation.
+        -->
+        <default class="motor_mx28at">
+            <dcmotor nominal="12 2.5 5.759586531581288" saturation="2.5 0 0" ctrllimited="true" ctrlrange="-12 12" />
+        </default>
+        <default class="motor_xm430_w350">
+            <dcmotor nominal="12 4.1 4.817108735504349" saturation="4.1 0 0" ctrllimited="true" ctrlrange="-12 12" />
+        </default>
+        <default class="motor_xm430_w210">
+            <dcmotor nominal="12 3.0 8.063421144213802" saturation="3.0 0 0" ctrllimited="true" ctrlrange="-12 12" />
+        </default>
+    </default>
+    <asset>
+        <mesh name="ARC_SHAPED_WHEEL" file="meshes/ARC_SHAPED_WHEEL.stl" scale="0.001 0.001 0.001" />
+        <mesh name="BODY" file="meshes/BODY.stl" scale="0.001 0.001 0.001" />
+        <mesh name="BODY_ACTUATOR" file="meshes/BODY_ACTUATOR.stl" scale="0.001 0.001 0.001" />
+        <mesh name="FR07" file="meshes/FR07.stl" scale="0.001 0.001 0.001" />
+        <mesh name="FR12" file="meshes/FR12.stl" scale="0.001 0.001 0.001" />
+        <mesh name="LEG_ACTUATOR" file="meshes/LEG_ACTUATOR.stl" scale="0.001 0.001 0.001" />
+        <!-- Alternate local-Z reflection for stage-1 servo horn orientation. -->
+        <mesh name="LEG_ACTUATOR_MIRRORED_Z" file="meshes/LEG_ACTUATOR.stl" scale="0.001 0.001 -0.001" />
+        <mesh name="LINK" file="meshes/LINK.stl" scale="0.001 0.001 0.001" />
+        <mesh name="TIRE" file="meshes/TIRE.stl" scale="0.001 0.001 0.001" />
+    </asset>
+    <!--
+      Motor numbering:
+        M01-M06: body joints for legs L1-L6
+        M07-M12: first leg joints for legs L1-L6
+        M13-M18: second leg joints for legs L1-L6
+        Physical layout from front to rear: L2/L1, L4/L3, L6/L5.
+        Hardware sides: L1/L3/L5=right, L2/L4/L6=left.
+        Every body/geom numeric suffix below matches its leg number directly
+        (BODY_ACTUATOR_3, FR07_3, LINK_3, TIRE_3, etc. are all leg L3), and
+        LEG_ACTUATOR_07..18 match their driving motor's ID. The raw Fusion
+        export used a different per-leg numbering (1=L1, 2=L3, 3=L5, 4=L2,
+        5=L4, 6=L6); everything has been renamed away from that scheme.
+
+        Left-side joint axis fix (M02/M04/M06, M14/M16/M18): L2/L4/L6's whole
+        leg subtree is a 180-degree-about-Z rotated copy of L1/L3/L5's (not a
+        true mirror), so an exported joint axis only ends up mirror-correct
+        on the left side if that axis happens to flip sign under the same
+        180-degree copy. Body joints (M01-M06) are Z-aligned, unaffected by
+        the copy, so they need an explicit negated axis on the left side.
+        Stage-1 joints (M07-M12) are X-aligned, already flip correctly
+        through the same copy, and were left alone. Stage-2 joints
+        (M13-M18) pick up one more flip from LINK's own local rotation,
+        which put them back in phase with the un-fixed body axis rather
+        than with the already-correct stage-1 axis, so they also needed the
+        same negation as the body joints. Net result: M02/M04/M06 and
+        M14/M16/M18 have a negated axis relative to the raw CAD export;
+        M08/M10/M12 do not. This makes the identical degree values that
+        Walk/Drive/Climb already send to both sides of a pair produce a
+        true mirror-symmetric stance, verified by rendering the exact
+        SCONE.Standard home pose before and after. No control code (real or
+        simulated) needed to change.
+      In the MuJoCo viewer, select Joint under Rendering > Label to show these names.
+
+      Mass model:
+        Measured: FR07=0.020 kg, FR12=0.046 kg, MX-28AT=0.077 kg,
+                  XM430-W350-T=0.082 kg, XM430-W210-T=0.082 kg.
+        Internal payload=0.600 kg total: three 0.150 kg batteries,
+        0.050 kg Raspberry Pi, 0.050 kg power system, and 0.050 kg reserved
+        for wiring and miscellaneous boards. All are midway between plates.
+        Estimated printed parts: 15% infill plus a 1.2 mm solid shell.
+        PLA density=1.24 g/cm^3, TPU density=1.22 g/cm^3.
+        Effective material volume = 0.15*V + 0.85*min(V, surface_area*1.2 mm).
+        BODY=0.127423 kg, LINK=0.026781 kg,
+        ARC_SHAPED_WHEEL=0.117388 kg, TIRE=0.099849 kg per part.
+        Inertias retain the CAD center of mass and are scaled with each new mass.
+
+      TPU tire contact model (initial estimate; tune against the real floor):
+        sliding/torsional/rolling friction = 1.0 / 0.005 / 0.0005
+        solref = 0.03 1 (soft, critically damped contact)
+        solimp width = 0.003 m (approximately 3 mm compliant contact layer)
+    -->
+    <worldbody>
+        <light directional="true" pos="-0.5 0.5 3" dir="0 0 -1" />
+        <!--
+          Floor plane, positioned 1mm below the lowest contact-enabled mesh
+          vertex at the rest pose (qpos0). friction/condim match the tire
+          contact model documented above.
+        -->
+        <geom name="simulation_floor" type="plane" pos="0 0 -0.34" size="3 3 0.1" rgba="0.22 0.24 0.27 1" friction="1.0 0.005 0.0005" condim="6" />
+        <body name="UPPER_BODY_1" pos="0.029499991647827226 -0.22049999164906234 1.3470492948115944e-31" euler="-1.387778780781525e-17 7.88860905221024e-31 1.5707963267949119">
+            <freejoint name="root_freejoint" />
+            <!--
+              Collision enabled (unlike most other visual-only geoms) as a
+              hard backstop: if the legs ever sag under load, the chassis
+              plate hits the floor instead of clipping through it invisibly.
+            -->
+            <geom name="UPPER_BODY_1_geom" type="mesh" mesh="BODY" pos="0 0 0" euler="0 0 0" contype="1" conaffinity="1" condim="3" group="2" />
+            <inertial mass="0.12742254384" pos="0.12500003050043243 -0.09550000000055786 -0.19910090250276608" fullinertia="0.0002496739061341672 0.0009818951988457812 0.001231056520028082 -1.239986592906769e-16 2.54736559045075e-12 -9.299086258855513e-18" />
+            <!--
+              UPPER_BODY_1 local frame, drawn 0.10 m long for inspection:
+              +X red, +Y green, +Z blue. Sites are visual-only and add no mass
+              or collision geometry.
+            -->
+            <site name="BODY_FRAME_ORIGIN" type="sphere" pos="0.125 -0.0955 -0.13" size="0.008" rgba="1 1 1 1" group="4" />
+            <site name="BODY_AXIS_X" type="capsule" fromto="0.125 -0.0955 -0.13 0.225 -0.0955 -0.13" size="0.004" rgba="1 0 0 1" group="4" />
+            <site name="BODY_AXIS_X_TIP" type="sphere" pos="0.225 -0.0955 -0.13" size="0.009" rgba="1 0 0 1" group="4" />
+            <site name="BODY_AXIS_Y" type="capsule" fromto="0.125 -0.0955 -0.13 0.125 0.0045 -0.13" size="0.004" rgba="0 1 0 1" group="4" />
+            <site name="BODY_AXIS_Y_TIP" type="sphere" pos="0.125 0.0045 -0.13" size="0.009" rgba="0 1 0 1" group="4" />
+            <site name="BODY_AXIS_Z" type="capsule" fromto="0.125 -0.0955 -0.13 0.125 -0.0955 -0.03" size="0.004" rgba="0 0.35 1 1" group="4" />
+            <site name="BODY_AXIS_Z_TIP" type="sphere" pos="0.125 -0.0955 -0.03" size="0.009" rgba="0 0.35 1 1" group="4" />
+            <!-- Internal payloads are ordered along the front-to-rear body axis. -->
+            <body name="BATTERY_L2_L1" pos="-0.005 -0.0955 -0.21650635">
+                <geom name="BATTERY_L2_L1_visual" type="box" size="0.040 0.025 0.0125" rgba="0.15 0.25 0.55 0.65" contype="0" conaffinity="0" group="3" />
+                <inertial mass="0.150" pos="0 0 0" diaginertia="0.0000390625 0.0000878125 0.00011125" />
+            </body>
+            <body name="RASPBERRY_PI" pos="0.060 -0.0955 -0.21650635">
+                <geom name="RASPBERRY_PI_visual" type="box" size="0.0425 0.028 0.0085" rgba="0.10 0.55 0.20 0.65" contype="0" conaffinity="0" group="3" />
+                <inertial mass="0.050" pos="0 0 0" diaginertia="0.0000142708333 0.0000313083333 0.0000431708333" />
+            </body>
+            <body name="BATTERY_L4_L3" pos="0.125 -0.0955 -0.21650635">
+                <geom name="BATTERY_L4_L3_visual" type="box" size="0.040 0.025 0.0125" rgba="0.15 0.25 0.55 0.65" contype="0" conaffinity="0" group="3" />
+                <inertial mass="0.150" pos="0 0 0" diaginertia="0.0000390625 0.0000878125 0.00011125" />
+            </body>
+            <body name="POWER_SYSTEM" pos="0.190 -0.0955 -0.21650635">
+                <geom name="POWER_SYSTEM_visual" type="box" size="0.040 0.025 0.010" rgba="0.60 0.20 0.10 0.65" contype="0" conaffinity="0" group="3" />
+                <inertial mass="0.050" pos="0 0 0" diaginertia="0.0000120833333 0.0000283333333 0.0000370833333" />
+            </body>
+            <body name="BATTERY_L6_L5" pos="0.255 -0.0955 -0.21650635">
+                <geom name="BATTERY_L6_L5_visual" type="box" size="0.040 0.025 0.0125" rgba="0.15 0.25 0.55 0.65" contype="0" conaffinity="0" group="3" />
+                <inertial mass="0.150" pos="0 0 0" diaginertia="0.0000390625 0.0000878125 0.00011125" />
+            </body>
+            <body name="WIRING_AND_MISC" pos="0.125 -0.0955 -0.21650635">
+                <!-- Keeps the previously specified 0.600 kg total payload. -->
+                <geom name="WIRING_AND_MISC_visual" type="box" size="0.050 0.020 0.010" rgba="0.25 0.25 0.25 0.5" contype="0" conaffinity="0" group="3" />
+                <inertial mass="0.050" pos="0 0 0" diaginertia="0.0000083333333 0.0000433333333 0.0000483333333" />
+            </body>
+            <body name="BODY_ACTUATOR_1" childclass="leg_L1" pos="-0.004999999999712479 -5.251665768923885e-13 -0.21650635094610934" euler="-6.245004513516503e-16 1.4446777107934682e-14 1.5265566588577741e-16">
+                <geom name="BODY_ACTUATOR_1_geom" type="mesh" mesh="BODY_ACTUATOR" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                <inertial mass="0.077" pos="2.2457565069409547e-05 -0.011283494713782982 0.0002804281429741776" fullinertia="2.203536983502834e-05 1.364886364353936e-05 1.824200278359794e-05 2.025080226143607e-08 -8.309985915615201e-09 -6.887682306429392e-07" />
+                <body name="FR07_1" pos="0.0 2.6645352591003756e-17 0.0" euler="9.714451465454548e-17 1.5707963267948966 0">
+                    <joint name="M01_body_L1" type="hinge" axis="1.0000000000000007 2.22044604925032e-16 3.538835890992687e-15" pos="-0.020500350946109344 -8.351647562104763e-09 -8.351225228403469e-09" />
+                    <geom name="FR07_1_geom" type="mesh" mesh="FR07" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                    <inertial mass="0.02" pos="-3.365828433536516e-06 0.021380623885861542 6.079385895546695e-14" fullinertia="3.186951201144599e-06 7.283572457516221e-06 7.870640535918281e-06 -2.275719459054597e-10 2.550321767021609e-17 2.603429859173215e-17" />
+                    <body name="FR12-v1_1" pos="2.1316282072803005e-16 0.05799999999999993 -1.0658141036401502e-16" euler="3.1415926535897922 1.5707963267948957 0">
+                        <geom name="FR12-v1_1_geom" type="mesh" mesh="FR12" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                        <inertial mass="0.046" pos="1.6382429867191999e-13 0.02025413363671504 6.005885045613372e-14" fullinertia="6.082038315091338e-06 1.423321251841214e-05 1.534998841650801e-05 1.293998255675933e-16 5.311271978328819e-17 5.599106523674402e-17" />
+                        <body name="LEG_ACTUATOR_07" pos="3.552713678800501e-17 -2.6645352591003756e-17 0.0" euler="8.049116928532463e-16 1.5707963267948957 0">
+                            <joint name="M07_stage1_L1" type="hinge" axis="2.776674363768828e-15 -1.1837753000065732e-14 0.9999999999999997" pos="-3.509461095091216e-07 8.35164719038861e-09 0.01900000835122414" />
+                            <geom name="LEG_ACTUATOR_07_geom" type="mesh" mesh="LEG_ACTUATOR" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                            <inertial mass="0.082" pos="5.66194523187576e-15 -0.011618523372184567 0.000605935309866351" fullinertia="2.265503224869742e-05 1.316549369469552e-05 1.983462216087228e-05 -5.270301430446761e-18 -1.677708315771839e-17 -3.861121350251272e-08" />
+                            <body name="LINK_1" pos="1.403321903126198e-14 -0.1854999999999991 0.024000000000000198" euler="-3.141592653589793 1.216790282796008e-16 0.4363323129986512">
+                                <geom name="LINK_1_geom" type="mesh" mesh="LINK" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                                <inertial mass="0.02678068176" pos="0.0396773571266088 -0.08508836694554256 0.04214426279977245" fullinertia="4.41284162783617e-05 1.501213069687376e-05 4.796298749486228e-05 1.73497189723624e-05 -1.810319426181919e-07 3.882242537800248e-07" />
+                                <body name="LEG_ACTUATOR_13" pos="-5.329070518200751e-17 3.552713678800501e-17 0.024000000000000094" euler="3.1415926535897927 -2.741961476848221e-16 -2.7052603405912103">
+                                    <geom name="LEG_ACTUATOR_13_geom" type="mesh" mesh="LEG_ACTUATOR" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                                    <inertial mass="0.082" pos="5.653398289321272e-15 -0.011618523372184567 0.0006059353098664376" fullinertia="2.265503224869737e-05 1.316549369469386e-05 1.983462216087312e-05 -5.294651624710833e-18 -1.66662429500006e-17 -3.861121350190815e-08" />
+                                    <body name="ARC_SHAPED_WHEEL_1" pos="1.0658141036401502e-16 -3.552713678800501e-17 0.023999999999999952" euler="3.14159265358979 1.65229052369821e-15 -2.792526803190928">
+                                        <joint name="M13_stage2_L1" type="hinge" axis="2.8115911445946827e-15 -1.4844358946090452e-14 0.9999999999999994" pos="-3.2692505147029913e-07 -1.2787862352458954e-07 0.004999991648778177" />
+                                        <geom name="ARC_SHAPED_WHEEL_1_geom" type="mesh" mesh="ARC_SHAPED_WHEEL" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                                        <inertial mass="0.117388134" pos="-0.016053674788584365 0.03875904568823382 0.013980637345167347" fullinertia="0.0003465005680367395 0.0006420763188464864 0.0009448621536884202 -0.0001477808497184295 4.906849897976306e-06 -1.184563145395376e-05" />
+                                        <body name="TIRE_1" pos="-0.09331384507160728 -0.3121854838360147 -0.10100000000000137" euler="0.4363323129982285 -1.5707963267948886 0">
+                                            <geom name="TIRE_1_geom" type="mesh" mesh="TIRE" pos="0 0 0" euler="0 0 0" contype="1" conaffinity="1" condim="6" priority="1" friction="1.0 0.005 0.0005" solref="0.03 1" solimp="0.70 0.95 0.003 0.5 2" group="2" />
+                                            <inertial mass="0.09984906024" pos="0.12400000000000065 0.2990890236505286 -0.21893408443237425" fullinertia="0.001071737097480606 0.0008285851295973189 0.0002753699313205109 1.327241472220512e-17 -5.977902715931707e-17 -2.420667812565429e-05" />
+                                        </body>
+                                    </body>
+                                </body>
+                            </body>
+                        </body>
+                    </body>
+                </body>
+            </body>
+            <body name="BODY_ACTUATOR_3" childclass="leg_L3" pos="0.12499999999999993 -3.9968028886505634e-17 -0.21650635094610976" euler="-3.191891195797322e-16 1.4446777107934682e-14 1.5265566588577741e-16">
+                <geom name="BODY_ACTUATOR_3_geom" type="mesh" mesh="BODY_ACTUATOR" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                <inertial mass="0.077" pos="2.2457565069391783e-05 -0.011283494713782982 0.0002804281429741809" fullinertia="2.203536983502834e-05 1.364886364353626e-05 1.824200278359823e-05 2.025080226138772e-08 -8.309985916002014e-09 -6.887682306430343e-07" />
+                <body name="FR07_3" pos="7.105427357601002e-17 4.4408920985006264e-17 0.0" euler="9.714451465454336e-17 1.5707963267948966 0">
+                    <joint name="M03_body_L3" type="hinge" axis="1.0000000000000007 -4.1633363423442594e-17 3.5388358909926877e-15" pos="-0.020500350946109344 0 0" />
+                    <geom name="FR07_3_geom" type="mesh" mesh="FR07" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                    <inertial mass="0.02" pos="-3.3658284335302847e-06 0.021380623885861542 6.084714966064896e-14" fullinertia="3.186951201144849e-06 7.283572457516721e-06 7.870640535918782e-06 -2.275719459041774e-10 2.55032176702161e-17 2.602647925711876e-17" />
+                    <body name="FR12-v1_3" pos="3.1974423109204507e-16 0.05799999999999994 5.329070518200751e-17" euler="3.1415926535897922 1.5707963267948957 0">
+                        <geom name="FR12-v1_3_geom" type="mesh" mesh="FR12" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                        <inertial mass="0.046" pos="1.6377100796673798e-13 0.02025413363671504 6.010112357457392e-14" fullinertia="6.08203831509177e-06 1.4233212518413e-05 1.534998841650871e-05 1.294200519340137e-16 5.375996350874224e-17 5.599218444282407e-17" />
+                        <body name="LEG_ACTUATOR_09" pos="0.0 7.993605777301127e-17 1.0658141036401502e-16" euler="7.494005416219899e-16 1.5707963267948957 0">
+                            <joint name="M09_stage1_L3" type="hinge" axis="2.7675393478062963e-15 -1.1657341758564144e-14 0.9999999999999999" pos="0 0 0.01900000835122414" />
+                            <geom name="LEG_ACTUATOR_09_geom" type="mesh" mesh="LEG_ACTUATOR" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                            <inertial mass="0.082" pos="5.664680766481023e-15 -0.011618523372184563 0.0006059353098663505" fullinertia="2.265503224869734e-05 1.316549369469551e-05 1.983462216087229e-05 -5.16632595871185e-18 -1.656748728474577e-17 -3.861121350240385e-08" />
+                            <body name="LINK_3" pos="1.3820056210533949e-14 -0.18549999999999892 0.024000000000000164" euler="3.141592653589793 1.5540010462964622e-16 0.4363323129986518">
+                                <geom name="LINK_3_geom" type="mesh" mesh="LINK" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                                <inertial mass="0.02678068176" pos="0.039677357126608824 -0.08508836694554255 0.04214426279977246" fullinertia="4.412841627836179e-05 1.501213069687377e-05 4.796298749486204e-05 1.734971897236244e-05 -1.8103194261825e-07 3.882242537800031e-07" />
+                                <body name="LEG_ACTUATOR_15" pos="-5.329070518200751e-17 0.0 0.024000000000000056" euler="3.1415926535897927 -2.981033963956325e-16 -2.7052603405912103">
+                                    <geom name="LEG_ACTUATOR_15_geom" type="mesh" mesh="LEG_ACTUATOR" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                                    <inertial mass="0.082" pos="5.65290562009785e-15 -0.011618523372184567 0.000605935309866421" fullinertia="2.26550322486974e-05 1.316549369469553e-05 1.983462216087146e-05 -5.294417332283574e-18 -1.666633109986903e-17 -3.861121350295695e-08" />
+                                    <body name="ARC_SHAPED_WHEEL_3" pos="-1.0658141036401502e-16 -7.105427357601002e-17 0.02400000000000002" euler="3.14159265358979 1.7310874707473542e-15 -2.7925268031909276">
+                                        <joint name="M15_stage2_L3" type="hinge" axis="2.8385348697371645e-15 -1.4940548916543012e-14 1.0" pos="0 0 0.004999991648778177" />
+                                        <geom name="ARC_SHAPED_WHEEL_3_geom" type="mesh" mesh="ARC_SHAPED_WHEEL" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                                        <inertial mass="0.117388134" pos="-0.016053674788584407 0.03875904568823388 0.01398063734516734" fullinertia="0.0003465005680367407 0.0006420763188464874 0.0009448621536884228 -0.0001477808497184307 4.90684989797634e-06 -1.184563145395381e-05" />
+                                        <body name="TIRE_3" pos="-0.09331384507160713 -0.31218548383601474 -0.10100000000000128" euler="0.4363323129982286 -1.5707963267948895 0">
+                                            <geom name="TIRE_3_geom" type="mesh" mesh="TIRE" pos="0 0 0" euler="0 0 0" contype="1" conaffinity="1" condim="6" priority="1" friction="1.0 0.005 0.0005" solref="0.03 1" solimp="0.70 0.95 0.003 0.5 2" group="2" />
+                                            <inertial mass="0.09984906024" pos="0.12400000000000072 0.2990890236505289 -0.21893408443237425" fullinertia="0.001071737097480606 0.0008285851295973303 0.0002753699313205077 1.488758361637115e-17 -6.267433253789663e-17 -2.420667812564554e-05" />
+                                        </body>
+                                    </body>
+                                </body>
+                            </body>
+                        </body>
+                    </body>
+                </body>
+            </body>
+            <body name="BODY_ACTUATOR_5" childclass="leg_L5" pos="0.2549999999997123 -4.0372150067469193e-13 -0.21650635094611034" euler="-3.191891195797322e-16 1.4446777107934682e-14 1.5265566588577741e-16">
+                <geom name="BODY_ACTUATOR_5_geom" type="mesh" mesh="BODY_ACTUATOR" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                <inertial mass="0.077" pos="2.2457565069400663e-05 -0.011283494713782982 0.0002804281429741809" fullinertia="2.203536983502834e-05 1.364886364353781e-05 1.824200278359828e-05 2.025080226142398e-08 -8.309985915905312e-09 -6.887682306429375e-07" />
+                <body name="FR07_5" pos="4.4408920985006264e-17 4.884981308350689e-17 7.105427357601002e-17" euler="9.714451465454336e-17 1.5707963267948966 0">
+                    <joint name="M05_body_L5" type="hinge" axis="1.0000000000000007 -4.1633363423442594e-17 3.5388358909926877e-15" pos="-0.020500350946109344 0 0" />
+                    <geom name="FR07_5_geom" type="mesh" mesh="FR07" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                    <inertial mass="0.02" pos="-3.3658284335302847e-06 0.021380623885861542 6.084714966064896e-14" fullinertia="3.186951201144865e-06 7.283572457516554e-06 7.870640535918615e-06 -2.275719459093902e-10 2.554492078815423e-17 2.602647925711875e-17" />
+                    <body name="FR12-v1_5" pos="2.842170943040401e-16 0.05799999999999991 1.2434497875801754e-16" euler="3.1415926535897922 1.5707963267948957 0">
+                        <geom name="FR12-v1_5_geom" type="mesh" mesh="FR12" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                        <inertial mass="0.046" pos="1.6377988975093497e-13 0.02025413363671504 6.006559643778591e-14" fullinertia="6.082038315090907e-06 1.4233212518413e-05 1.534998841650874e-05 1.294251085256188e-16 5.338240466889408e-17 5.600566868710437e-17" />
+                        <body name="LEG_ACTUATOR_11" pos="2.6645352591003756e-17 6.217248937900877e-17 7.105427357601002e-17" euler="7.494005416219899e-16 1.5707963267948957 0">
+                            <joint name="M11_stage1_L5" type="hinge" axis="2.7675393478062963e-15 -1.1657341758564144e-14 0.9999999999999999" pos="0 0 0.01900000835122414" />
+                            <geom name="LEG_ACTUATOR_11_geom" type="mesh" mesh="LEG_ACTUATOR" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                            <inertial mass="0.082" pos="5.664680766481023e-15 -0.011618523372184558 0.0006059353098663594" fullinertia="2.265503224869741e-05 1.316549369469551e-05 1.983462216087229e-05 -5.16632595871185e-18 -1.656748728474577e-17 -3.861121350240385e-08" />
+                            <body name="LINK_5" pos="1.3713474800169933e-14 -0.18549999999999897 0.024000000000000084" euler="3.141592653589793 1.5540010462964622e-16 0.4363323129986518">
+                                <geom name="LINK_5_geom" type="mesh" mesh="LINK" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                                <inertial mass="0.02678068176" pos="0.039677357126608824 -0.08508836694554255 0.04214426279977246" fullinertia="4.412841627836174e-05 1.501213069687356e-05 4.796298749486255e-05 1.734971897236254e-05 -1.810319426182365e-07 3.88224253779974e-07" />
+                                <body name="LEG_ACTUATOR_17" pos="1.7763568394002505e-17 0.0 0.02400000000000012" euler="3.1415926535897927 -2.981033963956325e-16 -2.7052603405912103">
+                                    <geom name="LEG_ACTUATOR_17_geom" type="mesh" mesh="LEG_ACTUATOR" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                                    <inertial mass="0.082" pos="5.65290562009785e-15 -0.011618523372184567 0.0006059353098664343" fullinertia="2.265503224869656e-05 1.31654936946947e-05 1.98346221608723e-05 -5.294417332283569e-18 -1.635263328001236e-17 -3.861121350253868e-08" />
+                                    <body name="ARC_SHAPED_WHEEL_5" pos="-7.105427357601002e-17 0.0 0.02400000000000011" euler="3.14159265358979 1.7310874707473542e-15 -2.7925268031909276">
+                                        <joint name="M17_stage2_L5" type="hinge" axis="2.8385348697371645e-15 -1.4940548916543012e-14 1.0" pos="0 0 0.004999991648778177" />
+                                        <geom name="ARC_SHAPED_WHEEL_5_geom" type="mesh" mesh="ARC_SHAPED_WHEEL" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                                        <inertial mass="0.117388134" pos="-0.016053674788584393 0.038759045688233844 0.013980637345167348" fullinertia="0.0003465005680367424 0.0006420763188464863 0.0009448621536884243 -0.0001477808497184306 4.906849897976083e-06 -1.184563145395311e-05" />
+                                        <body name="TIRE_5" pos="-0.09331384507160717 -0.3121854838360147 -0.10100000000000103" euler="0.4363323129982286 -1.5707963267948895 0">
+                                            <geom name="TIRE_5_geom" type="mesh" mesh="TIRE" pos="0 0 0" euler="0 0 0" contype="1" conaffinity="1" condim="6" priority="1" friction="1.0 0.005 0.0005" solref="0.03 1" solimp="0.70 0.95 0.003 0.5 2" group="2" />
+                                            <inertial mass="0.09984906024" pos="0.12400000000000072 0.2990890236505289 -0.21893408443237428" fullinertia="0.001071737097480603 0.0008285851295973295 0.0002753699313205094 1.527044029971047e-17 -6.205115647290042e-17 -2.420667812564531e-05" />
+                                        </body>
+                                    </body>
+                                </body>
+                            </body>
+                        </body>
+                    </body>
+                </body>
+            </body>
+            <body name="BODY_ACTUATOR_2" childclass="leg_L2" pos="-0.0049999999997123725 -0.19100000000073958 -0.21650635094610934" euler="-2.77555756156289e-16 1.4446777107934685e-14 -3.141592653589793">
+                <geom name="BODY_ACTUATOR_2_geom" type="mesh" mesh="BODY_ACTUATOR" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                <inertial mass="0.077" pos="2.2457565069410793e-05 -0.011283494713782975 0.000280428142974181" fullinertia="2.2035369835026e-05 1.364886364353627e-05 1.824200278359563e-05 2.025080226104653e-08 -8.309985916388743e-09 -6.887682306432267e-07" />
+                <body name="FR07_2" pos="1.0658141036401502e-16 7.105427357601002e-17 -3.552713678800501e-17" euler="-1.249000902704846e-16 1.5707963267948966 0">
+                    <joint name="M02_body_L2" type="hinge" axis="-1.0000000000000009 1.387778780781525e-17 -3.5388358909926873e-15" pos="-0.020500350946109344 0 0" />
+                    <geom name="FR07_2_geom" type="mesh" mesh="FR07" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                    <inertial mass="0.02" pos="-3.3658284335302855e-06 0.02138062388586154 6.083175981834686e-14" fullinertia="3.186951201144767e-06 7.28357245751656e-06 7.870640535918782e-06 -2.275719458675988e-10 2.550321764495055e-17 2.601403721758895e-17" />
+                    <body name="FR12-v1_2" pos="2.1316282072803005e-16 0.05799999999999976 -3.552713678800501e-17" euler="3.141592653589792 1.570796326794896 0">
+                        <geom name="FR12-v1_2_geom" type="mesh" mesh="FR12" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                        <inertial mass="0.046" pos="1.6376027146256502e-13 0.020254133636715056 6.006587752035475e-14" fullinertia="6.082038315090045e-06 1.423321251841386e-05 1.534998841650844e-05 1.2956674344701e-16 5.354421560025761e-17 5.611267504743935e-17" />
+                        <body name="LEG_ACTUATOR_08" pos="1.4210854715202004e-16 -1.4210854715202004e-16 0.0" euler="1.0408340855860839e-15 1.5707963267948957 0">
+                            <joint name="M08_stage1_L2" type="hinge" axis="2.7766743637688345e-15 -1.1837753000065732e-14 0.9999999999999991" pos="0 0 -0.01900000835122414" />
+                            <geom name="LEG_ACTUATOR_08_geom" type="mesh" mesh="LEG_ACTUATOR_MIRRORED_Z" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                            <inertial mass="0.082" pos="5.665492498719745e-15 -0.01161852337218457 -0.0006059353098663494" fullinertia="2.265503224869407e-05 1.316549369469551e-05 1.983462216087226e-05 -5.895428609966889e-18 1.510401633004193e-17 3.861121350115186e-08" />
+                            <body name="LINK_2" pos="-1.3891110484109959e-14 -0.18549999999999897 -0.024000000000000198" euler="-4.657886452361494e-16 -2.1720081235529743e-16 2.705260340591146">
+                                <geom name="LINK_2_geom" type="mesh" mesh="LINK" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                                <inertial mass="0.02678068176" pos="0.03967735712660881 -0.0850883669455427 0.0421442627997725" fullinertia="4.412841627836024e-05 1.501213069687369e-05 4.796298749486177e-05 1.734971897236263e-05 -1.810319426180063e-07 3.882242537803095e-07" />
+                                <body name="LEG_ACTUATOR_14" pos="-1.4210854715202004e-16 2.1316282072803005e-16 0.024000000000000094" euler="3.141592653589793 -4.477392057734016e-16 -2.705260340591211">
+                                    <geom name="LEG_ACTUATOR_14_geom" type="mesh" mesh="LEG_ACTUATOR" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                                    <inertial mass="0.082" pos="5.689175314426661e-15 -0.01161852337218462 0.0006059353098664137" fullinertia="2.265503224869735e-05 1.31654936946922e-05 1.983462216087063e-05 -7.374512175219921e-18 -1.581968108980639e-17 -3.86112135028936e-08" />
+                                    <body name="ARC_SHAPED_WHEEL_2" pos="1.0658141036401502e-16 -4.973799150320702e-16 0.02400000000000013" euler="3.14159265358979 1.5336060050969812e-15 -2.7925268031909276">
+                                        <joint name="M14_stage2_L2" type="hinge" axis="5.483397331624888e-15 -6.624461136860351e-15 -1.0" pos="0 0 0.004999991648778177" />
+                                        <geom name="ARC_SHAPED_WHEEL_2_geom" type="mesh" mesh="ARC_SHAPED_WHEEL" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                                        <inertial mass="0.117388134" pos="-0.01605367478858433 0.03875904568823381 0.013980637345167324" fullinertia="0.0003465005680367434 0.0006420763188464894 0.0009448621536884354 -0.0001477808497184265 4.906849897975049e-06 -1.18456314539519e-05" />
+                                        <body name="TIRE_2" pos="-0.09331384507160728 -0.312185483836015 -0.10100000000000144" euler="0.43633231299822883 -1.5707963267948883 0">
+                                            <geom name="TIRE_2_geom" type="mesh" mesh="TIRE" pos="0 0 0" euler="0 0 0" contype="1" conaffinity="1" condim="6" priority="1" friction="1.0 0.005 0.0005" solref="0.03 1" solimp="0.70 0.95 0.003 0.5 2" group="2" />
+                                            <inertial mass="0.09984906024" pos="0.12400000000000067 0.299089023650529 -0.2189340844323743" fullinertia="0.001071737097480608 0.0008285851295973128 0.0002753699313204698 5.731573301551582e-18 -6.756270057641804e-17 -2.420667812567446e-05" />
+                                        </body>
+                                    </body>
+                                </body>
+                            </body>
+                        </body>
+                    </body>
+                </body>
+            </body>
+            <body name="BODY_ACTUATOR_4" childclass="leg_L4" pos="0.12500000000000006 -0.19100000000114317 -0.21650635094610984" euler="-2.77555756156289e-16 1.4446777107934685e-14 -3.141592653589793">
+                <geom name="BODY_ACTUATOR_4_geom" type="mesh" mesh="BODY_ACTUATOR" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                <inertial mass="0.077" pos="2.245756506939303e-05 -0.011283494713782975 0.000280428142974181" fullinertia="2.203536983502755e-05 1.364886364353781e-05 1.824200278359717e-05 2.025080226143333e-08 -8.309985915808532e-09 -6.887682306432267e-07" />
+                <body name="FR07_4" pos="0.0 0.0 -3.552713678800501e-17" euler="-1.249000902704846e-16 1.5707963267948966 0">
+                    <joint name="M04_body_L4" type="hinge" axis="-1.0000000000000009 1.387778780781525e-17 -3.5388358909926873e-15" pos="-0.020500350946109344 0 0" />
+                    <geom name="FR07_4_geom" type="mesh" mesh="FR07" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                    <inertial mass="0.02" pos="-3.3658284335302855e-06 0.02138062388586154 6.084952338674086e-14" fullinertia="3.186951201144934e-06 7.28357245751656e-06 7.870640535919116e-06 -2.275719457007863e-10 2.550321764495055e-17 2.593063098171269e-17" />
+                    <body name="FR12-v1_4" pos="2.1316282072803005e-16 0.057999999999999975 1.4210854715202004e-16" euler="3.141592653589792 1.570796326794896 0">
+                        <geom name="FR12-v1_4_geom" type="mesh" mesh="FR12" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                        <inertial mass="0.046" pos="1.6379579859935304e-13 0.020254133636715056 6.006587752035475e-14" fullinertia="6.082038315092634e-06 1.423321251841257e-05 1.534998841650887e-05 1.295667434470099e-16 5.332846769177292e-17 5.568117923047003e-17" />
+                        <body name="LEG_ACTUATOR_10" pos="1.4210854715202004e-16 0.0 0.0" euler="1.0408340855860839e-15 1.5707963267948957 0">
+                            <joint name="M10_stage1_L4" type="hinge" axis="2.7766743637688345e-15 -1.1837753000065732e-14 0.9999999999999991" pos="0 0 -0.01900000835122414" />
+                            <geom name="LEG_ACTUATOR_10_geom" type="mesh" mesh="LEG_ACTUATOR_MIRRORED_Z" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                            <inertial mass="0.082" pos="5.665492498719745e-15 -0.01161852337218457 -0.0006059353098663494" fullinertia="2.26550322486991e-05 1.316549369469467e-05 1.983462216087394e-05 -5.05890109034916e-18 1.656793948937294e-17 3.861121350198839e-08" />
+                            <body name="LINK_4" pos="-1.3820056210533949e-14 -0.18549999999999892 -0.024000000000000164" euler="-3.6516826797962175e-16 -1.702807598741257e-16 2.7052603405911446">
+                                <geom name="LINK_4_geom" type="mesh" mesh="LINK" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                                <inertial mass="0.02678068176" pos="0.039677357126608956 -0.08508836694554275 0.042144262799772424" fullinertia="4.412841627836099e-05 1.501213069687401e-05 4.796298749486159e-05 1.734971897236247e-05 -1.810319426180317e-07 3.882242537797316e-07" />
+                                <body name="LEG_ACTUATOR_16" pos="-7.105427357601002e-17 -1.4210854715202004e-16 0.02399999999999997" euler="3.141592653589793 -4.477392057733902e-16 -2.7052603405912103">
+                                    <geom name="LEG_ACTUATOR_16_geom" type="mesh" mesh="LEG_ACTUATOR" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                                    <inertial mass="0.082" pos="5.672245177216741e-15 -0.011618523372184624 0.0006059353098664055" fullinertia="2.265503224869405e-05 1.316549369469472e-05 1.983462216087057e-05 -5.682272803556693e-18 -1.624231154754563e-17 -3.861121350330562e-08" />
+                                    <body name="ARC_SHAPED_WHEEL_4" pos="3.552713678800501e-17 4.263256414560601e-16 0.02400000000000011" euler="3.14159265358979 1.5960560502321378e-15 -2.7925268031909276">
+                                        <joint name="M16_stage2_L4" type="hinge" axis="5.45891915029033e-15 -6.936954792344282e-15 -0.9999999999999984" pos="0 0 0.004999991648778177" />
+                                        <geom name="ARC_SHAPED_WHEEL_4_geom" type="mesh" mesh="ARC_SHAPED_WHEEL" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                                        <inertial mass="0.117388134" pos="-0.016053674788584386 0.03875904568823382 0.013980637345167258" fullinertia="0.0003465005680367473 0.0006420763188464868 0.0009448621536884086 -0.0001477808497184307 4.906849897976907e-06 -1.184563145395458e-05" />
+                                        <body name="TIRE_4" pos="-0.09331384507160699 -0.31218548383601513 -0.10100000000000137" euler="0.4363323129982286 -1.5707963267948883 0">
+                                            <geom name="TIRE_4_geom" type="mesh" mesh="TIRE" pos="0 0 0" euler="0 0 0" contype="1" conaffinity="1" condim="6" priority="1" friction="1.0 0.005 0.0005" solref="0.03 1" solimp="0.70 0.95 0.003 0.5 2" group="2" />
+                                            <inertial mass="0.09984906024" pos="0.12400000000000003 0.2990890236505289 -0.21893408443237422" fullinertia="0.001071737097480556 0.0008285851295973497 0.0002753699313205182 -4.999997234791935e-18 -6.312794585173431e-17 -2.420667812564727e-05" />
+                                        </body>
+                                    </body>
+                                </body>
+                            </body>
+                        </body>
+                    </body>
+                </body>
+            </body>
+            <body name="BODY_ACTUATOR_6" childclass="leg_L6" pos="0.25499999999971246 -0.191000000000618 -0.21650635094611034" euler="-2.77555756156289e-16 1.4446777107934685e-14 -3.141592653589793">
+                <geom name="BODY_ACTUATOR_6_geom" type="mesh" mesh="BODY_ACTUATOR" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                <inertial mass="0.077" pos="2.245756506940191e-05 -0.011283494713782975 0.000280428142974181" fullinertia="2.20353698350291e-05 1.364886364353704e-05 1.824200278359833e-05 2.025080226143333e-08 -8.309985915905234e-09 -6.887682306428399e-07" />
+                <body name="FR07_6" pos="1.5543122344752193e-16 7.105427357601002e-17 -3.552713678800501e-17" euler="-1.249000902704846e-16 1.5707963267948966 0">
+                    <joint name="M06_body_L6" type="hinge" axis="-1.0000000000000009 1.387778780781525e-17 -3.5388358909926873e-15" pos="-0.020500350946109344 0 0" />
+                    <geom name="FR07_6_geom" type="mesh" mesh="FR07" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                    <inertial mass="0.02" pos="-3.3658284334947584e-06 0.02138062388586154 6.084508249464236e-14" fullinertia="3.186951201144934e-06 7.283572457516393e-06 7.870640535918115e-06 -2.275719455339739e-10 2.552406920391962e-17 2.603488877655802e-17" />
+                    <body name="FR12-v1_6" pos="2.486899575160351e-16 0.0579999999999999 1.1546319456101628e-16" euler="3.141592653589792 1.570796326794896 0">
+                        <geom name="FR12-v1_6_geom" type="mesh" mesh="FR12" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                        <inertial mass="0.046" pos="1.6378691681515603e-13 0.020254133636715056 6.006587752035475e-14" fullinertia="6.082038315090908e-06 1.4233212518413e-05 1.534998841650887e-05 1.294588694927676e-16 5.332846769177293e-17 5.568117923047003e-17" />
+                        <body name="LEG_ACTUATOR_12" pos="1.4210854715202004e-16 0.0 0.0" euler="1.0408340855860839e-15 1.5707963267948957 0">
+                            <joint name="M12_stage1_L6" type="hinge" axis="2.7766743637688345e-15 -1.1837753000065732e-14 0.9999999999999991" pos="0 0 -0.01900000835122414" />
+                            <geom name="LEG_ACTUATOR_12_geom" type="mesh" mesh="LEG_ACTUATOR_MIRRORED_Z" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                            <inertial mass="0.082" pos="5.665492498719745e-15 -0.01161852337218457 -0.0006059353098663628" fullinertia="2.265503224869658e-05 1.316549369469551e-05 1.983462216087226e-05 -5.895428609966881e-18 1.635880760946852e-17 3.861121350261578e-08" />
+                            <body name="LINK_6" pos="-1.396216475768597e-14 -0.18549999999999905 -0.02400000000000013" euler="-1.13617324838372e-16 -5.2980628671227306e-17 2.705260340591145">
+                                <geom name="LINK_6_geom" type="mesh" mesh="LINK" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                                <inertial mass="0.02678068176" pos="0.0396773571266088 -0.08508836694554239 0.04214426279977245" fullinertia="4.412841627836042e-05 1.501213069687367e-05 4.796298749486379e-05 1.734971897236233e-05 -1.810319426180131e-07 3.882242537800413e-07" />
+                                <body name="LEG_ACTUATOR_18" pos="-2.1316282072803005e-16 1.4210854715202004e-16 0.02400000000000029" euler="3.141592653589793 -4.477392057733957e-16 -2.7052603405912103">
+                                    <geom name="LEG_ACTUATOR_18_geom" type="mesh" mesh="LEG_ACTUATOR" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                                    <inertial mass="0.082" pos="5.674180050040729e-15 -0.011618523372184534 0.0006059353098664243" fullinertia="2.265503224870069e-05 1.316549369469551e-05 1.983462216087395e-05 -7.355948329275428e-18 -1.623394748404099e-17 -3.861121350268936e-08" />
+                                    <body name="ARC_SHAPED_WHEEL_6" pos="-1.0658141036401502e-16 2.1316282072803005e-16 0.024000000000000275" euler="3.14159265358979 1.5960560502321417e-15 -2.7925268031909276">
+                                        <joint name="M18_stage2_L6" type="hinge" axis="5.55384880979176e-15 -7.197771888260933e-15 -0.9999999999999994" pos="0 0 0.004999991648778177" />
+                                        <geom name="ARC_SHAPED_WHEEL_6_geom" type="mesh" mesh="ARC_SHAPED_WHEEL" pos="0 0 0" euler="0 0 0" contype="0" conaffinity="0" group="2" />
+                                        <inertial mass="0.117388134" pos="-0.016053674788584354 0.03875904568823377 0.013980637345167326" fullinertia="0.0003465005680367354 0.0006420763188464809 0.0009448621536884164 -0.0001477808497184329 4.906849897976771e-06 -1.184563145395284e-05" />
+                                        <body name="TIRE_6" pos="-0.09331384507160685 -0.31218548383601513 -0.10100000000000103" euler="0.4363323129982285 -1.5707963267948883 0">
+                                            <geom name="TIRE_6_geom" type="mesh" mesh="TIRE" pos="0 0 0" euler="0 0 0" contype="1" conaffinity="1" condim="6" priority="1" friction="1.0 0.005 0.0005" solref="0.03 1" solimp="0.70 0.95 0.003 0.5 2" group="2" />
+                                            <inertial mass="0.09984906024" pos="0.12400000000000065 0.2990890236505279 -0.2189340844323737" fullinertia="0.001071737097480628 0.0008285851295973219 0.0002753699313205102 8.391379602983448e-18 -7.008221996100635e-17 -2.420667812564392e-05" />
+                                        </body>
+                                    </body>
+                                </body>
+                            </body>
+                        </body>
+                    </body>
+                </body>
+            </body>
+            <body name="LOWER_BODY_1" pos="0.24999999999999994 -8.881784197001253e-17 -0.43301270189221897" euler="-3.141592653589792 -1.5646895536830287e-15 -3.141592653589793">
+                <geom name="LOWER_BODY_1_geom" type="mesh" mesh="BODY" pos="0 0 0" euler="0 0 0" contype="1" conaffinity="1" condim="3" group="2" />
+                <inertial mass="0.12742254384" pos="0.12500003050043199 -0.0955000000005577 -0.19910090250276527" fullinertia="0.0002496739061341388 0.0009818951988457285 0.001231056520028044 -1.311835450660646e-16 2.547349926866675e-12 2.018510548909079e-17" />
+            </body>
+        </body>
+    </worldbody>
+    <actuator>
+        <!-- Body joints: DYNAMIXEL MX-28AT, Protocol 1.0. -->
+        <dcmotor name="A01_mx28at" class="motor_mx28at" joint="M01_body_L1" />
+        <dcmotor name="A02_mx28at" class="motor_mx28at" joint="M02_body_L2" />
+        <dcmotor name="A03_mx28at" class="motor_mx28at" joint="M03_body_L3" />
+        <dcmotor name="A04_mx28at" class="motor_mx28at" joint="M04_body_L4" />
+        <dcmotor name="A05_mx28at" class="motor_mx28at" joint="M05_body_L5" />
+        <dcmotor name="A06_mx28at" class="motor_mx28at" joint="M06_body_L6" />
+
+        <!-- First leg joints: DYNAMIXEL XM430-W350-T, Protocol 2.0. -->
+        <dcmotor name="A07_xm430_w350" class="motor_xm430_w350" joint="M07_stage1_L1" />
+        <dcmotor name="A08_xm430_w350" class="motor_xm430_w350" joint="M08_stage1_L2" />
+        <dcmotor name="A09_xm430_w350" class="motor_xm430_w350" joint="M09_stage1_L3" />
+        <dcmotor name="A10_xm430_w350" class="motor_xm430_w350" joint="M10_stage1_L4" />
+        <dcmotor name="A11_xm430_w350" class="motor_xm430_w350" joint="M11_stage1_L5" />
+        <dcmotor name="A12_xm430_w350" class="motor_xm430_w350" joint="M12_stage1_L6" />
+
+        <!-- Second leg joints: DYNAMIXEL XM430-W210-T, Protocol 2.0. -->
+        <dcmotor name="A13_xm430_w210" class="motor_xm430_w210" joint="M13_stage2_L1" />
+        <dcmotor name="A14_xm430_w210" class="motor_xm430_w210" joint="M14_stage2_L2" />
+        <dcmotor name="A15_xm430_w210" class="motor_xm430_w210" joint="M15_stage2_L3" />
+        <dcmotor name="A16_xm430_w210" class="motor_xm430_w210" joint="M16_stage2_L4" />
+        <dcmotor name="A17_xm430_w210" class="motor_xm430_w210" joint="M17_stage2_L5" />
+        <dcmotor name="A18_xm430_w210" class="motor_xm430_w210" joint="M18_stage2_L6" />
+    </actuator>
+</mujoco>
