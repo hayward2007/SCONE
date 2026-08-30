@@ -12,6 +12,9 @@ from ...rl.stance import SPORT_STANDING_DEGREES
 from ..terrain import TERRAIN_CHOICES, TERRAIN_LABELS, TerrainType
 
 
+RL_REFERENCE_MOTION_CHOICES = ("non_rl", "hardcoded")
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Control SCONE in MuJoCo")
     parser.add_argument("--model", type=Path, default=DEFAULT_MODEL_PATH)
@@ -42,6 +45,11 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--rl-device", default="auto")
     parser.add_argument(
+        "--rl-reference-motion",
+        choices=RL_REFERENCE_MOTION_CHOICES,
+        default="non_rl",
+    )
+    parser.add_argument(
         "--rl-standing-pose-degrees",
         type=float,
         nargs=18,
@@ -69,6 +77,7 @@ def main(argv: list[str] | None = None) -> int:
         control=args.control,
         checkpoint=args.checkpoint,
         rl_device=args.rl_device,
+        rl_reference_motion=args.rl_reference_motion,
         rl_standing_pose_degrees=args.rl_standing_pose_degrees,
         verbose=args.verbose,
     )
@@ -118,7 +127,7 @@ def select_simulation_control() -> SimulationControl:
         choices=[
             Choice(
                 value=SimulationControl.OLD,
-                name="Old control · 기존 blocking Walk (strafe 미지원)",
+                name="Legacy mode control · Walk/Drive/Climb (R로 전환)",
             ),
             Choice(
                 value=SimulationControl.NON_RL,
@@ -126,7 +135,7 @@ def select_simulation_control() -> SimulationControl:
             ),
             Choice(
                 value=SimulationControl.RL,
-                name="RL control · PPO 체크포인트 정책",
+                name="RL control · PPO Walk + R로 Drive/Climb 전환",
             ),
         ],
         default=SimulationControl.NON_RL,

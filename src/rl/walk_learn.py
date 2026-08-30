@@ -42,14 +42,17 @@ from gymnasium import spaces
 from stable_baselines3 import PPO
 from stable_baselines3.common.callbacks import BaseCallback, CheckpointCallback
 from stable_baselines3.common.env_checker import check_env
-from stable_baselines3.common.vec_env import DummyVecEnv, VecMonitor
+from stable_baselines3.common.vec_env import DummyVecEnv, SubprocVecEnv, VecMonitor
 
 from src.hardware.actuator import Actuator
+from src.locomotion import GaitConfig, NonRLWalk
+from src.rl.motion_profile import motion_profile_for_standing_pose
 from src.rl.policy_compat import load_compatible_policy, observation_for_policy
 from src.rl.stance import SPORT_STANDING_DEGREES, validate_standing_pose
 from src.simulation.core.controller import MuJoCoController
 from src.simulation.core.model import load_model
 from src.simulation.core.pid import spec_for_motor_id
+from src.simulation.core.viewer import configure_simulation_viewer
 from src.simulation.terrain import TERRAIN_CHOICES, TerrainType
 
 
@@ -82,15 +85,35 @@ class RewardConfig:
     yaw_weight: float = 1.0
     heading_weight: float = 0.75
     upright_weight: float = 0.5
-    height_weight: float = 0.2
+    # Height is only a weak one-sided collapse guard. Body attitude from
+    # projected gravity is the primary posture objective, so the policy may
+    # discover a stance that rises above the reset reference without penalty.
+    height_weight: float = 0.05
     oscillation_weight: float = 0.1
     action_rate_weight: float = 0.02
     action_magnitude_weight: float = 0.25
+    # General tracking tolerances are intentionally broad enough for moving
+    # commands. At idle, use a much tighter velocity target and explicitly
+    # discourage residual action so the learned policy has a true stop state.
+    idle_velocity_weight: float = 1.0
+    idle_action_weight: float = 0.5
+    idle_linear_velocity_sigma: float = 0.03
+    idle_yaw_velocity_sigma: float = 0.05
+    idle_activity_threshold: float = 0.05
     current_weight: float = 0.02
     slip_weight: float = 0.1
     joint_limit_weight: float = 0.2
     collision_weight: float = 1.0
     termination_penalty: float = 5.0
+
+    def __post_init__(self) -> None:
+        if self.idle_activity_threshold <= 0.0:
+            raise ValueError("idle_activity_threshold must be positive")
+        if min(
+            self.idle_linear_velocity_sigma,
+            self.idle_yaw_velocity_sigma,
+        ) <= 0.0:
+            raise ValueError("idle velocity sigmas must be positive")
 
 
 @dataclass(frozen=True)
@@ -101,6 +124,7 @@ class WalkConfig:
     command_filter_seconds: float = 0.35
     command_hold_seconds_min: float = 2.0
     command_hold_seconds_max: float = 4.0
+    idle_command_probability: float = 0.20
     gait_frequency_min: float = 0.6
     gait_frequency_max: float = 1.4
     legacy_stride_degrees: float = 20.0
@@ -109,6 +133,10 @@ class WalkConfig:
     max_height_drop: float = 0.12
     max_tilt_degrees: float = 60.0
     contact_force_threshold: float = 1.0
+
+    def __post_init__(self) -> None:
+        if not 0.0 <= self.idle_command_probability <= 1.0:
+            raise ValueError("idle_command_probability must be between 0 and 1")
 
 
 CURRICULUM_RANGES: dict[str, np.ndarray] = {
@@ -120,6 +148,65 @@ CURRICULUM_RANGES: dict[str, np.ndarray] = {
 }
 
 OBSERVATION_COMMAND_SCALE = np.array([0.50, 0.25, 0.80], dtype=np.float64)
+REFERENCE_MOTION_CHOICES = ("non_rl", "hardcoded")
+
+
+class NeutralResidualGate:
+    """Decay policy residuals to zero while the velocity command is neutral.
+
+    A low-pass filter alone cannot remove a constant policy bias. Active
+    commands pass through unchanged; neutral commands ignore new policy bias.
+    """
+
+    def __init__(
+        self,
+        *,
+        command_threshold: float = 0.02,
+        decay_seconds: float = 0.10,
+        zero_epsilon: float = 5e-3,
+    ) -> None:
+        if not 0.0 <= command_threshold < 1.0:
+            raise ValueError("command_threshold must be in [0, 1)")
+        if decay_seconds < 0.0 or zero_epsilon < 0.0:
+            raise ValueError("decay_seconds and zero_epsilon cannot be negative")
+        self.command_threshold = command_threshold
+        self.decay_seconds = decay_seconds
+        self.zero_epsilon = zero_epsilon
+        self._action = np.zeros(18, dtype=np.float32)
+
+    def reset(self) -> None:
+        self._action.fill(0.0)
+
+    def apply(
+        self,
+        command: Sequence[float],
+        policy_action: Sequence[float],
+        dt: float,
+    ) -> np.ndarray:
+        if dt <= 0.0:
+            raise ValueError("dt must be positive")
+        parsed_command = np.asarray(command, dtype=np.float64)
+        parsed_action = np.asarray(policy_action, dtype=np.float32)
+        if parsed_command.shape != (3,):
+            raise ValueError("command must contain [vx, vy, yaw_rate]")
+        if parsed_action.size != self._action.size:
+            raise ValueError("policy_action must contain 18 residual values")
+        parsed_action = parsed_action.reshape(self._action.shape)
+
+        activity = float(
+            np.max(np.abs(parsed_command / OBSERVATION_COMMAND_SCALE))
+        )
+        if activity > self.command_threshold:
+            self._action[:] = parsed_action
+            return self._action.copy()
+
+        if self.decay_seconds == 0.0:
+            self._action.fill(0.0)
+        else:
+            self._action *= math.exp(-dt / self.decay_seconds)
+            if float(np.max(np.abs(self._action))) <= self.zero_epsilon:
+                self._action.fill(0.0)
+        return self._action.copy()
 
 
 class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
@@ -139,6 +226,7 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         terrain: TerrainType | str = TerrainType.FLAT,
         terrain_seed: int = 7,
         standing_pose_degrees: Sequence[float] | None = None,
+        reference_motion: str = "hardcoded",
     ) -> None:
         super().__init__()
         if curriculum not in CURRICULUM_RANGES:
@@ -148,6 +236,11 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
             )
         if render_mode not in (None, "human"):
             raise ValueError("render_mode must be None or 'human'")
+        if reference_motion not in REFERENCE_MOTION_CHOICES:
+            raise ValueError(
+                f"Unknown reference motion {reference_motion!r}; choose from "
+                f"{REFERENCE_MOTION_CHOICES}."
+            )
 
         self.model_path = Path(model_path).expanduser().resolve()
         self.curriculum = curriculum
@@ -163,6 +256,7 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         self.render_mode = render_mode
         self.reward_config = reward_config or RewardConfig()
         self.walk_config = walk_config or WalkConfig()
+        self.reference_motion = reference_motion
         self.terrain = TerrainType.parse(terrain)
         self.terrain_seed = terrain_seed
 
@@ -236,6 +330,22 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         self.residual_scale_degrees = np.array(
             [10.0] * 6 + [12.0] * 6 + [15.0] * 6, dtype=np.float64
         )
+        self._non_rl_reference: NonRLWalk | None = None
+        if self.reference_motion == "non_rl":
+            self._non_rl_reference = NonRLWalk(
+                profile=motion_profile_for_standing_pose(self.default_degrees),
+                model_path=self.model_path,
+                config=GaitConfig(
+                    control_frequency=1.0 / self.control_dt,
+                    cycle_frequency=0.8,
+                    max_stride=0.050,
+                    max_vx=float(OBSERVATION_COMMAND_SCALE[0]),
+                    max_vy=float(OBSERVATION_COMMAND_SCALE[1]),
+                    max_yaw_rate=float(OBSERVATION_COMMAND_SCALE[2]),
+                    command_time_constant=0.0,
+                ),
+            )
+            self._non_rl_reference.reset(motor_degrees=self.default_degrees)
 
         self.action_space = spaces.Box(-1.0, 1.0, shape=(18,), dtype=np.float32)
         # base linear velocity 3, angular velocity 3, projected gravity 3,
@@ -289,7 +399,7 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
     def _sample_command(self) -> np.ndarray:
         if self.fixed_command is not None:
             return self.fixed_command.copy()
-        if self.np_random.random() < 0.10:
+        if self.np_random.random() < self.walk_config.idle_command_probability:
             return np.zeros(3, dtype=np.float64)
 
         command = self.np_random.uniform(-self.command_range, self.command_range)
@@ -331,6 +441,10 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         return float(np.clip(np.max(np.abs(self._command / safe_scale)), 0.0, 1.0))
 
     def _advance_phase(self) -> None:
+        if self._non_rl_reference is not None:
+            # NonRLWalk owns its Phoenix gait phase; _reference_motion_degrees
+            # copies it back so the policy observation stays phase-aligned.
+            return
         activity = self._command_activity()
         frequency = self.walk_config.gait_frequency_min + activity * (
             self.walk_config.gait_frequency_max
@@ -339,14 +453,22 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         self._phase = (self._phase + frequency * self.control_dt) % 1.0
 
     def _reference_motion_degrees(self) -> np.ndarray:
-        """Smooth periodic version of the existing Walk tripod sequence.
+        """Return the selected model-based or hand-authored reference frame.
 
-        ``walk.py`` uses the same two diagonal groups and 20-degree offsets,
-        but expresses them as blocking commands and sleeps.  A phase-based
-        reference is differentiable in time and can be queried at 50 Hz.
-        It seeds forward/backward and yaw; lateral motion is left for the
-        residual policy and is introduced only in the full curriculum.
+        The recommended ``non_rl`` reference runs the continuous Phoenix gait
+        and IK solver used by interactive Non-RL control. ``hardcoded`` keeps
+        the earlier sinusoidal version of the blocking Walk tripod sequence.
         """
+
+        if self._non_rl_reference is not None:
+            sample = self._non_rl_reference.step(self._command, self.control_dt)
+            if not sample.converged:
+                raise RuntimeError(
+                    "Non-RL residual reference IK failed for legs "
+                    f"{sample.failed_legs}"
+                )
+            self._phase = sample.phase
+            return sample.motor_degrees.copy()
 
         reference = self.default_degrees.copy()
         phase_sine = math.sin(2.0 * math.pi * self._phase)
@@ -569,7 +691,8 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         )
 
         root_height = float(self.data.qpos[self.root_qpos_address + 2])
-        height_penalty = ((root_height - self._reference_height) / reward.height_sigma) ** 2
+        height_drop = max(0.0, self._reference_height - root_height)
+        height_penalty = (height_drop / reward.height_sigma) ** 2
         oscillation_penalty = (
             (linear_velocity[2] / reward.vertical_velocity_sigma) ** 2
             + (angular_velocity[0] / reward.roll_pitch_rate_sigma) ** 2
@@ -577,6 +700,26 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         )
         action_rate_penalty = float(np.mean(np.square(action - self._last_action)))
         action_magnitude_penalty = float(np.mean(np.square(action)))
+        activity = self._command_activity()
+        idle_fraction = float(
+            np.clip(
+                1.0 - activity / reward.idle_activity_threshold,
+                0.0,
+                1.0,
+            )
+        )
+        idle_velocity_tracking = math.exp(
+            -float(linear_velocity[:2] @ linear_velocity[:2])
+            / reward.idle_linear_velocity_sigma**2
+            - float(angular_velocity[2] ** 2) / reward.idle_yaw_velocity_sigma**2
+        )
+        idle_velocity_term = (
+            reward.idle_velocity_weight
+            * idle_fraction
+            * idle_velocity_tracking
+            * self.control_dt
+        )
+        idle_action_penalty = idle_fraction * action_magnitude_penalty
         current_penalty = self._normalized_current_penalty()
         slip_penalty, stance_contacts = self._slip_penalty()
 
@@ -589,7 +732,10 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         forbidden_collision = self._forbidden_floor_collision()
         collision_penalty = float(forbidden_collision)
 
-        velocity_term = reward.velocity_weight * linear_tracking * self.control_dt
+        velocity_term = (
+            reward.velocity_weight * linear_tracking * self.control_dt
+            + idle_velocity_term
+        )
         direction_term = (
             reward.yaw_weight * yaw_tracking * self.control_dt
             + reward.heading_weight * heading_tracking * self.control_dt
@@ -605,6 +751,7 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         damping_term = (
             -reward.action_rate_weight * action_rate_penalty * self.control_dt
             - reward.action_magnitude_weight * action_magnitude_penalty * self.control_dt
+            - reward.idle_action_weight * idle_action_penalty * self.control_dt
             - reward.current_weight * current_penalty * self.control_dt
         )
 
@@ -618,6 +765,10 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
             "action_rate": -reward.action_rate_weight * action_rate_penalty * self.control_dt,
             "action_magnitude": -reward.action_magnitude_weight
             * action_magnitude_penalty
+            * self.control_dt,
+            "idle_velocity": idle_velocity_term,
+            "idle_action": -reward.idle_action_weight
+            * idle_action_penalty
             * self.control_dt,
             "current": -reward.current_weight * current_penalty * self.control_dt,
             "slip": -reward.slip_weight * slip_penalty * self.control_dt,
@@ -643,10 +794,10 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         )
         hard_joint_limit = bool(np.any(joint_offset > reward.hard_joint_offset))
         terminated = (not finite) or fallen or forbidden_collision or hard_joint_limit
+        total = velocity_term + direction_term + stability_term + damping_term
         if terminated:
             weighted_terms["termination"] = -reward.termination_penalty
-
-        total = float(sum(weighted_terms.values()))
+            total -= reward.termination_penalty
         diagnostics: dict[str, float | int | bool] = {
             "vx": float(linear_velocity[0]),
             "vy": float(linear_velocity[1]),
@@ -654,12 +805,14 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
             "heading_error": heading_error,
             "target_heading": self._target_heading,
             "height": root_height,
+            "height_drop": height_drop,
+            "command_activity": activity,
             "stance_contacts": stance_contacts,
             "forbidden_collision": forbidden_collision,
             "fallen": fallen,
             "hard_joint_limit": hard_joint_limit,
         }
-        return total, weighted_terms, terminated, diagnostics
+        return float(total), weighted_terms, terminated, diagnostics
 
     def reset(
         self,
@@ -679,6 +832,11 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         self.controller.enable_torque()
 
         self._phase = float(self.np_random.random())
+        if self._non_rl_reference is not None:
+            self._non_rl_reference.reset(
+                phase=self._phase,
+                motor_degrees=self.default_degrees,
+            )
         self._episode_step = 0
         self._last_action.fill(0.0)
         self._command.fill(0.0)
@@ -735,6 +893,40 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
             self.render()
         return observation, reward, terminated, truncated, info
 
+    def advance_external_control(self) -> None:
+        """Advance one policy-sized frame without writing RL joint targets.
+
+        RL joystick mode uses this while the shared controller is executing a
+        blocking Walk/Drive/Climb transition on its input thread.  Keeping the
+        physics loop here prevents the policy from overwriting those targets.
+        """
+
+        for _ in range(self.walk_config.frame_skip):
+            with self.controller.lock:
+                self.controller.update(self.model.opt.timestep)
+                mujoco.mj_step(self.model, self.data)
+        if self.render_mode == "human":
+            self.render()
+
+    def resume_after_external_control(self) -> np.ndarray:
+        """Re-align policy state after legacy modes return to the Walk pose."""
+
+        self.fixed_command = np.zeros(3, dtype=np.float64)
+        self._command.fill(0.0)
+        self._command_target.fill(0.0)
+        self._last_action.fill(0.0)
+        self._heading = self._heading_yaw()
+        self._target_heading = self._heading
+        self._reference_height = float(
+            self.data.qpos[self.root_qpos_address + 2]
+        )
+        if self._non_rl_reference is not None:
+            self._non_rl_reference.reset(
+                phase=self._phase,
+                motor_degrees=self.default_degrees,
+            )
+        return self._observation()
+
     def render(self) -> None:
         if self.render_mode != "human":
             return
@@ -742,8 +934,12 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
             import mujoco.viewer
 
             self._viewer = mujoco.viewer.launch_passive(self.model, self.data)
-            self._viewer.cam.lookat[:] = self.model.stat.center
-            self._viewer.cam.distance = self.model.stat.extent * 2.2
+            configure_simulation_viewer(
+                self._viewer,
+                self.model,
+                self.data,
+                tracking_body_id=self.root_body_id,
+            )
         if self._viewer.is_running():
             self._viewer.sync()
 
@@ -762,7 +958,14 @@ class RewardTermsCallback(BaseCallback):
         for info in self.locals.get("infos", []):
             for name, value in info.get("reward_terms", {}).items():
                 self.logger.record_mean(f"reward/{name}", float(value))
-            for name in ("vx", "vy", "yaw_rate", "height", "stance_contacts"):
+            for name in (
+                "vx",
+                "vy",
+                "yaw_rate",
+                "height",
+                "height_drop",
+                "stance_contacts",
+            ):
                 if name in info:
                     self.logger.record_mean(f"state/{name}", float(info[name]))
         return True
@@ -830,6 +1033,7 @@ def _build_env(
     terrain: TerrainType | str = TerrainType.FLAT,
     terrain_seed: int = 7,
     standing_pose_degrees: Sequence[float] = SPORT_STANDING_DEGREES,
+    reference_motion: str = "hardcoded",
 ) -> SconeWalkEnv:
     return SconeWalkEnv(
         model_path,
@@ -839,7 +1043,20 @@ def _build_env(
         terrain=terrain,
         terrain_seed=terrain_seed,
         standing_pose_degrees=standing_pose_degrees,
+        reference_motion=reference_motion,
     )
+
+
+def _make_vector_env(
+    factories: Sequence[Callable[[], SconeWalkEnv]],
+) -> DummyVecEnv | SubprocVecEnv:
+    """Use subprocesses only when more than one environment was requested."""
+
+    if not factories:
+        raise ValueError("at least one environment factory is required")
+    if len(factories) == 1:
+        return DummyVecEnv(list(factories))
+    return SubprocVecEnv(list(factories))
 
 
 def run_check(args: argparse.Namespace) -> int:
@@ -849,6 +1066,7 @@ def run_check(args: argparse.Namespace) -> int:
         terrain=args.terrain,
         terrain_seed=args.terrain_seed,
         standing_pose_degrees=args.standing_pose_degrees,
+        reference_motion=args.reference_motion,
     )
     check_env(env, warn=True, skip_render_check=True)
     observation, _ = env.reset(seed=args.seed)
@@ -892,6 +1110,7 @@ def run_train(args: argparse.Namespace) -> int:
                 terrain=args.terrain,
                 terrain_seed=args.terrain_seed + environment_index,
                 standing_pose_degrees=args.standing_pose_degrees,
+                reference_motion=args.reference_motion,
             )
         )
         for environment_index in range(args.num_envs)
@@ -901,9 +1120,11 @@ def run_train(args: argparse.Namespace) -> int:
         if args.resume is None
         else f"monitor_resume_{time.strftime('%Y%m%d_%H%M%S')}.csv"
     )
-    vec_env = VecMonitor(
-        DummyVecEnv(factories), filename=str(run_dir / monitor_name)
-    )
+    # DummyVecEnv only interleaves environments in one process. Use real
+    # subprocess workers whenever the CLI requests parallelism so the SSH
+    # CPU/memory recommendation translates into actual MuJoCo throughput.
+    vector_env = _make_vector_env(factories)
+    vec_env = VecMonitor(vector_env, filename=str(run_dir / monitor_name))
     checkpoint = PruningCheckpointCallback(
         save_freq=max(1, args.checkpoint_every // args.num_envs),
         save_path=str(run_dir / "checkpoints"),
@@ -991,19 +1212,29 @@ def run_enjoy(args: argparse.Namespace) -> int:
         terrain=args.terrain,
         terrain_seed=args.terrain_seed,
         standing_pose_degrees=args.standing_pose_degrees,
+        reference_motion=args.reference_motion,
     )
     model = load_compatible_policy(args.checkpoint, env, args.device)
     observation, _ = env.reset(seed=args.seed)
+    neutral_gate = NeutralResidualGate()
     episodes = 0
     try:
         while episodes < args.episodes:
             frame_start = time.perf_counter()
             policy_observation = observation_for_policy(model, observation)
-            action, _ = model.predict(policy_observation, deterministic=True)
+            policy_action, _ = model.predict(
+                policy_observation, deterministic=True
+            )
+            action = (
+                policy_action
+                if args.raw_policy
+                else neutral_gate.apply(args.command, policy_action, env.control_dt)
+            )
             observation, _, terminated, truncated, _ = env.step(action)
             if terminated or truncated:
                 episodes += 1
                 observation, _ = env.reset()
+                neutral_gate.reset()
             remaining = env.control_dt - (time.perf_counter() - frame_start)
             if remaining > 0:
                 time.sleep(remaining)
@@ -1047,6 +1278,15 @@ def build_parser() -> argparse.ArgumentParser:
             "(default: legacy Sport RL stance)"
         ),
     )
+    parser.add_argument(
+        "--reference-motion",
+        choices=REFERENCE_MOTION_CHOICES,
+        default="non_rl",
+        help=(
+            "baseline motion under the residual policy "
+            "(default: continuous Non-RL gait)"
+        ),
+    )
     subparsers = parser.add_subparsers(dest="command_name", required=True)
 
     check = subparsers.add_parser("check", help="Validate reset, step, rewards and contacts")
@@ -1086,6 +1326,11 @@ def build_parser() -> argparse.ArgumentParser:
     enjoy.add_argument("--episodes", type=int, default=3)
     enjoy.add_argument("--seed", type=int, default=0)
     enjoy.add_argument("--device", default="auto")
+    enjoy.add_argument(
+        "--raw-policy",
+        action="store_true",
+        help="disable the neutral-command residual gate for policy diagnosis",
+    )
     enjoy.set_defaults(handler=run_enjoy)
     return parser
 

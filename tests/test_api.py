@@ -3,7 +3,7 @@ from __future__ import annotations
 import unittest
 from collections.abc import Iterable, Mapping
 from types import SimpleNamespace
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from SCONE import SCONE
 from src.cli import (
@@ -14,9 +14,12 @@ from src.cli import (
     render_joystick_ui,
     run_control_cli,
     run_joystick_cli,
+    run_legacy_joystick_cli,
 )
 from src.hardware import Actuator, ControllerProtocol, HardwareProbe
 from src.locomotion import GaitConfig, VelocityCommand, legacy_movement_for
+from src.locomotion.climb import Climb
+from src.locomotion.profile import STANDARD
 from src.simulation.core.cli_bridge import SimulationControl
 from src.simulation.terrain import TerrainType
 
@@ -128,6 +131,44 @@ class PublicApiTests(unittest.TestCase):
         ]
         self.assertTrue(upper_batches)
 
+    def test_simulated_climb_preparation_lifts_from_drive_center(self) -> None:
+        class FakeSimulationController(FakeController):
+            @staticmethod
+            def climb_prepare_middle_degrees(_profile_target: float) -> float:
+                return 160.0
+
+        controller = FakeSimulationController()
+
+        with patch("time.sleep", return_value=None):
+            Climb(controller, STANDARD)
+
+        lift_batches = [
+            call[1]
+            for call in controller.calls
+            if call[0] == "set_positions"
+            and call[1]
+            and set(call[1].values()) == {160.0}
+        ]
+        self.assertEqual(len(lift_batches), 2)
+        self.assertEqual(
+            set().union(*(batch.keys() for batch in lift_batches)),
+            set(Actuator.Index.MIDDLE),
+        )
+
+        hardware_controller = FakeController()
+        with patch("time.sleep", return_value=None):
+            Climb(hardware_controller, STANDARD)
+        self.assertEqual(
+            sum(
+                1
+                for call in hardware_controller.calls
+                if call[0] == "set_positions"
+                and call[1]
+                and set(call[1].values()) == {220}
+            ),
+            2,
+        )
+
 
 class InquirerLauncherTests(unittest.TestCase):
     @staticmethod
@@ -178,6 +219,14 @@ class InquirerLauncherTests(unittest.TestCase):
                 "src.simulation.core.simulator_cli.select_terrain",
                 return_value=TerrainType.FLAT,
             ),
+            patch(
+                "src.rl.inquiry.prompt_reference_motion",
+                return_value="non_rl",
+            ),
+            patch(
+                "src.rl.inquiry.prompt_standing_pose",
+                return_value=("standard", tuple(float(i) for i in range(18))),
+            ),
             patch("src.simulation.core.cli_bridge.run") as simulation_run,
         ):
             self.assertEqual(run_launcher(), 0)
@@ -187,6 +236,8 @@ class InquirerLauncherTests(unittest.TestCase):
             terrain=TerrainType.FLAT,
             control=SimulationControl.RL,
             checkpoint=checkpoint,
+            rl_reference_motion="non_rl",
+            rl_standing_pose_degrees=tuple(float(i) for i in range(18)),
         )
 
 
@@ -247,6 +298,18 @@ class KeyboardJoystickTests(unittest.TestCase):
         self.assertEqual(legacy_movement_for(VelocityCommand(yaw_rate=-0.2)), "right")
         self.assertIsNone(legacy_movement_for(VelocityCommand(vy=0.1)))
 
+        self.assertEqual(
+            legacy_movement_for(VelocityCommand(vy=0.1), mode_name="drive"),
+            "left",
+        )
+        self.assertEqual(
+            legacy_movement_for(VelocityCommand(vy=-0.1), mode_name="climb"),
+            "right",
+        )
+        self.assertIsNone(
+            legacy_movement_for(VelocityCommand(vx=0.1), mode_name="drive")
+        )
+
     def test_live_cli_sends_motion_then_neutral_on_quit(self) -> None:
         class FakeGait:
             config = GaitConfig(command_time_constant=0.0)
@@ -300,6 +363,66 @@ class KeyboardJoystickTests(unittest.TestCase):
         )
         self.assertTrue(all(send for _, _, send in gait.commands))
         self.assertTrue(terminal.screens)
+
+    def test_simulation_can_keep_the_selected_nominal_non_rl_pose(self) -> None:
+        gait = SimpleNamespace(
+            config=GaitConfig(command_time_constant=0.0),
+            reset_from_controller=Mock(),
+            update=Mock(),
+        )
+        robot = SimpleNamespace(
+            controller=object(),
+            profile=object(),
+            profile_name="standard",
+        )
+
+        with (
+            patch("src.cli.NonRLWalk", return_value=gait),
+            patch("src.cli.run_velocity_joystick_cli"),
+        ):
+            run_joystick_cli(robot, calibrate_from_controller=False)
+
+        gait.reset_from_controller.assert_not_called()
+
+    def test_legacy_joystick_dispatches_mode_change_key(self) -> None:
+        class FakeTerminal:
+            def __init__(self) -> None:
+                self.keys = iter(("r", None, "q", None))
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *_):
+                return None
+
+            def read_key(self, _timeout):
+                return next(self.keys, None)
+
+            def draw(self, _screen: str) -> None:
+                return None
+
+        adapter = SimpleNamespace(
+            start=Mock(),
+            update=Mock(),
+            close=Mock(),
+        )
+        robot = SimpleNamespace(
+            profile_name="standard",
+            mode_name="walk",
+            change_mode=Mock(return_value="drive"),
+            home=Mock(),
+        )
+
+        with (
+            patch("src.cli.LegacyVelocityAdapter", return_value=adapter),
+            patch("src.cli._JoystickTerminal", return_value=FakeTerminal()),
+        ):
+            run_legacy_joystick_cli(robot)
+
+        robot.change_mode.assert_called_once_with()
+        self.assertTrue(
+            any(call.args == (VelocityCommand(),) for call in adapter.update.call_args_list)
+        )
 
 
 if __name__ == "__main__":

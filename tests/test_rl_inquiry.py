@@ -10,6 +10,7 @@ from src.rl.inquiry import (
     TrainingConfig,
     _prompt_remote_job,
     _remote_path_expression,
+    build_remote_capacity_command,
     build_remote_dependency_check_command,
     build_remote_dependency_install_command,
     build_remote_launch_command,
@@ -18,7 +19,13 @@ from src.rl.inquiry import (
     build_remote_resume_command,
     build_training_arguments,
     ensure_remote_dependencies,
+    format_remote_capacity,
+    inspect_remote_capacity,
+    prompt_reference_motion,
+    prompt_standing_pose,
+    recommend_num_envs,
 )
+from src.rl.stance import STANDARD_STANDING_DEGREES
 
 
 class _FakeChoice:
@@ -39,7 +46,7 @@ class _FakeInquirer:
     def __init__(self) -> None:
         self.choices = []
 
-    def select(self, *, message: str, choices):
+    def select(self, *, message: str, choices, **_options):
         self.choices = choices
         return _FakeQuestion(choices[0].value)
 
@@ -63,6 +70,14 @@ class RLInquiryCommandTests(unittest.TestCase):
 
         self.assertIn("train", arguments)
         self.assertEqual(arguments[arguments.index("--terrain") + 1], "flat")
+        self.assertEqual(
+            arguments[arguments.index("--reference-motion") + 1], "non_rl"
+        )
+        pose_start = arguments.index("--standing-pose-degrees") + 1
+        self.assertEqual(
+            tuple(float(value) for value in arguments[pose_start : pose_start + 18]),
+            self.config.standing_pose_degrees,
+        )
         self.assertEqual(arguments[arguments.index("--timesteps") + 1], "250000")
         self.assertEqual(arguments[arguments.index("--num-envs") + 1], "4")
         self.assertEqual(
@@ -81,7 +96,10 @@ class RLInquiryCommandTests(unittest.TestCase):
         self.assertIn('cd "$HOME"/Developer/SCONE', command)
         self.assertIn("nohup env PYTHONPATH=.", command)
         self.assertIn("-m src.rl.walk_learn", command)
-        self.assertIn("--terrain flat --terrain-seed 7 train", command)
+        self.assertIn("--terrain flat --terrain-seed 7", command)
+        self.assertIn("--reference-motion non_rl", command)
+        self.assertIn("--standing-pose-degrees", command)
+        self.assertIn("195 195 195 195 195 195 train", command)
         self.assertIn("runs/walk_easy_test/train.log", command)
         self.assertIn("runs/walk_easy_test/train.pid", command)
         self.assertIn("--checkpoint-every 25000", command)
@@ -154,6 +172,57 @@ class RLInquiryCommandTests(unittest.TestCase):
         self.assertIn("--only-binary=mujoco", install)
         self.assertIn("-r requirements-rl.txt", install)
 
+    def test_remote_capacity_command_is_portable_shell(self) -> None:
+        command = build_remote_capacity_command()
+
+        self.assertIn("command -v python3", command)
+        self.assertIn("hw.physicalcpu", command)
+        self.assertIn("/proc/meminfo", command)
+        self.assertEqual(
+            subprocess.run(["sh", "-n", "-c", command], check=False).returncode,
+            0,
+        )
+
+    def test_parallel_recommendation_reserves_one_core_and_parent_memory(self) -> None:
+        cpu_limited = recommend_num_envs(
+            physical_cores=8,
+            logical_cores=16,
+            total_memory_bytes=32 * 1024**3,
+            available_memory_bytes=20 * 1024**3,
+            load_average_1m=1.5,
+        )
+        memory_limited = recommend_num_envs(
+            physical_cores=16,
+            logical_cores=16,
+            total_memory_bytes=8 * 1024**3,
+            available_memory_bytes=int(3.5 * 1024**3),
+            load_average_1m=2.0,
+        )
+
+        self.assertEqual(cpu_limited.cpu_limit, 7)
+        self.assertEqual(cpu_limited.recommended_num_envs, 7)
+        self.assertEqual(memory_limited.memory_limit, 2)
+        self.assertEqual(memory_limited.recommended_num_envs, 2)
+        self.assertIn("추천 2개", format_remote_capacity(memory_limited))
+        self.assertIn("메모리 기준", format_remote_capacity(memory_limited))
+
+    def test_remote_capacity_probe_parses_ssh_response(self) -> None:
+        response = subprocess.CompletedProcess(
+            [],
+            0,
+            '{"physical_cores": 10, "logical_cores": 10, '
+            '"total_memory_bytes": 68719476736, '
+            '"available_memory_bytes": 34359738368, '
+            '"load_average_1m": 2.25}\n',
+            "",
+        )
+
+        with patch("src.rl.inquiry._run_ssh", return_value=response):
+            capacity = inspect_remote_capacity(RemoteSettings())
+
+        self.assertEqual(capacity.recommended_num_envs, 9)
+        self.assertEqual(capacity.physical_cores, 10)
+
     def test_missing_remote_dependencies_are_installed_then_verified(self) -> None:
         missing = subprocess.CompletedProcess([], 1, "", "missing gymnasium")
         verified = subprocess.CompletedProcess([], 0, "", "")
@@ -224,6 +293,30 @@ class RLInquiryCommandTests(unittest.TestCase):
 
         self.assertIs(selected, job)
         self.assertEqual(fake_inquirer.choices[0].value, 0)
+
+    def test_standing_pose_prompt_recommends_high_standard_pose(self) -> None:
+        fake_inquirer = _FakeInquirer()
+
+        with patch(
+            "src.rl.inquiry._inquirer",
+            return_value=(fake_inquirer, _FakeChoice),
+        ):
+            name, degrees = prompt_standing_pose()
+
+        self.assertEqual(name, "standard")
+        self.assertEqual(degrees, STANDARD_STANDING_DEGREES)
+
+    def test_reference_motion_prompt_puts_non_rl_first(self) -> None:
+        fake_inquirer = _FakeInquirer()
+
+        with patch(
+            "src.rl.inquiry._inquirer",
+            return_value=(fake_inquirer, _FakeChoice),
+        ):
+            selection = prompt_reference_motion()
+
+        self.assertEqual(selection, "non_rl")
+        self.assertEqual(fake_inquirer.choices[0].value, "non_rl")
 
 
 if __name__ == "__main__":

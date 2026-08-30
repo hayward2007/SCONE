@@ -13,11 +13,18 @@ import mujoco
 import mujoco.viewer
 
 from ...cli import run_joystick_cli, run_legacy_joystick_cli
+from ...locomotion import GaitConfig
 from ...main import SCONE
 from ...rl.stance import SPORT_STANDING_DEGREES
 from .controller import MuJoCoController
 from .model import DEFAULT_MODEL_PATH, load_model
+from .viewer import configure_simulation_viewer
 from ..terrain import TerrainType
+
+
+# The high Standard stance reaches the edge of its horizontal IK workspace at
+# the shared 70 mm stride. Keep this conservative override simulation-local.
+NON_RL_SIMULATION_GAIT_CONFIG = GaitConfig(max_stride=0.050)
 
 
 class SimulationControl(str, Enum):
@@ -49,6 +56,7 @@ def run(
     checkpoint: str | Path | None = None,
     rl_device: str = "auto",
     rl_standing_pose_degrees: Sequence[float] = SPORT_STANDING_DEGREES,
+    rl_reference_motion: str = "non_rl",
     verbose: bool = False,
 ) -> None:
     """Open one viewer while terminal input drives the shared robot API.
@@ -71,6 +79,7 @@ def run(
             terrain_seed=terrain_seed,
             device=rl_device,
             standing_pose_degrees=rl_standing_pose_degrees,
+            reference_motion=rl_reference_motion,
         )
         return
 
@@ -92,7 +101,16 @@ def run(
             if selected_control is SimulationControl.OLD:
                 run_legacy_joystick_cli(robot, stop_event=stop_event)
             else:
-                run_joystick_cli(robot, stop_event=stop_event)
+                run_joystick_cli(
+                    robot,
+                    stop_event=stop_event,
+                    gait_config=NON_RL_SIMULATION_GAIT_CONFIG,
+                    # The loaded Standard pose sags under gravity before the
+                    # first frame.  Re-centering IK on that edge-of-workspace
+                    # transient makes legs 2/5 fail immediately.  Simulation
+                    # instead keeps the selected, known-solvable profile pose.
+                    calibrate_from_controller=False,
+                )
             robot.close()
         except BaseException as error:
             cli_errors.append(error)
@@ -106,15 +124,26 @@ def run(
     )
 
     print(
-        "\n[SIM] MuJoCo uses the velocity joystick in the terminal "
+        "\n[SIM] MuJoCo uses the terminal controller "
         f"(control={selected_control.value})."
     )
     print(f"[SIM] Terrain: {selected_terrain.value} (seed={terrain_seed})")
     print("[SIM] The viewer has no SCONE-specific keyboard mapping.\n")
     try:
         with mujoco.viewer.launch_passive(model, data) as viewer:
-            viewer.cam.lookat[:] = model.stat.center
-            viewer.cam.distance = model.stat.extent * 2.2
+            root_body_id = mujoco.mj_name2id(
+                model,
+                mujoco.mjtObj.mjOBJ_BODY,
+                "UPPER_BODY_1",
+            )
+            if root_body_id < 0:
+                raise ValueError("simulation model is missing UPPER_BODY_1")
+            configure_simulation_viewer(
+                viewer,
+                model,
+                data,
+                tracking_body_id=root_body_id,
+            )
             viewer.opt.label = mujoco.mjtLabel.mjLABEL_JOINT
             worker.start()
 
@@ -144,4 +173,4 @@ def run(
         raise cli_errors[0]
 
 
-__all__ = ["SimulationControl", "run"]
+__all__ = ["NON_RL_SIMULATION_GAIT_CONFIG", "SimulationControl", "run"]

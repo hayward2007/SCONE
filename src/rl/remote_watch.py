@@ -37,7 +37,13 @@ from .policy_compat import (
     observation_for_policy as _observation_for_policy,
 )
 from .stance import SPORT_STANDING_DEGREES
-from .walk_learn import CURRICULUM_RANGES, DEFAULT_MODEL_PATH, SconeWalkEnv
+from .walk_learn import (
+    CURRICULUM_RANGES,
+    DEFAULT_MODEL_PATH,
+    NeutralResidualGate,
+    REFERENCE_MOTION_CHOICES,
+    SconeWalkEnv,
+)
 from src.simulation.terrain import TERRAIN_CHOICES, TerrainType
 
 
@@ -298,9 +304,11 @@ def run_viewer(args: argparse.Namespace, source: CheckpointSource) -> int:
         terrain=args.terrain,
         terrain_seed=args.terrain_seed,
         standing_pose_degrees=args.standing_pose_degrees,
+        reference_motion=args.reference_motion,
     )
     observation, _ = env.reset(seed=args.seed)
     zero_action = np.zeros(env.action_space.shape, dtype=np.float32)
+    neutral_gate = NeutralResidualGate()
     policy: PPO | None = None
     active_step = -1
     poller = CheckpointPoller(
@@ -344,12 +352,20 @@ def run_viewer(args: argparse.Namespace, source: CheckpointSource) -> int:
                 action = zero_action
             else:
                 policy_observation = _observation_for_policy(policy, observation)
-                action, _ = policy.predict(
+                policy_action, _ = policy.predict(
                     policy_observation, deterministic=True
+                )
+                action = (
+                    policy_action
+                    if args.raw_policy
+                    else neutral_gate.apply(
+                        args.command, policy_action, env.control_dt
+                    )
                 )
             observation, _, terminated, truncated, _ = env.step(action)
             if terminated or truncated:
                 observation, _ = env.reset()
+                neutral_gate.reset()
 
             if env._viewer is not None and not env._viewer.is_running():
                 break
@@ -398,6 +414,11 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--terrain-seed", type=int, default=7)
     parser.add_argument(
+        "--reference-motion",
+        choices=REFERENCE_MOTION_CHOICES,
+        default="non_rl",
+    )
+    parser.add_argument(
         "--standing-pose-degrees",
         type=float,
         nargs=18,
@@ -413,6 +434,11 @@ def build_parser() -> argparse.ArgumentParser:
         nargs=3,
         metavar=("VX", "VY", "YAW_RATE"),
         default=[0.25, 0.0, 0.0],
+    )
+    parser.add_argument(
+        "--raw-policy",
+        action="store_true",
+        help="disable the neutral-command residual gate for policy diagnosis",
     )
     parser.add_argument("--render-speed", type=float, default=1.0)
     parser.add_argument("--seed", type=int, default=0)

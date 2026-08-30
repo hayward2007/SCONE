@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import math
 import threading
+import time
 from collections.abc import Iterable, Mapping, Sequence
 
 import mujoco
@@ -32,6 +33,11 @@ class MuJoCoController:
     _MX_SPEED_UNIT_RPM = 0.114
     _XM_SPEED_UNIT_RPM = 0.229
     _XM_ACCELERATION_UNIT_RPM_PER_MINUTE = 214.577
+    # Drive leaves IDs 7..12 in position hold while the six distal arc wheels
+    # spin. A measured sweep found 2x reduced both stage-1 angular error and
+    # velocity while preserving the validated stairs approach. Higher values
+    # made the contact outcome brittle, and 4x crossed into oscillation.
+    _DRIVE_STAGE1_DAMPING_MULTIPLIER = 2.0
 
     # A rough "standing" reference pose (degrees), used only to seed the
     # simulation's initial qpos instead of the raw CAD rest pose (every
@@ -83,6 +89,11 @@ class MuJoCoController:
         for motor_id in Actuator.Index.ALL:
             kp, kd = default_gains_for_motor_id(motor_id)
             self._pid[motor_id] = DCMotorPID(spec_for_motor_id(motor_id), kp, kd)
+        self._stage1_default_kd = {
+            motor_id: self._pid[motor_id].kd
+            for motor_id in Actuator.Index.MIDDLE
+        }
+        self._drive_stage1_damping_enabled = False
 
         self._torque_enabled = np.ones(19, dtype=bool)
         self._mode = np.full(19, self._POSITION_MODE, dtype=int)
@@ -304,6 +315,43 @@ class MuJoCoController:
         for motor_id, velocity in velocities.items():
             self.set_velocity(motor_id, velocity)
 
+    @staticmethod
+    def arc_wheel_velocities(velocity: int) -> dict[int, int]:
+        """Map one chassis direction to the mirrored left/right wheel axes.
+
+        The corrected MuJoCo joint axes point in opposite physical directions
+        on odd/right and even/left legs.  Equal raw velocity signs would make
+        the two sides fight each other; reversing the even IDs produces one
+        common ground-travel direction.  The physical controller does not
+        expose this optional adapter, so its established commands are kept.
+        """
+
+        return {
+            motor_id: velocity if motor_id % 2 == 1 else -velocity
+            for motor_id in Actuator.Index.LOWER
+        }
+
+    @staticmethod
+    def climb_prepare_middle_degrees(_profile_target: float) -> float:
+        """Lift a tripod from Drive's 180-degree centre in simulation."""
+
+        return 160.0
+
+    def set_drive_stage1_damping(self, enabled: bool) -> None:
+        """Apply a simulation-only damping boost to load-bearing stage 1."""
+
+        with self.lock:
+            for motor_id in Actuator.Index.MIDDLE:
+                default_kd = self._stage1_default_kd[motor_id]
+                self._pid[motor_id].kd = default_kd * (
+                    self._DRIVE_STAGE1_DAMPING_MULTIPLIER if enabled else 1.0
+                )
+            self._drive_stage1_damping_enabled = bool(enabled)
+        self._log(
+            "stage-1 Drive damping -> "
+            f"{'boosted' if enabled else 'default'}"
+        )
+
     def set_all_speed(self, speed: int) -> None:
         for motor_id in Actuator.Index.ALL:
             self.set_speed(motor_id, speed)
@@ -381,6 +429,43 @@ class MuJoCoController:
             result = self.radians_to_raw(self._joint_position(id))
         self._log(f"{self._id_label(id)}: position -> raw {result}")
         return result
+
+    def wait_until_raw_positions(
+        self,
+        positions: Mapping[int, int],
+        *,
+        tolerance: int = 64,
+        timeout: float = 4.0,
+        poll_interval: float = 0.01,
+    ) -> bool:
+        """Wait until simulated joints physically reach their commanded pose.
+
+        Legacy motions use fixed sleeps because the hardware controller runs
+        its own position loop.  MuJoCo is stepped on another thread, so a
+        short sleep can end before a loaded joint reaches its target.  The
+        locomotion state machine discovers this optional method at runtime;
+        the physical controller is therefore unchanged.
+        """
+
+        if tolerance < 0:
+            raise ValueError("tolerance must be non-negative")
+        if timeout <= 0.0 or poll_interval <= 0.0:
+            raise ValueError("timeout and poll_interval must be positive")
+
+        targets = {int(motor_id): int(raw) for motor_id, raw in positions.items()}
+        deadline = time.monotonic() + timeout
+        while True:
+            with self.lock:
+                reached = all(
+                    abs(self.radians_to_raw(self._joint_position(motor_id)) - target)
+                    <= tolerance
+                    for motor_id, target in targets.items()
+                )
+            if reached:
+                return True
+            if time.monotonic() >= deadline:
+                return False
+            time.sleep(poll_interval)
 
     def update(self, timestep: float) -> None:
         """Advance profile generators and write the next MuJoCo controls."""

@@ -33,6 +33,8 @@ RUNS_DIR = PROJECT_ROOT / "runs"
 REMOTE_JOBS_FILE = RUNS_DIR / ".remote_jobs.json"
 DEFAULT_REMOTE_HOST = "ssh.hayward.kim"
 DEFAULT_REMOTE_PROJECT = "~/Developer/SCONE"
+REMOTE_MEMORY_RESERVE_BYTES = 2 * 1024**3
+ESTIMATED_ENV_MEMORY_BYTES = 768 * 1024**2
 
 SAFE_NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]*$")
 SAFE_SSH_HOST = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.@-]*$")
@@ -46,6 +48,10 @@ TERRAIN_OPTIONS = (
     ("slope-2", "경사 2단계 (15°)"),
     ("slope-3", "경사 3단계 (25°)"),
     ("mixed", "혼합 코스"),
+)
+REFERENCE_MOTION_OPTIONS = (
+    ("non_rl", "Non-RL 알고리즘 · 연속 IK 보행 (권장)"),
+    ("hardcoded", "하드코딩 모션 · 기존 사인파 tripod 기준"),
 )
 
 
@@ -84,6 +90,7 @@ class TrainingConfig:
     terrain_seed: int = 7
     seed: int = 0
     device: str = "auto"
+    reference_motion: str = "non_rl"
     standing_pose_name: str = "sport"
     standing_pose_degrees: tuple[float, ...] = SPORT_STANDING_DEGREES
 
@@ -92,6 +99,10 @@ class TrainingConfig:
             raise ValueError(f"unknown training task: {self.task}")
         if self.curriculum not in {"easy", "medium", "full"}:
             raise ValueError(f"unknown curriculum: {self.curriculum}")
+        if self.reference_motion not in {
+            value for value, _ in REFERENCE_MOTION_OPTIONS
+        }:
+            raise ValueError(f"unknown reference motion: {self.reference_motion}")
         if SAFE_NAME.fullmatch(self.run_name) is None:
             raise ValueError(
                 "run name may contain only letters, digits, '.', '_', and '-'"
@@ -137,6 +148,79 @@ class RemoteSettings:
 
 
 @dataclass(frozen=True)
+class RemoteCapacity:
+    """CPU/memory limits used to recommend a real parallel env count."""
+
+    physical_cores: int
+    logical_cores: int
+    total_memory_bytes: int
+    available_memory_bytes: int
+    load_average_1m: float
+    cpu_limit: int
+    memory_limit: int
+    recommended_num_envs: int
+
+    def __post_init__(self) -> None:
+        for name in (
+            "physical_cores",
+            "logical_cores",
+            "total_memory_bytes",
+            "available_memory_bytes",
+            "cpu_limit",
+            "memory_limit",
+            "recommended_num_envs",
+        ):
+            if getattr(self, name) < 1:
+                raise ValueError(f"{name} must be at least 1")
+        if self.load_average_1m < 0.0:
+            raise ValueError("load_average_1m cannot be negative")
+
+    @property
+    def available_memory_gib(self) -> float:
+        return self.available_memory_bytes / 1024**3
+
+    @property
+    def is_busy(self) -> bool:
+        return self.load_average_1m >= self.physical_cores * 0.75
+
+
+def recommend_num_envs(
+    *,
+    physical_cores: int,
+    logical_cores: int,
+    total_memory_bytes: int,
+    available_memory_bytes: int,
+    load_average_1m: float,
+) -> RemoteCapacity:
+    """Reserve one physical core and enough RAM for the OS/PPO process."""
+
+    if min(physical_cores, logical_cores) < 1:
+        raise ValueError("remote core counts must be positive")
+    if total_memory_bytes < 1:
+        raise ValueError("remote total memory must be positive")
+    if available_memory_bytes < 1:
+        available_memory_bytes = max(1, int(total_memory_bytes * 0.75))
+
+    cpu_limit = max(1, physical_cores - 1)
+    memory_budget = max(
+        ESTIMATED_ENV_MEMORY_BYTES,
+        available_memory_bytes - REMOTE_MEMORY_RESERVE_BYTES,
+    )
+    memory_limit = max(1, memory_budget // ESTIMATED_ENV_MEMORY_BYTES)
+    recommended = max(1, min(cpu_limit, memory_limit))
+    return RemoteCapacity(
+        physical_cores=physical_cores,
+        logical_cores=logical_cores,
+        total_memory_bytes=total_memory_bytes,
+        available_memory_bytes=available_memory_bytes,
+        load_average_1m=max(0.0, load_average_1m),
+        cpu_limit=cpu_limit,
+        memory_limit=memory_limit,
+        recommended_num_envs=recommended,
+    )
+
+
+@dataclass(frozen=True)
 class RemoteJob:
     host: str
     project_dir: str
@@ -153,6 +237,10 @@ class RemoteJob:
     keep_checkpoints: int = 10
     seed: int = 0
     device: str = "auto"
+    # Records created before this field existed used the hand-authored gait.
+    # Keep that compatibility default while new TrainingConfig defaults to
+    # the recommended Non-RL reference explicitly.
+    reference_motion: str = "hardcoded"
     standing_pose_name: str = "sport"
     standing_pose_degrees: tuple[float, ...] = SPORT_STANDING_DEGREES
 
@@ -166,6 +254,10 @@ class RemoteJob:
             raise ValueError(f"unknown terrain: {self.terrain}")
         if self.curriculum not in {"easy", "medium", "full"}:
             raise ValueError(f"unknown curriculum: {self.curriculum}")
+        if self.reference_motion not in {
+            value for value, _ in REFERENCE_MOTION_OPTIONS
+        }:
+            raise ValueError(f"unknown reference motion: {self.reference_motion}")
         for name in ("num_envs", "checkpoint_every", "keep_checkpoints"):
             if getattr(self, name) < 1:
                 raise ValueError(f"{name} must be at least 1")
@@ -241,6 +333,162 @@ def _run_ssh(
     return result
 
 
+_REMOTE_CAPACITY_PYTHON = r"""
+import json
+import os
+import platform
+import re
+import subprocess
+
+
+def command_output(arguments):
+    try:
+        return subprocess.check_output(arguments, text=True).strip()
+    except (OSError, subprocess.CalledProcessError):
+        return ""
+
+
+logical = os.cpu_count() or 1
+physical = logical
+total_memory = 0
+available_memory = 0
+system = platform.system()
+
+if system == "Darwin":
+    physical_text = command_output(["sysctl", "-n", "hw.physicalcpu"])
+    total_text = command_output(["sysctl", "-n", "hw.memsize"])
+    if physical_text.isdigit():
+        physical = int(physical_text)
+    if total_text.isdigit():
+        total_memory = int(total_text)
+
+    vm_stat = command_output(["vm_stat"])
+    page_match = re.search(r"page size of ([0-9]+) bytes", vm_stat)
+    page_size = int(page_match.group(1)) if page_match else 4096
+    available_pages = 0
+    for label in (
+        "Pages free",
+        "Pages inactive",
+        "Pages speculative",
+        "Pages purgeable",
+    ):
+        match = re.search(r"^" + re.escape(label) + r":\s*([0-9]+)", vm_stat, re.M)
+        if match:
+            available_pages += int(match.group(1))
+    available_memory = available_pages * page_size
+
+elif system == "Linux":
+    try:
+        cpuinfo = open("/proc/cpuinfo", encoding="utf-8").read()
+    except OSError:
+        cpuinfo = ""
+    physical_ids = set()
+    for block in cpuinfo.split("\n\n"):
+        fields = {}
+        for line in block.splitlines():
+            if ":" in line:
+                key, value = line.split(":", 1)
+                fields[key.strip()] = value.strip()
+        if "core id" in fields:
+            physical_ids.add((fields.get("physical id", "0"), fields["core id"]))
+    if physical_ids:
+        physical = len(physical_ids)
+
+    try:
+        meminfo = open("/proc/meminfo", encoding="utf-8").read()
+    except OSError:
+        meminfo = ""
+    values = {
+        key: int(value.split()[0]) * 1024
+        for key, value in (
+            line.split(":", 1) for line in meminfo.splitlines() if ":" in line
+        )
+        if value.split()
+    }
+    total_memory = values.get("MemTotal", 0)
+    available_memory = values.get("MemAvailable", 0)
+
+if total_memory <= 0:
+    try:
+        total_memory = os.sysconf("SC_PAGE_SIZE") * os.sysconf("SC_PHYS_PAGES")
+    except (OSError, ValueError):
+        total_memory = max(available_memory, 8 * 1024**3)
+if available_memory <= 0:
+    available_memory = int(total_memory * 0.75)
+total_memory = max(total_memory, available_memory)
+
+try:
+    load_average = os.getloadavg()[0]
+except (AttributeError, OSError):
+    load_average = 0.0
+
+print(json.dumps({
+    "physical_cores": max(1, physical),
+    "logical_cores": max(1, logical),
+    "total_memory_bytes": total_memory,
+    "available_memory_bytes": available_memory,
+    "load_average_1m": max(0.0, load_average),
+}))
+""".strip()
+
+
+def build_remote_capacity_command() -> str:
+    """Build a dependency-free macOS/Linux resource probe."""
+
+    return " ".join(
+        [
+            'scone_probe_python="$(command -v python3 || command -v python)";',
+            '[ -n "$scone_probe_python" ] || exit 41;',
+            '"$scone_probe_python" -c',
+            shlex.quote(_REMOTE_CAPACITY_PYTHON),
+        ]
+    )
+
+
+def inspect_remote_capacity(settings: RemoteSettings) -> RemoteCapacity:
+    """Read the SSH host and calculate a conservative max parallel count."""
+
+    result = _run_ssh(
+        settings,
+        build_remote_capacity_command(),
+        timeout=max(15, settings.connect_timeout + 5),
+    )
+    try:
+        raw = json.loads(result.stdout.strip().splitlines()[-1])
+        return recommend_num_envs(
+            physical_cores=int(raw["physical_cores"]),
+            logical_cores=int(raw["logical_cores"]),
+            total_memory_bytes=int(raw["total_memory_bytes"]),
+            available_memory_bytes=int(raw["available_memory_bytes"]),
+            load_average_1m=float(raw["load_average_1m"]),
+        )
+    except (IndexError, KeyError, TypeError, ValueError, json.JSONDecodeError) as error:
+        raise RuntimeError(
+            f"SSH 머신 사양 응답을 해석하지 못했습니다: {result.stdout!r}"
+        ) from error
+
+
+def format_remote_capacity(capacity: RemoteCapacity) -> str:
+    """Return one compact Korean explanation for the CLI."""
+
+    bottleneck = (
+        "CPU"
+        if capacity.cpu_limit <= capacity.memory_limit
+        else "메모리"
+    )
+    message = (
+        f"물리 {capacity.physical_cores}코어 / 논리 {capacity.logical_cores}코어, "
+        f"사용 가능 메모리 {capacity.available_memory_gib:.1f} GiB, "
+        f"1분 load {capacity.load_average_1m:.1f} → "
+        f"추천 {capacity.recommended_num_envs}개 "
+        f"(CPU 한도 {capacity.cpu_limit}, 메모리 한도 {capacity.memory_limit}; "
+        f"{bottleneck} 기준)"
+    )
+    if capacity.is_busy:
+        message += " · 현재 다른 작업 부하가 높으므로 실제 학습 속도를 확인하세요."
+    return message
+
+
 def build_training_arguments(config: TrainingConfig) -> list[str]:
     """Build the common arguments used by local and remote training."""
 
@@ -249,6 +497,8 @@ def build_training_arguments(config: TrainingConfig) -> list[str]:
         config.terrain,
         "--terrain-seed",
         str(config.terrain_seed),
+        "--reference-motion",
+        config.reference_motion,
         "--standing-pose-degrees",
         *(f"{degrees:g}" for degrees in config.standing_pose_degrees),
         "train",
@@ -535,6 +785,7 @@ def run_environment_check(
     terrain: str,
     steps: int,
     random_actions: bool,
+    reference_motion: str = "non_rl",
     standing_pose_degrees: Sequence[float] = SPORT_STANDING_DEGREES,
 ) -> int:
     """Run the environment/reward smoke check before committing to training."""
@@ -545,6 +796,8 @@ def run_environment_check(
         "src.rl.walk_learn",
         "--terrain",
         terrain,
+        "--reference-motion",
+        reference_motion,
         "--standing-pose-degrees",
         *(f"{degrees:g}" for degrees in standing_pose_degrees),
         "check",
@@ -604,6 +857,7 @@ def start_remote_training(
         keep_checkpoints=config.keep_checkpoints,
         seed=config.seed,
         device=config.device,
+        reference_motion=config.reference_motion,
         standing_pose_name=config.standing_pose_name,
         standing_pose_degrees=config.standing_pose_degrees,
     )
@@ -871,6 +1125,7 @@ def resume_remote_training(
         terrain_seed=job.terrain_seed,
         seed=job.seed,
         device=job.device,
+        reference_motion=job.reference_motion,
         standing_pose_name=job.standing_pose_name,
         standing_pose_degrees=job.standing_pose_degrees,
     )
@@ -953,6 +1208,7 @@ def view_local_model(
     episodes: int = 3,
     terrain: str = "flat",
     terrain_seed: int = 7,
+    reference_motion: str = "non_rl",
     standing_pose_degrees: Sequence[float] = SPORT_STANDING_DEGREES,
 ) -> int:
     from .remote_watch import _validate_ppo_zip
@@ -968,6 +1224,8 @@ def view_local_model(
         terrain,
         "--terrain-seed",
         str(terrain_seed),
+        "--reference-motion",
+        reference_motion,
         "--standing-pose-degrees",
         *(f"{degrees:g}" for degrees in standing_pose_degrees),
         "enjoy",
@@ -999,6 +1257,8 @@ def watch_remote_job(job: RemoteJob) -> int:
         job.terrain,
         "--terrain-seed",
         str(job.terrain_seed),
+        "--reference-motion",
+        job.reference_motion,
         "--standing-pose-degrees",
         *(f"{degrees:g}" for degrees in job.standing_pose_degrees),
     ]
@@ -1098,12 +1358,33 @@ def prompt_standing_pose() -> tuple[str, tuple[float, ...]]:
     return f"custom(M={middle:g},L={lower:g})", validate_standing_pose(pose)
 
 
-def _prompt_training_config() -> TrainingConfig:
+def prompt_reference_motion() -> str:
+    """Choose the baseline that the residual policy will correct."""
+
+    inquirer, Choice = _inquirer()
+    return inquirer.select(
+        message="Residual RL의 기준 모션을 선택하세요.",
+        choices=[
+            Choice(value=value, name=label)
+            for value, label in REFERENCE_MOTION_OPTIONS
+        ],
+        default="non_rl",
+    ).execute()
+
+
+def _prompt_training_config(
+    *,
+    recommended_num_envs: int = 4,
+    num_envs_hint: str | None = None,
+) -> TrainingConfig:
+    if recommended_num_envs < 1:
+        raise ValueError("recommended_num_envs must be at least 1")
     inquirer, Choice = _inquirer()
     task = inquirer.select(
         message="무엇을 학습할까요?",
         choices=[Choice(value=item.key, name=item.label) for item in TRAINING_TASKS.values()],
     ).execute()
+    reference_motion = prompt_reference_motion()
     curriculum = inquirer.select(
         message="학습 범위(커리큘럼)를 선택하세요.",
         choices=[
@@ -1135,8 +1416,12 @@ def _prompt_training_config() -> TrainingConfig:
     )
     num_envs = int(
         inquirer.number(
-            message="병렬 환경 개수는 몇 개로 할까요?",
-            default=4,
+            message=(
+                "병렬 환경 개수는 몇 개로 할까요?"
+                if num_envs_hint is None
+                else f"병렬 환경 개수는 몇 개로 할까요? ({num_envs_hint})"
+            ),
+            default=recommended_num_envs,
             min_allowed=1,
         ).execute()
     )
@@ -1169,6 +1454,7 @@ def _prompt_training_config() -> TrainingConfig:
         keep_checkpoints=keep_checkpoints,
         terrain=terrain,
         device=device,
+        reference_motion=reference_motion,
         standing_pose_name=standing_pose_name,
         standing_pose_degrees=standing_pose_degrees,
     )
@@ -1202,6 +1488,7 @@ def _manual_remote_job() -> RemoteJob:
         choices=[Choice(value=value, name=label) for value, label in TERRAIN_OPTIONS],
         default="flat",
     ).execute()
+    reference_motion = prompt_reference_motion()
     standing_pose_name, standing_pose_degrees = prompt_standing_pose()
     return RemoteJob(
         host=settings.host,
@@ -1209,6 +1496,7 @@ def _manual_remote_job() -> RemoteJob:
         port=settings.port,
         run_name=run_name,
         terrain=terrain,
+        reference_motion=reference_motion,
         standing_pose_name=standing_pose_name,
         standing_pose_degrees=standing_pose_degrees,
     )
@@ -1252,7 +1540,6 @@ def _prompt_local_model() -> Path | None:
 
 def _start_training_flow() -> None:
     inquirer, Choice = _inquirer()
-    config = _prompt_training_config()
     location = inquirer.select(
         message="어디에서 학습할까요?",
         choices=[
@@ -1261,9 +1548,36 @@ def _start_training_flow() -> None:
         ],
         default="remote",
     ).execute()
+    settings: RemoteSettings | None = None
+    recommended_num_envs = 4
+    num_envs_hint: str | None = None
+    if location == "remote":
+        settings = _prompt_remote_settings()
+        print(f"\n[RL] {settings.host}의 병렬 학습 자원을 확인합니다...")
+        try:
+            capacity = inspect_remote_capacity(settings)
+        except (OSError, RuntimeError, subprocess.SubprocessError) as error:
+            print(
+                f"[RL] 자동 추천을 계산하지 못했습니다: {error}\n"
+                "     기본값 4개를 제안하며, SSH 연결 후 직접 바꿀 수 있습니다."
+            )
+        else:
+            recommended_num_envs = capacity.recommended_num_envs
+            num_envs_hint = f"SSH 추천 {recommended_num_envs}개"
+            print(f"[RL] {format_remote_capacity(capacity)}")
+            print(
+                "     OS/PPO용 물리 코어 1개와 메모리 2 GiB를 남긴 "
+                "출발값이며 직접 수정할 수 있습니다.\n"
+            )
+
+    config = _prompt_training_config(
+        recommended_num_envs=recommended_num_envs,
+        num_envs_hint=num_envs_hint,
+    )
     print(
         f"\n[RL] {config.task_spec.label} / {config.curriculum} / "
-        f"지형 {config.terrain} / 자세 {config.standing_pose_name} / "
+        f"기준 {config.reference_motion} / 지형 {config.terrain} / "
+        f"자세 {config.standing_pose_name} / "
         f"{config.timesteps:,} timestep / 실행명 {config.run_name}"
     )
     if not inquirer.confirm(message="이 설정으로 시작할까요?", default=True).execute():
@@ -1273,7 +1587,8 @@ def _start_training_flow() -> None:
         run_local_training(config)
         return
 
-    settings = _prompt_remote_settings()
+    if settings is None:
+        raise RuntimeError("원격 학습 SSH 설정이 없습니다")
     sync_code = inquirer.confirm(
         message="실행 전에 현재 로컬 코드를 원격 프로젝트로 동기화할까요?",
         default=True,
@@ -1300,6 +1615,7 @@ def _start_training_flow() -> None:
 
 def _environment_check_flow() -> None:
     inquirer, Choice = _inquirer()
+    reference_motion = prompt_reference_motion()
     curriculum = inquirer.select(
         message="테스트할 커리큘럼을 선택하세요.",
         choices=["easy", "medium", "full"],
@@ -1311,6 +1627,7 @@ def _environment_check_flow() -> None:
         default="flat",
     ).execute()
     standing_pose_name, standing_pose_degrees = prompt_standing_pose()
+    print(f"[RL] 환경 테스트 기본 자세: {standing_pose_name}")
     steps = int(
         inquirer.number(
             message="몇 policy step을 검사할까요?",
@@ -1327,6 +1644,7 @@ def _environment_check_flow() -> None:
         terrain=terrain,
         steps=steps,
         random_actions=random_actions,
+        reference_motion=reference_motion,
         standing_pose_degrees=standing_pose_degrees,
     )
     if result != 0:
@@ -1338,6 +1656,7 @@ def _view_model_flow() -> None:
     checkpoint = _prompt_local_model()
     if checkpoint is None:
         return
+    reference_motion = prompt_reference_motion()
     vx = float(inquirer.number(message="전진 속도 vx (m/s)", default=0.25, float_allowed=True).execute())
     vy = float(inquirer.number(message="측면 속도 vy (m/s)", default=0.0, float_allowed=True).execute())
     yaw = float(inquirer.number(message="회전 속도 (rad/s)", default=0.0, float_allowed=True).execute())
@@ -1354,6 +1673,7 @@ def _view_model_flow() -> None:
         command=(vx, vy, yaw),
         episodes=episodes,
         terrain=terrain,
+        reference_motion=reference_motion,
         standing_pose_degrees=standing_pose_degrees,
     )
 
@@ -1387,7 +1707,8 @@ def _resume_remote_flow() -> None:
         return
 
     print(
-        f"\n[RL] 저장된 설정: {job.curriculum} / 지형 {job.terrain} / "
+        f"\n[RL] 저장된 설정: {job.curriculum} / 기준 {job.reference_motion} / "
+        f"지형 {job.terrain} / "
         f"자세 {job.standing_pose_name} / 병렬 환경 {job.num_envs}개 / "
         f"체크포인트 {job.checkpoint_every:,} step마다"
     )

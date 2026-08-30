@@ -22,6 +22,7 @@ class Walk(Mode):
         transition: bool = False,
     ) -> None:
         super().__init__(controller, profile)
+        self._set_simulated_drive_stage1_damping(False)
         if transition:
             self._enter_walk_pose()
 
@@ -194,44 +195,46 @@ class Walk(Mode):
         time.sleep(0.05)
         for motor_id in Actuator.Index.LOWER_DIAGONAL_LEFT:
             self.controller.set_speed(motor_id, self.profile.boost_speed)
-        self.controller.set_raw_positions(
-            {
-                motor_id: Actuator.Position.CENTER if motor_id % 2 == 1 else 0
-                for motor_id in Actuator.Index.LOWER_DIAGONAL_LEFT
-            }
-        )
+        lower_left_targets = {
+            motor_id: Actuator.Position.CENTER if motor_id % 2 == 1 else 0
+            for motor_id in Actuator.Index.LOWER_DIAGONAL_LEFT
+        }
+        self.controller.set_raw_positions(lower_left_targets)
         time.sleep(0.3)
-        self.controller.set_raw_positions(
-            {
-                motor_id: Actuator.Position.CENTER
-                for motor_id in Actuator.Index.UPPER_DIAGONAL_LEFT
-            }
-        )
+        self._settle_simulated_raw_positions(lower_left_targets)
+        upper_left_targets = {
+            motor_id: Actuator.Position.CENTER
+            for motor_id in Actuator.Index.UPPER_DIAGONAL_LEFT
+        }
+        self.controller.set_raw_positions(upper_left_targets)
         time.sleep(0.5)
+        self._settle_simulated_raw_positions(upper_left_targets)
         self._release_left()
         self._hold_right()
         time.sleep(0.05)
         for motor_id in Actuator.Index.LOWER_DIAGONAL_RIGHT:
             self.controller.set_speed(motor_id, self.profile.boost_speed)
-        self.controller.set_raw_positions(
-            {
-                motor_id: Actuator.Position.CENTER if motor_id % 2 == 0 else 0
-                for motor_id in Actuator.Index.LOWER_DIAGONAL_RIGHT
-            }
-        )
+        lower_right_targets = {
+            motor_id: Actuator.Position.CENTER if motor_id % 2 == 0 else 0
+            for motor_id in Actuator.Index.LOWER_DIAGONAL_RIGHT
+        }
+        self.controller.set_raw_positions(lower_right_targets)
         time.sleep(0.3)
-        self.controller.set_raw_positions(
-            {
-                motor_id: Actuator.Position.CENTER
-                for motor_id in Actuator.Index.UPPER_DIAGONAL_RIGHT
-            }
-        )
+        self._settle_simulated_raw_positions(lower_right_targets)
+        upper_right_targets = {
+            motor_id: Actuator.Position.CENTER
+            for motor_id in Actuator.Index.UPPER_DIAGONAL_RIGHT
+        }
+        self.controller.set_raw_positions(upper_right_targets)
         time.sleep(0.5)
+        self._settle_simulated_raw_positions(upper_right_targets)
         self._release_right()
         time.sleep(0.05)
-        self.controller.set_raw_positions(
-            {motor_id: Actuator.Position.CENTER for motor_id in Actuator.Index.MIDDLE}
-        )
+        middle_targets = {
+            motor_id: Actuator.Position.CENTER for motor_id in Actuator.Index.MIDDLE
+        }
+        self.controller.set_raw_positions(middle_targets)
+        self._settle_simulated_raw_positions(middle_targets)
         return Drive(self.controller, self.profile)
 
 

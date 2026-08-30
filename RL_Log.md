@@ -756,3 +756,33 @@ Policy의 행동 공간(목표 각도 18개)은 실기에서도 그대로 씁니
 "지속적으로" 유지하는 경우뿐입니다. 1번(몸체 충돌)과 2번(시작 자세)은 그
 자체로도 유효한 개선이라 남겨뒀지만, 실제로 문제를 일으킨 근본 원인은
 3번(`saturation`이 너무 보수적이었던 것)이었습니다.
+
+## 2026-08-31: Residual 기준, 모드 전환, 병렬 학습 운영 정리
+
+### Residual RL 기준 모션
+
+CLI에서 residual 아래의 기준을 선택할 수 있게 했습니다.
+
+- `non_rl`(권장/최상단): 실제 Non-RL 조종과 같은 Phoenix식 연속 발 궤적과 IK를 사용하며 `vx`, `vy`, `yaw_rate`를 모두 기준 모션에 반영합니다.
+- `hardcoded`: 기존 사인파 tripod 기준을 보존합니다. 전진/후진과 yaw는 지원하지만 lateral은 residual이 담당합니다.
+
+새 학습/검사/재생/원격 작업에 이 값이 전달되고, pause 후 resume·원격 watch·다운로드 후 재생에서도 저장한 값을 유지합니다. 필드 추가 전 생성된 원격 작업 기록은 당시 동작을 보존하기 위해 `hardcoded`로 읽습니다.
+
+### RL 조종 중 Legacy 모드 전환
+
+RL 조이스틱에서도 `R`로 `RL Walk → Drive → Climb → RL Walk`를 순환합니다. 전환 중에는 policy가 관절 목표를 덮어쓰지 않고 물리만 진행합니다. Walk로 돌아오면 heading, 기준 높이, 마지막 residual과 Non-RL phase를 재정렬하고 PPO 제어를 재개합니다. 선택한 RL stance는 가장 가까운 Standard/Sport Legacy 프로필과 결합해 같은 controller에서 전환합니다.
+
+### 시뮬레이션 전용 Drive/Climb 보정
+
+실물 controller는 변경하지 않았습니다. MuJoCo backend가 제공하는 선택 기능만 Locomotion state machine이 사용합니다.
+
+- 좌우 말단 관절축에 맞춰 짝수 ID의 Drive/Climb wheel velocity 부호를 반전합니다.
+- 고정 sleep 뒤 관절이 아직 이동 중이면 다음 모드 단계로 넘어가지 않도록 목표 도달을 기다립니다.
+- Drive 동안 ID 7–12의 `kd`만 2배로 하고 Walk/Climb에서 원복합니다. 비교 sweep에서 기본값보다 RMS 관절 속도 약 18%, 최대 각도 오차 약 13% 감소했고 4배는 진동해 제외했습니다.
+- Standard Climb 준비 동작은 시뮬레이션에서만 middle 160°를 사용합니다.
+
+### SSH 자원 추천과 실제 병렬화
+
+원격 학습 위치를 선택하면 코어 수, 가용 메모리, 1분 load를 먼저 확인합니다. 추천치는 물리 코어 하나와 2 GiB를 남기고, 환경당 768 MiB를 가정한 CPU/메모리 한도의 최솟값입니다. 사용자가 최종 값을 바꿀 수 있고 조회 실패 시 4개를 기본값으로 제시합니다.
+
+이전에는 `num_envs`가 `DummyVecEnv`에서 순차 실행됐습니다. 이제 한 환경만 `DummyVecEnv`, 두 개 이상은 `SubprocVecEnv`를 사용해 실제 worker process로 병렬 실행합니다. 2-env 학습 smoke test에서 PPO rollout, checkpoint/final model 저장까지 완료했고 전체 단위/통합 테스트 86개가 통과했습니다.

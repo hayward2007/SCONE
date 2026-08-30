@@ -5,6 +5,7 @@ import unittest
 import numpy as np
 
 from src.locomotion.non_rl_walk import GaitConfig, NonRLWalk, VelocityCommand
+from src.locomotion.profile import STANDARD
 
 
 class RecordingController:
@@ -70,6 +71,19 @@ class NonRLWalkTests(unittest.TestCase):
             self.assertTrue(sample.converged, sample.failed_legs)
             self.assertTrue(np.all(sample.motor_degrees >= 0.0))
             self.assertTrue(np.all(sample.motor_degrees <= 360.0))
+
+    def test_standard_stance_solves_full_forward_stride(self) -> None:
+        gait = NonRLWalk(
+            profile=STANDARD,
+            config=GaitConfig(
+                command_time_constant=0.0,
+                max_stride=0.050,
+            ),
+        )
+
+        for _ in range(100):
+            sample = gait.step([gait.config.max_vx, 0.0, 0.0], dt=0.02)
+            self.assertTrue(sample.converged, sample.failed_legs)
 
     def test_send_is_one_batch_of_eighteen_positions(self) -> None:
         controller = RecordingController()

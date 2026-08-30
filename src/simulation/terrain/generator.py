@@ -18,7 +18,9 @@ _CONTACT_ATTRIBUTES = {
     "friction": "1.0 0.005 0.0005",
     "solref": "0.02 1",
     "solimp": "0.85 0.95 0.002 0.5 2",
-    "group": "3",
+    # MuJoCo's interactive viewer hides geom groups 3..5 by default. Terrain
+    # is primary scene geometry, so keep it in the always-visible group 0.
+    "group": "0",
 }
 
 

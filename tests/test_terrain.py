@@ -6,9 +6,11 @@ from types import SimpleNamespace
 from unittest.mock import patch
 
 import mujoco
+import numpy as np
 
 from src.simulation import build_terrain_xml, load_model
 from src.simulation.core.cli_bridge import SimulationControl
+from src.simulation.core.viewer import configure_simulation_viewer
 from src.simulation.core.simulator_cli import (
     select_rl_checkpoint,
     select_simulation_control,
@@ -61,6 +63,58 @@ class TerrainTests(unittest.TestCase):
                     self.assertEqual(generated, [])
                 else:
                     self.assertTrue(generated)
+
+    def test_generated_terrain_uses_default_visible_geom_group(self) -> None:
+        model = load_model(terrain=TerrainType.MIXED)
+        terrain_ids = [
+            geom_id
+            for geom_id in range(model.ngeom)
+            if (
+                mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_GEOM, geom_id)
+                or ""
+            ).startswith("terrain_")
+        ]
+
+        self.assertTrue(terrain_ids)
+        self.assertTrue(
+            all(model.geom_group[geom_id] == 0 for geom_id in terrain_ids)
+        )
+        self.assertTrue(
+            all(model.geom_rgba[geom_id, 3] == 1.0 for geom_id in terrain_ids)
+        )
+
+    def test_viewer_tracks_robot_without_zooming_to_whole_mixed_course(self) -> None:
+        model = load_model(terrain=TerrainType.MIXED)
+        data = mujoco.MjData(model)
+        mujoco.mj_forward(model, data)
+        root_body_id = mujoco.mj_name2id(
+            model,
+            mujoco.mjtObj.mjOBJ_BODY,
+            "UPPER_BODY_1",
+        )
+        viewer = SimpleNamespace(
+            cam=SimpleNamespace(
+                type=None,
+                trackbodyid=-1,
+                lookat=np.zeros(3),
+                distance=0.0,
+                azimuth=0.0,
+                elevation=0.0,
+            ),
+            opt=SimpleNamespace(geomgroup=np.zeros(6, dtype=np.uint8)),
+        )
+
+        configure_simulation_viewer(
+            viewer,
+            model,
+            data,
+            tracking_body_id=root_body_id,
+        )
+
+        self.assertEqual(viewer.cam.type, mujoco.mjtCamera.mjCAMERA_TRACKING)
+        self.assertEqual(viewer.cam.trackbodyid, root_body_id)
+        self.assertLessEqual(viewer.cam.distance, 3.0)
+        self.assertEqual(viewer.opt.geomgroup[0], 1)
 
     def test_fixed_base_removes_root_freejoint(self) -> None:
         model = load_model(floating_base=False, terrain=TerrainType.UNEVEN)

@@ -9,6 +9,8 @@ from .non_rl_walk import VelocityCommand
 
 
 class LegacyMotionRobot(Protocol):
+    mode_name: str
+
     def forward(self) -> None: ...
 
     def backward(self) -> None: ...
@@ -18,14 +20,26 @@ class LegacyMotionRobot(Protocol):
     def right(self) -> None: ...
 
 
-def legacy_movement_for(command: VelocityCommand) -> str | None:
+def legacy_movement_for(
+    command: VelocityCommand,
+    *,
+    mode_name: str = "walk",
+) -> str | None:
     """Select one legacy motion from a body-frame velocity command.
 
-    The old gait has forward/backward and in-place yaw primitives, but no
-    lateral/strafe primitive. Yaw therefore takes priority when both axes are
-    requested, while a pure ``vy`` command intentionally produces no motion.
+    Walk uses forward/backward plus yaw.  Drive and Climb expose their legacy
+    left/right motions instead, so the joystick's A/D (``vy``) axis maps to
+    those commands after a mode transition.
     """
 
+    if mode_name in ("drive", "climb"):
+        # Joystick A becomes +body-y and D becomes -body-y.  Preserve the
+        # user-facing left/right key meaning rather than the body-axis sign.
+        if command.vy > 0.0:
+            return "left"
+        if command.vy < 0.0:
+            return "right"
+        return None
     if command.yaw_rate > 0.0:
         return "left"
     if command.yaw_rate < 0.0:
@@ -91,7 +105,10 @@ class LegacyVelocityAdapter:
                 self._updated.clear()
                 if self._stop.is_set():
                     break
-                movement = legacy_movement_for(self._latest_command())
+                movement = legacy_movement_for(
+                    self._latest_command(),
+                    mode_name=self.robot.mode_name,
+                )
                 if movement is not None:
                     getattr(self.robot, movement)()
         except BaseException as error:

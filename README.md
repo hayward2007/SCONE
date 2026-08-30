@@ -28,14 +28,19 @@ position, then displays:
 Use the arrow keys and Enter to choose launcher, profile, terrain, and RL
 options. Press Ctrl-C to leave a selection menu safely.
 
+The detailed Korean documentation starts at [`docs/README.md`](docs/README.md),
+and the complete learning/checkpoint runbook is in
+[`docs/07-running-testing-and-operations.md`](docs/07-running-testing-and-operations.md).
+
 After choosing simulation control, select one locomotion implementation:
 
-- `Old control`: adapts `vx` and `yaw_rate` to the original blocking Walk
-  motions. The old gait has no lateral primitive, so `vy`/strafe is displayed
-  but ignored.
+- `Legacy mode control`: adapts terminal input to the original blocking
+  Walk/Drive/Climb state machine. Press `R` to cycle modes. Walk uses W/S and
+  yaw; Drive/Climb use A/D for their left/right motion.
 - `Non-RL control`: sends all three axes to the model-based `NonRLWalk` gait.
-- `RL control`: asks for a local `runs/**/*.zip` PPO checkpoint and writes all
-  three axes into the policy observation on every 50 Hz step.
+- `RL control`: asks for a local `runs/**/*.zip` PPO checkpoint, standing pose,
+  and residual reference. It runs PPO Walk at 50 Hz and also accepts `R` to
+  cycle through legacy Drive/Climb without replacing the shared controller.
 
 Simulation opens a self-centering velocity joystick in the terminal:
 
@@ -44,6 +49,8 @@ W/S       joystick Y (forward/backward)
 A/D       joystick X (left/right strafe)
 Left/Right arrow  yaw
 Space     immediate neutral
+R         Walk -> Drive -> Climb -> Walk (Legacy/RL control)
+H         return to home pose (Legacy control)
 Q         return to the launcher
 ```
 
@@ -283,10 +290,14 @@ python -m src.rl
 ```
 
 The same menu is available as `4. 강화학습 관리` from `mjpython SCONE.py`. It
-asks which policy, curriculum, and terrain to train, the total timestep count,
-parallel environment count, checkpoint interval, and whether to run locally or
-through SSH. The defaults for remote training are `ssh.hayward.kim` and
-`~/Developer/SCONE`.
+asks for the residual reference (`non_rl` is recommended and shown first, while
+`hardcoded` preserves the older sinusoidal tripod), curriculum, terrain,
+standing pose, timestep count, checkpoint interval, and local/SSH destination.
+For SSH training it probes physical/logical CPU cores, available memory, and
+load before asking for `num_envs`. The editable recommendation reserves one
+physical core, 2 GiB for the OS/PPO parent, and estimates 768 MiB per MuJoCo
+environment. Runs with more than one environment use `SubprocVecEnv`, so this is
+real process parallelism rather than sequential interleaving.
 
 For a remote run, the launcher can synchronize the current local source first
 (excluding `.git`, virtual environments, `runs`, and archives), then starts the
@@ -327,15 +338,16 @@ mjpython -m src.simulation --control non_rl --profile sport --terrain mixed
 # RL joystick control with a downloaded/trained checkpoint
 mjpython -m src.simulation --control rl \
   --checkpoint runs/remote_watch/scone_walk_700000_steps.zip \
+  --rl-reference-motion non_rl \
   --terrain flat
 
 # RL environment smoke check
-PYTHONPATH=. python -m src.rl.walk_learn check \
+PYTHONPATH=. python -m src.rl.walk_learn --reference-motion non_rl check \
   --steps 5 --curriculum easy
 
 # PPO training
-PYTHONPATH=. python -m src.rl.walk_learn train \
-  --curriculum easy --timesteps 1000000
+PYTHONPATH=. python -m src.rl.walk_learn --reference-motion non_rl train \
+  --curriculum easy --timesteps 1000000 --num-envs 4
 
 # Unit and integration-contract tests
 python -m unittest discover -s tests -v

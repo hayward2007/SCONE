@@ -8,6 +8,7 @@ from types import SimpleNamespace
 from unittest.mock import patch
 
 import numpy as np
+import mujoco
 
 from src.rl.remote_watch import (
     LocalCheckpointSource,
@@ -15,14 +16,123 @@ from src.rl.remote_watch import (
     mirror_checkpoint,
 )
 from src.rl.policy_compat import load_compatible_policy
+from src.rl.stance import SPORT_STANDING_DEGREES, STANDARD_STANDING_DEGREES
 from src.rl.walk_learn import (
     GracefulStopCallback,
+    RewardConfig,
     SconeWalkEnv,
+    WalkConfig,
     _write_resume_pointer,
 )
 
 
 class RemoteWatchCompatibilityTests(unittest.TestCase):
+    def test_standard_stance_starts_higher_than_sport_without_collision(self) -> None:
+        measurements = {}
+        for name, pose in (
+            ("sport", SPORT_STANDING_DEGREES),
+            ("standard", STANDARD_STANDING_DEGREES),
+        ):
+            env = SconeWalkEnv(
+                fixed_command=[0.0, 0.0, 0.0],
+                standing_pose_degrees=pose,
+            )
+            try:
+                env.reset(seed=7)
+                _, _, terminated, diagnostics = env._reward(
+                    np.zeros(18, dtype=np.float32)
+                )
+                measurements[name] = (
+                    env._reference_height,
+                    diagnostics["stance_contacts"],
+                    diagnostics["forbidden_collision"],
+                    terminated,
+                )
+            finally:
+                env.close()
+
+        self.assertGreater(
+            measurements["standard"][0],
+            measurements["sport"][0] + 0.15,
+        )
+        self.assertEqual(measurements["standard"][1], 6)
+        self.assertFalse(measurements["standard"][2])
+        self.assertFalse(measurements["standard"][3])
+
+    def test_height_reward_only_penalizes_body_drop(self) -> None:
+        env = SconeWalkEnv(
+            fixed_command=[0.0, 0.0, 0.0],
+            standing_pose_degrees=STANDARD_STANDING_DEGREES,
+        )
+        try:
+            env.reset(seed=7)
+            root_height_address = env.root_qpos_address + 2
+            env.data.qpos[root_height_address] = env._reference_height + 0.03
+            mujoco.mj_forward(env.model, env.data)
+            _, raised_terms, _, _ = env._reward(np.zeros(18, dtype=np.float32))
+
+            env.data.qpos[root_height_address] = env._reference_height - 0.03
+            mujoco.mj_forward(env.model, env.data)
+            _, dropped_terms, _, _ = env._reward(np.zeros(18, dtype=np.float32))
+        finally:
+            env.close()
+
+        self.assertEqual(raised_terms["height"], 0.0)
+        self.assertLess(dropped_terms["height"], 0.0)
+        self.assertGreater(RewardConfig().upright_weight, RewardConfig().height_weight)
+
+    def test_reward_aggregates_are_not_counted_twice(self) -> None:
+        env = SconeWalkEnv(
+            fixed_command=[0.0, 0.0, 0.0],
+            standing_pose_degrees=STANDARD_STANDING_DEGREES,
+        )
+        try:
+            env.reset(seed=7)
+            total, terms, terminated, _ = env._reward(
+                np.zeros(18, dtype=np.float32)
+            )
+        finally:
+            env.close()
+
+        expected = sum(
+            terms[name] for name in ("velocity", "direction", "stability", "damping")
+        )
+        if terminated:
+            expected += terms["termination"]
+        self.assertAlmostEqual(total, expected)
+
+    def test_idle_reward_penalizes_residual_action(self) -> None:
+        env = SconeWalkEnv(
+            fixed_command=[0.0, 0.0, 0.0],
+            standing_pose_degrees=STANDARD_STANDING_DEGREES,
+        )
+        try:
+            env.reset(seed=7)
+            _, zero_terms, _, _ = env._reward(
+                np.zeros(18, dtype=np.float32)
+            )
+            _, biased_terms, _, _ = env._reward(
+                np.ones(18, dtype=np.float32)
+            )
+        finally:
+            env.close()
+
+        self.assertGreater(zero_terms["idle_velocity"], 0.0)
+        self.assertEqual(zero_terms["idle_action"], 0.0)
+        self.assertLess(biased_terms["idle_action"], 0.0)
+
+    def test_training_can_sample_only_idle_command_segments(self) -> None:
+        env = SconeWalkEnv(
+            walk_config=WalkConfig(idle_command_probability=1.0),
+            standing_pose_degrees=STANDARD_STANDING_DEGREES,
+        )
+        try:
+            _, info = env.reset(seed=7)
+        finally:
+            env.close()
+
+        np.testing.assert_array_equal(info["command_target"], np.zeros(3))
+
     def test_graceful_stop_callback_stops_only_after_request(self) -> None:
         requested = False
         callback = GracefulStopCallback(lambda: requested)

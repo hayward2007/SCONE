@@ -310,9 +310,10 @@ def run_velocity_joystick_cli(
     limits: GaitConfig | JoystickLimits,
     apply_command: Callable[[VelocityCommand, float], None],
     profile_name: str,
-    control_name: str,
+    control_name: str | Callable[[], str],
     control_hint: str = "",
     stop_event: threading.Event | None = None,
+    handle_key: Callable[[str], bool] | None = None,
 ) -> None:
     """Read the common terminal joystick and publish body velocity commands."""
 
@@ -338,6 +339,11 @@ def run_velocity_joystick_cli(
                         quit_requested = True
                         stop.set()
                         break
+                    if handle_key is not None and handle_key(normalized):
+                        # A mode/home command must not leave the previous
+                        # velocity axis active when the new pose is entered.
+                        joystick.clear()
+                        continue
                     joystick.press(normalized, now=frame_started)
                 pending_keys.clear()
                 if quit_requested:
@@ -348,12 +354,15 @@ def run_velocity_joystick_cli(
                 dt = max(frame_started - last_frame, 1e-6)
                 last_frame = frame_started
                 apply_command(command, dt)
+                displayed_control_name = (
+                    control_name() if callable(control_name) else control_name
+                )
                 terminal.draw(
                     render_joystick_ui(
                         state,
                         command,
                         profile_name=profile_name,
-                        control_name=control_name,
+                        control_name=displayed_control_name,
                         control_hint=control_hint,
                     )
                 )
@@ -371,12 +380,22 @@ def run_velocity_joystick_cli(
 
 
 def run_joystick_cli(
-    robot: SCONE, *, stop_event: threading.Event | None = None
+    robot: SCONE,
+    *,
+    stop_event: threading.Event | None = None,
+    gait_config: GaitConfig | None = None,
+    calibrate_from_controller: bool = True,
 ) -> None:
     """Drive ``NonRLWalk`` from the common x/y/yaw terminal joystick."""
 
-    gait = NonRLWalk(robot.controller, robot.profile)
-    gait.reset_from_controller()
+    if robot.profile_name == "sport":
+        print(
+            "[SCONE] Sport는 차체가 매우 낮아 삼각 보행 중 발의 지면 여유가 "
+            "상쇄될 수 있습니다. Non-RL 보행은 Standard 자세를 권장합니다."
+        )
+    gait = NonRLWalk(robot.controller, robot.profile, config=gait_config)
+    if calibrate_from_controller:
+        gait.reset_from_controller()
     run_velocity_joystick_cli(
         limits=gait.config,
         apply_command=lambda command, dt: gait.update(command, dt=dt, send=True),
@@ -389,18 +408,33 @@ def run_joystick_cli(
 def run_legacy_joystick_cli(
     robot: SCONE, *, stop_event: threading.Event | None = None
 ) -> None:
-    """Drive the blocking old locomotion API from x/y/yaw input."""
+    """Drive and change legacy Walk/Drive/Climb modes from one joystick."""
 
     adapter = LegacyVelocityAdapter(robot)
     adapter.start()
+
+    def handle_mode_key(key: str) -> bool:
+        if key not in ("r", "h"):
+            return False
+        adapter.update(VelocityCommand())
+        if key == "r":
+            robot.change_mode()
+        else:
+            robot.home()
+        return True
+
     try:
         run_velocity_joystick_cli(
             limits=JoystickLimits(),
             apply_command=lambda command, _dt: adapter.update(command),
             profile_name=robot.profile_name,
-            control_name="old",
-            control_hint="old gait supports forward/back and yaw; strafe x is ignored",
+            control_name=lambda: f"old/{robot.mode_name}",
+            control_hint=(
+                "R: Walk→Drive→Climb, H: home; "
+                "Walk=W/S+arrows, Drive/Climb=A/D (stairs: side-on)"
+            ),
             stop_event=stop_event,
+            handle_key=handle_mode_key,
         )
     finally:
         adapter.close()
@@ -423,8 +457,8 @@ def _select_profile() -> str:
     return inquirer.select(
         message="동작 프로필을 선택하세요.",
         choices=[
-            Choice(value="standard", name="Standard · 기본 안전 속도"),
-            Choice(value="sport", name="Sport · 빠른 동작"),
+            Choice(value="standard", name="Standard · 높은 보행 자세 (권장)"),
+            Choice(value="sport", name="Sport · 낮은 차체 자세"),
         ],
         default="standard",
     ).execute()
@@ -487,13 +521,21 @@ def main() -> int:
                 control = select_simulation_control()
                 if control.value == "rl":
                     checkpoint = select_rl_checkpoint()
-                    from .rl.inquiry import prompt_standing_pose
+                    from .rl.inquiry import (
+                        prompt_reference_motion,
+                        prompt_standing_pose,
+                    )
 
+                    rl_reference_motion = prompt_reference_motion()
                     stance_name, rl_standing_pose = prompt_standing_pose()
-                    print(f"[RL] 시뮬레이션 기본 자세: {stance_name}")
+                    print(
+                        f"[RL] 시뮬레이션 기준: {rl_reference_motion} / "
+                        f"기본 자세: {stance_name}"
+                    )
                 else:
                     checkpoint = None
                     rl_standing_pose = None
+                    rl_reference_motion = None
                 profile = "sport" if control.value == "rl" else _select_profile()
                 run_arguments = dict(
                     profile=profile,
@@ -503,6 +545,8 @@ def main() -> int:
                 )
                 if rl_standing_pose is not None:
                     run_arguments["rl_standing_pose_degrees"] = rl_standing_pose
+                if rl_reference_motion is not None:
+                    run_arguments["rl_reference_motion"] = rl_reference_motion
                 run(**run_arguments)
             elif action == "hardware":
                 _run_hardware(probe, _select_profile())
