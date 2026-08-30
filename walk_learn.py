@@ -78,6 +78,7 @@ class RewardConfig:
     height_weight: float = 0.2
     oscillation_weight: float = 0.1
     action_rate_weight: float = 0.02
+    action_magnitude_weight: float = 0.10
     current_weight: float = 0.02
     slip_weight: float = 0.1
     joint_limit_weight: float = 0.2
@@ -188,10 +189,10 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
             self.tire_geom_ids.add(geom_id)
             self.tire_geom_to_body[geom_id] = int(self.model.geom_bodyid[geom_id])
 
-        # Standard profile from SCONE.Standard.  It is kept local so creating
+        # Sport profile from SCONE.Sport. It is kept local so creating
         # an environment never opens the real DYNAMIXEL serial controller.
         self.default_degrees = np.array(
-            [135, 135, 180, 180, 225, 225] + [240] * 6 + [255] * 6,
+            [135, 135, 180, 180, 225, 225] + [170] * 6 + [195] * 6,
             dtype=np.float64,
         )
         self.default_radians = np.array(
@@ -355,18 +356,21 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         return positions, velocities
 
     def _base_state(self) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+        # Ask MuJoCo for a world-oriented spatial velocity, then explicitly
+        # rotate it into the visible BODY_FRAME axes. Using flg_local=1 here
+        # followed the exported freejoint/object frame convention, which does
+        # not have SCONE's intended [forward, lateral, up] component order.
         mujoco.mj_objectVelocity(
             self.model,
             self.data,
             mujoco.mjtObj.mjOBJ_BODY,
             self.root_body_id,
             self._body_velocity,
-            1,
+            0,
         )
-        angular_velocity = self._body_velocity[:3].copy()
-        linear_velocity = self._body_velocity[3:].copy()
-
         world_from_body = self.data.xmat[self.root_body_id].reshape(3, 3)
+        angular_velocity = world_from_body.T @ self._body_velocity[:3]
+        linear_velocity = world_from_body.T @ self._body_velocity[3:]
         projected_gravity = world_from_body.T @ np.array([0.0, 0.0, -1.0])
         return linear_velocity, angular_velocity, projected_gravity
 
@@ -500,6 +504,7 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
             + (angular_velocity[1] / reward.roll_pitch_rate_sigma) ** 2
         )
         action_rate_penalty = float(np.mean(np.square(action - self._last_action)))
+        action_magnitude_penalty = float(np.mean(np.square(action)))
         current_penalty = self._normalized_current_penalty()
         slip_penalty, stance_contacts = self._slip_penalty()
 
@@ -519,6 +524,9 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
             "height": -reward.height_weight * height_penalty * self.control_dt,
             "oscillation": -reward.oscillation_weight * oscillation_penalty * self.control_dt,
             "action_rate": -reward.action_rate_weight * action_rate_penalty * self.control_dt,
+            "action_magnitude": -reward.action_magnitude_weight
+            * action_magnitude_penalty
+            * self.control_dt,
             "current": -reward.current_weight * current_penalty * self.control_dt,
             "slip": -reward.slip_weight * slip_penalty * self.control_dt,
             "joint_limit": -reward.joint_limit_weight * joint_limit_penalty * self.control_dt,
@@ -561,7 +569,12 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         super().reset(seed=seed)
         del options
         mujoco.mj_resetData(self.model, self.data)
-        self.controller = MuJoCoController(self.model, self.data, verbose=False)
+        self.controller = MuJoCoController(
+            self.model,
+            self.data,
+            verbose=False,
+            standing_pose_degrees=self.default_degrees,
+        )
         self.controller.enable_torque()
 
         self._phase = float(self.np_random.random())

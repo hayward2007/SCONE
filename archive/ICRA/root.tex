@@ -1,0 +1,74 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ICRA 2027 working manuscript for the SCONE project.
+% Initial submission: keep \icraanonymoustrue and remove identifying metadata.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[letterpaper,10pt,conference]{ieeeconf}
+
+\IEEEoverridecommandlockouts
+\overrideIEEEmargins
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{cite}
+\usepackage{graphicx}
+\usepackage{url}
+
+\graphicspath{{figures/}}
+
+% Review mode must remain anonymous for the initial ICRA submission.
+\newif\ificraanonymous
+\icraanonymoustrue
+
+% Keep visible while drafting; set to false before submission.
+\newif\ificradraft
+\icradrafttrue
+
+\ificraanonymous
+  \newcommand{\robotname}{the proposed platform}
+  \title{\LARGE \bf
+  An Actuated Arc-Leg Hexapod for Walking, Quasi-Rolling, and Stair Climbing}
+  \author{\mbox{}}
+\else
+  \newcommand{\robotname}{SCONE}
+  \title{\LARGE \bf
+  SCONE: An Actuated Arc-Leg Hexapod for Walking, Quasi-Rolling, and Stair Climbing}
+  \author{Hyoung-Seok Kim}% Add affiliations only after acceptance.
+\fi
+
+\newcommand{\draftnote}[1]{%
+  \ificradraft\textbf{[TODO: #1]}\fi}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+\pagestyle{empty}
+
+\begin{abstract}
+Mobile robots designed for efficient motion on flat ground often lose mobility on
+stairs, whereas articulated legged robots can negotiate obstacles at the cost of
+greater control complexity and slower transport. This paper studies whether one
+distal mechanism can support both operating regimes without a separate wheel-leg
+transformation mechanism. \robotname{} is a six-legged robot whose eighteen
+actuators include six arc-shaped distal links that function as feet during
+articulated walking, as quasi-wheels during fast flat-ground locomotion, and as
+edge-engagement elements during stair climbing. We describe the mechanism,
+mode-transition controller, and an experimental protocol covering untethered
+operation, walking, quasi-rolling, continuous stair ascent, and irregular terrain.
+\draftnote{Replace this final sentence with verified numerical results, trial
+counts, and uncertainty after the measurement audit.}
+\end{abstract}
+
+\input{sections/01_introduction}
+\input{sections/02_related_work_problem}
+\input{sections/03_system_design}
+\input{sections/04_locomotion_control}
+\input{sections/05_experimental_method}
+\input{sections/06_results}
+\input{sections/07_discussion_conclusion}
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

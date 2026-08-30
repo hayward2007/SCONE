@@ -1,0 +1,48 @@
+\section{INTRODUCTION}
+
+Fast flat-ground transport and obstacle negotiation impose different mechanical
+requirements. Wheels provide continuous contact and efficient rolling, but their
+obstacle capability is limited by geometry. Articulated legs can place contacts
+and reposition the body, but generally require more actuators, gait coordination,
+and time per unit distance. Hybrid platforms therefore face a design question:
+how can one robot retain fast transport while crossing stairs without adding a
+dedicated wheel drive or a separate transformation mechanism?
+
+This paper investigates that question through \robotname{}, shown schematically
+in Fig.~\ref{fig:teaser}. Each of its six three-actuator legs terminates in an
+actuated arc-shaped distal link. Adjacent arcs can provide approximately
+continuous rolling support on flat ground, while the open arc and articulated
+leg joints remain available for walking and stair-edge engagement.
+
+\begin{figure*}[t]
+  \centering
+  \fbox{\parbox[c][31mm][c]{0.94\textwidth}{\centering
+    Final Fig.~1: one clean side view of the robot, followed by three frames of
+    battery-powered walking, quasi-rolling, and continuous stair ascent. Include
+    scale and anonymize faces, affiliations, logos, and external links.}}
+  \caption{The proposed morphology uses the same actuated arc-shaped distal
+  links for three locomotion modes. This figure must communicate the complete
+  paper claim before the reader reaches the method section.}
+  \label{fig:teaser}
+\end{figure*}
+
+The central hypothesis is that the shared distal mechanism can reduce the
+mobility trade-off between a simple rotating-leg robot and a fully articulated
+hexapod. The paper evaluates three claims: (i) the platform can transition among
+walking, quasi-rolling, and stair-climbing configurations without mechanical
+reassembly; (ii) quasi-rolling improves flat-ground transport relative to
+articulated walking on the same hardware; and (iii) coordinated articulation and
+arc engagement improve stair traversal relative to a distal-only configuration.
+
+The intended contributions are:
+\begin{itemize}
+  \item an eighteen-actuator hexapod morphology with six multifunctional,
+  actuated arc-shaped distal links;
+  \item a mode-transition and locomotion controller that reuses the same hardware
+  for walking, quasi-rolling, and stair climbing; and
+  \item a controlled experimental comparison using the same platform, including
+  speed, success rate, traversal time, body attitude, and electrical demand.
+\end{itemize}
+
+\draftnote{After all experiments are frozen, rewrite the final paragraph so that
+each contribution ends with one concrete, verified result.}

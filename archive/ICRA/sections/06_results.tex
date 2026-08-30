@@ -1,0 +1,56 @@
+\section{RESULTS}
+
+This section is intentionally structured before values are inserted so that
+result selection follows the hypotheses rather than whichever demonstrations
+look best.
+
+\subsection{Flat-Ground Transport}
+
+\begin{table}[t]
+  \caption{Flat-ground performance on the same platform}
+  \label{tab:flat-results}
+  \centering
+  \small
+  \begin{tabular}{lcccc}
+    \toprule
+    Mode & $N$ & Speed & Success & Energy/m \\
+    \midrule
+    Articulated walk & TBD & TBD & TBD & TBD \\
+    Distal-only & TBD & TBD & TBD & TBD \\
+    Full quasi-roll & TBD & TBD & TBD & TBD \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\draftnote{Report means with standard deviations and units in every header. The
+2.0 m/s and 0.7 m/s historical claims enter the paper only after raw measurement
+reconstruction or a repeated controlled test.}
+
+\subsection{Stair Traversal}
+
+\begin{figure}[t]
+  \centering
+  \fbox{\parbox[c][32mm][c]{0.92\columnwidth}{\centering
+    Final Fig.~4: success rate versus normalized riser height, plus ascent time
+    for the 15-step staircase. Show raw trial points and uncertainty.}}
+  \caption{Stair-climbing performance under onboard power.}
+  \label{fig:stair-results}
+\end{figure}
+
+\subsection{Ablation and Failure Analysis}
+
+The ablation must answer whether articulated body/contact adaptation improves
+stair performance beyond rotating arcs alone. Failure categories should include
+slip, missed edge engagement, actuator overload, body collision, loss of balance,
+and controller or power faults. Representative failures belong in the submitted
+video as well as the success examples.
+
+\begin{figure}[t]
+  \centering
+  \fbox{\parbox[c][28mm][c]{0.92\columnwidth}{\centering
+    Final Fig.~5: current, body pitch, and distal phase over one successful and one
+    failed ascent.}}
+  \caption{Time-aligned state and electrical measurements reveal how failures
+  arise rather than merely reporting whether a run succeeded.}
+  \label{fig:failure-results}
+\end{figure}

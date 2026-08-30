@@ -1,0 +1,60 @@
+\section{RELATED WORK AND PROBLEM FORMULATION}
+
+\subsection{Rotating-Leg and Hybrid Hexapods}
+
+RHex demonstrates that six continuously rotating compliant legs can yield robust
+mobility with a mechanically simple, open-loop gait
+\cite{saranli2001rhex}. Q-Whex extends the quasi-wheeled rotating-leg design space
+\cite{zhang2023qwhex}. At the other end of the spectrum, Cassino Hexapod III uses
+articulated legs with omni-wheels at their distal ends to combine legged and
+wheeled motion \cite{tedeschi2017cassino}. These systems establish that rotating
+legs, articulated legs, and distal wheels each provide useful mobility, but they
+make different choices about contact geometry, actuation, and control authority.
+
+\draftnote{Add Whegs/ASGUARD, transformable wheel-leg robots, recent stair-climbing
+hexapods, and the closest paper using an actuated arc at a multi-DoF leg tip. Use
+primary papers only.}
+
+\subsection{Problem Definition}
+
+Let the commanded locomotion mode be
+$m \in \{\mathrm{walk},\mathrm{roll},\mathrm{climb}\}$. The design objective is
+to realize all three modes with one distal mechanism and no hardware
+reconfiguration. Let $v$ denote forward speed, $p_s$ traversal success rate,
+$E_d$ electrical energy per traveled distance, and $h_s$ stair riser height. The
+experimental question is not whether each mode can be demonstrated in isolation,
+but whether the shared mechanism produces a useful operating envelope:
+\begin{equation}
+  \mathcal{O} = \{v_{\mathrm{walk}}, v_{\mathrm{roll}}, p_s(h_s), E_d,
+  t_{\mathrm{transition}}\}.
+  \label{eq:operating-envelope}
+\end{equation}
+
+The proposed design is considered successful only if (i) rolling is measurably
+faster or more energy-efficient than walking on a common surface, (ii) the robot
+ascends the target staircase repeatedly under onboard power, and (iii) its full
+articulation provides a measurable stair-climbing advantage over a restricted
+distal-only condition.
+
+\begin{table}[t]
+  \caption{Required related-work comparison dimensions}
+  \label{tab:related-work}
+  \centering
+  \small
+  \resizebox{\columnwidth}{!}{%
+  \begin{tabular}{lcccc}
+    \toprule
+    Platform & Leg DoF & Distal form & Flat mode & Stairs \\
+    \midrule
+    RHex & 1 & compliant arc & rotating leg & reported \\
+    Q-Whex & 1 & quasi-wheel & quasi-rolling & reported \\
+    Cassino III & multi & omni-wheel & wheeled & steps \\
+    Proposed & 3 & actuated arc & quasi-rolling & tested \\
+    \bottomrule
+  \end{tabular}
+  }
+\end{table}
+
+\draftnote{Replace qualitative entries with source-backed specifications and add
+columns for actuator count, body-pose authority, transformation hardware, and
+normalized obstacle height.}

@@ -1,0 +1,58 @@
+\section{ROBOT DESIGN}
+
+\subsection{System Architecture}
+
+The platform has six laterally arranged legs and eighteen Dynamixel actuators.
+Actuator IDs 1--6 generate proximal body-relative motion, IDs 7--12 actuate the
+first leg stage, and IDs 13--18 actuate the distal stage. Table~\ref{tab:hardware}
+records the hardware mapping that must remain identical between the physical
+robot, controller, and simulation model.
+
+\begin{table}[t]
+  \caption{Platform hardware summary}
+  \label{tab:hardware}
+  \centering
+  \small
+  \begin{tabular}{lll}
+    \toprule
+    IDs & Model & Function \\
+    \midrule
+    1--6 & MX-28AT & body-relative leg motion \\
+    7--12 & XM430-W350-T & first articulated stage \\
+    13--18 & XM430-W210-T & distal/arc stage \\
+    \midrule
+    Total mass & \multicolumn{2}{l}{\draftnote{measured value}} \\
+    Battery & \multicolumn{2}{l}{\draftnote{verified voltage and capacity}} \\
+    Controller & \multicolumn{2}{l}{\draftnote{board, loop rate, protocol}} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Arc-Shaped Distal Link}
+
+The distal link combines a rigid frame with a compliant TPU tread. Its geometry
+must support three contact regimes: localized support during walking, sequential
+arc contact during quasi-rolling, and edge engagement during stair ascent.
+Figure~\ref{fig:arc-geometry} will define the arc radius $r$, opening angle
+$\phi$, tread width $w$, joint axis, and nominal stair geometry.
+
+\begin{figure}[t]
+  \centering
+  \fbox{\parbox[c][32mm][c]{0.92\columnwidth}{\centering
+    Final Fig.~2: dimensioned CAD cross-section and contact sequence.}}
+  \caption{Geometry and contact roles of one actuated arc-shaped distal link.}
+  \label{fig:arc-geometry}
+\end{figure}
+
+\subsection{Design Evolution}
+
+The first prototype exposed four coupled limitations: a long parallel-link load
+path, off-axis distal contact, insufficient tire friction, and inadequate
+untethered power delivery. The current prototype removes the parallel mechanism,
+aligns the distal contact with the leg plane, adds a TPU tread, and uses higher
+torque actuators and an onboard battery system. This evolution motivates the
+current design but is not, by itself, a controlled ablation because several
+variables changed simultaneously.
+
+\draftnote{Add measured mass distribution, center of mass, joint ranges, arc
+dimensions, material properties, and a free-body or torque analysis.}

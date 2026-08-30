@@ -1,0 +1,39 @@
+\section{MULTIMODAL LOCOMOTION AND CONTROL}
+
+\subsection{Walking}
+
+Walking uses alternating tripods. One tripod supports the body while the other is
+lifted and advanced; the roles are then exchanged. The final paper must report
+joint trajectories in radians rather than raw Dynamixel counts, together with
+the policy or state machine that sets phase, stride, and body height.
+
+\subsection{Quasi-Rolling}
+
+For flat-ground transport, the six arc-shaped distal links are aligned into two
+longitudinal groups and commanded in velocity mode. Their staggered contact
+phases approximate continuous rolling support even though each distal link is an
+open arc rather than a complete wheel. Direction changes are produced by
+differential left-right velocity commands.
+
+\subsection{Stair Climbing}
+
+During stair ascent, the arcs engage successive stair edges while proximal joints
+adjust the front and rear body height. The controller permits a phase offset
+between front and rear legs so the robot can accommodate tread spacing that does
+not exactly match the nominal leg spacing.
+
+\subsection{Mode Transitions}
+
+\begin{figure}[t]
+  \centering
+  \fbox{\parbox[c][27mm][c]{0.92\columnwidth}{\centering
+    Final Fig.~3: state diagram for walk $\leftrightarrow$ roll
+    $\leftrightarrow$ climb, including transition guards and times.}}
+  \caption{Mode-transition controller. Each transition is executed without
+  mechanical reconfiguration or external handling.}
+  \label{fig:mode-transition}
+\end{figure}
+
+\draftnote{Document the actual control frequency, interpolation, velocity limits,
+current/torque limits, and emergency stop. If reinforcement learning is not used
+in the reported experiments, do not add it merely as a future-looking method.}

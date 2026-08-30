@@ -1,0 +1,49 @@
+\section{EXPERIMENTAL METHODOLOGY}
+
+All primary results must be obtained under onboard battery power unless an
+experiment explicitly studies tethered operation. Before testing, the final mass,
+battery state, tire condition, firmware, controller revision, and surface must be
+recorded. Each quantitative condition should use at least ten independent trials
+or justify a smaller number.
+
+\begin{table*}[t]
+  \caption{Planned experiments and minimum reported quantities}
+  \label{tab:protocol}
+  \centering
+  \small
+  \begin{tabular}{p{0.18\textwidth}p{0.24\textwidth}p{0.28\textwidth}p{0.20\textwidth}}
+    \toprule
+    Experiment & Controlled condition & Primary metrics & Required evidence \\
+    \midrule
+    Untethered operation & fixed battery state and payload & runtime, voltage sag, failures & continuous raw video and log \\
+    Flat-ground walking & measured course, common surface & speed, success, energy/distance & timestamps and distance scale \\
+    Flat-ground rolling & same course and payload & speed, success, energy/distance & same protocol as walking \\
+    Single stair & measured riser and tread & time, success, pitch, peak current & repeated trials, failures included \\
+    Continuous staircase & 15 measured steps & ascent time, success, pitch/roll & uncut full-ascent video \\
+    Irregular terrain & defined obstacle field & success, speed, failure mode & terrain dimensions and trial list \\
+    Mode transition & robot initially stationary & transition time, success, energy & uncut transition sequence \\
+    \bottomrule
+  \end{tabular}
+\end{table*}
+
+\subsection{Same-Hardware Ablations}
+
+Three controller restrictions separate the effect of the morphology from changes
+between prototype generations: (A) distal-only rotating-leg motion with the
+articulated joints locked, (B) articulated walking with distal rotation disabled,
+and (C) the complete proposed controller. Conditions A--C use the same robot,
+battery, tires, payload, and environment.
+
+\subsection{Metrics and Statistics}
+
+For a course of measured length $d$ completed in time $t$, speed is $v=d/t$.
+Success rate over $N$ trials is $p_s=N_{\mathrm{success}}/N$. Report mean,
+standard deviation, all $N$, and individual values when $N$ is small. Electrical
+energy is computed from synchronized voltage and current measurements,
+\begin{equation}
+  E = \int_{t_0}^{t_1} V(t)I(t)\,dt,
+\end{equation}
+and normalized by distance or gained height as appropriate.
+
+\draftnote{Pre-register exact start/finish events for every timing result. Resolve
+all historical v1 speed inconsistencies before using v1 as supporting evidence.}

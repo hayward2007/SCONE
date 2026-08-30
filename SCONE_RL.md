@@ -213,6 +213,21 @@ q_target = q_reference(command, phase) + residual_scale * action
 함수로 바꾸어 `q_reference`로 사용했습니다. 따라서 처음부터 무작위 전류로
 넘어지는 동작을 탐색하는 대신 기존 보행 주변에서 개선을 시작합니다.
 
+기본 자세는 `SCONE.Standard`가 아니라 실제 컨트롤러의 `SCONE.Sport` 값을
+사용합니다.
+
+```text
+상체 모터 1~6   : [135, 135, 180, 180, 225, 225]도
+중간 모터 7~12  : 170도
+말단 모터 13~18 : 195도
+```
+
+환경 reset 때 이 각도를 단순 목표값으로만 보내는 것이 아니라 MuJoCo 초기 qpos와
+PID setpoint에 함께 적용하므로, Standard 자세에서 Sport 자세로 떨어지는 과도구간은
+학습 데이터에 들어가지 않습니다. 실측한 기준 보행은 10초 동안 안정적이었지만
+속도는 Sport 약 0.013m/s, Standard 약 0.020m/s였습니다. 낮은 자세가 자동으로
+빠른 것은 아니며, 이후 Policy가 Sport 자세의 가동 여유를 활용해 개선해야 합니다.
+
 직접 전류 Action을 첫 버전에서 사용하지 않은 이유도 있습니다. 다리의 XM430
 (ID 7~18)은 전류 제어를 지원하지만, 몸통의 MX-28AT (ID 1~6)는 전류 센서와
 전류 제어 모드가 없습니다. 18개 모터에 동일한 Action 의미를 유지하고 실기로
@@ -233,6 +248,7 @@ R = + 2.0 * 전후/좌우 속도 추종
     - 0.2 * 몸체 높이 변화
     - 0.1 * z/roll/pitch 진동
     - 0.02 * Action 급변
+    - 0.10 * Action 크기 제곱
     - 0.02 * 전류 사용량
     - 0.1 * 접지점 미끄러짐
     - 0.2 * 관절 한계 접근
@@ -249,6 +265,17 @@ R = + 2.0 * 전후/좌우 속도 추종
 감점으로 두어 “평균 자세는 맞지만 계속 덜덜 떠는” 동작도 구분합니다. 진동을
 물리적으로 과도하게 댐핑해서 숨기기보다는 실제 모터 감쇠를 유지하고 이 항으로
 학습시키는 편이 sim-to-real에 더 적합합니다.
+
+몸체 속도는 MuJoCo에서 월드 좌표의 `(각속도, 선속도)`로 먼저 읽은 뒤,
+`BODY_FRAME` 회전행렬의 전치행렬을 곱해 `[전진 x, 좌우 y, 수직 z]`로
+변환합니다. Fusion에서 export된 freejoint에 `local=1`을 바로 사용하면 축 순서가
+이 의도와 달라 실제 전진속도를 수직속도로 오인하는 문제가 있었기 때문에
+명시적 변환을 사용합니다.
+
+`Action 급변`은 `action_t-action_(t-1)`을 줄여 떨림을 억제하고, 새로 추가한
+`Action 크기 제곱`은 일정한 `+1/-1`을 계속 유지하는 포화 Policy를 억제합니다.
+18개 Action이 전부 최대값일 때 초당 `-0.1`점이며, 일부 관절에 꼭 필요한 큰
+보정은 허용하면서 전체 관절 포화를 공짜로 쓰지는 못하게 하는 출발값입니다.
 
 ### 호형 말단의 접지 미끄러짐
 
@@ -304,14 +331,14 @@ python3 walk_learn.py train \
   --curriculum easy \
   --timesteps 1000000 \
   --num-envs 4 \
-  --output runs/scone_walk_easy
+  --output runs/scone_walk_sport_easy
 ```
 
-저장 결과는 `runs/scone_walk_easy/final_model.zip`, 중간 checkpoint 및
+저장 결과는 `runs/scone_walk_sport_easy/final_model.zip`, 중간 checkpoint 및
 `monitor.csv`입니다. 학습된 Policy를 고정 명령으로 화면에서 확인합니다.
 
 ```bash
-mjpython walk_learn.py enjoy runs/scone_walk_easy/final_model.zip \
+mjpython walk_learn.py enjoy runs/scone_walk_sport_easy/final_model.zip \
   --command 0.25 0.0 0.0
 ```
 
@@ -320,10 +347,15 @@ mjpython walk_learn.py enjoy runs/scone_walk_easy/final_model.zip \
 ```bash
 python3 walk_learn.py train \
   --curriculum medium \
-  --resume runs/scone_walk_easy/final_model.zip \
+  --resume runs/scone_walk_sport_easy/final_model.zip \
   --timesteps 1000000 \
-  --output runs/scone_walk_medium
+  --output runs/scone_walk_sport_medium
 ```
+
+좌표 수정 전에 학습한 20,000~1,200,000스텝 checkpoint는 관측값과 보상에서
+전진/수직 및 회전축 의미가 잘못된 상태로 학습됐습니다. 파일 형상 `(68,)/(18,)`은
+같아서 기술적으로 로드되더라도 `--resume`에 사용하면 안 됩니다. 반드시 새 출력
+디렉터리에서 0스텝부터 다시 학습합니다.
 
 ### 학습 전에 반드시 다시 측정할 값
 
@@ -399,7 +431,7 @@ python3 walk_learn.py train \
   --num-envs 4 \
   --checkpoint-every 20000 \
   --keep-checkpoints 10 \
-  --output runs/scone_walk_easy
+  --output runs/scone_walk_sport_easy
 ```
 
 `--keep-checkpoints 10`은 최신 10개만 유지해 장시간 학습 중 디스크가 계속
@@ -412,7 +444,8 @@ python3 walk_learn.py train \
 ```bash
 python3 remote_watch.py \
   --host <SSH_HOST> \
-  --checkpoint-dir '~/Developer/SCONE/runs/scone_walk_easy/checkpoints' \
+  --checkpoint-dir '~/Developer/SCONE/runs/scone_walk_sport_easy/checkpoints' \
+  --cache-dir runs/remote_watch_sport_easy \
   --download-only
 ```
 
@@ -427,7 +460,8 @@ macOS에서는 MuJoCo 창을 메인 스레드에서 열기 위해 `mjpython`으�
 ```bash
 mjpython remote_watch.py \
   --host <SSH_HOST> \
-  --checkpoint-dir '~/Developer/SCONE/runs/scone_walk_easy/checkpoints' \
+  --checkpoint-dir '~/Developer/SCONE/runs/scone_walk_sport_easy/checkpoints' \
+  --cache-dir runs/remote_watch_sport_easy \
   --poll-interval 5 \
   --curriculum easy \
   --command 0.25 0.0 0.0
@@ -447,15 +481,16 @@ SSH config에 Port와 IdentityFile이 있으면 그대로 사용합니다. 직�
 OpenSSH의 기존 host-key 검사를 끄지 않습니다.
 
 네트워크가 잠시 끊기거나 저장 중인 ZIP을 불완전하게 읽으면 현재 Policy 재생을
-계속하면서 다음 polling 때 다시 시도합니다. 로컬로 받은 파일은
-`runs/remote_watch/`에 캐시되며 Git에는 포함되지 않습니다.
+계속하면서 다음 polling 때 다시 시도합니다. 위 예시에서 로컬로 받은 파일은
+`runs/remote_watch_sport_easy/`에 캐시되며 Git에는 포함되지 않습니다.
 
 같은 컴퓨터에서 학습과 뷰어를 시험할 때는 SSH 대신 다음 명령을 사용할 수
 있습니다.
 
 ```bash
 mjpython remote_watch.py \
-  --local-dir runs/scone_walk_easy/checkpoints \
+  --local-dir runs/scone_walk_sport_easy/checkpoints \
+  --cache-dir runs/remote_watch_sport_easy \
   --curriculum easy \
   --command 0.25 0.0 0.0
 ```

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import math
 import threading
+from collections.abc import Sequence
 
 import mujoco
 import numpy as np
@@ -39,6 +40,11 @@ class MuJoCoController:
     _STANDING_UPPER_DEGREES = (135.0, 135.0, 180.0, 180.0, 225.0, 225.0)
     _STANDING_MIDDLE_DEGREES = 240.0
     _STANDING_LOWER_DEGREES = 255.0
+    _STANDING_POSE_DEGREES = (
+        _STANDING_UPPER_DEGREES
+        + (_STANDING_MIDDLE_DEGREES,) * 6
+        + (_STANDING_LOWER_DEGREES,) * 6
+    )
 
     def __init__(
         self,
@@ -46,6 +52,7 @@ class MuJoCoController:
         data: mujoco.MjData,
         *,
         verbose: bool = True,
+        standing_pose_degrees: Sequence[float] | None = None,
     ) -> None:
         if model.nu < len(Actuator.index):
             raise ValueError(
@@ -86,7 +93,18 @@ class MuJoCoController:
         self._profile_velocity = np.full(19, math.inf)
         self._profile_acceleration = np.full(19, math.inf)
 
-        self._seed_stable_pose(model, data)
+        seed_pose = np.asarray(
+            self._STANDING_POSE_DEGREES
+            if standing_pose_degrees is None
+            else standing_pose_degrees,
+            dtype=np.float64,
+        )
+        if seed_pose.shape != (len(Actuator.index),):
+            raise ValueError(
+                "standing_pose_degrees must contain one value for each of "
+                f"the {len(Actuator.index)} actuators"
+            )
+        self._seed_stable_pose(model, data, seed_pose)
         mujoco.mj_forward(model, data)
         for motor_id in Actuator.index:
             current = self._joint_position(motor_id)
@@ -97,7 +115,12 @@ class MuJoCoController:
 
         self._log("MuJoCo controller ready (18 actuator mapping validated)")
 
-    def _seed_stable_pose(self, model: mujoco.MjModel, data: mujoco.MjData) -> None:
+    def _seed_stable_pose(
+        self,
+        model: mujoco.MjModel,
+        data: mujoco.MjData,
+        pose_degrees: np.ndarray,
+    ) -> None:
         """Start the simulation already standing, not at the raw CAD rest pose.
 
         Spawning at the CAD rest pose (every joint at raw 2048, an unsupported
@@ -112,15 +135,8 @@ class MuJoCoController:
         target profile pose afterward.
         """
 
-        for motor_id in Actuator.upper_index:
-            degrees = self._STANDING_UPPER_DEGREES[motor_id - 1]
-            raw = self.degrees_to_raw(motor_id, degrees)
-            data.qpos[self._qpos_addresses[motor_id]] = self.raw_to_radians(raw)
-        for motor_id in Actuator.middle_index:
-            raw = self.degrees_to_raw(motor_id, self._STANDING_MIDDLE_DEGREES)
-            data.qpos[self._qpos_addresses[motor_id]] = self.raw_to_radians(raw)
-        for motor_id in Actuator.lower_index:
-            raw = self.degrees_to_raw(motor_id, self._STANDING_LOWER_DEGREES)
+        for motor_id in Actuator.index:
+            raw = self.degrees_to_raw(motor_id, pose_degrees[motor_id - 1])
             data.qpos[self._qpos_addresses[motor_id]] = self.raw_to_radians(raw)
 
         freejoint_id = self._find_root_freejoint(model)

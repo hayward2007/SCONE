@@ -154,6 +154,28 @@ cython_debug/
 
 # Reinforcement-learning checkpoints and remote-viewer cache
 /runs/
+checkpoints/
+tensorboard/
+wandb/
+mlruns/
+events.out.tfevents.*
+*.monitor.csv
+
+# Generated local artifacts
+/tmp/
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Keep compressed archive/videos/*.mp4, but never commit raw video sources
+/archive/videos/raw/
+/archive/videos/*.mov
+/archive/videos/*.avi
+/archive/videos/*.mkv
+/archive/videos/*.m4v
+/archive/videos/*.webm
+/archive/videos/*_raw.*
+/archive/videos/*_original.*
 
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
