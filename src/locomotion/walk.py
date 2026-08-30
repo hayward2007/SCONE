@@ -1,189 +1,238 @@
-import time;
+"""Tripod gait used by the physical robot and simulation."""
 
-from src.hardware.actuator import Actuator;
-from src.hardware import *;
-from src import locomotion;
+from __future__ import annotations
 
-class Walk(locomotion.Mode) :
-    # the moving degree of each step
-    __moving_degree = 20;
+import time
 
-    def __init__(self, mode: locomotion.Mode, is_initial: bool = False) :
-        self.controller = mode.controller;
+from src.hardware import Actuator, ControllerProtocol
 
-        self.upper_initial_position = mode.upper_initial_position;
-        self.middle_initial_position = mode.middle_initial_position;
-        self.lower_initial_position = mode.lower_initial_position;
+from .mode import Mode
+from .profile import MotionProfile
 
-        self.boost_speed = mode.boost_speed;
-        self.safety_speed = mode.safety_speed;
-        self.walking_speed = mode.walking_speed;
-        self.driving_speed = mode.driving_speed;
-        self.climbing_speed = mode.climbing_speed;
-    
-        if not is_initial :
-            self.controller.set_all_speed(self.walking_speed);
 
-            self.__hold_dignoal_left();
-            time.sleep(0.05);
+class Walk(Mode):
+    name = "walk"
+    MOVING_DEGREES = 20
 
-            for i in Actuator.lower_diagonal_left_index :
-                self.controller.set_speed(i, self.boost_speed);
-                self.controller.set_position(i, self.lower_initial_position);
-            time.sleep(0.3);
+    def __init__(
+        self,
+        controller: ControllerProtocol,
+        profile: MotionProfile,
+        *,
+        transition: bool = False,
+    ) -> None:
+        super().__init__(controller, profile)
+        if transition:
+            self._enter_walk_pose()
 
-            for i in Actuator.upper_diagonal_left_index :
-                self.controller.set_position(i, self.upper_initial_position[i - 1]);
-            time.sleep(0.5);
-            
-            self.__release_dignoal_left();
-            self.__hold_dignoal_right();
-            time.sleep(0.05);
+    def _positions(self, ids: tuple[int, ...], value) -> None:
+        self.controller.set_positions(
+            {motor_id: value(motor_id) if callable(value) else value for motor_id in ids}
+        )
 
-            for i in Actuator.lower_diagonal_right_index :
-                self.controller.set_speed(i, self.boost_speed);
-                self.controller.set_position(i, self.lower_initial_position);
-            time.sleep(0.3);
+    def _enter_walk_pose(self) -> None:
+        self.controller.set_all_speed(self.profile.walking_speed)
+        self._hold_left()
+        time.sleep(0.05)
+        for motor_id in Actuator.Index.LOWER_DIAGONAL_LEFT:
+            self.controller.set_speed(motor_id, self.profile.boost_speed)
+        self._positions(
+            Actuator.Index.LOWER_DIAGONAL_LEFT,
+            self.profile.lower_initial_position,
+        )
+        time.sleep(0.3)
+        self._positions(
+            Actuator.Index.UPPER_DIAGONAL_LEFT,
+            lambda motor_id: self.profile.upper_initial_position[motor_id - 1],
+        )
+        time.sleep(0.5)
+        self._release_left()
+        self._hold_right()
+        time.sleep(0.05)
+        for motor_id in Actuator.Index.LOWER_DIAGONAL_RIGHT:
+            self.controller.set_speed(motor_id, self.profile.boost_speed)
+        self._positions(
+            Actuator.Index.LOWER_DIAGONAL_RIGHT,
+            self.profile.lower_initial_position,
+        )
+        time.sleep(0.3)
+        self._positions(
+            Actuator.Index.UPPER_DIAGONAL_RIGHT,
+            lambda motor_id: self.profile.upper_initial_position[motor_id - 1],
+        )
+        time.sleep(0.5)
+        self._release_right()
+        time.sleep(0.05)
 
-            for i in Actuator.upper_diagonal_right_index :
-                self.controller.set_position(i, self.upper_initial_position[i - 1]);
-            time.sleep(0.5);
-            
-            self.__release_dignoal_right();
-            time.sleep(0.05);
-    
-    def __hold_dignoal_left(self) :
-        for i in Actuator.middle_diagonal_left_index :
-            self.controller.set_speed(i, self.safety_speed);
-            self.controller.set_position(i, self.middle_initial_position - self.__moving_degree);
-        time.sleep(0.5);
-    
-    def __hold_dignoal_right(self) :
-        for i in Actuator.middle_diagonal_right_index :
-            self.controller.set_speed(i, self.safety_speed);
-            self.controller.set_position(i, self.middle_initial_position - self.__moving_degree);
-        time.sleep(0.5);
+    def _hold_left(self) -> None:
+        for motor_id in Actuator.Index.MIDDLE_DIAGONAL_LEFT:
+            self.controller.set_speed(motor_id, self.profile.safety_speed)
+        self._positions(
+            Actuator.Index.MIDDLE_DIAGONAL_LEFT,
+            self.profile.middle_initial_position - self.MOVING_DEGREES,
+        )
+        time.sleep(0.5)
 
-    def __release_dignoal_left(self) :
-        for i in Actuator.middle_diagonal_left_index :
-            self.controller.set_position(i, self.middle_initial_position);
-        time.sleep(0.5);
+    def _hold_right(self) -> None:
+        for motor_id in Actuator.Index.MIDDLE_DIAGONAL_RIGHT:
+            self.controller.set_speed(motor_id, self.profile.safety_speed)
+        self._positions(
+            Actuator.Index.MIDDLE_DIAGONAL_RIGHT,
+            self.profile.middle_initial_position - self.MOVING_DEGREES,
+        )
+        time.sleep(0.5)
 
-    def __release_dignoal_right(self) :
-        for i in Actuator.middle_diagonal_right_index :
-            self.controller.set_position(i, self.middle_initial_position);
-        time.sleep(0.5);
+    def _release_left(self) -> None:
+        self._positions(
+            Actuator.Index.MIDDLE_DIAGONAL_LEFT,
+            self.profile.middle_initial_position,
+        )
+        time.sleep(0.5)
 
-    def forward(self) :
-        self.__hold_dignoal_left();
-        time.sleep(0.1);
-    
-        for i in Actuator.upper_diagonal_left_index :
-            self.controller.set_position(i, self.upper_initial_position[i - 1] - self.__moving_degree);
-        for i in Actuator.upper_diagonal_right_index :
-            self.controller.set_position(i, self.upper_initial_position[i - 1] + self.__moving_degree);
-        time.sleep(0.5);
-    
-        self.__release_dignoal_left();
-        self.__hold_dignoal_right();
-        time.sleep(0.1);
-    
-        for i in Actuator.upper_index :
-            self.controller.set_position(i, self.upper_initial_position[i - 1]);
-        time.sleep(0.5);
-    
-        self.__release_dignoal_right();
+    def _release_right(self) -> None:
+        self._positions(
+            Actuator.Index.MIDDLE_DIAGONAL_RIGHT,
+            self.profile.middle_initial_position,
+        )
+        time.sleep(0.5)
 
-    def backward(self) :
-        self.__hold_dignoal_right();
-        time.sleep(0.1);
-    
-        for i in Actuator.upper_diagonal_right_index :
-            self.controller.set_position(i, self.upper_initial_position[i - 1] + self.__moving_degree);
-        for i in Actuator.upper_diagonal_left_index :
-            self.controller.set_position(i, self.upper_initial_position[i - 1] - self.__moving_degree);
-        time.sleep(0.5);
-    
-        self.__release_dignoal_right();
-        self.__hold_dignoal_left();
-        time.sleep(0.1);
-    
-        for i in Actuator.upper_index :
-            self.controller.set_position(i, self.upper_initial_position[i - 1]);
-        time.sleep(0.5);
-    
-        self.__release_dignoal_left();
+    def _reset_upper(self) -> None:
+        self._positions(
+            Actuator.Index.UPPER,
+            lambda motor_id: self.profile.upper_initial_position[motor_id - 1],
+        )
 
-    def right(self) :
-        self.__hold_dignoal_left();
-        time.sleep(0.05);
+    def forward(self) -> None:
+        self._hold_left()
+        time.sleep(0.1)
+        positions = {
+            motor_id: self.profile.upper_initial_position[motor_id - 1]
+            - self.MOVING_DEGREES
+            for motor_id in Actuator.Index.UPPER_DIAGONAL_LEFT
+        }
+        positions.update(
+            {
+                motor_id: self.profile.upper_initial_position[motor_id - 1]
+                + self.MOVING_DEGREES
+                for motor_id in Actuator.Index.UPPER_DIAGONAL_RIGHT
+            }
+        )
+        self.controller.set_positions(positions)
+        time.sleep(0.5)
+        self._release_left()
+        self._hold_right()
+        time.sleep(0.1)
+        self._reset_upper()
+        time.sleep(0.5)
+        self._release_right()
 
-        for i in Actuator.upper_diagonal_left_index :
-            self.controller.set_position(i, self.upper_initial_position[i - 1] - self.__moving_degree * ( 1 if i % 2 == 1 else -1 ));
-        for i in Actuator.upper_diagonal_right_index :
-            self.controller.set_position(i, self.upper_initial_position[i - 1] + self.__moving_degree * ( 1 if i % 2 == 1 else -1 ));
-        time.sleep(0.05);
-    
-        self.__release_dignoal_left();
-        self.__hold_dignoal_right();
-        time.sleep(0.05);
-    
-        for i in Actuator.upper_index :
-            self.controller.set_position(i, self.upper_initial_position[i - 1]);
-        time.sleep(0.05);
-    
-        self.__release_dignoal_right();
+    def backward(self) -> None:
+        self._hold_right()
+        time.sleep(0.1)
+        positions = {
+            motor_id: self.profile.upper_initial_position[motor_id - 1]
+            + self.MOVING_DEGREES
+            for motor_id in Actuator.Index.UPPER_DIAGONAL_RIGHT
+        }
+        positions.update(
+            {
+                motor_id: self.profile.upper_initial_position[motor_id - 1]
+                - self.MOVING_DEGREES
+                for motor_id in Actuator.Index.UPPER_DIAGONAL_LEFT
+            }
+        )
+        self.controller.set_positions(positions)
+        time.sleep(0.5)
+        self._release_right()
+        self._hold_left()
+        time.sleep(0.1)
+        self._reset_upper()
+        time.sleep(0.5)
+        self._release_left()
 
-    def left(self) :
-        self.__hold_dignoal_right();
-        time.sleep(0.05);
+    def right(self) -> None:
+        self._turn(Actuator.Index.UPPER_DIAGONAL_LEFT)
 
-        for i in Actuator.upper_diagonal_right_index :
-            self.controller.set_position(i, self.upper_initial_position[i - 1] + self.__moving_degree * ( 1 if i % 2 == 1 else -1 ));
-        for i in Actuator.upper_diagonal_left_index :
-            self.controller.set_position(i, self.upper_initial_position[i - 1] - self.__moving_degree * ( 1 if i % 2 == 1 else -1 ));
-        time.sleep(0.05);
-    
-        self.__release_dignoal_right();
-        self.__hold_dignoal_left();
-        time.sleep(0.05);
-    
-        for i in Actuator.upper_index :
-            self.controller.set_position(i, self.upper_initial_position[i - 1]);
-        time.sleep(0.05);
-    
-        self.__release_dignoal_left();
+    def left(self) -> None:
+        self._turn(Actuator.Index.UPPER_DIAGONAL_RIGHT)
 
-    def change_mode(self) :
-        self.__hold_dignoal_left();
-        time.sleep(0.05);
+    def _turn(self, first_tripod: tuple[int, ...]) -> None:
+        first_is_left = first_tripod == Actuator.Index.UPPER_DIAGONAL_LEFT
+        hold_first = self._hold_left if first_is_left else self._hold_right
+        release_first = self._release_left if first_is_left else self._release_right
+        hold_second = self._hold_right if first_is_left else self._hold_left
+        release_second = self._release_right if first_is_left else self._release_left
 
-        for i in Actuator.lower_diagonal_left_index :
-            self.controller.set_speed(i, self.boost_speed);
-            self.controller.set_raw_position(i, Actuator.position.center if i % 2 == 1 else 0);
-        time.sleep(0.3);
+        hold_first()
+        time.sleep(0.05)
+        positions = {}
+        for motor_id in Actuator.Index.UPPER_DIAGONAL_LEFT:
+            sign = 1 if motor_id % 2 == 1 else -1
+            positions[motor_id] = (
+                self.profile.upper_initial_position[motor_id - 1]
+                - self.MOVING_DEGREES * sign
+            )
+        for motor_id in Actuator.Index.UPPER_DIAGONAL_RIGHT:
+            sign = 1 if motor_id % 2 == 1 else -1
+            positions[motor_id] = (
+                self.profile.upper_initial_position[motor_id - 1]
+                + self.MOVING_DEGREES * sign
+            )
+        self.controller.set_positions(positions)
+        time.sleep(0.05)
+        release_first()
+        hold_second()
+        time.sleep(0.05)
+        self._reset_upper()
+        time.sleep(0.05)
+        release_second()
 
-        for i in Actuator.upper_diagonal_left_index :
-            self.controller.set_raw_position(i, Actuator.position.center);
-        time.sleep(0.5);
-        
-        self.__release_dignoal_left();
-        self.__hold_dignoal_right();
-        time.sleep(0.05);
+    def change_mode(self) -> Mode:
+        from .drive import Drive
 
-        for i in Actuator.lower_diagonal_right_index :
-            self.controller.set_speed(i, self.boost_speed);
-            self.controller.set_raw_position(i, Actuator.position.center if i % 2 == 0 else 0);
-        time.sleep(0.3);
+        self._hold_left()
+        time.sleep(0.05)
+        for motor_id in Actuator.Index.LOWER_DIAGONAL_LEFT:
+            self.controller.set_speed(motor_id, self.profile.boost_speed)
+        self.controller.set_raw_positions(
+            {
+                motor_id: Actuator.Position.CENTER if motor_id % 2 == 1 else 0
+                for motor_id in Actuator.Index.LOWER_DIAGONAL_LEFT
+            }
+        )
+        time.sleep(0.3)
+        self.controller.set_raw_positions(
+            {
+                motor_id: Actuator.Position.CENTER
+                for motor_id in Actuator.Index.UPPER_DIAGONAL_LEFT
+            }
+        )
+        time.sleep(0.5)
+        self._release_left()
+        self._hold_right()
+        time.sleep(0.05)
+        for motor_id in Actuator.Index.LOWER_DIAGONAL_RIGHT:
+            self.controller.set_speed(motor_id, self.profile.boost_speed)
+        self.controller.set_raw_positions(
+            {
+                motor_id: Actuator.Position.CENTER if motor_id % 2 == 0 else 0
+                for motor_id in Actuator.Index.LOWER_DIAGONAL_RIGHT
+            }
+        )
+        time.sleep(0.3)
+        self.controller.set_raw_positions(
+            {
+                motor_id: Actuator.Position.CENTER
+                for motor_id in Actuator.Index.UPPER_DIAGONAL_RIGHT
+            }
+        )
+        time.sleep(0.5)
+        self._release_right()
+        time.sleep(0.05)
+        self.controller.set_raw_positions(
+            {motor_id: Actuator.Position.CENTER for motor_id in Actuator.Index.MIDDLE}
+        )
+        return Drive(self.controller, self.profile)
 
-        for i in Actuator.upper_diagonal_right_index :
-            self.controller.set_raw_position(i, Actuator.position.center);
-        time.sleep(0.5);
 
-        self.__release_dignoal_right();
-        time.sleep(0.05);
-
-        for i in Actuator.middle_index :
-            self.controller.set_raw_position(i, Actuator.position.center);
-
-        return locomotion.Drive(self);
+__all__ = ["Walk"]

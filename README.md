@@ -1,160 +1,144 @@
 # SCONE
 
-SCONE is a six-legged robot project that combines real hardware control, MuJoCo simulation, gait generation, and reinforcement learning in a single codebase.
+SCONE is a six-legged robot project with one high-level control API and two
+interchangeable backends: physical DYNAMIXEL hardware and MuJoCo simulation.
 
-The repository is organized around a single design idea:
+## Quick start
 
-- hardware constants and actuator metadata live in one place
-- gait and locomotion logic are separated from the control interface
-- simulation behaves like the same robot interface as the real hardware
-- RL training consumes the robot state and command, not raw actuator quirks
+Run the launcher on macOS with `mjpython` so the MuJoCo viewer can own the main
+thread:
 
----
+```bash
+mjpython SCONE.py
+```
 
-## Repository structure
+The launcher searches for a physical controller without changing torque or
+position, then displays:
 
 ```text
-SCONE/
-├── LICENSE
-├── README.md
-├── RL_Log.md
-├── main.py
-├── archive/
-│   ├── assets/
-│   ├── codes/
-│   ├── ICRA/
-│   ├── meshes/
-│   ├── papers/
-│   └── videos/
-├── src/
-│   ├── __init__.py
-│   ├── SCONE.py
-│   ├── assets/
-│   │   ├── model.xml
-│   │   └── meshes/
-│   ├── hardware/
-│   │   ├── __init__.py
-│   │   ├── actuator.py
-│   │   ├── actuator_index.py
-│   │   └── actuator_control_table.py
-│   ├── locomotion/
-│   │   ├── __init__.py
-│   │   ├── climb.py
-│   │   ├── drive.py
-│   │   ├── mode.py
-│   │   └── walk.py
-│   ├── reinforce_learning/
-│   │   ├── __init__.py
-│   │   ├── remote_watch.py
-│   │   ├── walk_learn.py
-│   │   └── remote_watch/
-│   └── simulation/
-│       ├── __init__.py
-│       ├── __main__.py
-│       ├── app.py
-│       ├── cli_bridge.py
-│       ├── controller.py
-│       ├── pid.py
-│       ├── runner.py
-│       └── simulator_cli.py
-└── .gitignore
+1. 시뮬레이션 조종
+2. 하드웨어 조종 (/dev/...)
+   or 하드웨어 조종 (현재 불가)
+3. 하드웨어 다시 탐색
 ```
 
----
+Simulation and hardware use exactly the same terminal command interpreter:
 
-## Layer responsibilities
+```text
+W/S  forward/backward
+A/D  left/right
+R    Walk -> Drive -> Climb
+H    return to the selected profile's home pose
+?    help
+Q    return to the launcher
+```
 
-### Hardware layer
+The MuJoCo window has no SCONE-specific key callback. W/A/S/D are read by the
+terminal only, so robot commands do not alter viewer rendering controls.
 
-Location: src/hardware/
+## Python API
 
-Contains actuator definitions, side/leg groupings, and DYNAMIXEL register maps.
+`import SCONE` is the stable public entry point. Object construction does not
+open a serial port and does not start an interactive CLI.
 
-Examples:
+```python
+import SCONE
+from src.hardware import Controller, discover_hardware
 
-- actuator IDs and leg grouping
-- robot-specific constants
-- protocol/version metadata
+probe = discover_hardware()
+if probe.available:
+    with SCONE.SCONE(Controller(probe.device_name), profile="sport") as robot:
+        robot.forward()
+        robot.left()
+        robot.change_mode()
+```
 
-This layer should stay static and avoid motion logic.
+See `example.py` for a runnable hardware example. A custom backend can be used
+by implementing `src.hardware.ControllerProtocol` and passing it to
+`SCONE.SCONE`.
 
-### Locomotion layer
+## Command flow
 
-Location: src/locomotion/
+```text
+terminal key
+  -> src.cli RobotCommand interpreter
+  -> src.main.SCONE API
+  -> src.locomotion Walk / Drive / Climb
+  -> ControllerProtocol
+       -> src.hardware.Controller       (DYNAMIXEL)
+       -> src.simulation.MuJoCoController (MuJoCo)
+```
 
-Defines motion profiles and gait behavior, such as:
+There is no second simulation key map or duplicated simulation gait logic.
 
-- Walk
-- Drive
-- Climb
-- mode switching logic
+## Folder responsibilities
 
-This layer defines how the robot should move, independent of RL training.
+```text
+SCONE.py                         stable `import SCONE` facade and CLI launcher
+example.py                       minimal API usage example
+src/main.py                      high-level robot lifecycle and command API
+src/cli.py                       the only interactive key/launcher interpreter
+src/hardware/
+  actuator_index.py              physical IDs and leg/tripod groups
+  actuator_control_table.py      register address + byte width per motor model
+  actuator.py                    ID-to-model catalogue and shared constants
+  interface.py                   ControllerProtocol backend contract
+  controller.py                  physical DYNAMIXEL transport only
+  discovery.py                   non-mutating serial/DYNAMIXEL probe
+src/locomotion/
+  profile.py                     Standard/Sport posture and speed values
+  walk.py, drive.py, climb.py    backend-independent motion sequences
+src/simulation/
+  model.py                       MJCF loading and runtime floor/freejoint utility
+  controller.py                  virtual DYNAMIXEL implementation
+  pid.py                         voltage-input DC motor position loop
+  cli_bridge.py                  one viewer + common terminal CLI integration
+  simulator_cli.py               direct simulation entry point
+src/reinforce_learning/
+  walk_learn.py                  Gym environment, observations, rewards, PPO CLI
+  remote_watch.py                SSH checkpoint mirroring and local replay
+src/assets/                       MJCF and meshes used by simulation/RL
+runs/                             generated training/checkpoint data (gitignored)
+tests/                            API, actuator-map, and simulation contract tests
+```
 
-### Simulation layer
+Dependency direction is one-way: locomotion knows only the controller protocol;
+hardware and simulation never own key mappings or gait decisions; reinforcement
+learning consumes the simulation backend without being imported by the core API.
 
-Location: src/simulation/
+## Actuator metadata
 
-Provides a MuJoCo-backed runtime that mirrors the same robot interface used by the real system.
+The physical map is centralized in `Actuator.Index`:
 
-This is used for:
+```text
+IDs 1..6    upper/body stage     MX-28AT
+IDs 7..12   middle/leg stage     XM430-W350-T
+IDs 13..18  distal wheel stage   XM430-W210-T
+```
 
-- debugging motion sequences
-- validating controller behavior offline
-- testing control loops before hardware use
+For leg `n`, `Actuator.Index.for_leg(n)` returns `(n, n+6, n+12)`. All models
+use 4096 position units per revolution. Register access in the hardware
+controller goes through the model control tables. Multi-motor target poses use
+DYNAMIXEL GroupSyncWrite, while MuJoCo implements the same batch API locally.
 
-### Reinforcement learning layer
-
-Location: src/reinforce_learning/
-
-Handles policy training, observation construction, reward design, and model checkpoints.
-
-This layer consumes robot state and commands, not hardware-specific magic numbers.
-
----
-
-## Main entry points
-
-### Python package entry
+## Direct commands
 
 ```bash
-python main.py
+# Same common terminal control, directly in simulation
+mjpython -m src.simulation --profile sport
+
+# RL environment smoke check
+PYTHONPATH=. python -m src.reinforce_learning.walk_learn check \
+  --steps 5 --curriculum easy
+
+# PPO training
+PYTHONPATH=. python -m src.reinforce_learning.walk_learn train \
+  --curriculum easy --timesteps 1000000
+
+# Unit and integration-contract tests
+python -m unittest discover -s tests -v
 ```
 
-### Environment check for RL
-
-```bash
-PYTHONPATH=. python -m src.reinforce_learning.walk_learn check --steps 5 --curriculum easy
-```
-
-### Training
-
-```bash
-PYTHONPATH=. python -m src.reinforce_learning.walk_learn train --curriculum easy --timesteps 1000000
-```
-
-### Simulated preview
-
-```bash
-PYTHONPATH=. python -m src.simulation.simulator_cli
-```
-
----
-
-## Architectural principles
-
-1. Hardware constants live only in src/hardware
-2. Motion logic lives only in src/locomotion
-3. Simulation is a test environment for the same control abstractions
-4. RL is optimized over robot state and commands, not raw actuator values
-5. No magic numbers should leak across modules when a shared constant exists
-
----
-
-## Notes
-
-- The project intentionally keeps the real-robot and simulation paths close so they can share the same logic and behaviors.
-- The model used by the simulator and RL stack is under src/assets/model.xml.
-- Older historical experiments and archived material remain under archive/.
-
-This repository is currently organized around a cleaner refactor model: robot hardware metadata, locomotion logic, simulation runtime, and RL learning are separated by responsibility rather than mixed together.
+The locomotion reward configuration is defined by `RewardConfig` in
+`src/reinforce_learning/walk_learn.py`; reward calculation and per-term logging
+are implemented in `SconeWalkEnv` in the same file.

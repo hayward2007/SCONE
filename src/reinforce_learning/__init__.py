@@ -1,19 +1,18 @@
-"""Reinforcement learning environment and training utilities for SCONE."""
-
-from .walk_learn import (
-    CURRICULUM_RANGES,
-    DEFAULT_MODEL_PATH,
-    OBSERVATION_COMMAND_SCALE,
-    RewardConfig,
-    SconeWalkEnv,
-    WalkConfig,
-)
+"""Reinforcement-learning API, loaded lazily to keep core imports light."""
 
 __all__ = [
     "CURRICULUM_RANGES",
     "DEFAULT_MODEL_PATH",
     "OBSERVATION_COMMAND_SCALE",
     "RewardConfig",
-    "WalkConfig",
     "SconeWalkEnv",
+    "WalkConfig",
 ]
+
+
+def __getattr__(name: str):
+    if name in __all__:
+        from . import walk_learn
+
+        return getattr(walk_learn, name)
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

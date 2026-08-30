@@ -1,44 +1,41 @@
-import time;
+"""Arc-wheel velocity mode."""
 
-from src.hardware.actuator import Actuator;
-from src.hardware import *;
-from src import locomotion;
+from __future__ import annotations
 
-class Drive(locomotion.Mode) :
-    def __init__(self, mode: locomotion.Mode) :
-        # sync
-        self.controller = mode.controller;
+import time
 
-        self.upper_initial_position = mode.upper_initial_position;
-        self.middle_initial_position = mode.middle_initial_position;
-        self.lower_initial_position = mode.lower_initial_position;
+from src.hardware import Actuator, ControllerProtocol
 
-        self.boost_speed = mode.boost_speed;
-        self.safety_speed = mode.safety_speed;
-        self.walking_speed = mode.walking_speed;
-        self.driving_speed = mode.driving_speed;
-        self.climbing_speed = mode.climbing_speed;
+from .mode import Mode
+from .profile import MotionProfile
 
-        self.controller.set_all_mode(Actuator.model.XM.operating_mode.velocity);
 
-    def __del__(self) :
-        pass;
-    
-    def left(self) :
-        for i in Actuator.lower_index :
-            self.controller.set_speed(i, - self.driving_speed, address = Actuator.model.XM.address.goal_velocity);
-        time.sleep(1);
-    
-        for i in Actuator.lower_index :
-            self.controller.set_speed(i, 0, address = Actuator.model.XM.address.goal_velocity);
-    
-    def right(self) :
-        for i in Actuator.lower_index :
-            self.controller.set_speed(i, self.driving_speed, address = Actuator.model.XM.address.goal_velocity);
-        time.sleep(1);
-    
-        for i in Actuator.lower_index :
-            self.controller.set_speed(i, 0, address = Actuator.model.XM.address.goal_velocity);
+class Drive(Mode):
+    name = "drive"
 
-    def change_mode(self) :
-        return locomotion.Climb(self);
+    def __init__(self, controller: ControllerProtocol, profile: MotionProfile) -> None:
+        super().__init__(controller, profile)
+        self.controller.set_all_mode(Actuator.OperatingMode.VELOCITY)
+
+    def _run(self, velocity: int) -> None:
+        self.controller.set_velocities(
+            {motor_id: velocity for motor_id in Actuator.Index.LOWER}
+        )
+        time.sleep(1)
+        self.controller.set_velocities(
+            {motor_id: 0 for motor_id in Actuator.Index.LOWER}
+        )
+
+    def left(self) -> None:
+        self._run(-self.profile.driving_speed)
+
+    def right(self) -> None:
+        self._run(self.profile.driving_speed)
+
+    def change_mode(self) -> Mode:
+        from .climb import Climb
+
+        return Climb(self.controller, self.profile)
+
+
+__all__ = ["Drive"]

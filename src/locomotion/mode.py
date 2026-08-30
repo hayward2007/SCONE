@@ -1,22 +1,21 @@
-from src.hardware import *;
-from src.hardware.controller import Controller;
+"""Base class for locomotion state-machine nodes."""
 
-class Mode :
-    __default_upper_position = [ 180 for _ in range(6) ];
-    __default_middle_position = 180;
-    __default_lower_position = 180;
+from __future__ import annotations
 
-    __default_speed = 30;
+from src.hardware import ControllerProtocol
 
-    def __init__(self) :
-        self.upper_initial_position = self.__default_upper_position;
-        self.middle_initial_position = self.__default_middle_position;
-        self.lower_initial_position =self.__default_lower_position;
+from .profile import MotionProfile
 
-        self.boost_speed = self.__default_speed;
-        self.safety_speed = self.__default_speed;
-        self.walking_speed = self.__default_speed;
-        self.driving_speed = self.__default_speed;
-        self.climbing_speed = self.__default_speed;
 
-        self.controller: Controller = None;
+class Mode:
+    name = "mode"
+
+    def __init__(self, controller: ControllerProtocol, profile: MotionProfile) -> None:
+        self.controller = controller
+        self.profile = profile
+
+    def change_mode(self) -> "Mode":
+        raise NotImplementedError
+
+
+__all__ = ["Mode"]

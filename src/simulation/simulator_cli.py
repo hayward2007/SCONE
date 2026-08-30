@@ -1,49 +1,33 @@
-"""Command-line entry point for running the real SCONE CLI against MuJoCo.
+"""Direct simulation CLI entry point; the root launcher uses the same bridge."""
 
-Unlike simulator.py's simplified W/A/S/D preview, this launches the actual
-production SCONE.Cli (menus, Remote Control, Actuator/System Settings) with
-a MuJoCoController standing in for the real hardware controller.
-"""
+from __future__ import annotations
 
 import argparse
 from pathlib import Path
 
-from src.simulation.cli_bridge import run
+from .cli_bridge import run
+from .model import DEFAULT_MODEL_PATH
 
 
-def main() -> int:
-    project_root = Path(__file__).resolve().parent
-    parser = argparse.ArgumentParser(
-        description="Run the real, interactive SCONE.Cli against a MuJoCo simulation."
-    )
-    parser.add_argument(
-        "--model",
-        type=Path,
-        default=project_root / "model.xml",
-        help="MJCF path (default: project model.xml)",
-    )
-    parser.add_argument(
-        "--floating-base",
-        action="store_true",
-        default=True,
-        help=(
-            "Kept for parity with simulator.py; model.xml already ships a "
-            "floating root and floor, so this only matters if those were "
-            "removed from the file again."
-        ),
-    )
-    parser.add_argument(
-        "--quiet",
-        action="store_true",
-        help="Hide individual simulated DYNAMIXEL commands",
-    )
-    args = parser.parse_args()
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description="Control SCONE in MuJoCo")
+    parser.add_argument("--model", type=Path, default=DEFAULT_MODEL_PATH)
+    parser.add_argument("--profile", choices=("standard", "sport"), default="standard")
+    parser.add_argument("--fixed-base", action="store_true")
+    parser.add_argument("--verbose", action="store_true")
+    return parser
 
-    model_path = args.model.expanduser().resolve()
-    if not model_path.exists():
-        raise SystemExit(f"Model not found: {model_path}")
 
-    run(model_path, floating_base=args.floating_base, verbose=not args.quiet)
+def main(argv: list[str] | None = None) -> int:
+    args = build_parser().parse_args(argv)
+    if not args.model.expanduser().exists():
+        raise SystemExit(f"model not found: {args.model}")
+    run(
+        args.model,
+        profile=args.profile,
+        floating_base=not args.fixed_base,
+        verbose=args.verbose,
+    )
     return 0
 
 

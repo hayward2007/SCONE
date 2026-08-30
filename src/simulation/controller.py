@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import math
 import threading
-from collections.abc import Sequence
+from collections.abc import Iterable, Mapping, Sequence
 
 import mujoco
 import numpy as np
@@ -24,9 +24,9 @@ class MuJoCoController:
     drives the model's ``<dcmotor>`` actuators (see model.xml and pid.py).
     """
 
-    _POSITION_MODE = Actuator.model.XM.operating_mode.position
-    _EXTENDED_POSITION_MODE = Actuator.model.XM.operating_mode.extended_position
-    _VELOCITY_MODE = Actuator.model.XM.operating_mode.velocity
+    _POSITION_MODE = int(Actuator.OperatingMode.POSITION)
+    _EXTENDED_POSITION_MODE = int(Actuator.OperatingMode.EXTENDED_POSITION)
+    _VELOCITY_MODE = int(Actuator.OperatingMode.VELOCITY)
     _CENTER_RAW = 2048.0
     _RAW_PER_REVOLUTION = 4096.0
     _MX_SPEED_UNIT_RPM = 0.114
@@ -54,7 +54,7 @@ class MuJoCoController:
         verbose: bool = True,
         standing_pose_degrees: Sequence[float] | None = None,
     ) -> None:
-        if model.nu < len(Actuator.index):
+        if model.nu < len(Actuator.Index.ALL):
             raise ValueError(
                 f"SCONE requires 18 actuators, but the model contains {model.nu}."
             )
@@ -68,7 +68,7 @@ class MuJoCoController:
         self._joint_ids = np.empty(19, dtype=int)
         self._qpos_addresses = np.empty(19, dtype=int)
         self._dof_addresses = np.empty(19, dtype=int)
-        for motor_id in Actuator.index:
+        for motor_id in Actuator.Index.ALL:
             actuator_id = self._find_actuator(motor_id)
             joint_id = int(model.actuator_trnid[actuator_id, 0])
             self._actuator_ids[motor_id] = actuator_id
@@ -80,7 +80,7 @@ class MuJoCoController:
         # supplies the outer position/velocity loop that turns a target
         # angle into that voltage. See src/simulation/pid.py.
         self._pid: list[DCMotorPID | None] = [None] * 19
-        for motor_id in Actuator.index:
+        for motor_id in Actuator.Index.ALL:
             kp, kd = default_gains_for_motor_id(motor_id)
             self._pid[motor_id] = DCMotorPID(spec_for_motor_id(motor_id), kp, kd)
 
@@ -99,14 +99,14 @@ class MuJoCoController:
             else standing_pose_degrees,
             dtype=np.float64,
         )
-        if seed_pose.shape != (len(Actuator.index),):
+        if seed_pose.shape != (len(Actuator.Index.ALL),):
             raise ValueError(
                 "standing_pose_degrees must contain one value for each of "
-                f"the {len(Actuator.index)} actuators"
+                f"the {len(Actuator.Index.ALL)} actuators"
             )
         self._seed_stable_pose(model, data, seed_pose)
         mujoco.mj_forward(model, data)
-        for motor_id in Actuator.index:
+        for motor_id in Actuator.Index.ALL:
             current = self._joint_position(motor_id)
             self._target[motor_id] = current
             self._setpoint[motor_id] = current
@@ -135,7 +135,7 @@ class MuJoCoController:
         target profile pose afterward.
         """
 
-        for motor_id in Actuator.index:
+        for motor_id in Actuator.Index.ALL:
             raw = self.degrees_to_raw(motor_id, pose_degrees[motor_id - 1])
             data.qpos[self._qpos_addresses[motor_id]] = self.raw_to_radians(raw)
 
@@ -248,7 +248,7 @@ class MuJoCoController:
         return int(round(raw))
 
     def set_mode(self, id: int, mode: int) -> None:
-        if id not in Actuator.lower_index:
+        if id not in Actuator.Index.LOWER:
             return
         if mode not in (
             self._VELOCITY_MODE,
@@ -269,29 +269,14 @@ class MuJoCoController:
         self._log(f"{self._id_label(id)}: operating mode -> {mode}")
 
     def set_all_mode(self, mode: int) -> None:
-        for motor_id in Actuator.lower_index:
+        for motor_id in Actuator.Index.LOWER:
             self.set_mode(motor_id, mode)
 
     def get_mode(self, id: int) -> int:
         return int(self._mode[id])
 
-    def set_speed(
-        self,
-        id: int,
-        speed: int,
-        address: int = Actuator.model.XM.address.profile_velocity,
-    ) -> None:
+    def set_speed(self, id: int, speed: int) -> None:
         with self.lock:
-            if address == Actuator.model.XM.address.goal_velocity:
-                self._velocity_command[id] = self._speed_to_radians_per_second(
-                    id, speed
-                )
-                self._log(
-                    f"{self._id_label(id)}: goal velocity -> "
-                    f"{self._velocity_command[id]:+.3f} rad/s"
-                )
-                return
-
             # A DYNAMIXEL profile velocity of zero means that the profile is not
             # velocity-limited. Preserve that behavior in the simulation.
             self._profile_velocity[id] = (
@@ -301,8 +286,26 @@ class MuJoCoController:
             )
         self._log(f"{self._id_label(id)}: profile velocity -> {speed}")
 
+    def set_velocity(self, id: int, velocity: int) -> None:
+        with self.lock:
+            self._velocity_command[id] = self._speed_to_radians_per_second(
+                id, velocity
+            )
+        self._log(
+            f"{self._id_label(id)}: goal velocity -> "
+            f"{self._velocity_command[id]:+.3f} rad/s"
+        )
+
+    def set_speeds(self, speeds: Mapping[int, int]) -> None:
+        for motor_id, speed in speeds.items():
+            self.set_speed(motor_id, speed)
+
+    def set_velocities(self, velocities: Mapping[int, int]) -> None:
+        for motor_id, velocity in velocities.items():
+            self.set_velocity(motor_id, velocity)
+
     def set_all_speed(self, speed: int) -> None:
-        for motor_id in Actuator.index:
+        for motor_id in Actuator.Index.ALL:
             self.set_speed(motor_id, speed)
 
     def set_acceleration(self, id: int, acceleration: int) -> None:
@@ -316,8 +319,12 @@ class MuJoCoController:
             )
         self._log(f"{self._id_label(id)}: profile acceleration -> {acceleration}")
 
+    def set_accelerations(self, accelerations: Mapping[int, int]) -> None:
+        for motor_id, acceleration in accelerations.items():
+            self.set_acceleration(motor_id, acceleration)
+
     def set_torque(self, id: int, torque: int) -> None:
-        enabled = torque == Actuator.torque.on
+        enabled = torque == Actuator.Torque.ON
         actuator_id = self._actuator_ids[id]
         with self.lock:
             self._torque_enabled[id] = enabled
@@ -335,22 +342,33 @@ class MuJoCoController:
                 self.data.ctrl[actuator_id] = 0.0
         self._log(f"{self._id_label(id)}: torque {'on' if enabled else 'off'}")
 
-    def set_all_torque(self, torque: int) -> None:
-        for motor_id in Actuator.index:
+    def set_torques(self, motor_ids: Iterable[int], torque: int) -> None:
+        for motor_id in motor_ids:
             self.set_torque(motor_id, torque)
 
+    def set_all_torque(self, torque: int) -> None:
+        self.set_torques(Actuator.Index.ALL, torque)
+
     def enable_torque(self) -> None:
-        self.set_all_torque(Actuator.torque.on)
+        self.set_all_torque(Actuator.Torque.ON)
 
     def disable_torque(self) -> None:
-        self.set_all_torque(Actuator.torque.off)
+        self.set_all_torque(Actuator.Torque.OFF)
 
     def set_position(self, id: int, position: float) -> None:
         raw_position = self.degrees_to_raw(id, position)
         self._set_raw_position(id, raw_position)
 
+    def set_positions(self, positions: Mapping[int, float]) -> None:
+        for motor_id, position in positions.items():
+            self.set_position(motor_id, position)
+
     def set_raw_position(self, id: int, position: int) -> None:
         self._set_raw_position(id, position)
+
+    def set_raw_positions(self, positions: Mapping[int, int]) -> None:
+        for motor_id, position in positions.items():
+            self.set_raw_position(motor_id, position)
 
     def _set_raw_position(self, id: int, raw_position: float) -> None:
         target = self.raw_to_radians(raw_position)
@@ -368,7 +386,7 @@ class MuJoCoController:
         """Advance profile generators and write the next MuJoCo controls."""
 
         with self.lock:
-            for motor_id in Actuator.index:
+            for motor_id in Actuator.Index.ALL:
                 actuator_id = self._actuator_ids[motor_id]
                 if not self._torque_enabled[motor_id]:
                     self.data.ctrl[actuator_id] = 0.0

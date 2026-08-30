@@ -1,13 +1,4 @@
-"""Run the real, unmodified SCONE.Cli against a MuJoCo simulation.
-
-This is not a second, simplified control surface like ``app.py``'s
-``SimulationApp`` (W/A/S/D/R/H/I/Q only) -- it drives the actual production
-CLI (menus, Remote Control, Actuator/System Settings, the same
-``getch()``/InquirerPy prompts) by injecting a :class:`MuJoCoController` in
-place of the real hardware ``Controller``. ``src/SCONE.py`` only needed one
-small change to make that injection possible (``Cli(controller=None)``);
-none of its logic was duplicated.
-"""
+"""Run the common SCONE API/CLI against a MuJoCo controller backend."""
 
 from __future__ import annotations
 
@@ -19,70 +10,79 @@ from pathlib import Path
 import mujoco
 import mujoco.viewer
 
-from ..SCONE import SCONE
-from .app import load_model
+from ..cli import run_control_cli
+from ..main import SCONE
 from .controller import MuJoCoController
+from .model import DEFAULT_MODEL_PATH, load_model
 
 
-def run(model_path: Path, *, floating_base: bool = True, verbose: bool = True) -> None:
-    """Launch the real SCONE.Cli, rendering it live in the MuJoCo viewer.
+def run(
+    model_path: str | Path = DEFAULT_MODEL_PATH,
+    *,
+    profile: str = "standard",
+    floating_base: bool = True,
+    verbose: bool = False,
+) -> None:
+    """Open one viewer while terminal input drives the shared robot API.
 
-    The CLI runs on a background thread and reads this terminal's stdin
-    exactly as it would on the real robot (a separate input surface from the
-    MuJoCo window, so there is no conflict). The viewer/physics loop runs on
-    the main thread, as ``mujoco.viewer.launch_passive`` requires on macOS,
-    and keeps stepping in real time so the CLI's internal ``time.sleep()``
-    based motion timing behaves the same as it does against real hardware.
+    MuJoCo receives no keyboard callback. W/A/S/D are read exclusively from
+    the terminal by :func:`src.cli.run_control_cli`, exactly like hardware.
     """
 
-    model = load_model(model_path, floating_base)
+    model = load_model(model_path, floating_base=floating_base)
     data = mujoco.MjData(model)
     controller = MuJoCoController(model, data, verbose=verbose)
-
+    robot = SCONE(controller, profile=profile)
     stop_event = threading.Event()
-    cli_error: list[BaseException] = []
+    cli_errors: list[BaseException] = []
 
-    def run_cli() -> None:
+    def control_worker() -> None:
         try:
-            SCONE(controller)
-        except BaseException as error:  # surfaced after the viewer loop exits
-            cli_error.append(error)
+            robot.initialize()
+            run_control_cli(robot)
+            robot.close()
+        except BaseException as error:
+            cli_errors.append(error)
         finally:
             stop_event.set()
 
-    cli_thread = threading.Thread(target=run_cli, name="scone-cli", daemon=True)
+    worker = threading.Thread(
+        target=control_worker,
+        name="scone-command-interpreter",
+        daemon=True,
+    )
 
-    print("\nSCONE CLI is running against the MuJoCo simulation.")
-    print("Use this terminal for the real SCONE menu / Remote Control, exactly as with real hardware.")
-    print("Choose Shutdown in the CLI to stop cleanly, or close the MuJoCo window to stop immediately.\n")
-
+    print("\n[SIM] MuJoCo uses the same terminal commands as physical SCONE.")
+    print("[SIM] The viewer has no SCONE-specific keyboard mapping.\n")
     try:
         with mujoco.viewer.launch_passive(model, data) as viewer:
             viewer.cam.lookat[:] = model.stat.center
             viewer.cam.distance = model.stat.extent * 2.2
             viewer.opt.label = mujoco.mjtLabel.mjLABEL_JOINT
+            worker.start()
 
-            cli_thread.start()
-
-            dt = model.opt.timestep
+            timestep = model.opt.timestep
             while viewer.is_running() and not stop_event.is_set():
                 frame_start = time.perf_counter()
                 with controller.lock:
-                    controller.update(dt)
+                    controller.update(timestep)
                     mujoco.mj_step(model, data)
                 viewer.sync()
-                remaining = dt - (time.perf_counter() - frame_start)
+                remaining = timestep - (time.perf_counter() - frame_start)
                 if remaining > 0:
                     time.sleep(remaining)
     except RuntimeError as error:
         if sys.platform == "darwin" and "mjpython" not in Path(sys.executable).name:
             raise RuntimeError(
-                "On macOS the passive MuJoCo viewer must be launched with "
-                "`mjpython simulator_cli.py`, not regular `python`."
+                "On macOS launch the SCONE CLI with `mjpython SCONE.py`."
             ) from error
         raise
     finally:
         stop_event.set()
+        controller.close()
 
-    if cli_error:
-        raise cli_error[0]
+    if cli_errors:
+        raise cli_errors[0]
+
+
+__all__ = ["run"]

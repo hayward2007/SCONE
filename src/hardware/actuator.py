@@ -1,52 +1,58 @@
-class Actuator :
-    index = [i for i in range(1, 19)];
-    upper_index = [i for i in range(1, 7)];
-    upper_right_index = [1, 3, 5];
-    upper_left_index = [2, 4, 6];
-    middle_index = [i for i in range(7, 13)];
-    middle_right_index = [i + 6 for i in upper_right_index];
-    middle_left_index = [i + 6 for i in upper_left_index];
-    lower_index = [i for i in range(13, 19)];
-    lower_right_index = [i + 6 for i in middle_right_index];
-    lower_left_index = [i + 6 for i in middle_left_index];
-    upper_diagonal_right_index = [1, 4, 5];
-    upper_diagonal_left_index = [2, 3, 6];
-    middle_diagonal_right_index = [i + 6 for i in upper_diagonal_right_index];
-    middle_diagonal_left_index = [i + 6 for i in upper_diagonal_left_index];
-    lower_diagonal_right_index = [i + 6 for i in middle_diagonal_right_index];
-    lower_diagonal_left_index = [i + 6 for i in middle_diagonal_left_index];
+"""Single source of truth for SCONE actuator metadata."""
 
-    class torque :
-        off = 0;
-        on = 1;
+from __future__ import annotations
 
-    class position :
-        start = 0;
-        center = 2048;
-        end = 4096;
-    
-    class model :
-        class MX :
-            protocol_version = 1.0;
-            class address :
-                present_position = 36;
-                goal_position = 30;
-                enable_torque = 24;
-                moving_speed = 32;
-        
-        class XM :
-            protocol_version = 2.0;
-            class address :
-                profile_acceleration = 108;
-                present_position = 132;
-                present_velocity = 128;
-                profile_velocity = 112;
-                operating_mode = 11;
-                goal_position = 116;
-                goal_velocity = 104;
-                torque_enable = 64;
+from .actuator_control_table import (
+    MX28_AT,
+    XM430_W210T,
+    XM430_W350T,
+    ActuatorModel,
+    OperatingMode,
+)
+from .actuator_index import ActuatorIndex
 
-            class operating_mode :
-                velocity = 1;
-                position = 3;
-                extended_position = 4;
+
+class Torque:
+    OFF = 0
+    ON = 1
+
+
+class Position:
+    START = 0
+    CENTER = 2048
+    END = 4096
+
+
+class Model:
+    MX28_AT = MX28_AT
+    XM430_W350T = XM430_W350T
+    XM430_W210T = XM430_W210T
+
+
+def model_for_id(motor_id: int) -> ActuatorModel:
+    if motor_id in ActuatorIndex.UPPER:
+        return MX28_AT
+    if motor_id in ActuatorIndex.MIDDLE:
+        return XM430_W350T
+    if motor_id in ActuatorIndex.LOWER:
+        return XM430_W210T
+    raise ValueError(f"actuator ID must be between 1 and 18, got {motor_id}")
+
+
+class Actuator:
+    Index = ActuatorIndex
+    Model = Model
+    OperatingMode = OperatingMode
+    Position = Position
+    Torque = Torque
+
+
+__all__ = [
+    "Actuator",
+    "ActuatorIndex",
+    "Model",
+    "OperatingMode",
+    "Position",
+    "Torque",
+    "model_for_id",
+]

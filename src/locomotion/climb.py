@@ -1,106 +1,91 @@
+"""Climbing posture and arc-wheel motions."""
+
+from __future__ import annotations
+
 import time
 
-from src.hardware.actuator import Actuator;
-from src.hardware import *;
-from src import locomotion;
+from src.hardware import Actuator, ControllerProtocol
 
-class Climb(locomotion.Mode) :
-    def __init__(self, mode: locomotion.Mode) :
-        self.controller = mode.controller;
+from .mode import Mode
+from .profile import MotionProfile
 
-        self.upper_initial_position = mode.upper_initial_position;
-        self.middle_initial_position = mode.middle_initial_position;
-        self.lower_initial_position = mode.lower_initial_position;
 
-        self.boost_speed = mode.boost_speed;
-        self.safety_speed = mode.safety_speed;
-        self.walking_speed = mode.walking_speed;
-        self.driving_speed = mode.driving_speed;
-        self.climbing_speed = mode.climbing_speed;
-    
-        self.controller.set_all_mode(Actuator.model.XM.operating_mode.position);
-        self.controller.set_all_speed(self.safety_speed);
+class Climb(Mode):
+    name = "climb"
 
-        for i in Actuator.middle_diagonal_left_index :
-            self.controller.set_position(i, self.middle_initial_position - 20);
-        time.sleep(0.5);
+    def __init__(self, controller: ControllerProtocol, profile: MotionProfile) -> None:
+        super().__init__(controller, profile)
+        self.controller.set_all_mode(Actuator.OperatingMode.POSITION)
+        self.controller.set_all_speed(self.profile.safety_speed)
+        self._prepare_tripod(
+            Actuator.Index.MIDDLE_DIAGONAL_LEFT,
+            Actuator.Index.LOWER_DIAGONAL_LEFT,
+        )
+        self._prepare_tripod(
+            Actuator.Index.MIDDLE_DIAGONAL_RIGHT,
+            Actuator.Index.LOWER_DIAGONAL_RIGHT,
+        )
 
-        for i in Actuator.lower_diagonal_left_index :
-            self.controller.set_speed(i, self.boost_speed);
-            self.controller.set_raw_position(i, Actuator.position.center);
-        time.sleep(0.5);
-    
-        for i in Actuator.middle_diagonal_left_index :
-            self.controller.set_raw_position(i, Actuator.position.center);
-        time.sleep(0.5);
+    def _prepare_tripod(
+        self, middle_ids: tuple[int, ...], lower_ids: tuple[int, ...]
+    ) -> None:
+        self.controller.set_positions(
+            {
+                motor_id: self.profile.middle_initial_position - 20
+                for motor_id in middle_ids
+            }
+        )
+        time.sleep(0.5)
+        for motor_id in lower_ids:
+            self.controller.set_speed(motor_id, self.profile.boost_speed)
+        self.controller.set_raw_positions(
+            {motor_id: Actuator.Position.CENTER for motor_id in lower_ids}
+        )
+        time.sleep(0.5)
+        self.controller.set_raw_positions(
+            {motor_id: Actuator.Position.CENTER for motor_id in middle_ids}
+        )
+        time.sleep(0.5)
 
-        for i in Actuator.middle_diagonal_right_index :
-            self.controller.set_position(i, self.middle_initial_position - 20);
-        time.sleep(0.5);
-    
-        for i in Actuator.lower_diagonal_right_index :
-            self.controller.set_speed(i, self.boost_speed);
-            self.controller.set_raw_position(i, Actuator.position.center);
-        time.sleep(0.5);
-    
-        for i in Actuator.middle_diagonal_right_index :
-            self.controller.set_raw_position(i, Actuator.position.center);
-        time.sleep(0.5);
-    
-    def __default_stance(self) :
-        self.controller.set_all_mode(Actuator.model.XM.operating_mode.position);
+    def _default_stance(self) -> None:
+        self.controller.set_all_mode(Actuator.OperatingMode.POSITION)
+        for motor_id in Actuator.Index.LOWER:
+            self.controller.set_speed(motor_id, self.profile.safety_speed)
+        self.controller.set_positions(
+            {motor_id: 180 for motor_id in Actuator.Index.MIDDLE + Actuator.Index.LOWER}
+        )
+        time.sleep(1)
 
-        for i in Actuator.lower_index :
-            self.controller.set_speed(i, self.safety_speed);
-            self.controller.set_position(i, 180);
-        for i in Actuator.middle_index :
-            self.controller.set_position(i, 180);
-        time.sleep(1);
+    def _side_stance(self, middle_ids: tuple[int, ...]) -> None:
+        for motor_id in Actuator.Index.LOWER:
+            self.controller.set_speed(motor_id, self.profile.safety_speed)
+        self.controller.set_positions(
+            {motor_id: 270 for motor_id in Actuator.Index.LOWER + middle_ids}
+        )
+        time.sleep(1)
+        self.controller.set_all_mode(Actuator.OperatingMode.VELOCITY)
 
-    
-    def __left_stance(self) :
-        for i in Actuator.lower_index :
-            self.controller.set_speed(i, self.safety_speed);
-            self.controller.set_position(i, 270);
-        for i in Actuator.middle_right_index :
-            self.controller.set_position(i, 270);
-        time.sleep(1);
+    def _run(self, middle_ids: tuple[int, ...], velocity: int) -> None:
+        self._side_stance(middle_ids)
+        self.controller.set_velocities(
+            {motor_id: velocity for motor_id in Actuator.Index.LOWER}
+        )
+        time.sleep(2.5)
+        self.controller.set_velocities(
+            {motor_id: 0 for motor_id in Actuator.Index.LOWER}
+        )
+        self._default_stance()
 
-        self.controller.set_all_mode(Actuator.model.XM.operating_mode.velocity);
-    
-    def __right_stance(self) :
-        for i in Actuator.lower_index :
-            self.controller.set_speed(i, self.safety_speed);
-            self.controller.set_position(i, 270);
-        for i in Actuator.middle_left_index :
-            self.controller.set_position(i, 270);
-        time.sleep(1);
+    def left(self) -> None:
+        self._run(Actuator.Index.MIDDLE_RIGHT, -self.profile.climbing_speed)
 
-        self.controller.set_all_mode(Actuator.model.XM.operating_mode.velocity);
-    
-    def left(self) :
-        self.__left_stance();
+    def right(self) -> None:
+        self._run(Actuator.Index.MIDDLE_LEFT, self.profile.climbing_speed)
 
-        for i in Actuator.lower_index :
-            self.controller.set_speed(i, - self.climbing_speed, address = Actuator.model.XM.address.goal_velocity);
-        time.sleep(2.5);
-    
-        for i in Actuator.lower_index :
-            self.controller.set_speed(i, 0, address = Actuator.model.XM.address.goal_velocity);
-    
-        self.__default_stance();
-    
-    def right(self) :
-        self.__right_stance();
+    def change_mode(self) -> Mode:
+        from .walk import Walk
 
-        for i in Actuator.lower_index :
-            self.controller.set_speed(i, self.climbing_speed, address = Actuator.model.XM.address.goal_velocity);
-        time.sleep(2.5);
-    
-        for i in Actuator.lower_index :
-            self.controller.set_speed(i, 0, address = Actuator.model.XM.address.goal_velocity);
-    
-        self.__default_stance();
+        return Walk(self.controller, self.profile, transition=True)
 
-    def change_mode(self) :
-        return locomotion.Walk(self);
+
+__all__ = ["Climb"]
