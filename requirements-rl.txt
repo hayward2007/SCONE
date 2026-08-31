@@ -1,9 +1,0 @@
--r requirements.txt
-
-# Reinforcement learning and simulation
-gymnasium
-mujoco>=3.3,<3.5; python_version < "3.10"
-mujoco>=3.3; python_version >= "3.10"
-numpy
-stable-baselines3
-tensorboard

@@ -330,15 +330,21 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         self.residual_scale_degrees = np.array(
             [10.0] * 6 + [12.0] * 6 + [15.0] * 6, dtype=np.float64
         )
+        self._motion_profile = motion_profile_for_standing_pose(
+            self.default_degrees
+        )
         self._non_rl_reference: NonRLWalk | None = None
         if self.reference_motion == "non_rl":
             self._non_rl_reference = NonRLWalk(
-                profile=motion_profile_for_standing_pose(self.default_degrees),
+                profile=self._motion_profile,
                 model_path=self.model_path,
                 config=GaitConfig(
                     control_frequency=1.0 / self.control_dt,
-                    cycle_frequency=0.8,
-                    max_stride=0.050,
+                    cycle_frequency=0.7,
+                    max_stride=0.060,
+                    max_lateral_stride=0.050,
+                    ik_tolerance=1e-3,
+                    ik_stride_backoff_attempts=4,
                     max_vx=float(OBSERVATION_COMMAND_SCALE[0]),
                     max_vy=float(OBSERVATION_COMMAND_SCALE[1]),
                     max_yaw_rate=float(OBSERVATION_COMMAND_SCALE[2]),
@@ -364,6 +370,9 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         self._target_heading = 0.0
         self._last_action = np.zeros(18, dtype=np.float64)
         self._reference_height = 0.0
+        self._reference_cycle_frequency = 0.0
+        self._reference_stride_clip_fraction = 0.0
+        self._reference_ik_backoff_scale = 1.0
         self._viewer: Any | None = None
 
         self._jacobian_position = np.zeros((3, self.model.nv), dtype=np.float64)
@@ -450,6 +459,9 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
             self.walk_config.gait_frequency_max
             - self.walk_config.gait_frequency_min
         )
+        self._reference_cycle_frequency = frequency
+        self._reference_stride_clip_fraction = 0.0
+        self._reference_ik_backoff_scale = 1.0
         self._phase = (self._phase + frequency * self.control_dt) % 1.0
 
     def _reference_motion_degrees(self) -> np.ndarray:
@@ -468,6 +480,9 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
                     f"{sample.failed_legs}"
                 )
             self._phase = sample.phase
+            self._reference_cycle_frequency = sample.cycle_frequency
+            self._reference_stride_clip_fraction = sample.stride_clip_fraction
+            self._reference_ik_backoff_scale = sample.ik_backoff_scale
             return sample.motor_degrees.copy()
 
         reference = self.default_degrees.copy()
@@ -807,6 +822,9 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
             "height": root_height,
             "height_drop": height_drop,
             "command_activity": activity,
+            "reference_cycle_frequency": self._reference_cycle_frequency,
+            "reference_stride_clip_fraction": self._reference_stride_clip_fraction,
+            "reference_ik_backoff_scale": self._reference_ik_backoff_scale,
             "stance_contacts": stance_contacts,
             "forbidden_collision": forbidden_collision,
             "fallen": fallen,
@@ -831,6 +849,11 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         )
         self.controller.enable_torque()
 
+        # Existing PPO checkpoints were trained with the simulation
+        # controller's unlimited profile velocity/acceleration. Applying the
+        # physical CLI profile only during replay changes the actuator
+        # dynamics and breaks the learned phase relationship.
+
         self._phase = float(self.np_random.random())
         if self._non_rl_reference is not None:
             self._non_rl_reference.reset(
@@ -839,6 +862,9 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
             )
         self._episode_step = 0
         self._last_action.fill(0.0)
+        self._reference_cycle_frequency = 0.0
+        self._reference_stride_clip_fraction = 0.0
+        self._reference_ik_backoff_scale = 1.0
         self._command.fill(0.0)
         self._command_target = self._sample_command()
         self._heading = self._heading_yaw()
@@ -915,6 +941,9 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         self._command.fill(0.0)
         self._command_target.fill(0.0)
         self._last_action.fill(0.0)
+        self._reference_cycle_frequency = 0.0
+        self._reference_stride_clip_fraction = 0.0
+        self._reference_ik_backoff_scale = 1.0
         self._heading = self._heading_yaw()
         self._target_heading = self._heading
         self._reference_height = float(
@@ -964,6 +993,9 @@ class RewardTermsCallback(BaseCallback):
                 "yaw_rate",
                 "height",
                 "height_drop",
+                "reference_cycle_frequency",
+                "reference_stride_clip_fraction",
+                "reference_ik_backoff_scale",
                 "stance_contacts",
             ):
                 if name in info:
@@ -1281,10 +1313,10 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--reference-motion",
         choices=REFERENCE_MOTION_CHOICES,
-        default="non_rl",
+        default=None,
         help=(
-            "baseline motion under the residual policy "
-            "(default: continuous Non-RL gait)"
+            "baseline motion under the residual policy; defaults to non_rl "
+            "for check/train and hardcoded for legacy-compatible enjoy replay"
         ),
     )
     subparsers = parser.add_subparsers(dest="command_name", required=True)
@@ -1335,8 +1367,23 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def _resolve_reference_motion(
+    command_name: str,
+    selected: str | None,
+) -> str:
+    """Keep new training on Non-RL while replaying legacy PPO correctly."""
+
+    if selected is not None:
+        return selected
+    return "hardcoded" if command_name == "enjoy" else "non_rl"
+
+
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
+    args.reference_motion = _resolve_reference_motion(
+        args.command_name,
+        args.reference_motion,
+    )
     args.model = args.model.expanduser().resolve()
     if not args.model.exists():
         raise SystemExit(f"Model not found: {args.model}")

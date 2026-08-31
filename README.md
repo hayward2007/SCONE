@@ -9,7 +9,7 @@ Run the launcher on macOS with `mjpython` so the MuJoCo viewer can own the main
 thread:
 
 ```bash
-python -m pip install -r requirements-rl.txt
+python -m pip install -r requirements.txt
 mjpython SCONE.py
 ```
 
@@ -31,6 +31,10 @@ options. Press Ctrl-C to leave a selection menu safely.
 The detailed Korean documentation starts at [`docs/README.md`](docs/README.md),
 and the complete learning/checkpoint runbook is in
 [`docs/07-running-testing-and-operations.md`](docs/07-running-testing-and-operations.md).
+The RL/simulation history is in
+[`docs/08-rl-development-log.md`](docs/08-rl-development-log.md), and the latest
+hardcoded/Non-RL performance diagnosis and prioritized roadmap are in
+[`docs/09-gait-performance-analysis.md`](docs/09-gait-performance-analysis.md).
 
 After choosing simulation control, select one locomotion implementation:
 
@@ -262,9 +266,21 @@ Yaw uses `omega × r` at each nominal foot position, so turning is not a shared
 sideways offset. Command filtering, velocity/stride limits, and an all-or-none
 IK send guard are enabled by default in `GaitConfig`.
 
+The shared physical default keeps a fixed 0.8 Hz cadence. MuJoCo and
+residual-RL use a measured 0.7 Hz cadence and a 60/50 mm fore-aft/lateral
+elliptical workspace; an IK-failed frame can shrink its foot offsets up to four
+times before it is rejected. Each sample reports cadence, stride clipping, and
+the applied IK backoff scale for diagnostics.
+Legacy PPO checkpoints were trained with the simulation controller's unlimited
+profile velocity/acceleration, so RL reset preserves that actuator behavior.
+Physical/Non-RL controller benchmarks still apply the selected motion profile;
+do not compare or resume policies across those dynamics without retraining.
+
 The gait does not treat the centre of `TIRE_n` as a foot. At startup it loads
 the collision mesh from `model.xml`, applies the selected profile pose, and
-uses each TPU mesh's lowest vertex as a fixed local support point. Supplying
+uses the centre of each TPU sector tip's lowest 0.1 mm patch as a fixed local
+support point. This avoids anchoring IK to one lateral edge of the 44 mm-wide
+frame. Supplying
 `end_effector_points` overrides this automatic selection with measured points.
 
 Before physical use, call `gait.reset_from_controller()` to centre the stroke
@@ -285,7 +301,7 @@ discrete Arduino servo loop.
 Install the RL dependencies and open the interactive launcher:
 
 ```bash
-python -m pip install -r requirements-rl.txt
+python -m pip install -r requirements.txt
 python -m src.rl
 ```
 
@@ -302,7 +318,7 @@ real process parallelism rather than sequential interleaving.
 For a remote run, the launcher can synchronize the current local source first
 (excluding `.git`, virtual environments, `runs`, and archives), then starts the
 trainer with `nohup`. If the remote RL packages are missing, it can create a
-Python 3.12 project-local `.venv` and install `requirements-rl.txt`
+Python 3.12 project-local `.venv` and install the unified `requirements.txt`
 automatically before creating the run directory. A pre-existing virtualenv
 using another Python version is renamed to `.venv.python-old_<timestamp>` rather
 than deleted. Remote artifacts remain on the training machine at:

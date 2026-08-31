@@ -59,7 +59,7 @@
 | `medium` | `[0.40, 0, 0.60]`; 전후진+yaw |
 | `full` | `[0.50, 0.25, 0.80]`; lateral 포함 전축 |
 | `OBSERVATION_COMMAND_SCALE` | `[0.50, 0.25, 0.80]`; 관측 normalization과 수동 명령 clip 공통 |
-| `REFERENCE_MOTION_CHOICES` | `non_rl`, `hardcoded`; CLI 기본은 `non_rl`, 직접 환경 생성 호환 기본은 `hardcoded` |
+| `REFERENCE_MOTION_CHOICES` | `non_rl`, `hardcoded`; 신규 학습 기본은 `non_rl`, 기존 PPO 재생·직접 환경 생성 호환 기본은 `hardcoded` |
 
 `NeutralResidualGate`:
 
@@ -114,6 +114,10 @@
 | `_target_heading` | yaw command를 적분한 heading 목표 |
 | `_last_action` | action-rate penalty와 관측의 이전 residual |
 | `_reference_height` | settle 후 root z; height penalty/fall 기준 |
+| `_motion_profile` | 선택 자세와 가장 가까운 실물 profile; Non-RL 기준 생성에 사용하며 기존 PPO 호환을 위해 RL controller에는 속도·가속도 한계로 강제 적용하지 않음 |
+| `_reference_cycle_frequency` | 현재 기준 모션 cadence. 시뮬레이션/RL Non-RL은 `0.7 Hz` 고정 |
+| `_reference_stride_clip_fraction` | Non-RL 작업공간 제한에 걸린 다리 비율 |
+| `_reference_ik_backoff_scale` | Non-RL IK 재시도로 적용된 foot offset 배율 |
 | `_viewer` | lazy passive viewer |
 | `_jacobian_position/_rotation` | contact point velocity 계산 buffer |
 | `_contact_force` | `mj_contactForce` 6축 buffer; index 0 normal force |

@@ -8,7 +8,7 @@
 2. `SconeWalkEnv._reward()`: raw 측정값, 정규화, aggregate, 종료 조건
 3. `RewardTermsCallback`: TensorBoard에 기록하는 항목
 
-`RL_Log.md`의 숫자는 개발 기록이며 현재 기본값과 일부 다르다. 실험 설정을 기록할 때는 `RewardConfig` 전체와 Git commit/working-tree diff를 함께 저장한다.
+[`08-rl-development-log.md`](08-rl-development-log.md)의 숫자는 개발 기록이며 현재 기본값과 일부 다르다. 실험 설정을 기록할 때는 `RewardConfig` 전체와 Git commit/working-tree diff를 함께 저장한다.
 
 ## 2. 현재 보상 수식
 

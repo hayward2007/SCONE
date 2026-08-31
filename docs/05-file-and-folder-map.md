@@ -7,11 +7,9 @@
 | [`.gitignore`](../.gitignore) | Python 캐시, 가상환경, 학습 산출물, 임시 파일, 미디어/논문 빌드 부산물의 Git 제외 규칙 |
 | [`LICENSE`](../LICENSE) | MIT 라이선스 |
 | [`README.md`](../README.md) | 사용자용 설치·구조·실행 개요 |
-| [`RL_Log.md`](../RL_Log.md) | RL/시뮬레이션 개발 과정과 과거 실험 메모. 현재 구현과 다른 값이 있을 수 있음 |
 | [`SCONE.py`](../SCONE.py) | 외부 코드가 `SCONE`, 명령/상태 타입, locomotion/kinematics API를 import하는 안정 facade |
 | [`example.py`](../example.py) | 실제 장치를 탐색하고 context manager 안에서 전진 동작을 실행하는 최소 예제 |
-| [`requirements.txt`](../requirements.txt) | 기본 실행 의존성 |
-| [`requirements-rl.txt`](../requirements-rl.txt) | RL 학습·재생을 위한 추가 의존성 |
+| [`requirements.txt`](../requirements.txt) | CLI·하드웨어·시뮬레이션·RL 통합 의존성 |
 | `docs/` | 이 분석 문서 모음 |
 | `runs/` | 로컬/원격 PPO 체크포인트와 작업 상태. 생성 데이터이며 Git 비추적 |
 | `tmp/` | PDF 렌더링 등 일시 작업 파일. 런타임 소스가 아님 |
@@ -28,6 +26,8 @@
 | [`05-file-and-folder-map.md`](05-file-and-folder-map.md) | 저장소 전체 파일·폴더 역할(현재 문서) |
 | [`06-reward-function-guide.md`](06-reward-function-guide.md) | reward 수식, 값, 수정·검증·호환성 절차 |
 | [`07-running-testing-and-operations.md`](07-running-testing-and-operations.md) | 설치, 실행, 학습, 원격 운영, 테스트 |
+| [`08-rl-development-log.md`](08-rl-development-log.md) | RL/시뮬레이션 시행착오와 변경 이력 |
+| [`09-gait-performance-analysis.md`](09-gait-performance-analysis.md) | 하드코드·Non-RL·policy 수치 비교와 개선 우선순위 |
 | [`variables/README.md`](variables/README.md) | 변수 사전 색인과 포함 규칙 |
 | [`variables/01-api-hardware-locomotion.md`](variables/01-api-hardware-locomotion.md) | API/CLI/hardware/locomotion 변수 |
 | [`variables/02-kinematics-simulation-terrain.md`](variables/02-kinematics-simulation-terrain.md) | kinematics/simulation/terrain 변수 |

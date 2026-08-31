@@ -526,7 +526,13 @@ def main() -> int:
                         prompt_standing_pose,
                     )
 
-                    rl_reference_motion = prompt_reference_motion()
+                    # Existing PPO checkpoints were trained with the original
+                    # hardcoded sinusoidal reference. Keep replay aligned with
+                    # that action meaning unless the user explicitly selects a
+                    # checkpoint trained on the newer Non-RL reference.
+                    rl_reference_motion = prompt_reference_motion(
+                        default="hardcoded"
+                    )
                     stance_name, rl_standing_pose = prompt_standing_pose()
                     print(
                         f"[RL] 시뮬레이션 기준: {rl_reference_motion} / "

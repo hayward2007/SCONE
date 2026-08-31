@@ -10,22 +10,10 @@ source .venv/bin/activate
 python -m pip install --upgrade pip
 ```
 
-기본 terminal 메뉴만 설치:
+CLI, Dynamixel SDK, MuJoCo, RL 의존성을 하나의 파일에서 설치한다.
 
 ```bash
 python -m pip install -r requirements.txt
-```
-
-MuJoCo와 RL까지 설치:
-
-```bash
-python -m pip install -r requirements-rl.txt
-```
-
-실제 Dynamixel을 사용할 때는 현재 requirements 파일에 SDK가 명시되어 있지 않으므로 별도로 설치해야 한다.
-
-```bash
-python -m pip install dynamixel-sdk
 ```
 
 아카이브 SCONEv1의 OpenCV/imutils vision 코드는 현재 runtime 의존성이 아니다.
@@ -148,6 +136,12 @@ python -m src.rl.walk_learn \
 
 출력되는 mean weighted reward term은 항의 부호와 scale을 보는 smoke 지표다. 학습 성능 결론으로 사용하지 않는다.
 
+Non-RL 기준을 선택하면 TensorBoard `state/` 아래에 다음 튜닝 지표가 추가된다.
+
+- `reference_cycle_frequency`: 현재 기준 모션 cadence. 시뮬레이션/RL Non-RL은 `0.7 Hz`
+- `reference_stride_clip_fraction`: 작업공간 한계에 걸린 다리 비율
+- `reference_ik_backoff_scale`: IK 재시도로 실제 적용된 발 오프셋 배율. 항상 1보다 작다면 stance·보폭을 다시 조정한다.
+
 ## 6. PPO 학습
 
 새 학습:
@@ -185,6 +179,8 @@ python -m src.rl.walk_learn --reference-motion non_rl train \
 SIGINT/SIGTERM을 보내면 현재 step을 마치고 final model/resume pointer를 남기는 경로를 사용한다.
 
 `--reference-motion non_rl`은 Phoenix식 연속 발 궤적과 IK를 기준으로 사용하며 CLI 최상단 권장값이다. `hardcoded`는 기존 사인파 tripod 기준을 보존한다. 기준 모션이 다른 checkpoint를 재개하면 action 의미가 달라지므로, 원래 설정과 반드시 일치시킨다.
+
+Non-RL 기준 모션은 2026-08-31에 stride 작업공간과 IK backoff가 추가되었고, support point는 부채꼴 말단의 최저 0.1 mm 패치 중심으로 교정됐다. 시뮬레이션/RL cadence는 별도 actuator 추종성과 slip sweep 후 0.7 Hz를 사용한다. 기존 PPO는 무제한 simulation profile에서 학습됐으므로 RL reset도 그 동역학을 보존한다. `walking_speed=100`·XM acceleration 20 같은 물리 profile을 쓰는 새 학습은 기존 checkpoint를 resume하지 말고 환경 버전을 기록해 0 step부터 시작한다.
 
 `--num-envs 1`은 단일 프로세스이고 2 이상은 `SubprocVecEnv`로 각 MuJoCo 환경을 별도 프로세스에서 실행한다. 환경 수를 늘리면 PPO rollout 크기도 `n_steps × num_envs`로 커지므로 CPU 사용률뿐 아니라 업데이트 지연과 메모리를 함께 확인한다.
 

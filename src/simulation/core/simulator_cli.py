@@ -47,7 +47,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--rl-reference-motion",
         choices=RL_REFERENCE_MOTION_CHOICES,
-        default="non_rl",
+        default="hardcoded",
+        help=(
+            "residual reference used when replaying PPO; legacy checkpoints "
+            "use hardcoded, and non_rl must only be used with a matching model"
+        ),
     )
     parser.add_argument(
         "--rl-standing-pose-degrees",

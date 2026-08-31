@@ -15,11 +15,25 @@ from src.simulation.core.cli_bridge import (
     SimulationControl,
     run,
 )
+from src.simulation.core.simulator_cli import build_parser
 
 
 class SimulationBackendTests(unittest.TestCase):
     def test_non_rl_simulation_uses_ik_safe_stride(self) -> None:
-        self.assertEqual(NON_RL_SIMULATION_GAIT_CONFIG.max_stride, 0.050)
+        self.assertEqual(NON_RL_SIMULATION_GAIT_CONFIG.max_stride, 0.060)
+        self.assertEqual(
+            NON_RL_SIMULATION_GAIT_CONFIG.max_lateral_stride,
+            0.050,
+        )
+        self.assertEqual(NON_RL_SIMULATION_GAIT_CONFIG.cycle_frequency, 0.7)
+        self.assertEqual(
+            NON_RL_SIMULATION_GAIT_CONFIG.ik_stride_backoff_attempts,
+            4,
+        )
+        self.assertEqual(
+            NON_RL_SIMULATION_GAIT_CONFIG.ik_tolerance,
+            1e-3,
+        )
 
     def test_rl_control_routes_to_policy_runtime_without_legacy_viewer(self) -> None:
         with patch("src.rl.joystick_control.run_rl_joystick") as runner:
@@ -34,7 +48,14 @@ class SimulationBackendTests(unittest.TestCase):
         arguments = runner.call_args.kwargs
         self.assertEqual(arguments["terrain"].value, "uneven")
         self.assertEqual(arguments["terrain_seed"], 11)
-        self.assertEqual(arguments["reference_motion"], "non_rl")
+        self.assertEqual(arguments["reference_motion"], "hardcoded")
+
+    def test_rl_cli_defaults_to_legacy_hardcoded_reference(self) -> None:
+        arguments = build_parser().parse_args(
+            ["--control", "rl", "--checkpoint", "policy.zip"]
+        )
+
+        self.assertEqual(arguments.rl_reference_motion, "hardcoded")
 
     def test_model_maps_all_actuators_to_controller_contract(self) -> None:
         model = load_model(DEFAULT_MODEL_PATH)

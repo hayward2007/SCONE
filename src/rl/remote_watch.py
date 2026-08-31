@@ -416,7 +416,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--reference-motion",
         choices=REFERENCE_MOTION_CHOICES,
-        default="non_rl",
+        default="hardcoded",
     )
     parser.add_argument(
         "--standing-pose-degrees",

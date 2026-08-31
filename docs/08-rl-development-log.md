@@ -1,4 +1,30 @@
-# SCONE RL
+# SCONE RL·시뮬레이션 개발 기록
+
+> 이 문서는 시행착오와 당시 판단을 보존하는 **개발 이력**이다. 현재 관측값,
+> 보상식, 실행 명령의 최종 기준은 [`src/rl/walk_learn.py`](../src/rl/walk_learn.py),
+> [`06-reward-function-guide.md`](06-reward-function-guide.md),
+> [`07-running-testing-and-operations.md`](07-running-testing-and-operations.md)다.
+> 아래 초기 기록에는 이전 68차원 관측, 구형 경로, 폐기한 파라미터가 의도적으로
+> 남아 있다. 2026-08-31의 최신 성능 진단과 다음 개선 순서는
+> [`09-gait-performance-analysis.md`](09-gait-performance-analysis.md)에 분리했다.
+
+## 개발 과정 요약
+
+| 단계 | 부딪힌 문제 | 확인한 원인과 결과 |
+|---|---|---|
+| 첫 residual RL | 무작위 18관절 제어가 바로 넘어짐 | 기존 tripod 동작에 작은 위치 residual을 더하는 구조로 시작 |
+| 좌표계 검증 | 전진 속도를 수직 속도로 읽고 yaw 부호가 어긋남 | freejoint velocity를 body frame으로 명시 변환하고 명령 부호 회귀 테스트 추가 |
+| 액추에이터 물리 | `<position>` 서보가 실제 모터의 토크-속도 관계를 숨김 | 18개를 전압 입력 `<dcmotor>`와 외부 PD/PID 루프로 교체 |
+| floating base | 시작 직후 주저앉고 1단 관절이 목표를 못 따라감 | 안정 자세 seed, 충돌체, 정지토크 saturation을 순서대로 진단·교정 |
+| SSH 학습 운영 | Python/MuJoCo 설치 실패, 상태·다운로드 기록 호환 오류 | Python 3.12 `.venv`, 원격 job 역직렬화, pause/resume/download/reset 흐름 구현 |
+| 시뮬레이션 조종 | 지형·모드 전환·계단 준비 동작과 좌우 말단 방향 불일치 | 공통 x/y/yaw CLI, 지형 표시, 시뮬레이션 전용 축·settling·damping 보정 추가 |
+| Non-RL 도입 | Standard IK 실패, Sport 접지 여유 부족, 말단 slip | Phoenix tripod + model IK, Standard 권장, stride backoff와 실제 접촉점 slip 측정 도입 |
+| 잘못된 고속화 시도 | 1.4 Hz에서 더 빨라질 것으로 예상했지만 72% 느려짐 | 무제한 profile로 sweep한 실수 확인; 실제 speed=100 조건에서 0.7 Hz로 재측정 |
+| 말단 지지점 교정 | 부채꼴 끝의 한쪽 모서리를 IK 지지점으로 사용 | 최저 0.1 mm 패치 중심으로 바꿔 drift와 slip 감소 |
+| 기존 PPO 재생 회귀 | 학습 후 추가한 물리 profile 한계 때문에 15.4M policy가 전진 명령에서 후진 | RL reset을 학습 당시 무제한 profile로 복구하고 legacy 재생 기본을 hardcoded로 고정 |
+| 현재 병목 분석 | Non-RL 기준은 빠른데 학습된 policy가 다시 느리게 만듦 | 작업공간 포화, 말단 목표속도 초과, residual 포화와 구형 checkpoint 재사용이 함께 존재 |
+
+## 초기 설계와 상세 시행착오
 
 input은 [x, y, yaw] 값을 넣어서 명령 조건부 정책 (command-conditioned policy)로 진행함 <- z 대신 yaw가 있는 것은 로봇이 공중에서 날지 않기 때문
 
@@ -786,3 +812,39 @@ RL 조이스틱에서도 `R`로 `RL Walk → Drive → Climb → RL Walk`를 순
 원격 학습 위치를 선택하면 코어 수, 가용 메모리, 1분 load를 먼저 확인합니다. 추천치는 물리 코어 하나와 2 GiB를 남기고, 환경당 768 MiB를 가정한 CPU/메모리 한도의 최솟값입니다. 사용자가 최종 값을 바꿀 수 있고 조회 실패 시 4개를 기본값으로 제시합니다.
 
 이전에는 `num_envs`가 `DummyVecEnv`에서 순차 실행됐습니다. 이제 한 환경만 `DummyVecEnv`, 두 개 이상은 `SubprocVecEnv`를 사용해 실제 worker process로 병렬 실행합니다. 2-env 학습 smoke test에서 PPO rollout, checkpoint/final model 저장까지 완료했고 전체 단위/통합 테스트 86개가 통과했습니다.
+
+## 2026-08-31: Non-RL 기준 모션 튜닝
+
+초기 sweep는 Residual RL 환경의 관절 profile 속도가 무제한 상태인 것을 간과해 adaptive cadence `0.8→1.4 Hz`를 잘못 채택했습니다. 실제 CLI와 같이 `SCONE.initialize()`를 거쳐 `walking_speed=100`이 적용된 controller에서는 관절이 1.4 Hz 목표를 추종하지 못해, 6초 최대 전진 시 고정 0.8 Hz `0.0502 m/s`에서 adaptive 1.4 Hz `0.0143 m/s`로 속도가 약 72% 떨어졌습니다. 따라서 adaptive cadence를 제거하고 고정 0.8 Hz로 복구했습니다.
+
+교정 후 채택값과 안전장치는 다음과 같습니다.
+
+- actuator 속도 profile이 추종 가능한 시뮬레이션/RL cadence `0.7 Hz`(실물 공용 기본 `0.8 Hz`)
+- 전후 `0.060 m`, 측면 `0.050 m` 타원형 작업공간
+- 시뮬레이션/RL IK 허용오차 `1e-3 m`(실물 기본 `1e-4 m`는 유지)
+- 복합 명령에서 IK 실패 시 nominal 발 위치 쪽으로 `0.8×`씩 최대 4회 backoff
+- TensorBoard `state/reference_cycle_frequency`, `reference_stride_clip_fraction`, `reference_ik_backoff_scale` 기록
+
+추가 접지 진단에서 IK support point가 부채꼴 말단의 44 mm 폭 가운데가 아니라 한쪽 모서리 vertex를 가리키고 있었습니다. 명목 자세에서 가장 낮은 0.1 mm 말단 패치의 중심을 사용하도록 교정했고, cadence/stride/step height를 실제 관절 속도 한계에서 다시 sweep해 `0.7 Hz / 60 mm / 35 mm`를 채택했습니다.
+
+이 단계에서는 학습 환경 reset에도 `SCONE.initialize()`와 같은 `walking_speed=100`과 XM acceleration 20을 적용했습니다. 같은 물리 한계의 Standard zero-action 500-step에서 Non-RL은 `vx=0.05602 m/s`, hardcoded는 `0.01633 m/s`였습니다. Non-RL slip penalty는 `-0.0002390`, hardcoded는 `-0.0004108`로 Non-RL이 약 42% 작았습니다. 실제 CLI형 controller 최대 전진은 기존 `0.05018→0.05702 m/s`, 평균 접촉 slip 속도는 `0.11861→0.11211 m/s`, 6초 측면 drift는 `0.0551→0.0385 m`로 개선됐습니다. 전진·후진·좌우·yaw·복합 명령은 모두 termination 없이 올바른 부호로 움직였고, 복합 yaw도 `0.0017→0.0257 rad/s`로 개선됐습니다. full curriculum random residual은 평지와 uneven에서 각각 500 step을 통과했습니다. 아래 재생 회귀 진단에서 기존 PPO와 호환되지 않는 변경으로 확인되어 RL reset 적용은 되돌렸고, 이 수치는 물리 profile benchmark로만 보존합니다.
+
+IK 허용오차 sweep(`1e-4/2e-4/5e-4/1e-3 m`) 결과, `1e-3 m`는 500 gait frame에서 실패 0건과 최대 residual `0.997 mm`를 유지하면서 기준 명령 생성을 약 48% 빠르게 만들었습니다. 이 완화는 시뮬레이션과 RL 기준 모션에만 적용합니다.
+
+최종 말단 접지·물리 한계 설정의 2-env PPO smoke는 `620 FPS`, 2,048 timestep rollout과 `final_model.zip` 저장을 완료했습니다. 전체 단위/통합 테스트 94개도 통과했습니다. 관절 추종 동역학과 기준 접점이 바뀌었으므로 기준 모션에 관계없이 기존 RL checkpoint를 resume하지 말고 새로 학습하는 것을 권장합니다.
+
+## 2026-08-31: 기존 PPO 재생 동역학 회귀 복구
+
+`scone_walk_15410928_steps.zip`을 직접 재생하자, 학습 뒤 추가된
+`walking_speed=100`·XM acceleration 20 제한에서 `vx=0.18` 전진 명령이 평균
+`-0.0225 m/s` 후진으로 바뀌었다. 같은 checkpoint를 학습 당시의 무제한
+simulation profile에서 실행하면 `+0.0509 m/s` 전진했고, commit `9fd774a`의
+학습 당시 코드와도 같은 결과가 나왔다. 따라서 기준 모션 부호가 아니라 actuator
+동역학 불일치가 직접 회귀 원인이었다.
+
+RL reset에서 뒤늦게 추가한 profile 제한을 제거하고, 기존 PPO 재생 기본을
+`hardcoded`로 복구했다. Non-RL 기준으로 학습한 checkpoint만 `non_rl`을
+명시적으로 선택한다. 수정 후 정확한 15.4M checkpoint를 MuJoCo GUI와 headless로
+다시 확인했고 전체 테스트 98개가 통과했다. 물리 profile을 반영한 새 정책이
+필요하면 기존 checkpoint를 resume하지 않고 별도 환경 버전에서 0 step부터
+학습해야 한다.

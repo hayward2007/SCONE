@@ -50,8 +50,14 @@ TERRAIN_OPTIONS = (
     ("mixed", "혼합 코스"),
 )
 REFERENCE_MOTION_OPTIONS = (
-    ("non_rl", "Non-RL 알고리즘 · 연속 IK 보행 (권장)"),
-    ("hardcoded", "하드코딩 모션 · 기존 사인파 tripod 기준"),
+    (
+        "non_rl",
+        "Non-RL 알고리즘 · 이 기준으로 학습한 PPO 전용",
+    ),
+    (
+        "hardcoded",
+        "하드코딩 모션 · 기존 PPO 학습 기준 (재생 권장)",
+    ),
 )
 
 
@@ -700,7 +706,7 @@ def build_remote_dependency_install_command(settings: RemoteSettings) -> str:
             "fi;",
             ".venv/bin/python -m pip install --upgrade pip setuptools wheel || exit 41;",
             ".venv/bin/python -m pip install --prefer-binary "
-            "--only-binary=mujoco -r requirements-rl.txt",
+            "--only-binary=mujoco -r requirements.txt",
         ]
     )
 
@@ -1208,7 +1214,7 @@ def view_local_model(
     episodes: int = 3,
     terrain: str = "flat",
     terrain_seed: int = 7,
-    reference_motion: str = "non_rl",
+    reference_motion: str = "hardcoded",
     standing_pose_degrees: Sequence[float] = SPORT_STANDING_DEGREES,
 ) -> int:
     from .remote_watch import _validate_ppo_zip
@@ -1358,9 +1364,11 @@ def prompt_standing_pose() -> tuple[str, tuple[float, ...]]:
     return f"custom(M={middle:g},L={lower:g})", validate_standing_pose(pose)
 
 
-def prompt_reference_motion() -> str:
+def prompt_reference_motion(*, default: str = "non_rl") -> str:
     """Choose the baseline that the residual policy will correct."""
 
+    if default not in {value for value, _ in REFERENCE_MOTION_OPTIONS}:
+        raise ValueError(f"unknown default reference motion: {default}")
     inquirer, Choice = _inquirer()
     return inquirer.select(
         message="Residual RL의 기준 모션을 선택하세요.",
@@ -1368,7 +1376,7 @@ def prompt_reference_motion() -> str:
             Choice(value=value, name=label)
             for value, label in REFERENCE_MOTION_OPTIONS
         ],
-        default="non_rl",
+        default=default,
     ).execute()
 
 
@@ -1384,7 +1392,7 @@ def _prompt_training_config(
         message="무엇을 학습할까요?",
         choices=[Choice(value=item.key, name=item.label) for item in TRAINING_TASKS.values()],
     ).execute()
-    reference_motion = prompt_reference_motion()
+    reference_motion = prompt_reference_motion(default="hardcoded")
     curriculum = inquirer.select(
         message="학습 범위(커리큘럼)를 선택하세요.",
         choices=[
