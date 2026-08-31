@@ -91,7 +91,6 @@
 |---|---|
 | [`requirements.txt`](../requirements.txt) | 기본 terminal launcher용 `InquirerPy` |
 | [`requirements-rl.txt`](../requirements-rl.txt) | 기본 요구사항에 Gymnasium, MuJoCo, NumPy, Stable-Baselines3, TensorBoard 추가 |
-| [`.vscode/settings.json`](../.vscode/settings.json) | 로컬 IDE의 Python 환경 선택 보조 |
 
 Python 패키지 import는 일부 영역에서 의도적으로 지연된다. 예를 들어 루트 facade와 하드웨어 controller는 MuJoCo나 Dynamixel SDK가 필요하지 않은 작업에서 선택 의존성 때문에 전체 import가 실패하지 않도록 lazy import를 사용한다.
 

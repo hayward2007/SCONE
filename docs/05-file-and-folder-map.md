@@ -5,7 +5,6 @@
 | 경로 | 역할 |
 |---|---|
 | [`.gitignore`](../.gitignore) | Python 캐시, 가상환경, 학습 산출물, 임시 파일, 미디어/논문 빌드 부산물의 Git 제외 규칙 |
-| [`.vscode/settings.json`](../.vscode/settings.json) | VS Code Python interpreter/분석 설정 |
 | [`LICENSE`](../LICENSE) | MIT 라이선스 |
 | [`README.md`](../README.md) | 사용자용 설치·구조·실행 개요 |
 | [`RL_Log.md`](../RL_Log.md) | RL/시뮬레이션 개발 과정과 과거 실험 메모. 현재 구현과 다른 값이 있을 수 있음 |
