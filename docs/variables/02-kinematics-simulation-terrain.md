@@ -215,7 +215,7 @@ XML의 `<dcmotor nominal>`과 Python 사양은 함께 바꿔야 한다.
 
 | 이름 | 목적·사용처 |
 |---|---|
-| `NON_RL_SIMULATION_GAIT_CONFIG` | `GaitConfig(max_stride=0.050)`; Standard 자세에서 검증된 시뮬레이션 전용 stride |
+| `NON_RL_SIMULATION_GAIT_CONFIG` | 고정 cadence `0.7 Hz`, 전후/측면 stride `0.060/0.050 m`, IK 허용오차 `1 mm`, backoff 4회의 Standard 검증 시뮬레이션 설정 |
 | `SimulationControl.OLD/NON_RL/RL` | 제어 방식 선택 enum |
 | `profile` | Standard/Sport |
 | `floating_base` | 고정형 기구 검사와 실제 동역학 실행 선택 |

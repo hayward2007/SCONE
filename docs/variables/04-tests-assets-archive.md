@@ -59,7 +59,7 @@
 | 자산 | 런타임 목적/관련 변수 |
 |---|---|
 | `ARC_SHAPED_WHEEL.stl` | 호형 바퀴 visual/geometry |
-| `TIRE.stl` | 실제 contact edge와 Non-RL support vertex 추론 |
+| `TIRE.stl` | 실제 contact edge와 Non-RL 말단 support patch 추론 |
 | `BODY.stl`, `BODY_ACTUATOR.stl` | 중앙 구조와 actuator mount visual/collision 구성 |
 | `LEG_ACTUATOR.stl`, `LINK.stl`, `FR07.stl`, `FR12.stl` | 다리 각 링크의 CAD geometry |
 | mesh `scale`, mirrored scale | mm 단위 CAD를 meter로 바꾸고 좌우 visual을 재사용 |

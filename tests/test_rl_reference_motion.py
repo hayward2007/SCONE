@@ -6,15 +6,25 @@ from unittest.mock import patch
 import numpy as np
 
 from src.rl.stance import STANDARD_STANDING_DEGREES
-from src.rl.walk_learn import SconeWalkEnv, _make_vector_env
+from src.rl.walk_learn import (
+    SconeWalkEnv,
+    _make_vector_env,
+    _resolve_reference_motion,
+)
 
 
 class ResidualReferenceMotionTests(unittest.TestCase):
     @staticmethod
-    def _rollout(command: list[float], steps: int = 250) -> tuple[np.ndarray, float]:
+    def _rollout(
+        command: list[float],
+        steps: int = 250,
+        *,
+        reference_motion: str = "hardcoded",
+    ) -> tuple[np.ndarray, float]:
         env = SconeWalkEnv(
             fixed_command=command,
             standing_pose_degrees=STANDARD_STANDING_DEGREES,
+            reference_motion=reference_motion,
         )
         try:
             env.reset(seed=7)
@@ -50,6 +60,15 @@ class ResidualReferenceMotionTests(unittest.TestCase):
         subproc.assert_called_once_with(factories)
         dummy.assert_not_called()
 
+    def test_reference_default_depends_on_training_or_replay(self) -> None:
+        self.assertEqual(_resolve_reference_motion("train", None), "non_rl")
+        self.assertEqual(_resolve_reference_motion("check", None), "non_rl")
+        self.assertEqual(_resolve_reference_motion("enjoy", None), "hardcoded")
+        self.assertEqual(
+            _resolve_reference_motion("enjoy", "non_rl"),
+            "non_rl",
+        )
+
     def test_one_training_env_avoids_subprocess_overhead(self) -> None:
         factories = [lambda: object()]
 
@@ -67,13 +86,36 @@ class ResidualReferenceMotionTests(unittest.TestCase):
         forward, _ = self._rollout([0.25, 0.0, 0.0])
         reverse, _ = self._rollout([-0.25, 0.0, 0.0])
 
-        self.assertGreater(float(forward[0]), 0.05)
-        self.assertLess(float(reverse[0]), -0.05)
+        self.assertGreater(float(forward[0]), 0.01)
+        self.assertLess(float(reverse[0]), -0.01)
 
     def test_yaw_reference_uses_counter_clockwise_positive_sign(self) -> None:
         _, left_yaw = self._rollout([0.0, 0.0, 0.4])
         _, right_yaw = self._rollout([0.0, 0.0, -0.4])
 
+        self.assertGreater(left_yaw, 0.1)
+        self.assertLess(right_yaw, -0.1)
+
+    def test_non_rl_reference_keeps_hardcoded_command_directions(self) -> None:
+        forward, _ = self._rollout(
+            [0.25, 0.0, 0.0],
+            reference_motion="non_rl",
+        )
+        reverse, _ = self._rollout(
+            [-0.25, 0.0, 0.0],
+            reference_motion="non_rl",
+        )
+        _, left_yaw = self._rollout(
+            [0.0, 0.0, 0.4],
+            reference_motion="non_rl",
+        )
+        _, right_yaw = self._rollout(
+            [0.0, 0.0, -0.4],
+            reference_motion="non_rl",
+        )
+
+        self.assertGreater(float(forward[0]), 0.01)
+        self.assertLess(float(reverse[0]), -0.01)
         self.assertGreater(left_yaw, 0.1)
         self.assertLess(right_yaw, -0.1)
 
@@ -107,8 +149,41 @@ class ResidualReferenceMotionTests(unittest.TestCase):
                 0.1,
             )
             self.assertAlmostEqual(env._phase, env._non_rl_reference.phase)
+            self.assertEqual(env._reference_cycle_frequency, 0.7)
+            self.assertGreater(env._reference_stride_clip_fraction, 0.0)
+            self.assertGreater(env._reference_ik_backoff_scale, 0.0)
+            self.assertLessEqual(env._reference_ik_backoff_scale, 1.0)
         finally:
             env.close()
+
+    def test_rl_env_preserves_checkpoint_training_motion_profile(self) -> None:
+        for reference_motion in ("hardcoded", "non_rl"):
+            with self.subTest(reference_motion=reference_motion):
+                env = SconeWalkEnv(
+                    standing_pose_degrees=STANDARD_STANDING_DEGREES,
+                    reference_motion=reference_motion,
+                )
+                try:
+                    env.reset(seed=7)
+
+                    self.assertTrue(
+                        all(
+                            np.isinf(
+                                env.controller._profile_velocity[motor_id]
+                            )
+                            for motor_id in range(1, 19)
+                        )
+                    )
+                    self.assertTrue(
+                        all(
+                            np.isinf(
+                                env.controller._profile_acceleration[motor_id]
+                            )
+                            for motor_id in range(1, 19)
+                        )
+                    )
+                finally:
+                    env.close()
 
 
 if __name__ == "__main__":

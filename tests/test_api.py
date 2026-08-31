@@ -222,7 +222,7 @@ class InquirerLauncherTests(unittest.TestCase):
             patch(
                 "src.rl.inquiry.prompt_reference_motion",
                 return_value="non_rl",
-            ),
+            ) as reference_prompt,
             patch(
                 "src.rl.inquiry.prompt_standing_pose",
                 return_value=("standard", tuple(float(i) for i in range(18))),
@@ -239,6 +239,7 @@ class InquirerLauncherTests(unittest.TestCase):
             rl_reference_motion="non_rl",
             rl_standing_pose_degrees=tuple(float(i) for i in range(18)),
         )
+        reference_prompt.assert_called_once_with(default="hardcoded")
 
 
 class KeyboardJoystickTests(unittest.TestCase):

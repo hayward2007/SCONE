@@ -69,6 +69,7 @@ class GaitConfig:
     duty_factor: float = 0.5
     step_height: float = 0.035
     max_stride: float = 0.070
+    max_lateral_stride: float | None = None
     max_vx: float = 0.18
     max_vy: float = 0.12
     max_yaw_rate: float = 0.9
@@ -78,6 +79,8 @@ class GaitConfig:
     ik_max_iterations: int = 80
     ik_damping: float = 2e-3
     ik_max_step: float = 0.15
+    ik_stride_backoff_attempts: int = 0
+    ik_stride_backoff_factor: float = 0.8
 
     def __post_init__(self) -> None:
         if self.control_frequency <= 0.0 or self.cycle_frequency <= 0.0:
@@ -86,10 +89,21 @@ class GaitConfig:
             raise ValueError("duty_factor must be between 0 and 1")
         if self.step_height < 0.0 or self.max_stride <= 0.0:
             raise ValueError("step_height must be non-negative and max_stride positive")
+        if (
+            self.max_lateral_stride is not None
+            and not 0.0 < self.max_lateral_stride <= self.max_stride
+        ):
+            raise ValueError(
+                "max_lateral_stride must be positive and no larger than max_stride"
+            )
         if min(self.max_vx, self.max_vy, self.max_yaw_rate) <= 0.0:
             raise ValueError("velocity limits must be positive")
         if self.command_time_constant < 0.0 or self.idle_epsilon < 0.0:
             raise ValueError("filter time and idle epsilon cannot be negative")
+        if self.ik_stride_backoff_attempts < 0:
+            raise ValueError("ik_stride_backoff_attempts cannot be negative")
+        if not 0.0 < self.ik_stride_backoff_factor < 1.0:
+            raise ValueError("ik_stride_backoff_factor must be between 0 and 1")
 
 
 @dataclass(frozen=True)
@@ -102,6 +116,9 @@ class GaitSample:
     motor_degrees: NDArray[np.float64]
     ik_results: dict[int, IKResult]
     stance_legs: tuple[int, ...]
+    cycle_frequency: float = 0.8
+    stride_clip_fraction: float = 0.0
+    ik_backoff_scale: float = 1.0
 
     @property
     def converged(self) -> bool:
@@ -131,6 +148,10 @@ class NonRLWalk:
         5: 0.0,
         6: 0.5,
     }
+    # Average the vertices in the lowest 0.1 mm of the sector tip.  Selecting
+    # one absolute-lowest vertex locks IK to either lateral edge of the 44 mm
+    # wide TPU frame and creates an avoidable sideways moment at contact.
+    SUPPORT_PATCH_DEPTH = 1e-4
 
     def __init__(
         self,
@@ -149,8 +170,8 @@ class NonRLWalk:
 
         # TIRE_n's body origin is a CAD transform origin, not the point that
         # supports the robot. Unless the caller supplies calibrated points,
-        # select the lowest vertex of each collision mesh in the nominal pose.
-        # This keeps all six stance targets on the physical TPU support edge.
+        # use the centre of each sector tip's lowest contact patch in the
+        # nominal pose. This keeps IK off either lateral TPU edge.
         if end_effector_points is None:
             origin_kinematics = RobotKinematics(model_path)
             end_effector_points = self._infer_support_points(
@@ -167,6 +188,8 @@ class NonRLWalk:
         self._last_update_time: float | None = None
         self._last_angles = self._nominal_angles.copy()
         self._nominal_feet = self._forward_positions(self._nominal_angles)
+        self._last_cycle_frequency = self.config.cycle_frequency
+        self._last_stride_clip_fraction = 0.0
 
     @staticmethod
     def _profile_motor_degrees(profile: MotionProfile) -> NDArray[np.float64]:
@@ -182,7 +205,7 @@ class NonRLWalk:
         kinematics: RobotKinematics,
         nominal_angles: ArrayLike,
     ) -> dict[int, Vector3]:
-        """Find the nominal lowest TPU vertex in every tire's local frame."""
+        """Find the centre of each nominal TPU sector-tip contact patch."""
 
         # forward() sets all 18 qpos values on the shared MjData instance.
         kinematics.forward(nominal_angles, frame="body")
@@ -213,12 +236,17 @@ class NonRLWalk:
                 local_vertices @ world_from_geom.T + data.geom_xpos[geom_id]
             )
             body_vertices = (world_vertices - root_position) @ world_from_body
-            support_vertex = world_vertices[int(np.argmin(body_vertices[:, 2]))]
+            lowest_height = float(np.min(body_vertices[:, 2]))
+            support_patch = world_vertices[
+                body_vertices[:, 2]
+                <= lowest_height + NonRLWalk.SUPPORT_PATCH_DEPTH
+            ]
+            support_point = np.mean(support_patch, axis=0)
 
             tire_body_id = int(model.geom_bodyid[geom_id])
             world_from_tire = data.xmat[tire_body_id].reshape(3, 3)
             points[leg] = world_from_tire.T @ (
-                support_vertex - data.xpos[tire_body_id]
+                support_point - data.xpos[tire_body_id]
             )
         return points
 
@@ -261,6 +289,8 @@ class NonRLWalk:
         self._nominal_angles = np.radians(degrees - 180.0)
         self._last_angles = self._nominal_angles.copy()
         self._nominal_feet = self._forward_positions(self._nominal_angles)
+        self._last_cycle_frequency = self.config.cycle_frequency
+        self._last_stride_clip_fraction = 0.0
 
     def reset_from_controller(self) -> NDArray[np.float64]:
         """Read the present raw positions and use them as the nominal stance."""
@@ -300,7 +330,11 @@ class NonRLWalk:
         )
         return float(np.clip(normalized.max(), 0.0, 1.0))
 
-    def _stride_for_leg(self, leg: int, command: Vector3) -> Vector3:
+    def _stride_for_leg(
+        self,
+        leg: int,
+        command: Vector3,
+    ) -> tuple[Vector3, bool]:
         """Return the stance stroke caused by the requested body twist.
 
         For yaw, ``omega x r`` is evaluated separately at every nominal foot
@@ -315,10 +349,26 @@ class NonRLWalk:
         )
         stance_time = self.config.duty_factor / self.config.cycle_frequency
         stroke_xy = point_velocity * stance_time
-        length = float(np.linalg.norm(stroke_xy))
-        if length > self.config.max_stride:
-            stroke_xy *= self.config.max_stride / length
-        return np.array([stroke_xy[0], stroke_xy[1], 0.0], dtype=np.float64)
+        lateral_limit = (
+            self.config.max_stride
+            if self.config.max_lateral_stride is None
+            else self.config.max_lateral_stride
+        )
+        workspace_radius = float(
+            np.linalg.norm(
+                [
+                    stroke_xy[0] / self.config.max_stride,
+                    stroke_xy[1] / lateral_limit,
+                ]
+            )
+        )
+        clipped = workspace_radius > 1.0
+        if clipped:
+            stroke_xy /= workspace_radius
+        return (
+            np.array([stroke_xy[0], stroke_xy[1], 0.0], dtype=np.float64),
+            clipped,
+        )
 
     @staticmethod
     def _quintic(value: float) -> float:
@@ -347,16 +397,20 @@ class NonRLWalk:
         )
         parsed = self._clamp_command(VelocityCommand.from_array(parsed))
         activity = self._activity(parsed)
+        self._last_cycle_frequency = self.config.cycle_frequency
         cycle_phase = self._phase if phase is None else float(phase) % 1.0
         targets = self._nominal_feet.copy()
         stance_legs: list[int] = []
 
         if activity <= self.config.idle_epsilon:
+            self._last_stride_clip_fraction = 0.0
             return targets, tuple(range(1, 7))
 
+        clipped_legs = 0
         for leg in range(1, 7):
             leg_phase = (cycle_phase + self.PHASE_OFFSETS[leg]) % 1.0
-            stroke = self._stride_for_leg(leg, parsed)
+            stroke, clipped = self._stride_for_leg(leg, parsed)
+            clipped_legs += int(clipped)
             if leg_phase < self.config.duty_factor:
                 stance_legs.append(leg)
                 stance_progress = leg_phase / self.config.duty_factor
@@ -373,6 +427,7 @@ class NonRLWalk:
                     * activity
                     * self._swing_lift(swing_progress)
                 )
+        self._last_stride_clip_fraction = clipped_legs / 6.0
         return targets, tuple(stance_legs)
 
     def step(
@@ -394,13 +449,16 @@ class NonRLWalk:
         filtered = self._filter_command(requested, dt)
         activity = self._activity(filtered)
         if activity > self.config.idle_epsilon:
-            self._phase = (self._phase + dt * self.config.cycle_frequency) % 1.0
+            self._phase = (
+                self._phase + dt * self.config.cycle_frequency
+            ) % 1.0
 
         filtered_command = VelocityCommand.from_array(filtered)
         targets, stance_legs = self.foot_targets(
             filtered_command,
             phase=self._phase,
         )
+        requested_targets = targets.copy()
         results = self.kinematics.inverse(
             targets,
             initial_angles=self._last_angles,
@@ -410,6 +468,24 @@ class NonRLWalk:
             damping=self.config.ik_damping,
             max_step=self.config.ik_max_step,
         )
+        ik_backoff_scale = 1.0
+        for _ in range(self.config.ik_stride_backoff_attempts):
+            if all(result.converged for result in results.values()):
+                break
+            ik_backoff_scale *= self.config.ik_stride_backoff_factor
+            backed_off_targets = self._nominal_feet + (
+                requested_targets - self._nominal_feet
+            ) * ik_backoff_scale
+            results = self.kinematics.inverse(
+                backed_off_targets,
+                initial_angles=self._last_angles,
+                frame="body",
+                tolerance=self.config.ik_tolerance,
+                max_iterations=self.config.ik_max_iterations,
+                damping=self.config.ik_damping,
+                max_step=self.config.ik_max_step,
+            )
+            targets = backed_off_targets
 
         solved = self._last_angles.copy()
         for leg, result in results.items():
@@ -427,6 +503,9 @@ class NonRLWalk:
             motor_degrees=motor_degrees,
             ik_results=results,
             stance_legs=stance_legs,
+            cycle_frequency=self._last_cycle_frequency,
+            stride_clip_fraction=self._last_stride_clip_fraction,
+            ik_backoff_scale=ik_backoff_scale,
         )
 
     def send(self, sample: GaitSample, *, require_converged: bool = True) -> None:

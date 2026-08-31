@@ -128,9 +128,14 @@ def run_rl_joystick(
     device: str = "auto",
     seed: int = 7,
     standing_pose_degrees: Sequence[float] = SPORT_STANDING_DEGREES,
-    reference_motion: str = "non_rl",
+    reference_motion: str = "hardcoded",
 ) -> None:
-    """Run a PPO policy whose command is supplied by the common CLI joystick."""
+    """Run a PPO policy whose command is supplied by the common CLI joystick.
+
+    Replay defaults to the original hardcoded residual reference because the
+    pre-selection checkpoints were trained against that exact action meaning.
+    A Non-RL-trained checkpoint must opt into ``reference_motion="non_rl"``.
+    """
 
     checkpoint_path = Path(checkpoint).expanduser().resolve()
     _validate_ppo_zip(checkpoint_path)

@@ -45,15 +45,17 @@ DynamixelController  MuJoCoController
 ```text
 (vx, vy, yaw_rate)
    → clamp / low-pass filter
-   → 다리별 tripod phase
+   → 모터 속도 한계에 맞춘 고정 cadence와 다리별 tripod phase
    → stance 또는 swing 발 목표점
    → body yaw가 만드는 접선 속도 합성
+   → 전후/측면 타원형 보폭 제한
    → 각 다리 DLS inverse kinematics
+   → 실패 시 nominal 발 위치 쪽으로 adaptive backoff 후 재시도
    → radian → degree → Dynamixel raw
    → 18개 목표를 batch 전송
 ```
 
-각 다리의 neutral support point는 tire contact mesh의 최저 정점에서 추론한다. stance에서는 명령 반대 방향으로 발이 지면을 민다. swing에서는 quintic 보간과 lift를 사용해 다음 접촉점으로 이동한다. IK가 수렴하지 않거나 범위를 벗어나면 마지막으로 유효했던 관절각을 유지한다.
+각 다리의 neutral support point는 tire contact mesh의 부채꼴 끝단 중 가장 낮은 0.1 mm 패치의 중심에서 추론한다. 한 모서리 vertex를 고르면 44 mm 폭의 한쪽으로 IK가 치우쳐 접지 모멘트와 slip이 생긴다. stance에서는 명령 반대 방향으로 발이 지면을 민다. swing에서는 quintic 보간과 lift를 사용해 다음 접촉점으로 이동한다. 실물 공용 cadence는 0.8 Hz를 유지하고, 시뮬레이션/RL은 actuator 속도 profile sweep에서 선택한 0.7 Hz와 전후 60 mm·측면 50 mm 작업공간, 최대 4회 IK backoff를 사용한다. 그래도 수렴하지 않으면 마지막 유효 관절각을 유지하고 frame을 실패로 보고한다.
 
 ## 5. RL 환경 데이터 흐름
 

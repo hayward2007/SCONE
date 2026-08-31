@@ -216,23 +216,29 @@ HUD의 `grid`, `point_column`, `point_row`, `yaw_column`, `yaw_bar`, `motion`은
 |---|---|
 | `VelocityCommand.vx/vy/yaw_rate` | body 명령 3축; `from_array`는 shape `(3,)` 강제 |
 | `GaitConfig.control_frequency` | `50 Hz`; frame 생성/전송 속도 |
-| `cycle_frequency` | `0.8 Hz`; 기본 gait cycle 속도 |
+| `cycle_frequency` | 실물 공용 기본 `0.8 Hz`; 시뮬레이션/RL은 `0.7 Hz` |
 | `duty_factor` | `0.5`; 한 다리가 stance에 있는 cycle 비율 |
 | `step_height` | `0.035 m`; swing lift 높이 |
-| `max_stride` | `0.070 m`; 발 궤적 최대 길이. 시뮬레이션 bridge는 `0.050 m`로 override |
+| `max_stride` | `0.070 m`; 전후 발 궤적 한계. 시뮬레이션/RL은 `0.060 m` |
+| `max_lateral_stride` | 기본 `None`이면 `max_stride`와 동일. 시뮬레이션/RL은 `0.050 m` |
 | `max_vx/max_vy/max_yaw_rate` | `0.18/0.12/0.9`; 명령 clamp |
 | `command_time_constant` | `0.15 s`; low-pass command 응답 시간 |
 | `idle_epsilon` | `1e-3`; 명령을 정지로 판단하는 기준 |
-| `ik_tolerance` | `1e-4 m`; IK 수렴 residual |
+| `ik_tolerance` | 기본 `1e-4 m`; IK 수렴 residual. 시뮬레이션/RL은 계산량을 줄이기 위해 `1e-3 m` |
 | `ik_max_iterations` | `80`; 다리별 최대 반복 |
 | `ik_damping` | `2e-3`; DLS 안정화 |
 | `ik_max_step` | `0.15 rad`; 한 IK update 제한 |
+| `ik_stride_backoff_attempts` | 기본 `0`; 시뮬레이션/RL은 실패한 foot target을 최대 4회 축소 재시도 |
+| `ik_stride_backoff_factor` | `0.8`; 재시도마다 nominal 대비 발 오프셋 배율 |
 | `GaitSample.phase` | 생성 frame의 global phase |
 | `command` | 필터된 실제 적용 명령 |
 | `foot_targets` | 6×3 body-frame 발 목표 |
 | `motor_degrees` | actuator ID 순서의 18개 목표 degree |
 | `ik_results` | 다리 번호→수렴/잔차/반복 결과 |
 | `stance_legs` | 해당 frame에 지면을 지지하는 다리 tuple |
+| `cycle_frequency` | 해당 frame에 실제 적용된 cadence |
+| `stride_clip_fraction` | 타원형 작업공간에 의해 잘린 다리 비율 |
+| `ik_backoff_scale` | IK 재시도 후 실제 foot offset 배율, 미사용 시 `1.0` |
 | `TRIPOD_A/B` | `(1,4,5)` / `(2,3,6)` |
 | `PHASE_OFFSETS` | A 다리 `0.0`, B 다리 `0.5`로 반 cycle 분리 |
 
@@ -251,10 +257,14 @@ HUD의 `grid`, `point_column`, `point_row`, `yaw_column`, `yaw_bar`, `motion`은
 | `_last_update_time` | `update()`에서 실제 `dt` 계산; reset 시 `None` |
 | `_last_angles` | IK 실패 시 유지할 마지막 유효 18 joint radian |
 | `_nominal_feet` | nominal 자세의 6×3 body-frame support point |
-| `end_effector_points` | caller calibration 또는 각 tire mesh의 최저 정점 local 좌표 |
-| `world_from_body/world_from_geom/world_from_tire` | support vertex를 world↔body↔tire local 좌표로 바꾸는 회전행렬 |
+| `_last_cycle_frequency` | 최근 sample에 적용한 고정 cadence |
+| `_last_stride_clip_fraction` | 최근 sample의 작업공간 포화 다리 비율 |
+| `end_effector_points` | caller calibration 또는 각 tire mesh 말단 최저 0.1 mm 패치 중심의 local 좌표 |
+| `SUPPORT_PATCH_DEPTH` | `1e-4 m`; 부채꼴 말단 접촉 폭 중심을 구하는 최저 패치 두께 |
+| `world_from_body/world_from_geom/world_from_tire` | support patch를 world↔body↔tire local 좌표로 바꾸는 회전행렬 |
 | `point_velocity` | body translation에 yaw 접선 `[-ωy, ωx]`를 더한 각 발의 목표 지면 속도 |
-| `stride` | 속도와 stance 시간을 곱하고 `max_stride`로 제한한 이동 벡터 |
+| `stride` | 속도와 stance 시간을 곱하고 전후/측면 타원형 작업공간으로 제한한 이동 벡터 |
+| `ik_backoff_scale` | 실패 target을 nominal 쪽으로 축소하는 누적 배율 |
 | `stance_progress/swing_progress` | 각 구간 내부의 0–1 보간 위치 |
 | `blend` | endpoint에서 속도/가속도가 부드러운 quintic 보간값 |
 | `lift` | swing 중 z축 추가 높이 |

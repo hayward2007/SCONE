@@ -45,10 +45,13 @@ class _FakeQuestion:
 class _FakeInquirer:
     def __init__(self) -> None:
         self.choices = []
+        self.default = None
 
-    def select(self, *, message: str, choices, **_options):
+    def select(self, *, message: str, choices, **options):
         self.choices = choices
-        return _FakeQuestion(choices[0].value)
+        self.default = options.get("default")
+        selected = choices[0].value if self.default is None else self.default
+        return _FakeQuestion(selected)
 
 
 class RLInquiryCommandTests(unittest.TestCase):
@@ -170,7 +173,7 @@ class RLInquiryCommandTests(unittest.TestCase):
         self.assertIn(".venv.python-old_", install)
         self.assertIn("pip install --upgrade pip setuptools wheel", install)
         self.assertIn("--only-binary=mujoco", install)
-        self.assertIn("-r requirements-rl.txt", install)
+        self.assertIn("-r requirements.txt", install)
 
     def test_remote_capacity_command_is_portable_shell(self) -> None:
         command = build_remote_capacity_command()
@@ -306,7 +309,7 @@ class RLInquiryCommandTests(unittest.TestCase):
         self.assertEqual(name, "standard")
         self.assertEqual(degrees, STANDARD_STANDING_DEGREES)
 
-    def test_reference_motion_prompt_puts_non_rl_first(self) -> None:
+    def test_reference_motion_prompt_defaults_new_training_to_non_rl(self) -> None:
         fake_inquirer = _FakeInquirer()
 
         with patch(
@@ -317,6 +320,19 @@ class RLInquiryCommandTests(unittest.TestCase):
 
         self.assertEqual(selection, "non_rl")
         self.assertEqual(fake_inquirer.choices[0].value, "non_rl")
+        self.assertEqual(fake_inquirer.default, "non_rl")
+
+    def test_reference_motion_prompt_can_restore_legacy_replay_reference(self) -> None:
+        fake_inquirer = _FakeInquirer()
+
+        with patch(
+            "src.rl.inquiry._inquirer",
+            return_value=(fake_inquirer, _FakeChoice),
+        ):
+            selection = prompt_reference_motion(default="hardcoded")
+
+        self.assertEqual(selection, "hardcoded")
+        self.assertEqual(fake_inquirer.default, "hardcoded")
 
 
 if __name__ == "__main__":

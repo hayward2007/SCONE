@@ -22,9 +22,18 @@ from .viewer import configure_simulation_viewer
 from ..terrain import TerrainType
 
 
-# The high Standard stance reaches the edge of its horizontal IK workspace at
-# the shared 70 mm stride. Keep this conservative override simulation-local.
-NON_RL_SIMULATION_GAIT_CONFIG = GaitConfig(max_stride=0.050)
+# The high Standard stance fails IK at the shared 70 mm stride. Keep the
+# validated 60 mm workspace and a hardware-profile-compatible fixed 0.7 Hz
+# cadence.
+# Faster cadence outruns the initialized actuator speed profile and produces
+# mostly lateral slip instead of forward travel.
+NON_RL_SIMULATION_GAIT_CONFIG = GaitConfig(
+    cycle_frequency=0.7,
+    max_stride=0.060,
+    max_lateral_stride=0.050,
+    ik_tolerance=1e-3,
+    ik_stride_backoff_attempts=4,
+)
 
 
 class SimulationControl(str, Enum):
@@ -56,7 +65,7 @@ def run(
     checkpoint: str | Path | None = None,
     rl_device: str = "auto",
     rl_standing_pose_degrees: Sequence[float] = SPORT_STANDING_DEGREES,
-    rl_reference_motion: str = "non_rl",
+    rl_reference_motion: str = "hardcoded",
     verbose: bool = False,
 ) -> None:
     """Open one viewer while terminal input drives the shared robot API.

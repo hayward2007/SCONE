@@ -1,6 +1,6 @@
 # 문제와 해결 과정
 
-이 문서는 코드, 테스트, `RL_Log.md`, Git 기록, 논문 증거 계획을 함께 비교해 정리했다. 과거 진단이 현재 구현과 다르면 현재 코드 상태를 별도로 적었다.
+이 문서는 코드, 테스트, [`08-rl-development-log.md`](08-rl-development-log.md), Git 기록, 논문 증거 계획을 함께 비교해 정리했다. 과거 진단이 현재 구현과 다르면 현재 코드 상태를 별도로 적었다.
 
 ## 1. floating-base 모델이 바닥으로 무너지는 문제
 
@@ -90,8 +90,12 @@ CAD export 이름, 다리 번호, actuator ID가 서로 다른 규칙을 사용�
 - damped least-squares, joint step 제한, backtracking을 사용한다.
 - 모든 18개 결과가 finite, converged, 유효 범위일 때만 batch 전송한다.
 - 실패한 다리는 마지막 유효 관절각을 유지한다.
-- 기본 gait의 제한은 보수적으로 유지하고, 시뮬레이션 Non-RL에만 `max_stride=0.050 m` 설정을 적용한다.
+- 실물 공용 cadence는 0.8 Hz를 유지하고, 시뮬레이션/RL Non-RL 기준은 별도 actuator 속도 profile benchmark에서 slip과 전진의 균형이 나은 0.7 Hz를 사용한다.
+- 시뮬레이션/RL에서는 전후 `0.060 m`·측면 `0.050 m` 타원형 보폭 제한을 적용한다.
+- 복합 명령의 특정 다리 IK가 실패하면 nominal 발 위치 쪽으로 0.8배씩 최대 4회 backoff해 다시 푼다.
 - 회전은 각 발의 위치에 `(-yaw*y, yaw*x)` 접선 속도를 더해 만든다.
+
+초기 sweep는 RL 환경의 무제한 관절 profile 속도를 사용해 1.4 Hz를 잘못 채택했다. 실제 CLI와 같이 `walking_speed=100`으로 초기화한 별도 controller에서 6초간 최대 전진을 비교하면 1.4 Hz는 `0.0143 m/s`, 0.8 Hz는 `0.0502 m/s`였다. 또한 support point를 말단 패치 중심으로 교정하고 0.7 Hz를 적용했다. 같은 물리 profile의 Standard zero-action 500-step에서 Non-RL은 `0.05602 m/s`, hardcoded는 `0.01633 m/s`였고 slip penalty도 Non-RL이 약 42% 작았다. 다만 이 profile을 기존 PPO 재생에 뒤늦게 강제하면 학습 동역학이 달라져 15.4M policy가 전진 대신 후진했다. RL reset은 기존 checkpoint 호환을 위해 무제한 profile을 유지하고, 물리 profile 학습은 별도 버전으로 0 step부터 시작해야 한다. Sport는 느려 Standard를 권장한다.
 
 ## 6. body velocity 좌표계 오류
 
@@ -157,7 +161,7 @@ body center velocity나 단순 foot body velocity는 실제 타이어-지면 접
 
 ### 발견된 예
 
-- `RL_Log.md`의 일부 reward weight는 현재 `RewardConfig` 기본값과 다르다.
+- 개발 기록의 일부 reward weight는 현재 `RewardConfig` 기본값과 다르다.
 - 구형 논문과 아카이브에는 속도가 `0.05`, `0.07`, `0.5`, `0.7 m/s` 등 서로 다르게 기록되어 있다.
 - ICRA 초안의 정량 결과는 아직 `TODO`이고 evidence matrix가 완성되지 않았다.
 - 구형 SCONEv1 코드는 AX/MX 혼합, 재귀 gait, MobileNetSSD 카메라를 포함하지만 현재 SCONEv2 runtime 구조가 아니다.
