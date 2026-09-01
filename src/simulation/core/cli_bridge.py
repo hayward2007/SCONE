@@ -12,39 +12,76 @@ from pathlib import Path
 import mujoco
 import mujoco.viewer
 
-from ...cli import run_joystick_cli, run_legacy_joystick_cli
-from ...locomotion import GaitConfig
+from ...cli import (
+    run_legacy_joystick_cli,
+    run_tripod_gait_joystick_cli,
+)
+from ...hardware import Actuator
+from ...locomotion import GaitConfig, SconeGaitConfig
 from ...main import SCONE
 from ...rl.stance import SPORT_STANDING_DEGREES
 from .controller import MuJoCoController
 from .model import DEFAULT_MODEL_PATH, load_model
+from .scone_rolling_gait import (
+    RollGaitConfig,
+    run_roll_gait_joystick_cli,
+)
+from .stair_climber import run_scone_stair_joystick_cli
 from .viewer import configure_simulation_viewer
 from ..terrain import TerrainType
 
 
-# The high Standard stance fails IK at the shared 70 mm stride. Keep the
-# validated 60 mm workspace and a hardware-profile-compatible fixed 0.7 Hz
-# cadence.
-# Faster cadence outruns the initialized actuator speed profile and produces
-# mostly lateral slip instead of forward travel.
-NON_RL_SIMULATION_GAIT_CONFIG = GaitConfig(
-    cycle_frequency=0.7,
-    max_stride=0.060,
-    max_lateral_stride=0.050,
+# Model gait tuning is deliberately opt-in after ``SCONE.initialize``.  PPO
+# replay retains the dynamics, gains, and unlimited profile used in training.
+TRIPOD_GAIT_SIMULATION_CONFIG = GaitConfig(
+    cycle_frequency=1.0,
+    step_height=0.025,
+    max_stride=0.090,
+    max_lateral_stride=0.070,
     ik_tolerance=1e-3,
     ik_stride_backoff_attempts=4,
 )
+SCONE_GAIT_SIMULATION_CONFIG = SconeGaitConfig(
+    ik_tolerance=1e-3,
+    ik_stride_backoff_attempts=4,
+)
+ROLL_GAIT_SIMULATION_CONFIG = RollGaitConfig()
+# Compatibility constant for code written before continuous rotation was
+# renamed from scone-gait to roll-gait.
+SCONE_ROLLING_GAIT_SIMULATION_CONFIG = ROLL_GAIT_SIMULATION_CONFIG
+# Compatibility constant for external code written before the gait rename.
+NON_RL_SIMULATION_GAIT_CONFIG = TRIPOD_GAIT_SIMULATION_CONFIG
+
+
+def configure_model_gait_controller(controller: MuJoCoController) -> None:
+    """Apply measured non-RL gait tuning without changing PPO or hardware."""
+
+    # Zero means "not profile-limited" in the DYNAMIXEL API. The MuJoCo
+    # dcmotor PID, voltage, and torque limits still apply. The previous 160/50
+    # profile lagged the clipped Cartesian gait by up to 52 degrees, which
+    # made the sector contacts alternately push forward and backward.
+    controller.set_all_speed(0)
+    controller.set_accelerations(
+        {motor_id: 0 for motor_id in Actuator.Index.XM}
+    )
+    controller.set_gait_position_stiffness(2.0)
 
 
 class SimulationControl(str, Enum):
     OLD = "old"
-    NON_RL = "non_rl"
+    TRIPOD_GAIT = "tripod-gait"
+    SCONE_GAIT = "scone-gait"
+    ROLL_GAIT = "roll-gait"
+    SCONE_STAIR = "scone-stair"
     RL = "rl"
+    NON_RL = "tripod-gait"
 
     @classmethod
     def parse(cls, value: "SimulationControl | str") -> "SimulationControl":
         if isinstance(value, cls):
             return value
+        if value == "non_rl":
+            return cls.TRIPOD_GAIT
         try:
             return cls(value)
         except ValueError as error:
@@ -61,7 +98,7 @@ def run(
     floating_base: bool = True,
     terrain: TerrainType | str = TerrainType.FLAT,
     terrain_seed: int = 7,
-    control: SimulationControl | str = SimulationControl.NON_RL,
+    control: SimulationControl | str = SimulationControl.TRIPOD_GAIT,
     checkpoint: str | Path | None = None,
     rl_device: str = "auto",
     rl_standing_pose_degrees: Sequence[float] = SPORT_STANDING_DEGREES,
@@ -76,9 +113,12 @@ def run(
 
     selected_terrain = TerrainType.parse(terrain)
     selected_control = SimulationControl.parse(control)
-    if selected_control is SimulationControl.RL:
+    if selected_control in (SimulationControl.RL, SimulationControl.SCONE_GAIT):
         if checkpoint is None:
-            raise ValueError("RL simulation control requires a PPO checkpoint")
+            raise ValueError(
+                f"{selected_control.value} simulation control requires a PPO "
+                "checkpoint"
+            )
         from ...rl.joystick_control import run_rl_joystick
 
         run_rl_joystick(
@@ -89,6 +129,7 @@ def run(
             device=rl_device,
             standing_pose_degrees=rl_standing_pose_degrees,
             reference_motion=rl_reference_motion,
+            hybrid_scone=selected_control is SimulationControl.SCONE_GAIT,
         )
         return
 
@@ -109,16 +150,33 @@ def run(
             robot.initialize()
             if selected_control is SimulationControl.OLD:
                 run_legacy_joystick_cli(robot, stop_event=stop_event)
-            else:
-                run_joystick_cli(
+            elif selected_control is SimulationControl.TRIPOD_GAIT:
+                configure_model_gait_controller(controller)
+                run_tripod_gait_joystick_cli(
                     robot,
                     stop_event=stop_event,
-                    gait_config=NON_RL_SIMULATION_GAIT_CONFIG,
+                    gait_config=TRIPOD_GAIT_SIMULATION_CONFIG,
                     # The loaded Standard pose sags under gravity before the
                     # first frame.  Re-centering IK on that edge-of-workspace
                     # transient makes legs 2/5 fail immediately.  Simulation
                     # instead keeps the selected, known-solvable profile pose.
                     calibrate_from_controller=False,
+                )
+            elif selected_control is SimulationControl.ROLL_GAIT:
+                run_roll_gait_joystick_cli(
+                    robot,
+                    stop_event=stop_event,
+                    config=ROLL_GAIT_SIMULATION_CONFIG,
+                )
+            elif selected_control is SimulationControl.SCONE_STAIR:
+                run_scone_stair_joystick_cli(
+                    robot,
+                    terrain=selected_terrain,
+                    stop_event=stop_event,
+                )
+            else:  # pragma: no cover - SimulationControl.parse rejects this.
+                raise AssertionError(
+                    f"unhandled simulation control: {selected_control}"
                 )
             robot.close()
         except BaseException as error:
@@ -182,4 +240,13 @@ def run(
         raise cli_errors[0]
 
 
-__all__ = ["NON_RL_SIMULATION_GAIT_CONFIG", "SimulationControl", "run"]
+__all__ = [
+    "NON_RL_SIMULATION_GAIT_CONFIG",
+    "ROLL_GAIT_SIMULATION_CONFIG",
+    "SCONE_GAIT_SIMULATION_CONFIG",
+    "SCONE_ROLLING_GAIT_SIMULATION_CONFIG",
+    "SimulationControl",
+    "TRIPOD_GAIT_SIMULATION_CONFIG",
+    "configure_model_gait_controller",
+    "run",
+]

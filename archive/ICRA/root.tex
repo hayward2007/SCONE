@@ -1,63 +1,69 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% ICRA 2027 working manuscript for the SCONE project.
-% Initial submission: keep \icraanonymoustrue and remove identifying metadata.
+% ICRA 2027 double-anonymous working manuscript.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \documentclass[letterpaper,10pt,conference]{ieeeconf}
 
 \IEEEoverridecommandlockouts
 \overrideIEEEmargins
 
-\usepackage{amsmath}
-\usepackage{amssymb}
+% ieeeconf sets \rmdefault to ptm (Times), which XeLaTeX cannot resolve in its
+% Unicode (TU) encoding, silently degrading every bold/italic run. TeX Gyre
+% Termes is the metric-compatible Times clone shipped with TeX Live, so the
+% manuscript keeps the required IEEE Times appearance with a complete family.
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Termes}
+\setsansfont{TeX Gyre Heros}
+\setmonofont{TeX Gyre Cursor}
+\usepackage{amsmath,amssymb}
 \usepackage{booktabs}
 \usepackage{cite}
 \usepackage{graphicx}
 \usepackage{url}
 
-\graphicspath{{figures/}}
+\graphicspath{{figures/}{../simulation_media/images/}}
+\newcommand{\vect}[1]{\vec{#1}}
+\newcommand{\R}{\mathbb{R}}
+% Single point of control for the platform and gait names. For a
+% double-anonymous submission set \gaitname to a neutral string (e.g.
+% "Arc-Reuse Gait"): the project name must not appear in the review version,
+% and a public repository under that name must be closed or anonymously
+% mirrored for the review period.
+\newcommand{\robotname}{the proposed platform}
+\newcommand{\gaitname}{SCONE-gait}
 
-% Review mode must remain anonymous for the initial ICRA submission.
-\newif\ificraanonymous
-\icraanonymoustrue
-
-% Keep visible while drafting; set to false before submission.
-\newif\ificradraft
-\icradrafttrue
-
-\ificraanonymous
-  \newcommand{\robotname}{the proposed platform}
-  \title{\LARGE \bf
-  An Actuated Arc-Leg Hexapod for Walking, Quasi-Rolling, and Stair Climbing}
-  \author{\mbox{}}
-\else
-  \newcommand{\robotname}{SCONE}
-  \title{\LARGE \bf
-  SCONE: An Actuated Arc-Leg Hexapod for Walking, Quasi-Rolling, and Stair Climbing}
-  \author{Hyoung-Seok Kim}% Add affiliations only after acceptance.
-\fi
-
-\newcommand{\draftnote}[1]{%
-  \ificradraft\textbf{[TODO: #1]}\fi}
+\title{\LARGE \bf
+An Actuated Arc--Leg Hexapod for Walking, Rolling, and Stair-Edge Locomotion}
+\author{\mbox{}}
 
 \begin{document}
-
 \maketitle
 \thispagestyle{empty}
 \pagestyle{empty}
 
 \begin{abstract}
-Mobile robots designed for efficient motion on flat ground often lose mobility on
-stairs, whereas articulated legged robots can negotiate obstacles at the cost of
-greater control complexity and slower transport. This paper studies whether one
-distal mechanism can support both operating regimes without a separate wheel-leg
-transformation mechanism. \robotname{} is a six-legged robot whose eighteen
-actuators include six arc-shaped distal links that function as feet during
-articulated walking, as quasi-wheels during fast flat-ground locomotion, and as
-edge-engagement elements during stair climbing. We describe the mechanism,
-mode-transition controller, and an experimental protocol covering untethered
-operation, walking, quasi-rolling, continuous stair ascent, and irregular terrain.
-\draftnote{Replace this final sentence with verified numerical results, trial
-counts, and uncertainty after the measurement audit.}
+Wheels transport efficiently on level ground, whereas articulated legs place
+contacts across discontinuities; conventional wheel--leg hybrids commonly retain
+both mechanisms and their associated actuation. We study a different compromise:
+each of six 3-DoF legs terminates in one actuated, open C-shaped arc that is
+reused as a planted foot, a rolling contact, and a stair-edge hook. One
+controller runs the alternating-tripod walking reference and continuous arc
+rotation on the same six distal joints at the same instant: those joints are
+placed in velocity mode and the rolling rate is superposed on the differentiated
+walking reference, so neither a mode switch nor a hardware change is required.
+In a 500-Hz MuJoCo model, a same-platform ablation at a commanded
+$0.18\,\mathrm{m\,s^{-1}}$ yielded $0.117\,\mathrm{m\,s^{-1}}$ for articulated
+walking, $0.090\,\mathrm{m\,s^{-1}}$ for distal-only rotation, and
+$0.200\,\mathrm{m\,s^{-1}}$ for full-body rolling. A closed-wheel moment balance
+places a $122.5\,\mathrm{mm}$ riser limit on rotation over a rim; on three
+three-step geometries, rotation alone nevertheless cleared a $0.15\,\mathrm{m}$
+riser, which isolates the open sector acting as a hook, whereas only the
+coordinated controller reached the top of the $0.20\,\mathrm{m}$ riser with
+$0.35\,\mathrm{m}$ tread, which isolates articulation. Walk--roll and roll--walk
+mode switches completed in $0.342$ and $0.660\,\mathrm{s}$. These deterministic simulation trials establish a
+reproducible operating envelope and isolate the benefit of coordinating
+articulation with the shared arc contact. The study is a simulation-scope design
+analysis and does not yet validate physical speed, endurance, or stair
+reliability.
 \end{abstract}
 
 \input{sections/01_introduction}
@@ -70,5 +76,4 @@ counts, and uncertainty after the measurement audit.}
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}
-
 \end{document}

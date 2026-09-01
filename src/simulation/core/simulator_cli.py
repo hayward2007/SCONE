@@ -8,11 +8,20 @@ from typing import Any
 
 from .cli_bridge import SimulationControl, run
 from .model import DEFAULT_MODEL_PATH
+from .stair_demo import (
+    StairDemoStrategy,
+    run_automatic_stair_demo,
+)
 from ...rl.stance import SPORT_STANDING_DEGREES
 from ..terrain import TERRAIN_CHOICES, TERRAIN_LABELS, TerrainType
 
 
-RL_REFERENCE_MOTION_CHOICES = ("non_rl", "hardcoded")
+RL_REFERENCE_MOTION_CHOICES = (
+    "tripod-gait",
+    "scone-gait",
+    "hardcoded",
+    "non_rl",
+)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -34,14 +43,25 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--fixed-base", action="store_true")
     parser.add_argument(
         "--control",
-        choices=tuple(control.value for control in SimulationControl),
-        default=SimulationControl.NON_RL.value,
+        choices=(
+            *(control.value for control in SimulationControl),
+            "non_rl",
+        ),
+        default=SimulationControl.TRIPOD_GAIT.value,
         help="simulation locomotion controller",
+    )
+    parser.add_argument(
+        "--demo",
+        choices=tuple(strategy.value for strategy in StairDemoStrategy),
+        help=(
+            "run a non-interactive stair demo; flat default becomes stairs-2, "
+            "and compare shows hardcoded then improved"
+        ),
     )
     parser.add_argument(
         "--checkpoint",
         type=Path,
-        help="PPO checkpoint required by --control rl",
+        help="PPO checkpoint required by --control rl or scone-gait",
     )
     parser.add_argument("--rl-device", default="auto")
     parser.add_argument(
@@ -50,7 +70,8 @@ def build_parser() -> argparse.ArgumentParser:
         default="hardcoded",
         help=(
             "residual reference used when replaying PPO; legacy checkpoints "
-            "use hardcoded, and non_rl must only be used with a matching model"
+            "use hardcoded; tripod-gait/scone-gait require matching models; "
+            "non_rl is a legacy alias for tripod-gait"
         ),
     )
     parser.add_argument(
@@ -68,10 +89,32 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     if not args.model.expanduser().exists():
         raise SystemExit(f"model not found: {args.model}")
-    if args.control == SimulationControl.RL.value and args.checkpoint is None:
-        raise SystemExit("--checkpoint is required with --control rl")
-    if args.control == SimulationControl.RL.value and args.fixed_base:
-        raise SystemExit("--fixed-base is not supported with --control rl")
+    policy_controls = {
+        SimulationControl.RL.value,
+        SimulationControl.SCONE_GAIT.value,
+    }
+    if args.control in policy_controls and args.checkpoint is None:
+        raise SystemExit(
+            f"--checkpoint is required with --control {args.control}"
+        )
+    if args.control in policy_controls and args.fixed_base:
+        raise SystemExit(
+            f"--fixed-base is not supported with --control {args.control}"
+        )
+    if args.demo is not None:
+        if args.fixed_base:
+            raise SystemExit("--fixed-base is not supported with --demo")
+        demo_terrain = (
+            TerrainType.STAIRS_2
+            if args.terrain == TerrainType.FLAT.value
+            else TerrainType.parse(args.terrain)
+        )
+        run_automatic_stair_demo(
+            args.demo,
+            terrain=demo_terrain,
+            model_path=args.model,
+        )
+        return 0
     run(
         args.model,
         profile=args.profile,
@@ -134,15 +177,95 @@ def select_simulation_control() -> SimulationControl:
                 name="Legacy mode control · Walk/Drive/Climb (R로 전환)",
             ),
             Choice(
-                value=SimulationControl.NON_RL,
-                name="Non-RL control · 모델 기반 연속 보행",
+                value=SimulationControl.TRIPOD_GAIT,
+                name="tripod-gait · 고전 교대 삼각보 + IK",
+            ),
+            Choice(
+                value=SimulationControl.SCONE_GAIT,
+                name=(
+                    "scone-gait · 저속/yaw PPO + 고속 점접지/말단회전 "
+                    "하이브리드"
+                ),
+            ),
+            Choice(
+                value=SimulationControl.ROLL_GAIT,
+                name="roll-gait · 여섯 부채꼴 말단 연속 회전 (실험)",
+            ),
+            Choice(
+                value=SimulationControl.SCONE_STAIR,
+                name=(
+                    "scone-stair · 여섯 부채꼴 공통 위상 폐루프 "
+                    "계단 모션 (시뮬레이션)"
+                ),
             ),
             Choice(
                 value=SimulationControl.RL,
                 name="RL control · PPO Walk + R로 Drive/Climb 전환",
             ),
         ],
-        default=SimulationControl.NON_RL,
+        default=SimulationControl.TRIPOD_GAIT,
+    )
+    return prompt.execute()
+
+
+def select_stair_demo_strategy() -> StairDemoStrategy:
+    """Choose a no-input stair demonstration."""
+
+    try:
+        from InquirerPy import inquirer
+        from InquirerPy.base.control import Choice
+    except ImportError as error:
+        raise RuntimeError(
+            "InquirerPy가 필요합니다. `python -m pip install -r requirements.txt` "
+            "후 다시 실행하세요."
+        ) from error
+    prompt: Any = inquirer.select(
+        message="자동 계단 시뮬레이션 방식을 선택하세요.",
+        choices=[
+            Choice(
+                value=StairDemoStrategy.COMPARE,
+                name="비교 · 공통 위상 개방루프 후 폐루프 개선형",
+            ),
+            Choice(
+                value=StairDemoStrategy.HARDCODED,
+                name="하드코딩 · 앞 1단 270° 수직 + 고정 속도 개방루프",
+            ),
+            Choice(
+                value=StairDemoStrategy.IMPROVED,
+                name="개선형 · 높이별 앞 1단 지지 + 공통 위상 폐루프",
+            ),
+        ],
+        default=StairDemoStrategy.COMPARE,
+    )
+    return prompt.execute()
+
+
+def select_stair_terrain() -> TerrainType:
+    """Choose one of the three deterministic stair courses."""
+
+    try:
+        from InquirerPy import inquirer
+        from InquirerPy.base.control import Choice
+    except ImportError as error:
+        raise RuntimeError(
+            "InquirerPy가 필요합니다. `python -m pip install -r requirements.txt` "
+            "후 다시 실행하세요."
+        ) from error
+    stairs = (
+        TerrainType.STAIRS_1,
+        TerrainType.STAIRS_2,
+        TerrainType.STAIRS_3,
+    )
+    prompt: Any = inquirer.select(
+        message="자동 계단 지형을 선택하세요.",
+        choices=[
+            Choice(
+                value=terrain,
+                name=f"{TERRAIN_LABELS[terrain]} · {terrain.value}",
+            )
+            for terrain in stairs
+        ],
+        default=TerrainType.STAIRS_2,
     )
     return prompt.execute()
 

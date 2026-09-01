@@ -144,8 +144,14 @@ HUD의 `grid`, `point_column`, `point_row`, `yaw_column`, `yaw_bar`, `motion`은
 | `payload` | little-endian sync-write bytes |
 | `mx`, `xm` | `set_speeds()`에서 moving-speed와 profile-velocity 쓰기를 분리한 mapping |
 | `supported` | acceleration register가 있는 motor만 남긴 mapping |
+| `wait_until_raw_positions()` | present-position을 20 ms 간격으로 읽어 모든 목표가 tolerance 안에 들 때까지 대기; timeout이면 `False` |
+| `verify_drive_stage1_settings()` | ID 7–12의 mode/torque/profile velocity/profile acceleration/goal/present를 read-only 검증 |
+| `readings` | stage-1 ID별 live register dictionary |
+| `failures` | 기대값과 다른 register/position 메시지; 하나라도 있으면 `ControllerError` |
 
 `set_mode()`는 torque off→register write→torque on 순서다. `degrees_to_raw()`는 `degree/360×4096`으로 변환하며 기계적 범위 제한은 이 계층이 하지 않는다.
+초기화는 ID 7–18 모든 XM을 position mode로 명시한다. Drive stage-1 기대값은
+position mode 3, torque 1, velocity 50, acceleration 20, goal/present 2048이다.
 
 ## 7. `src/hardware/discovery.py`
 
@@ -192,6 +198,7 @@ HUD의 `grid`, `point_column`, `point_row`, `yaw_column`, `yaw_bar`, `motion`은
 | `first_is_left`, `hold_*`, `release_*` | 선택된 tripod 순서에 맞춰 bound method를 구성 |
 | `sign` | 홀짝 다리의 거울상 회전 offset 부호 |
 | `Drive._run(velocity)` | 모든 lower motor에 1초간 적용할 raw velocity; `left` 음수, `right` 양수 |
+| Drive stage-1 verifier | physical backend가 제공할 때 ID 7–12 live register를 확인; MuJoCo에는 적용하지 않음 |
 | `Climb.middle_ids/lower_ids` | 준비하거나 측면 자세로 만들 tripod의 관절 그룹 |
 | `Climb.velocity` | 2.5초 wheel drive 속도; 방향과 profile에 의해 결정 |
 
@@ -208,7 +215,7 @@ HUD의 `grid`, `point_column`, `point_row`, `yaw_column`, `yaw_bar`, `motion`은
 | `_error` | worker 예외를 호출 thread로 다시 전달 |
 | `_worker` | blocking legacy stride를 terminal/viewer와 분리하는 daemon thread |
 
-## 11. `src/locomotion/non_rl_walk.py`
+## 11. `src/locomotion/tripod_gait.py`와 `scone_gait.py`
 
 ### 데이터 클래스와 상수
 
@@ -216,11 +223,11 @@ HUD의 `grid`, `point_column`, `point_row`, `yaw_column`, `yaw_bar`, `motion`은
 |---|---|
 | `VelocityCommand.vx/vy/yaw_rate` | body 명령 3축; `from_array`는 shape `(3,)` 강제 |
 | `GaitConfig.control_frequency` | `50 Hz`; frame 생성/전송 속도 |
-| `cycle_frequency` | 실물 공용 기본 `0.8 Hz`; 시뮬레이션/RL은 `0.7 Hz` |
+| `cycle_frequency` | 공용 기본 `0.8 Hz`; 비-RL MuJoCo 조종 `0.8 Hz`, RL tripod reference만 `0.7 Hz` |
 | `duty_factor` | `0.5`; 한 다리가 stance에 있는 cycle 비율 |
 | `step_height` | `0.035 m`; swing lift 높이 |
-| `max_stride` | `0.070 m`; 전후 발 궤적 한계. 시뮬레이션/RL은 `0.060 m` |
-| `max_lateral_stride` | 기본 `None`이면 `max_stride`와 동일. 시뮬레이션/RL은 `0.050 m` |
+| `max_stride` | `0.070 m`; 전후 발 궤적 한계. 비-RL MuJoCo 조종은 `0.080 m`, RL reference는 `0.060 m` |
+| `max_lateral_stride` | 기본 `None`이면 `max_stride`와 동일. 비-RL MuJoCo 조종은 `0.060 m`, RL reference는 `0.050 m` |
 | `max_vx/max_vy/max_yaw_rate` | `0.18/0.12/0.9`; 명령 clamp |
 | `command_time_constant` | `0.15 s`; low-pass command 응답 시간 |
 | `idle_epsilon` | `1e-3`; 명령을 정지로 판단하는 기준 |
@@ -242,7 +249,7 @@ HUD의 `grid`, `point_column`, `point_row`, `yaw_column`, `yaw_bar`, `motion`은
 | `TRIPOD_A/B` | `(1,4,5)` / `(2,3,6)` |
 | `PHASE_OFFSETS` | A 다리 `0.0`, B 다리 `0.5`로 반 cycle 분리 |
 
-### `NonRLWalk` 상태
+### `TripodGait` 상태
 
 | 이름 | 목적·사용처 |
 |---|---|
@@ -263,6 +270,16 @@ HUD의 `grid`, `point_column`, `point_row`, `yaw_column`, `yaw_bar`, `motion`은
 | `SUPPORT_PATCH_DEPTH` | `1e-4 m`; 부채꼴 말단 접촉 폭 중심을 구하는 최저 패치 두께 |
 | `world_from_body/world_from_geom/world_from_tire` | support patch를 world↔body↔tire local 좌표로 바꾸는 회전행렬 |
 | `point_velocity` | body translation에 yaw 접선 `[-ωy, ωx]`를 더한 각 발의 목표 지면 속도 |
+
+`SconeGaitConfig`는 bounded 학습 reference 설정과 함께
+`continuous_rotation`, `point_support_ratio`, `swing_roll_hold_ratio`,
+`effective_roll_radius`, `max_roll_rate_degrees`를 추가한다. `SconeGait`는 각 말단
+mesh의 접선/극성을 자세마다 보정하고, interactive 고속 route에서는
+`_continuous_roll_degrees`를 누적해 IK 2단 움직임과 실제 다회전을 합성한다.
+비-RL simulation의 continuous `SconeRollingGait` 변수는
+[`02-kinematics-simulation-terrain.md`](02-kinematics-simulation-terrain.md)에
+분리해 기록한다.
+이전 `non_rl_walk.py`와 `NonRLWalk`는 `TripodGait` 호환 별칭이다.
 | `stride` | 속도와 stance 시간을 곱하고 전후/측면 타원형 작업공간으로 제한한 이동 벡터 |
 | `ik_backoff_scale` | 실패 target을 nominal 쪽으로 축소하는 누적 배율 |
 | `stance_progress/swing_progress` | 각 구간 내부의 0–1 보간 위치 |

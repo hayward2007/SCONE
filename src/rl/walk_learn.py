@@ -45,7 +45,12 @@ from stable_baselines3.common.env_checker import check_env
 from stable_baselines3.common.vec_env import DummyVecEnv, SubprocVecEnv, VecMonitor
 
 from src.hardware.actuator import Actuator
-from src.locomotion import GaitConfig, NonRLWalk
+from src.locomotion import (
+    GaitConfig,
+    SconeGait,
+    SconeGaitConfig,
+    TripodGait,
+)
 from src.rl.motion_profile import motion_profile_for_standing_pose
 from src.rl.policy_compat import load_compatible_policy, observation_for_policy
 from src.rl.stance import SPORT_STANDING_DEGREES, validate_standing_pose
@@ -148,7 +153,18 @@ CURRICULUM_RANGES: dict[str, np.ndarray] = {
 }
 
 OBSERVATION_COMMAND_SCALE = np.array([0.50, 0.25, 0.80], dtype=np.float64)
-REFERENCE_MOTION_CHOICES = ("non_rl", "hardcoded")
+REFERENCE_MOTION_CHOICES = (
+    "tripod-gait",
+    "scone-gait",
+    "hardcoded",
+    "non_rl",
+)
+
+
+def normalize_reference_motion(value: str) -> str:
+    """Map serialized legacy names to the canonical gait names."""
+
+    return "tripod-gait" if value == "non_rl" else value
 
 
 class NeutralResidualGate:
@@ -256,7 +272,7 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         self.render_mode = render_mode
         self.reward_config = reward_config or RewardConfig()
         self.walk_config = walk_config or WalkConfig()
-        self.reference_motion = reference_motion
+        self.reference_motion = normalize_reference_motion(reference_motion)
         self.terrain = TerrainType.parse(terrain)
         self.terrain_seed = terrain_seed
 
@@ -333,9 +349,9 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         self._motion_profile = motion_profile_for_standing_pose(
             self.default_degrees
         )
-        self._non_rl_reference: NonRLWalk | None = None
-        if self.reference_motion == "non_rl":
-            self._non_rl_reference = NonRLWalk(
+        self._reference_gait: TripodGait | SconeGait | None = None
+        if self.reference_motion == "tripod-gait":
+            self._reference_gait = TripodGait(
                 profile=self._motion_profile,
                 model_path=self.model_path,
                 config=GaitConfig(
@@ -351,7 +367,24 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
                     command_time_constant=0.0,
                 ),
             )
-            self._non_rl_reference.reset(motor_degrees=self.default_degrees)
+        elif self.reference_motion == "scone-gait":
+            self._reference_gait = SconeGait(
+                profile=self._motion_profile,
+                model_path=self.model_path,
+                config=SconeGaitConfig(
+                    control_frequency=1.0 / self.control_dt,
+                    max_vx=float(OBSERVATION_COMMAND_SCALE[0]),
+                    max_vy=float(OBSERVATION_COMMAND_SCALE[1]),
+                    max_yaw_rate=float(OBSERVATION_COMMAND_SCALE[2]),
+                    command_time_constant=0.0,
+                    ik_tolerance=1e-3,
+                    ik_stride_backoff_attempts=4,
+                ),
+            )
+        if self._reference_gait is not None:
+            self._reference_gait.reset(motor_degrees=self.default_degrees)
+        # Compatibility attribute for integrations written before the rename.
+        self._non_rl_reference = self._reference_gait
 
         self.action_space = spaces.Box(-1.0, 1.0, shape=(18,), dtype=np.float32)
         # base linear velocity 3, angular velocity 3, projected gravity 3,
@@ -373,6 +406,9 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         self._reference_cycle_frequency = 0.0
         self._reference_stride_clip_fraction = 0.0
         self._reference_ik_backoff_scale = 1.0
+        self._reference_override_degrees: np.ndarray | None = None
+        self._reference_override_blend = 0.0
+        self._reference_override_unwrapped_lower = False
         self._viewer: Any | None = None
 
         self._jacobian_position = np.zeros((3, self.model.nv), dtype=np.float64)
@@ -404,6 +440,35 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         self.fixed_command = clipped.copy()
         self._command_target[:] = clipped
         return clipped.copy()
+
+    def set_reference_override(
+        self,
+        motor_degrees: Sequence[float] | None,
+        *,
+        blend: float = 1.0,
+        unwrapped_lower: bool = False,
+    ) -> None:
+        """Blend a replay-only model reference into the next action frame.
+
+        Training never calls this method.  The interactive hybrid
+        ``scone-gait`` uses it to retain the checkpoint's original reference
+        at low speed and transition to a point-support/sector-roll reference
+        at high translation speed without changing actuator operating mode.
+        """
+
+        if motor_degrees is None:
+            self._reference_override_degrees = None
+            self._reference_override_blend = 0.0
+            self._reference_override_unwrapped_lower = False
+            return
+        parsed = np.asarray(motor_degrees, dtype=np.float64)
+        if parsed.shape != (18,) or not np.all(np.isfinite(parsed)):
+            raise ValueError("reference override must contain 18 finite degrees")
+        if not 0.0 <= blend <= 1.0:
+            raise ValueError("reference override blend must be in [0, 1]")
+        self._reference_override_degrees = parsed.copy()
+        self._reference_override_blend = float(blend)
+        self._reference_override_unwrapped_lower = bool(unwrapped_lower)
 
     def _sample_command(self) -> np.ndarray:
         if self.fixed_command is not None:
@@ -450,8 +515,8 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         return float(np.clip(np.max(np.abs(self._command / safe_scale)), 0.0, 1.0))
 
     def _advance_phase(self) -> None:
-        if self._non_rl_reference is not None:
-            # NonRLWalk owns its Phoenix gait phase; _reference_motion_degrees
+        if self._reference_gait is not None:
+            # The selected model gait owns its phase; _reference_motion_degrees
             # copies it back so the policy observation stays phase-aligned.
             return
         activity = self._command_activity()
@@ -467,16 +532,16 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
     def _reference_motion_degrees(self) -> np.ndarray:
         """Return the selected model-based or hand-authored reference frame.
 
-        The recommended ``non_rl`` reference runs the continuous Phoenix gait
-        and IK solver used by interactive Non-RL control. ``hardcoded`` keeps
-        the earlier sinusoidal version of the blocking Walk tripod sequence.
+        ``tripod-gait`` runs the classic continuous alternating tripod and IK.
+        ``scone-gait`` adds SCONE sector rolling/creep. ``hardcoded`` keeps the
+        earlier sinusoidal version of the blocking Walk tripod sequence.
         """
 
-        if self._non_rl_reference is not None:
-            sample = self._non_rl_reference.step(self._command, self.control_dt)
+        if self._reference_gait is not None:
+            sample = self._reference_gait.step(self._command, self.control_dt)
             if not sample.converged:
                 raise RuntimeError(
-                    "Non-RL residual reference IK failed for legs "
+                    "gait residual reference IK failed for legs "
                     f"{sample.failed_legs}"
                 )
             self._phase = sample.phase
@@ -525,15 +590,38 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
     def _apply_action(self, action: np.ndarray) -> None:
         clipped = np.clip(np.asarray(action, dtype=np.float64), -1.0, 1.0)
         reference = self._reference_motion_degrees()
+        if self._reference_override_degrees is not None:
+            blend = self._reference_override_blend
+            if self._reference_override_unwrapped_lower:
+                # A multi-turn lower target and the checkpoint reference may
+                # describe the same C-frame orientation on different 360°
+                # branches.  Move the checkpoint branch next to the override
+                # before blending so entering hybrid never commands an
+                # artificial one-or-more-turn rewind.
+                lower_reference = reference[12:]
+                lower_override = self._reference_override_degrees[12:]
+                reference[12:] = lower_reference + 360.0 * np.round(
+                    (lower_override - lower_reference) / 360.0
+                )
+            reference = (
+                (1.0 - blend) * reference
+                + blend * self._reference_override_degrees
+            )
         targets = reference + self.residual_scale_degrees * clipped
 
         # model.xml currently has no mechanical joint ranges.  This provisional
         # conservative clip must be replaced with measured SCONE hard stops.
-        targets = np.clip(
+        bounded_targets = np.clip(
             targets,
             self.default_degrees - 60.0,
             self.default_degrees + 60.0,
         )
+        if self._reference_override_unwrapped_lower:
+            # Only the interactive simulation hybrid may cross 0/360°.  PPO
+            # training, ordinary replay, and all upper/stage-1 joints retain
+            # the conservative one-turn clip.
+            bounded_targets[12:] = targets[12:]
+        targets = bounded_targets
         for motor_id, target in enumerate(targets, start=1):
             self.controller.set_position(motor_id, float(target))
 
@@ -546,6 +634,15 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
             [self.controller._joint_velocity(i) for i in Actuator.Index.ALL],
             dtype=np.float64,
         )
+        if self._reference_override_unwrapped_lower:
+            # The six C-frames are rotationally periodic.  Keep their actual
+            # MuJoCo qpos unwrapped so the mesh visibly completes revolutions,
+            # but fold policy observations and joint-limit diagnostics onto
+            # the equivalent one-turn angle expected by the checkpoint.
+            lower_delta = positions[12:] - self.default_radians[12:]
+            positions[12:] = self.default_radians[12:] + (
+                lower_delta + math.pi
+            ) % (2.0 * math.pi) - math.pi
         return positions, velocities
 
     def _base_state(self) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
@@ -739,6 +836,11 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         slip_penalty, stance_contacts = self._slip_penalty()
 
         joint_offset = np.abs(joint_position - self.default_radians)
+        if self._reference_override_unwrapped_lower:
+            # Full C-frame revolutions are intentional in the interactive
+            # hybrid and are not a mechanical hard-stop violation in the
+            # unlimited MuJoCo hinge.  Keep upper/stage-1 protection intact.
+            joint_offset[12:] = 0.0
         excess = np.maximum(0.0, joint_offset - reward.soft_joint_offset)
         joint_limit_penalty = float(
             np.mean(np.square(excess / math.radians(15.0)))
@@ -855,8 +957,8 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         # dynamics and breaks the learned phase relationship.
 
         self._phase = float(self.np_random.random())
-        if self._non_rl_reference is not None:
-            self._non_rl_reference.reset(
+        if self._reference_gait is not None:
+            self._reference_gait.reset(
                 phase=self._phase,
                 motor_degrees=self.default_degrees,
             )
@@ -865,6 +967,7 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         self._reference_cycle_frequency = 0.0
         self._reference_stride_clip_fraction = 0.0
         self._reference_ik_backoff_scale = 1.0
+        self.set_reference_override(None)
         self._command.fill(0.0)
         self._command_target = self._sample_command()
         self._heading = self._heading_yaw()
@@ -944,13 +1047,14 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         self._reference_cycle_frequency = 0.0
         self._reference_stride_clip_fraction = 0.0
         self._reference_ik_backoff_scale = 1.0
+        self.set_reference_override(None)
         self._heading = self._heading_yaw()
         self._target_heading = self._heading
         self._reference_height = float(
             self.data.qpos[self.root_qpos_address + 2]
         )
-        if self._non_rl_reference is not None:
-            self._non_rl_reference.reset(
+        if self._reference_gait is not None:
+            self._reference_gait.reset(
                 phase=self._phase,
                 motor_degrees=self.default_degrees,
             )
@@ -1315,8 +1419,9 @@ def build_parser() -> argparse.ArgumentParser:
         choices=REFERENCE_MOTION_CHOICES,
         default=None,
         help=(
-            "baseline motion under the residual policy; defaults to non_rl "
-            "for check/train and hardcoded for legacy-compatible enjoy replay"
+            "baseline motion under the residual policy; defaults to "
+            "tripod-gait for check/train and hardcoded for legacy replay; "
+            "non_rl is a compatibility alias for tripod-gait"
         ),
     )
     subparsers = parser.add_subparsers(dest="command_name", required=True)
@@ -1371,11 +1476,13 @@ def _resolve_reference_motion(
     command_name: str,
     selected: str | None,
 ) -> str:
-    """Keep new training on Non-RL while replaying legacy PPO correctly."""
+    """Use canonical gait names while replaying legacy PPO correctly."""
 
     if selected is not None:
-        return selected
-    return "hardcoded" if command_name == "enjoy" else "non_rl"
+        return normalize_reference_motion(selected)
+    if command_name == "enjoy":
+        return "hardcoded"
+    return "tripod-gait"
 
 
 def main(argv: list[str] | None = None) -> int:

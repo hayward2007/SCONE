@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import time
 from collections import defaultdict
 from collections.abc import Iterable, Mapping
 
@@ -248,6 +249,88 @@ class Controller:
         value = self._read(motor_id, model_for_id(motor_id).table.present_position)
         self._log(f"ID {motor_id:02d}: position -> {value}")
         return value
+
+    def wait_until_raw_positions(
+        self,
+        positions: Mapping[int, int],
+        *,
+        tolerance: int = 64,
+        timeout: float = 4.0,
+    ) -> bool:
+        """Read back physical positions until every requested joint settles."""
+
+        if tolerance < 0 or timeout <= 0.0:
+            raise ValueError("tolerance must be non-negative and timeout positive")
+        deadline = time.monotonic() + timeout
+        while True:
+            if all(
+                abs(
+                    self._read(
+                        motor_id,
+                        model_for_id(motor_id).table.present_position,
+                    )
+                    - int(target)
+                )
+                <= tolerance
+                for motor_id, target in positions.items()
+            ):
+                return True
+            if time.monotonic() >= deadline:
+                return False
+            time.sleep(0.02)
+
+    def verify_drive_stage1_settings(
+        self,
+        *,
+        profile_velocity: int,
+        profile_acceleration: int,
+        goal_position: int = Actuator.Position.CENTER,
+        position_tolerance: int = 64,
+    ) -> dict[int, dict[str, int]]:
+        """Read and validate the six load-bearing stage-1 XM registers.
+
+        This method never writes the bus.  It runs only on the physical
+        backend when Drive is entered, after the posture transition has
+        already waited for the centre targets.
+        """
+
+        readings: dict[int, dict[str, int]] = {}
+        failures: list[str] = []
+        for motor_id in Actuator.Index.MIDDLE:
+            table = model_for_id(motor_id).table
+            values = {
+                "operating_mode": self._read(motor_id, table.operating_mode),
+                "torque_enable": self._read(motor_id, table.torque_enable),
+                "profile_velocity": self._read(motor_id, table.profile_velocity),
+                "profile_acceleration": self._read(
+                    motor_id, table.profile_acceleration
+                ),
+                "goal_position": self._read(motor_id, table.goal_position),
+                "present_position": self._read(motor_id, table.present_position),
+            }
+            readings[motor_id] = values
+            expected = {
+                "operating_mode": int(Actuator.OperatingMode.POSITION),
+                "torque_enable": int(Actuator.Torque.ON),
+                "profile_velocity": int(profile_velocity),
+                "profile_acceleration": int(profile_acceleration),
+                "goal_position": int(goal_position),
+            }
+            for name, target in expected.items():
+                if values[name] != target:
+                    failures.append(
+                        f"ID {motor_id} {name}={values[name]} expected={target}"
+                    )
+            if abs(values["present_position"] - goal_position) > position_tolerance:
+                failures.append(
+                    f"ID {motor_id} present_position={values['present_position']} "
+                    f"outside {goal_position}±{position_tolerance}"
+                )
+        if failures:
+            raise ControllerError(
+                "Drive stage-1 read-back failed: " + "; ".join(failures)
+            )
+        return readings
 
     def close(self) -> None:
         if self._closed:

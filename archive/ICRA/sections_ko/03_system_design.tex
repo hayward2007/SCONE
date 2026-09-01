@@ -1,0 +1,100 @@
+\section{플랫폼 및 접촉 모델}
+
+\subsection{기계 및 시뮬레이션 모델}
+
+다리 번호는 전방에서 후방으로 우측 $1,3,5$, 좌측 $2,4,6$이다. ID $1$--$6$은 근위
+링크, $7$--$12$는 중간 링크, $13$--$18$은 호형 말단을 구동한다. MuJoCo 모델은 57개
+body, 1개 floating base와 18개 회전 관절로 구성되며 총 모델 질량은 $4.161\,$kg이다.
+알루미늄 프레임과 액추에이터의 실측 질량, 15\% infill 폴리머 부품의 추정 질량을
+함께 사용했으므로 총합은 재조립한 로봇을 계량하기 전까지 시뮬레이션 파라미터다.
+표~\ref{tab:hardware-ko}는 이 모델 값과 검증된 부품 값을 구분한다.
+
+\begin{table}[t]
+\caption{시뮬레이션에 사용한 구동·접촉·말단 기하}
+\label{tab:hardware-ko}
+\centering\footnotesize
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{@{}lll@{}}
+\toprule
+항목 & 값 & 역할\\
+\midrule
+ID 1--6 & MX-28AT, $77\,$g & 근위\\
+ID 7--12 & XM430-W350-T, $82\,$g & 중간\\
+ID 13--18 & XM430-W210-T, $82\,$g & 말단 호\\
+FR07 / FR12 & $20/46\,$g & 프레임\\
+호 반지름 $r_i/r_o$ & $112.5/122.5\,$mm & 내/외\\
+호 폭 / 개구 $\psi$ & $44\,$mm / $135^\circ$ & TPU 접촉\\
+미끄럼 마찰 $\mu$ & $1.0$ & 호--지면\\
+접촉 연성 & $3\,$mm, $\zeta=1$ & \texttt{solimp}/\texttt{solref}\\
+모델 질량 & $4.161\,$kg & MuJoCo 전용\\
+물리 / 제어 & $500/50\,$Hz & 적분 / 목표\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+각 액추에이터는 이상적 토크원이 아니라 위치 피드백을 갖는 전압 입력 DC 모터다.
+모터 상수 $K,R$에 대해 외측 PD 루프와 전압 포화는
+\begin{align}
+ \tau_i^c &= k_{p,i}(q_i^\star-q_i)+k_{d,i}(\dot q_i^\star-\dot q_i), \label{eq:pd-ko}\\
+ V_i &= \operatorname{sat}_{[-V_n,V_n]}
+ \left(\frac{R_i}{K_i}\tau_i^c+K_i\dot q_i\right)             \label{eq:dcmotor-ko}
+\end{align}
+이다. 각 군은 정격 삼중항(전압, 스톨 토크, 무부하 속도)으로 규정되며
+$K=V_n/\dot q_{\rm nl}$, $R=KV_n/\tau_{\rm stall}$로 유도된다.
+값은 $(12\,\mathrm{V},2.5\,\mathrm{N\,m},5.76\,\mathrm{rad/s})$, $(12,4.1,4.82)$,
+$(12,3.0,8.06)$이다. 시뮬레이션 이득 $(k_p,k_d)$는 SI 단위로 $(5.73,0.752)$,
+$(9.40,0.792)$, $(6.88,0.264)$이다. 적분 이득은 0이며, 공급 전압과 스톨에 맞춘
+포화 토크가 응답을 제한한다.
+
+\subsection{호 접촉과 계단 모서리 역학}
+
+\begin{figure}[t]
+\centering\includegraphics[width=\columnwidth]{arc_geometry.pdf}
+\caption{말단 링크 하나의 접촉 기하. (a) 열린 부채꼴: 외경과 내경 $r_o,r_i$,
+개구각 $\psi$, 개구 현 $l_o$이며 보행 시에는 최저 패치가 지지점이 된다.
+(b) 기준선으로 사용하는 닫힌 바퀴의 모서리 회전: 모멘트 팔은 $x_e(h)$이고
+평형 수평력은 $h\to r_o$에서 발산하므로, $h_{\rm cw}$를 넘는 등반은 개구 또는
+관절 운동에서만 나올 수 있다.}
+\label{fig:geometry-ko}
+\end{figure}
+
+그림~\ref{fig:geometry-ko}이 기호를 정한다. 외경 $r_o$, 내경 $r_i$, 개구 $\psi$에
+대해 개구 현은
+\begin{equation}
+ l_o=2r_o\sin(\psi/2)=0.226\ \mathrm{m}                        \label{eq:chord-ko}
+\end{equation}
+이다. 접촉은 미끄럼 계수 $\mu=1.0$의 6차원 마찰 원뿔과 $3\,$mm 연성층을 사용하므로
+TPU 호는 연하지만 변형체는 아니다. 보행에서는 최저 호 패치의 $0.1\,$mm 이내
+메시 정점 중심이 지지점이고, 구름에서는 이 패치가 말단 각도를 따라 이동한다.
+
+호 하나가 중심을 하단 디딤면 위 한 반지름 높이에 두고 단높이 $h$의 날카로운
+모서리를 넘는 경우를 생각하자. 수평 중심--모서리 거리는
+\begin{equation}
+ x_e(h)=\sqrt{r_o^2-(r_o-h)^2}=\sqrt{2r_oh-h^2},\quad 0\le h\le 2r_o
+                                                               \label{eq:edgearm-ko}
+\end{equation}
+이다. 이 호가 하중 $F_i$를 받을 때 안전계수 $\gamma\ge1$과 구동 효율 $\eta\le1$에
+대해 준정적 회전 토크 하한이 정해지고, 같은 중력 모멘트를 호 중심의 수평력으로
+평형시키려면
+\begin{align}
+ \tau_{e,i}&\ge \gamma\,\frac{F_i\,x_e(h)}{\eta},               \label{eq:stairtorque-ko}\\
+ F_{h,i}&\ge \gamma\,\frac{F_i\,x_e(h)}{r_o-h},\qquad
+ \mu_{\min}=\frac{|F_t|}{F_n}                                   \label{eq:stairpush-ko}
+\end{align}
+이 필요하다. 식~(\ref{eq:stairpush-ko})은 같은 반지름의 \emph{닫힌} 바퀴에 대한
+실효 경계다. $h\to r_o^-$에서 $F_{h,i}\to\infty$이고 $h\ge r_o$에서는 모멘트
+평형에 해가 없다. 노징 반지름 $r_n$과 여유 $c$를 두면 닫힌 바퀴의 단높이 한계는
+\begin{equation}
+ h<h_{\rm cw}=r_o-r_n-c\le 122.5\ \mathrm{mm}                   \label{eq:riserlimit-ko}
+\end{equation}
+이다. \ref{sec:results-ko}절의 $150\,$mm$(1.22r_o)$와 $200\,$mm$(1.63r_o)$는 모두
+이 경계 위에 있으므로, 둘 중 어느 하나의 등반도 닫힌 바퀴에 없는 기구에서 나온
+것이다. 본 플랫폼에는 그런 기구가 둘 있고 절제 실험은 이 둘을 구분하도록 설계했다.
+첫째는 개구 자체다. 단높이가 개구 현보다 작으면($h<l_o=226\,$mm) 모서리가
+$135^\circ$ 틈으로 들어와 림이 넘는 대신 C의 반대쪽 끝이 걸 수 있으므로 호는
+걸쇠로 작동한다. 둘째는 관절 운동이며, 모서리 기하와 무관하게 호 전체를 들어
+재배치한다. 따라서 식~(\ref{eq:riserlimit-ko})은 실패의 예측이 아니라
+\emph{기준선}이다. $122.5\,$mm를 넘는 각 등반 결과를 둘 중 어느 기구의 몫인지에
+대한 증거로 바꾸어 준다. 개구 현을 한 단의 대각선과 비교하는 무차원 지표
+$l_o/\sqrt{h^2+d^2}$는 세 계단에서 $0.87$, $0.91$, $0.56$이다. 다리 바퀴 문헌의
+표준 비교이므로 함께 보고하되, 이 값만으로는 관측된 결과의 순서를 설명하지 못한다.

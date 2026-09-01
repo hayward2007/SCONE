@@ -23,7 +23,7 @@ class Mode:
         tolerance: int = 64,
         timeout: float = 4.0,
     ) -> None:
-        """Synchronize a pose only when the backend offers simulation waits."""
+        """Synchronize a pose when the backend offers position read-back."""
 
         waiter = getattr(self.controller, "wait_until_raw_positions", None)
         if waiter is None:

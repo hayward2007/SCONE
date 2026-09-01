@@ -1,0 +1,87 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% SCONE ICRA manuscript -- Korean companion edition.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[letterpaper,10pt,conference]{ieeeconf}
+
+\IEEEoverridecommandlockouts
+\overrideIEEEmargins
+
+% Korean typesetting. Prefer kotex where the distribution provides it
+% (e.g. a tectonic build, which fetches it on demand); fall back to xeCJK
+% with the system Noto CJK KR faces so the manuscript also builds on a
+% plain offline TeX Live + XeLaTeX installation.
+\IfFileExists{kotex.sty}{%
+  \usepackage{kotex}%
+}{%
+  \usepackage{xeCJK}%
+  \setCJKmainfont{Noto Serif CJK KR}%
+  \setCJKsansfont{Noto Sans CJK KR}%
+  \setCJKmonofont{Noto Sans Mono CJK KR}%
+  % Korean is space-delimited, unlike the CJK default xeCJK assumes.
+  \xeCJKsetup{CJKmath=true, CJKspace=true}%
+}
+% ieeeconf sets \rmdefault to ptm (Times), which XeLaTeX cannot resolve in its
+% Unicode (TU) encoding, silently degrading every bold/italic run. TeX Gyre
+% Termes is the metric-compatible Times clone shipped with TeX Live, so the
+% manuscript keeps the required IEEE Times appearance with a complete family.
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Termes}
+\setsansfont{TeX Gyre Heros}
+\setmonofont{TeX Gyre Cursor}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{cite}
+\usepackage{graphicx}
+\usepackage{url}
+
+\graphicspath{{figures/}{../simulation_media/images/}}
+\newcommand{\vect}[1]{\vec{#1}}
+\newcommand{\R}{\mathbb{R}}
+% 이름은 이 한 곳에서만 정의한다. 이중 익명 심사본에서는 \gaitname 을 중립적인
+% 문자열로 바꾸고, 같은 이름의 공개 저장소는 심사 기간 동안 비공개로 전환하거나
+% 익명 미러를 사용해야 한다.
+\newcommand{\robotname}{제안 플랫폼}
+\newcommand{\gaitname}{SCONE-gait}
+
+\title{\LARGE \bf
+보행, 구름 주행 및 계단 모서리 이동을 위한 능동 호형 말단 6족 로봇}
+\author{\mbox{}}
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+\pagestyle{empty}
+
+\begin{abstract}
+바퀴는 평지에서 효율적으로 이동하지만, 관절형 다리는 불연속 지형에 접점을
+배치할 수 있다. 일반적인 바퀴--다리 하이브리드는 두 기구와 그 구동계를 함께
+탑재한다. 본 연구는 다른 절충안을 검토한다. 3자유도 다리 여섯 개의 끝에
+구동되는 열린 C자형 호를 배치하고, 이를 고정 발, 구름 접점, 계단 모서리 걸쇠로
+재사용한다. 하나의 제어기가 교대 삼각보 보행 궤적과 연속 호 회전을 같은 여섯 개
+말단 관절에서 동시에 수행한다. 해당 관절을 속도 모드로 두고 보행 궤적의 미분에
+회전 속도를 중첩하므로, 모드 전환도 기구 변형도 필요하지 않다.
+500 Hz MuJoCo 모델에서 $0.18\,\mathrm{m\,s^{-1}}$ 명령을 인가한 동일
+플랫폼 절제 실험 결과 관절 보행은 $0.117\,\mathrm{m\,s^{-1}}$, 말단 단독 회전은
+$0.090\,\mathrm{m\,s^{-1}}$, 전신 구름 주행은 $0.200\,\mathrm{m\,s^{-1}}$를
+기록했다. 닫힌 바퀴의 모멘트 평형은 림 회전만으로 넘을 수 있는 단높이를
+$122.5\,\mathrm{mm}$로 제한한다. 그런데 3단 계단 실험에서 회전만으로도
+$0.15\,\mathrm{m}$ 단높이를 통과했고, 이는 열린 부채꼴이 걸쇠로 작동함을
+분리해 준다. 반면 $0.20\,\mathrm{m}$ 단높이와 $0.35\,\mathrm{m}$ 디딤폭에서는
+협응 제어기만 상단에 도달했고, 이는 관절 운동의 기여를 분리해 준다.
+보행--구름 및 구름--보행 전환은 각각 $0.342\,$s와 $0.660\,$s에 완료되었다.
+이 결정론적 시뮬레이션은 재현 가능한 운용 범위를 제시하고 관절 운동과 공유 호형
+접점의 결합 효과를 분리한다. 본 연구는 시뮬레이션 범위의 설계 분석이며, 실물의
+속도, 내구성, 계단 신뢰도를 아직 검증하지 않는다.
+\end{abstract}
+
+\input{sections_ko/01_introduction}
+\input{sections_ko/02_related_work_problem}
+\input{sections_ko/03_system_design}
+\input{sections_ko/04_locomotion_control}
+\input{sections_ko/05_experimental_method}
+\input{sections_ko/06_results}
+\input{sections_ko/07_discussion_conclusion}
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+\end{document}

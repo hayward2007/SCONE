@@ -1,58 +1,113 @@
-\section{ROBOT DESIGN}
+\section{PLATFORM AND CONTACT MODEL}
 
-\subsection{System Architecture}
+\subsection{Mechanical and Simulation Model}
 
-The platform has six laterally arranged legs and eighteen Dynamixel actuators.
-Actuator IDs 1--6 generate proximal body-relative motion, IDs 7--12 actuate the
-first leg stage, and IDs 13--18 actuate the distal stage. Table~\ref{tab:hardware}
-records the hardware mapping that must remain identical between the physical
-robot, controller, and simulation model.
+The six legs are numbered front to rear as right $1,3,5$ and left $2,4,6$.
+Actuator IDs $1$--$6$ rotate the proximal links, IDs $7$--$12$ the middle links,
+and IDs $13$--$18$ the distal arcs. The MuJoCo model has 57 bodies, one floating
+base and 18 revolute joints, and a total modeled mass of $4.161\,$kg. Its
+component masses encode measured aluminum frames and actuators plus estimated
+15\%-infill polymer parts; therefore the total is a simulation parameter until
+the reassembled robot is weighed. Table~\ref{tab:hardware} distinguishes that
+model quantity from verified part data.
 
 \begin{table}[t]
-  \caption{Platform hardware summary}
-  \label{tab:hardware}
-  \centering
-  \small
-  \begin{tabular}{lll}
-    \toprule
-    IDs & Model & Function \\
-    \midrule
-    1--6 & MX-28AT & body-relative leg motion \\
-    7--12 & XM430-W350-T & first articulated stage \\
-    13--18 & XM430-W210-T & distal/arc stage \\
-    \midrule
-    Total mass & \multicolumn{2}{l}{\draftnote{measured value}} \\
-    Battery & \multicolumn{2}{l}{\draftnote{verified voltage and capacity}} \\
-    Controller & \multicolumn{2}{l}{\draftnote{board, loop rate, protocol}} \\
-    \bottomrule
-  \end{tabular}
+\caption{Actuation, contact and distal geometry used in simulation}
+\label{tab:hardware}
+\centering\footnotesize
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Quantity & Value & Role\\
+\midrule
+IDs 1--6 & MX-28AT, $77\,$g & proximal\\
+IDs 7--12 & XM430-W350-T, $82\,$g & middle\\
+IDs 13--18 & XM430-W210-T, $82\,$g & distal arc\\
+FR07 / FR12 & $20/46\,$g & frames\\
+Arc radii $r_i/r_o$ & $112.5/122.5\,$mm & inner/outer\\
+Arc width / opening $\psi$ & $44\,$mm / $135^\circ$ & TPU contact\\
+Sliding friction $\mu$ & $1.0$ & arc--ground\\
+Contact softness & $3\,$mm, $\zeta=1$ & \texttt{solimp}/\texttt{solref}\\
+Modeled mass & $4.161\,$kg & MuJoCo only\\
+Physics / control & $500/50\,$Hz & integrate / target\\
+\bottomrule
+\end{tabular}
 \end{table}
 
-\subsection{Arc-Shaped Distal Link}
+Each actuator is a voltage-input DC motor with position feedback rather than an
+ideal torque source. For motor constants $K,R$, the outer PD loop and voltage
+saturation are
+\begin{align}
+ \tau_i^c &= k_{p,i}(q_i^\star-q_i)+k_{d,i}(\dot q_i^\star-\dot q_i), \label{eq:pd}\\
+ V_i &= \operatorname{sat}_{[-V_n,V_n]}
+ \left(\frac{R_i}{K_i}\tau_i^c+K_i\dot q_i\right).            \label{eq:dcmotor}
+\end{align}
+Each group is specified by its rated triple (voltage, stall torque, no-load
+speed), from which $K=V_n/\dot q_{\rm nl}$ and $R=KV_n/\tau_{\rm stall}$ follow:
+$(12\,\mathrm{V},2.5\,\mathrm{N\,m},5.76\,\mathrm{rad/s})$,
+$(12,4.1,4.82)$, and $(12,3.0,8.06)$. The simulated gains $(k_p,k_d)$ in SI units
+are $(5.73,0.752)$, $(9.40,0.792)$, and $(6.88,0.264)$. Integral gain is zero;
+supply voltage and a stall-matched saturation torque bound the response.
 
-The distal link combines a rigid frame with a compliant TPU tread. Its geometry
-must support three contact regimes: localized support during walking, sequential
-arc contact during quasi-rolling, and edge engagement during stair ascent.
-Figure~\ref{fig:arc-geometry} will define the arc radius $r$, opening angle
-$\phi$, tread width $w$, joint axis, and nominal stair geometry.
+\subsection{Arc Contact and Stair-Edge Mechanics}
 
 \begin{figure}[t]
-  \centering
-  \fbox{\parbox[c][32mm][c]{0.92\columnwidth}{\centering
-    Final Fig.~2: dimensioned CAD cross-section and contact sequence.}}
-  \caption{Geometry and contact roles of one actuated arc-shaped distal link.}
-  \label{fig:arc-geometry}
+\centering\includegraphics[width=\columnwidth]{arc_geometry.pdf}
+\caption{Contact geometry of one distal link. (a) The open sector: outer and
+inner radii $r_o,r_i$, opening angle $\psi$ and opening chord $l_o$, with the
+lowest patch acting as the support point during walking. (b) The closed-wheel
+pivot used as a reference line: the moment arm is $x_e(h)$ and the balancing
+horizontal force diverges as $h\to r_o$, so any measured ascent above
+$h_{\rm cw}$ must come from the opening or from articulation.}
+\label{fig:geometry}
 \end{figure}
 
-\subsection{Design Evolution}
 
-The first prototype exposed four coupled limitations: a long parallel-link load
-path, off-axis distal contact, insufficient tire friction, and inadequate
-untethered power delivery. The current prototype removes the parallel mechanism,
-aligns the distal contact with the leg plane, adds a TPU tread, and uses higher
-torque actuators and an onboard battery system. This evolution motivates the
-current design but is not, by itself, a controlled ablation because several
-variables changed simultaneously.
+Figure~\ref{fig:geometry} fixes the notation. For outer radius $r_o$, inner
+radius $r_i$, and opening $\psi$, the opening chord is
+\begin{equation}
+ l_o=2r_o\sin(\psi/2)=0.226\ \mathrm{m}.                       \label{eq:chord}
+\end{equation}
+Contacts use a six-dimensional friction cone with sliding coefficient $\mu=1.0$
+and a $3\,$mm compliant layer, so the TPU arc is modeled as soft but not
+deformable. During walking, the support point is the centroid of mesh vertices
+within $0.1\,$mm of the lowest arc patch. During rolling, this patch advances
+with the distal angle.
 
-\draftnote{Add measured mass distribution, center of mass, joint ranges, arc
-dimensions, material properties, and a free-body or torque analysis.}
+Consider a single arc pivoting over a sharp riser of rise $h$ with its centre
+initially one radius above the lower tread. The horizontal centre-to-edge offset
+is
+\begin{equation}
+ x_e(h)=\sqrt{r_o^2-(r_o-h)^2}=\sqrt{2r_oh-h^2},\quad 0\le h\le 2r_o.
+                                                               \label{eq:edgearm}
+\end{equation}
+If that arc carries load $F_i$, safety factor $\gamma\ge1$ and drive efficiency
+$\eta\le1$ give a quasi-static lower bound on the pivot torque, while balancing
+the same gravity moment with a horizontal force at the arc centre requires
+\begin{align}
+ \tau_{e,i}&\ge \gamma\,\frac{F_i\,x_e(h)}{\eta},               \label{eq:stairtorque}\\
+ F_{h,i}&\ge \gamma\,\frac{F_i\,x_e(h)}{r_o-h},\qquad
+ \mu_{\min}=\frac{|F_t|}{F_n}.                                  \label{eq:stairpush}
+\end{align}
+Equation~(\ref{eq:stairpush}) is the operative bound for a \emph{closed} wheel of
+the same radius: $F_{h,i}\to\infty$ as $h\to r_o^-$, and the moment balance has
+no solution for $h\ge r_o$. With a nosing radius $r_n$ and clearance $c$ the
+closed-wheel riser limit is therefore
+\begin{equation}
+ h<h_{\rm cw}=r_o-r_n-c\le 122.5\ \mathrm{mm}.                  \label{eq:riserlimit}
+\end{equation}
+Both the $150\,$mm ($1.22r_o$) and the $200\,$mm ($1.63r_o$) risers of
+Sec.~\ref{sec:results} lie above $h_{\rm cw}$, so any ascent of either one is
+produced by a mechanism the closed wheel does not have. Two such mechanisms exist
+on this platform, and the ablation is designed to tell them apart. The first is
+the opening itself: a riser whose height is smaller than the opening chord,
+$h<l_o=226\,$mm, can enter the $135^\circ$ gap and be engaged by the far end of
+the C rather than pivoted over by the rim, so the arc acts as a hook. The second
+is articulation, which raises and repositions the whole arc irrespective of edge
+geometry. Equation~(\ref{eq:riserlimit}) is thus not a prediction of failure but
+a \emph{reference line}: it converts each measured ascent above $122.5\,$mm into
+evidence about which of the two mechanisms is responsible.
+A second dimensionless descriptor compares the opening chord with one step's
+diagonal, $l_o/\sqrt{h^2+d^2}$, giving $0.87$, $0.91$, and $0.56$ for the three
+tested profiles. We report it because it is the standard legged-wheel comparison,
+and note that it does not by itself order the observed outcomes.

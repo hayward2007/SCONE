@@ -13,10 +13,11 @@ from src.cli import (
     main as run_launcher,
     render_joystick_ui,
     run_control_cli,
-    run_joystick_cli,
     run_legacy_joystick_cli,
+    run_tripod_gait_joystick_cli,
 )
 from src.hardware import Actuator, ControllerProtocol, HardwareProbe
+from src.hardware.controller import Controller, ControllerError
 from src.locomotion import GaitConfig, VelocityCommand, legacy_movement_for
 from src.locomotion.climb import Climb
 from src.locomotion.profile import STANDARD
@@ -115,6 +116,13 @@ class PublicApiTests(unittest.TestCase):
         self.assertTrue(any(call[0] == "set_positions" for call in controller.calls))
         self.assertEqual(controller.positions[7], 170)
         self.assertEqual(controller.positions[13], 195)
+        position_mode_ids = {
+            call[1]
+            for call in controller.calls
+            if call[0] == "set_mode"
+            and call[2] == Actuator.OperatingMode.POSITION
+        }
+        self.assertEqual(position_mode_ids, set(Actuator.Index.XM))
 
     @patch("src.locomotion.walk.time.sleep", return_value=None)
     @patch("src.main.time.sleep", return_value=None)
@@ -170,6 +178,50 @@ class PublicApiTests(unittest.TestCase):
         )
 
 
+class PhysicalStage1ReadbackTests(unittest.TestCase):
+    @staticmethod
+    def _controller_with_registers(**overrides: int) -> Controller:
+        values = {
+            11: int(Actuator.OperatingMode.POSITION),
+            64: int(Actuator.Torque.ON),
+            108: 20,
+            112: 50,
+            116: Actuator.Position.CENTER,
+            132: Actuator.Position.CENTER,
+            **{int(address): value for address, value in overrides.items()},
+        }
+        controller = object.__new__(Controller)
+        controller._read = Mock(side_effect=lambda _motor_id, register: values[register.address])
+        return controller
+
+    def test_drive_stage1_readback_accepts_expected_live_registers(self) -> None:
+        controller = self._controller_with_registers()
+
+        readings = controller.verify_drive_stage1_settings(
+            profile_velocity=50,
+            profile_acceleration=20,
+        )
+
+        self.assertEqual(set(readings), set(Actuator.Index.MIDDLE))
+        self.assertTrue(
+            all(
+                values["operating_mode"] == Actuator.OperatingMode.POSITION
+                for values in readings.values()
+            )
+        )
+
+    def test_drive_stage1_readback_rejects_wrong_operating_mode(self) -> None:
+        controller = self._controller_with_registers(
+            **{"11": int(Actuator.OperatingMode.VELOCITY)}
+        )
+
+        with self.assertRaisesRegex(ControllerError, "operating_mode"):
+            controller.verify_drive_stage1_settings(
+                profile_velocity=50,
+                profile_acceleration=20,
+            )
+
+
 class InquirerLauncherTests(unittest.TestCase):
     @staticmethod
     def _choice(*, value, name):
@@ -196,7 +248,7 @@ class InquirerLauncherTests(unittest.TestCase):
             self.assertEqual(run_launcher(), 0)
 
     def test_root_launcher_routes_rl_simulation_selection(self) -> None:
-        actions = iter(("simulation", "quit"))
+        actions = iter(("simulation_control", "quit"))
         prompt = SimpleNamespace(execute=lambda: next(actions))
         inquirer = SimpleNamespace(select=lambda **_arguments: prompt)
         checkpoint = SimpleNamespace()
@@ -240,6 +292,37 @@ class InquirerLauncherTests(unittest.TestCase):
             rl_standing_pose_degrees=tuple(float(i) for i in range(18)),
         )
         reference_prompt.assert_called_once_with(default="hardcoded")
+
+    def test_root_launcher_routes_automatic_stair_demo(self) -> None:
+        from src.simulation.core.stair_demo import StairDemoStrategy
+
+        actions = iter(("simulation_demo", "quit"))
+        prompt = SimpleNamespace(execute=lambda: next(actions))
+        inquirer = SimpleNamespace(select=lambda **_arguments: prompt)
+        with (
+            patch("src.cli._inquirer", return_value=(inquirer, self._choice)),
+            patch(
+                "src.cli.discover_hardware",
+                return_value=HardwareProbe(False, detail="not connected"),
+            ),
+            patch(
+                "src.simulation.core.simulator_cli.select_stair_demo_strategy",
+                return_value=StairDemoStrategy.COMPARE,
+            ),
+            patch(
+                "src.simulation.core.simulator_cli.select_stair_terrain",
+                return_value=TerrainType.STAIRS_2,
+            ),
+            patch(
+                "src.simulation.core.stair_demo.run_automatic_stair_demo"
+            ) as demo,
+        ):
+            self.assertEqual(run_launcher(), 0)
+
+        demo.assert_called_once_with(
+            StairDemoStrategy.COMPARE,
+            terrain=TerrainType.STAIRS_2,
+        )
 
 
 class KeyboardJoystickTests(unittest.TestCase):
@@ -351,10 +434,10 @@ class KeyboardJoystickTests(unittest.TestCase):
         )
 
         with (
-            patch("src.cli.NonRLWalk", return_value=gait),
+            patch("src.cli.TripodGait", return_value=gait),
             patch("src.cli._JoystickTerminal", return_value=terminal),
         ):
-            run_joystick_cli(robot)
+            run_tripod_gait_joystick_cli(robot)
 
         self.assertTrue(gait.reset_called)
         self.assertAlmostEqual(gait.commands[0][0].vx, gait.config.max_vx)
@@ -365,7 +448,7 @@ class KeyboardJoystickTests(unittest.TestCase):
         self.assertTrue(all(send for _, _, send in gait.commands))
         self.assertTrue(terminal.screens)
 
-    def test_simulation_can_keep_the_selected_nominal_non_rl_pose(self) -> None:
+    def test_simulation_can_keep_the_selected_nominal_tripod_pose(self) -> None:
         gait = SimpleNamespace(
             config=GaitConfig(command_time_constant=0.0),
             reset_from_controller=Mock(),
@@ -378,10 +461,13 @@ class KeyboardJoystickTests(unittest.TestCase):
         )
 
         with (
-            patch("src.cli.NonRLWalk", return_value=gait),
+            patch("src.cli.TripodGait", return_value=gait),
             patch("src.cli.run_velocity_joystick_cli"),
         ):
-            run_joystick_cli(robot, calibrate_from_controller=False)
+            run_tripod_gait_joystick_cli(
+                robot,
+                calibrate_from_controller=False,
+            )
 
         gait.reset_from_controller.assert_not_called()
 

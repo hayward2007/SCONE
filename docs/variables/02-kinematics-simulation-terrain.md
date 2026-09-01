@@ -179,6 +179,7 @@ XML의 `<dcmotor nominal>`과 Python 사양은 함께 바꿔야 한다.
 | `_qpos_addresses` | motor ID→qpos address |
 | `_dof_addresses` | motor ID→qvel address |
 | `_pid` | motor ID→`DCMotorPID` |
+| `_default_pid_gains` | motor ID별 원래 `(kp,kd)`; model-gait opt-in stiffness 계산 기준 |
 | `_stage1_default_kd` | ID 7–12의 원래 `kd`; Drive 종료 시 복구 기준 |
 | `_drive_stage1_damping_enabled` | MuJoCo Drive 댐핑 2배 적용 상태 |
 | `_torque_enabled` | motor별 전압 출력 활성 여부 |
@@ -208,6 +209,7 @@ XML의 `<dcmotor nominal>`과 Python 사양은 함께 바꿔야 한다.
 | `_DRIVE_STAGE1_DAMPING_MULTIPLIER` | `2.0`; Drive 중 ID 7–12에만 적용하는 시뮬레이션 보정 |
 | `arc_wheel_velocities()` | 홀수 말단 ID는 입력 부호, 짝수 ID는 반대 부호로 매핑 |
 | `wait_until_raw_positions()` | mode 전환 목표가 tolerance 안에 들 때까지 시뮬레이션 상태 확인 |
+| `set_gait_position_stiffness(multiplier)` | 기본 ID 7–12의 `kp`를 배수, `kd`를 배수 제곱근으로 조정; 허용 0.5–4.0, torque cap 불변 |
 
 `degrees_to_raw()`의 `motor_id`는 API 호환 때문에 남아 있지만 현재 변환 방향은 홀짝 ID에 따라 바뀌지 않는다.
 
@@ -215,14 +217,18 @@ XML의 `<dcmotor nominal>`과 Python 사양은 함께 바꿔야 한다.
 
 | 이름 | 목적·사용처 |
 |---|---|
-| `NON_RL_SIMULATION_GAIT_CONFIG` | 고정 cadence `0.7 Hz`, 전후/측면 stride `0.060/0.050 m`, IK 허용오차 `1 mm`, backoff 4회의 Standard 검증 시뮬레이션 설정 |
-| `SimulationControl.OLD/NON_RL/RL` | 제어 방식 선택 enum |
+| `TRIPOD_GAIT_SIMULATION_CONFIG` | cadence `1.0 Hz`, lift `0.025 m`, 전후/측면 stride `0.090/0.070 m`, IK 허용오차 `1 mm`, backoff 4회의 비-RL 조종 설정 |
+| `SCONE_GAIT_SIMULATION_CONFIG` | RL/position 호환 bounded sector sweep 설정 |
+| `ROLL_GAIT_SIMULATION_CONFIG` | lower 연속 회전 비-RL `roll-gait` 설정 |
+| `SCONE_ROLLING_GAIT_SIMULATION_CONFIG` | 위 설정의 구형 호환 별칭 |
+| `configure_model_gait_controller()` | profile velocity/acceleration 0(무제한), middle stiffness 2배를 비-RL tripod에 opt-in |
+| `SimulationControl.OLD/TRIPOD_GAIT/SCONE_GAIT/ROLL_GAIT/SCONE_STAIR/RL` | 제어 방식 선택 enum; `NON_RL`은 `TRIPOD_GAIT` 호환 별칭 |
 | `profile` | Standard/Sport |
 | `floating_base` | 고정형 기구 검사와 실제 동역학 실행 선택 |
 | `terrain`, `terrain_seed` | 지형 preset과 난수 seed |
-| `control` | old/non_rl/rl route |
+| `control` | old/tripod-gait/roll-gait/scone-gait/scone-stair/rl route |
 | `checkpoint`, `rl_device` | RL route의 PPO ZIP과 CPU/CUDA 선택 |
-| `rl_reference_motion` | `non_rl/hardcoded`; RL residual 기준 모션 |
+| `rl_reference_motion` | `tripod-gait/scone-gait/hardcoded`; RL residual 기준 모션 |
 | `rl_standing_pose_degrees` | RL 환경/controller startup의 18개 stance |
 | `stop_event` | CLI worker와 viewer main loop 종료 공유 |
 | `cli_errors` | worker 예외를 main thread에서 다시 발생시키는 목록 |
@@ -231,8 +237,79 @@ XML의 `<dcmotor nominal>`과 Python 사양은 함께 바꿔야 한다.
 | `viewer.opt.geomgroup[0]` | 지형/collision group 0 표시 활성화 |
 | `viewer.cam.distance` | `extent×2.2`를 2.2–3.0 사이로 제한 |
 | `azimuth/elevation` | `135°/-30°` 초기 시점 |
+| `demo` | `hardcoded/improved/compare`; terminal joystick 없는 stair viewer route |
 
-## 8. `src/simulation/terrain/types.py`, `presets.py`
+### `RollGaitConfig`와 자동 데모
+
+| 이름 | 기본값/목적 |
+|---|---|
+| `roll_velocity` | `175`; lower 연속 회전 raw velocity scale |
+| `support_velocity_ratio` | `0.80`; stance tripod의 lower 속도 비율 |
+| `tripod_b_phase_offset_degrees` | `60°`; B `(2,3,6)`의 C자 개구 시작 phase |
+| `basic_velocity_time_constant` | `0.04 s`; lower 기본 보행 미분 속도 low-pass |
+| `basic_lower_motion_blend` | `0.35`; lower 기본 보행 속도 성분의 합성 비율 |
+| `max_basic_lower_velocity` | `80`; IK branch 변화 시 lower 기본 속도 상한 |
+| `velocity_time_constant` | `0.10 s`; lower 속도 low-pass |
+| `profile_velocity/profile_acceleration` | `160/50`; upper/middle 기본 보행 position profile |
+| `middle_stiffness_multiplier` | `2.0`; ID 7–12 hold 보정 |
+| `cycle_frequency/duty_factor` | `0.8 Hz/0.58`; full-body 기본 보행 phase |
+| `step_height/max_stride` | `0.020/0.055 m`; full-body 기본 보행 lift/전후 stroke |
+| `max_steering_degrees/steering_blend` | `45°/0.20` |
+| `_filtered_roll_velocity` | 여섯 lower의 연속 회전 filter 출력 |
+| `_filtered_basic_velocity` | lower 기본 보행 offset 미분의 filter 출력 |
+| `_previous_lower_offset` | 다음 frame 미분을 위한 이전 lower 기본 보행 offset |
+| `_active` | phase 준비 뒤 velocity mode가 활성화됐는지 여부 |
+| `StairDemoStrategy` | `hardcoded`, `improved`, `compare` |
+| `HardcodedStairRoller.velocity` | `200`; 1회 동기화 뒤 feedback 없는 계단 baseline |
+| `timeout_seconds` | 기본 `16 s`; 자동 상단 판정 최대 시간 |
+| `time_to_top_seconds` | root Y/Z가 상단 조건을 처음 동시에 만족한 시각 |
+
+## 8. `src/locomotion/stair_geometry.py`, `src/simulation/core/stair_climber.py`
+
+### 부채꼴 geometry와 분석 함수
+
+| 이름 | 기본값/목적 |
+|---|---|
+| `SCONE_V2_ARC_WHEEL.inner_radius` | `0.1125 m`; 도면과 `TIRE.stl`의 안쪽 반경 |
+| `outer_radius` | `0.1225 m`; 보수적 riser reach와 edge pivot 계산 반경 |
+| `width` | `0.044 m`; 축방향 TPU 폭 |
+| `occupied_arc_degrees` | `225°`; 현재 contact mesh에서 계산한 점유 호각 |
+| `opening_degrees` | `135°`; `360° - occupied_arc_degrees` |
+| `opening_chord` | 약 `0.22635 m`; 바깥 반경 양 끝 사이 chord |
+| `edge_in_radial_band()` | 계단 모서리 거리가 annular TPU band에 들어오는지 검사 |
+| `conservative_riser_limit()` | `R - nosing_radius - clearance` |
+| `wheel_edge_offset()` | `sqrt(2Rh-h²)` sharp-edge moment arm |
+| `quasi_static_pivot_torque()` | 하중·안전율·효율을 포함한 이상적 edge pivot 토크 |
+| `required_friction_coefficient()` | `abs(F_t)/F_n` Coulomb 요구량 |
+| `legged_wheel_opening_ratio()` | opening chord / 계단 rise-tread 대각선; 비교용이지 성공 판정은 아님 |
+| `support_polygon_margin()` | CoM 투영점과 convex contact hull 경계의 부호 있는 최소 거리 |
+
+### `SconeStairConfig`와 상태
+
+| 이름 | 기본값/목적 |
+|---|---|
+| `StairControlState` | `idle`, `synchronizing`, `climbing` |
+| `max_vy` | `0.12 m/s`; A/D 명령 scale |
+| `synchronized_phase_degrees` | `60°`; 100/150 mm 시작 공통 위상 |
+| `tall_synchronized_phase_degrees` | `90°`; 200 mm 시작 공통 위상 |
+| `neutral/medium/tall_front_stage1_degrees` | `180/184/195°`; improved 앞쪽 1단 `(7,9,11)` 높이별 지지 자세 |
+| `legacy_front_stage1_degrees` | `270°`; hardcoded 옛 수직 자세 재현값 |
+| `front_stage1_profile_velocity` | `100`; 앞쪽 1단 자세 획득 profile |
+| `front_stage1_tolerance_raw/sync_timeout` | `256/4.0 s`; 하중 지지 관절의 준비 허용오차와 timeout |
+| `phase_velocity` | `200`; 150/200 mm 공통 위상 속도, DYNAMIXEL velocity 수치 단위 |
+| `easy_phase_velocity` | `250`; 100 mm에서 측정상 더 빠르고 일이 적었던 속도 |
+| `easy_rise_limit/tall_rise_threshold` | `0.125/0.175 m`; 위 phase/speed 조합 선택 경계 |
+| `profile_velocity/profile_acceleration` | `240/80`; extended-position setpoint profile |
+| `phase_tolerance_raw/phase_sync_timeout` | `96/4.0 s`; 시작 위상 획득 판정 |
+| `phase_degrees` | wrap하지 않는 현재 공통 위상 `θ`; 다회전 누적 |
+| `selected_phase_velocity` | 현재 preset rise로 선택한 위상 속도 |
+| `phase_sync_entries` | 시작 위상 정렬 횟수 |
+| `front_stage1_sync_entries` | 앞쪽 1단 지지 자세 획득 횟수 |
+| `maximum_phase_spread_degrees` | 접촉 하중을 포함한 여섯 실제 기하 위상의 최대 순간 spread |
+
+이 값은 현재 MuJoCo preset 튜닝값이며 실물 모터·마찰 안전 한계가 아니다.
+
+## 9. `src/simulation/terrain/types.py`, `presets.py`
 
 | 이름 | 값/목적 |
 |---|---|
@@ -251,11 +328,11 @@ XML의 `<dcmotor nominal>`과 Python 사양은 함께 바꿔야 한다.
 | `geom_names` | 추가된 모든 geom 이름 |
 | `start_y/end_y` | 코스 world-y 범위 |
 | `max_height` | floor 위 최대 장애물 높이 |
-| `STAIR_PRESETS` | 난도 1 rises `.035/.045/.055`, 난도 2 `.055/.070/.085`, 난도 3 `.080/.100/.120 m`; tread/width/landing도 난도별 지정 |
+| `STAIR_PRESETS` | 물리 단 rise 난도 1 `.10×3`, 난도 2 `.15×3`, 난도 3 `.20×3 m`; 난도 3은 staged hook 지지를 위해 tread `.35×3 m` |
 | `SLOPE_PRESETS` | `8°/15°/25°`, length `1.4/1.2/1.0 m`, width `.9/1.0/1.1 m` |
 | `TERRAIN_LABELS` | CLI용 한국어 표시 이름 |
 
-## 9. `src/simulation/terrain/generator.py`
+## 10. `src/simulation/terrain/generator.py`
 
 | 이름 | 기본값/목적 |
 |---|---|

@@ -90,8 +90,9 @@ CAD export 이름, 다리 번호, actuator ID가 서로 다른 규칙을 사용�
 - damped least-squares, joint step 제한, backtracking을 사용한다.
 - 모든 18개 결과가 finite, converged, 유효 범위일 때만 batch 전송한다.
 - 실패한 다리는 마지막 유효 관절각을 유지한다.
-- 실물 공용 cadence는 0.8 Hz를 유지하고, 시뮬레이션/RL Non-RL 기준은 별도 actuator 속도 profile benchmark에서 slip과 전진의 균형이 나은 0.7 Hz를 사용한다.
-- 시뮬레이션/RL에서는 전후 `0.060 m`·측면 `0.050 m` 타원형 보폭 제한을 적용한다.
+- RL reference는 checkpoint 호환을 위해 0.7 Hz와 전후 `0.060 m`·측면
+  `0.050 m`를 유지한다. 비-RL MuJoCo 조종은 후속 sweep에서 0.8 Hz와
+  `0.080/0.060 m`로 분리했다.
 - 복합 명령의 특정 다리 IK가 실패하면 nominal 발 위치 쪽으로 0.8배씩 최대 4회 backoff해 다시 푼다.
 - 회전은 각 발의 위치에 `(-yaw*y, yaw*x)` 접선 속도를 더해 만든다.
 
@@ -183,23 +184,132 @@ body center velocity나 단순 foot body velocity는 실제 타이어-지면 접
 
 ### 해결
 
-- 실물 controller API는 유지하고, MuJoCo controller가 제공할 때만 목표 도달 대기를 사용한다.
+- `SCONE.initialize()`가 ID 7–18 XM을 position mode로 명시하고, 실제 controller도
+  present-position 목표 도달을 기다리게 했다. Drive 진입 때 ID 7–12의
+  mode/torque/profile/goal/present register를 read-back해 설정 오류를 분리한다.
 - 시뮬레이션의 짝수 말단 ID 속도 부호를 뒤집어 좌우 바퀴의 지면 이동 방향을 맞춘다.
 - Drive에 들어간 동안만 ID 7–12의 `kd`를 2배로 적용하고 Walk/Climb에서 복구한다.
 - 시뮬레이션 Climb 준비각만 160°로 보정하고, 실물의 검증된 프로필 명령은 변경하지 않는다.
 
 측정 sweep에서 2배 댐핑은 기본값 대비 1단 RMS 속도를 약 18%, 최대 각도 오차를 약 13% 줄였다. 4배는 진동 영역으로 넘어갔으므로 채택하지 않았다. 이 수치는 해당 MuJoCo 설정의 비교값이며 실물 성능 주장으로 사용하지 않는다.
+실물 read-back이 통과해도 position gain/current/기계 유격은 아직 검사 대상이다.
+따라서 흔들림을 자동으로 정상 판정하지 않고 진폭이 감쇠되는지 별도로 본다.
 
 ## 12. 병렬 환경 수가 실제 병렬이 아니었던 문제
 
 기존 `num_envs`는 `DummyVecEnv` 안에서 환경을 순서대로 실행해 CPU 코어를 실질적으로 활용하지 못했다. 한 환경은 기존 동작을 유지하고, 두 개 이상은 `SubprocVecEnv` worker로 분리했다. SSH CLI도 물리 코어 하나와 메모리 2 GiB를 남긴 보수적 추천값을 계산하되 사용자가 수정할 수 있게 했다.
 
-## 13. 남아 있는 기술 부채와 권장 순서
+## 13. 계단 연속 회전과 후킹 assist 선택 문제
+
+아래 120 mm까지의 비교는 최초 controller 선택 당시 기록이다. 현재
+100/150/200 mm 재검증과 shallow-tread 실패 sweep는 이 절 끝과
+11번 문서 12절을 기준으로 본다.
+
+> **현재 구현 교정:** 이 절의 `ROLLING/TRIPOD_ASSIST` controller는 더 이상
+> production `SconeStairClimber`가 아니다. 실제 계단 모션은 lower 여섯 개의
+> 기하 위상을 동일하게 유지해야 한다는 정의에 따라, 2026-09-01에 하나의
+> extended-position 위상 `θ`를 추종하는 방식으로 교체했다. 최신 원인·수식·
+> 100/150/200 mm 공통 위상 결과는 11번 문서 13절, 옛 270° 앞다리 자세를
+> 반영한 최종 결과는 14절을 기준으로 한다.
+
+### 비교한 접근
+
+- 여섯 C-sector를 같은 속도로 계속 돌리는 pure rolling
+- 기존 Legacy `Climb`
+- 항상 큰 middle 관절 동작을 쓰는 tripod hook
+- 항상 작은 tripod 보조를 쓰는 hybrid
+- 쉬운 단에서는 rolling을 유지하고 높은 단/정체에만 hybrid를 켜는 adaptive
+  `scone-stair`
+
+### 발견한 문제와 해결
+
+- pure rolling은 `stairs-1/2`에서 가장 빠르고 적은 일을 사용했지만 120 mm
+  rise가 있는 `stairs-3`에서 정체됐다.
+- 기존 Legacy `Climb`은 현재 side-on procedural stair의 진행 phase와 맞지
+  않아 세 preset 모두 제한 시간에 정상부 판정을 통과하지 못했다.
+- 상시 tripod/hybrid는 높은 단을 통과했지만 쉬운 계단에서도 middle 관절을
+  불필요하게 움직여 시간과 절대 기계 일이 증가했다.
+- rolling 중인 여섯 하단 관절에 곧바로 서로 다른 tripod 속도를 섞은 초기
+  prototype은 첫 지지 교대에서 옆으로 넘어졌다. assist 진입 전에 하단
+  속도를 0으로 보내 phase를 동기화하고 0.18초 smoothstep을 적용했다.
+- 알려진 높은 단 조건을 assist 종료 뒤에도 계속 평가하면 같은 구간에서
+  assist가 반복됐다. known pre-hook은 한 번만 사용하고 이후에는 정체
+  detector만 재진입을 허용한다.
+
+현재 높이에서는 100 mm만 pure/adaptive가 모두 4.920초에 통과했다. pure는
+150/200 mm에서 실패했고 adaptive는 각각 12.682초/assist 2회,
+14.394초/assist 3회로 통과했다. 200 mm는 기존 170--240 mm tread에서
+실패해 350 mm support tread로 바꾼 조건이다. 이 결과는 현재 MuJoCo preset
+한 번씩의 결정론적 비교로, 실물 성공률이나 일반 계단 보장이 아니다.
+수식·전체 표·실패 로그·실물 진입 조건은
+[`11-scone-stair-climbing.md`](11-scone-stair-climbing.md)에 있다.
+
+## 14. 비-RL 보행의 처짐·속도·가짜 rolling 문제
+
+### 증상
+
+- 세 다리 support가 바뀔 때 MuJoCo 차체가 실물보다 크게 내려가거나 출렁였다.
+- `tripod-gait`가 PPO보다 답답하고 최대 명령을 올려도 보폭이 거의 같았다.
+- 기존 `scone-gait`가 lower를 약 30° 왕복할 뿐이라 일반 tripod와 외형·성능이
+  비슷했고 C자 말단을 바퀴처럼 사용하지 못했다.
+
+### 실패와 원인
+
+- `qfrc_bias` 중력 feed-forward는 contact constraint와 PID 보상을 중복해 root
+  높이와 middle tracking error를 악화시켜 제거했다.
+- speed 175/200과 cadence 0.85/0.9는 더 높은 명령인데도 slip과 20–28 mm
+  하방 drop 때문에 느려졌다.
+- lower 여섯 개를 같은 phase로 연속 회전하면 135° 개구부가 동시에 지면을
+  향해 root Z가 63.5 mm 빠졌다.
+- 여섯 다리 arbitrary phase는 0.1835 m/s로 빨랐지만 44.4 mm lateral drift와
+  upright 0.964로 기각했다.
+- 후속 직진 진단에서 0.8 Hz/80 mm 경로는 최대 명령의 약 97% frame에서
+  stride가 잘렸고 lower 목표가 nominal 대비 최대 약 94°까지 다른 IK branch로
+  이동했다. 8초 동안 역방향 이동 24.5 mm, 측면 편향 51.8 mm, 최대 yaw
+  3.38°가 측정되어 “평균 전진”만으로는 문제를 발견할 수 없었다.
+- 최초 continuous-roll 구현은 18관절 `SconeGait` 결과 중 1–12번만 보내고
+  13–18번 기본 보행 position을 버렸다. 그래서 상·중단 진폭도 25/4 mm로
+  작고 화면에서는 사실상 말단 회전만 보였다.
+
+### 해결
+
+- 비-RL tripod를 1.0 Hz, 90/70 mm, lift 25 mm로 바꾸고 simulation profile
+  limiter를 해제했다. 모터 PID·전압·토크 한계와 middle stiffness 2배는
+  유지한다. PPO replay와 실물은 그대로다.
+- 당시 interactive `scone-gait`를 연속 회전으로 만들었고, 현재는 의미를
+  바로잡아 `roll-gait`/`RollGait`로 route해 lower를 velocity mode로
+  연속 회전시켰다.
+- `scone-gait` 기본 보행을 stride/lift 55/20 mm로 키우고, lower bounded 목표의
+  시간 미분을 0.35배로 연속 회전 속도에 합성했다. 상단·1단·2단 기본 보행과
+  회전이 동시에 남는다.
+- tripod B `(2,3,6)` lower 시작각을 +60° 벌려 개구부 support phase를
+  de-synchronize했다.
+- RL의 bounded `SconeGait` reference는 checkpoint action 의미 때문에 보존했다.
+- 자동 계단 데모를 조종 메뉴와 분리해 hardcoded/improved/compare를 입력 없이
+  실행하게 했다.
+- 새 `scone-gait`는 checkpoint 필수 supervisor로 재정의했다. 저속/yaw는 PPO,
+  고속은 stance 55% point hold 뒤 late-stance와 무부하 swing에서 한 방향
+  multi-turn sector roll을 누적한다. 이전 bounded 왕복의 cycle 순 회전량 0
+  문제를 제거했다.
+
+수정 후 tripod는 8초 0.9469 m(0.1184 m/s), 역방향 누적 3.7 mm, 측면
+0.7 mm, 최대 yaw 1.17°였고 20초에도 측면 5.0 mm/IK 실패 0이었다.
+full-body continuous roll은 6초 1.2556 m(0.2093 m/s), lower 평균 3.09회,
+최소 upright 0.9847, IK 실패 0이었다. 전체 sweep과 식은
+[`12-automatic-stair-demo-and-continuous-roll-rework.md`](12-automatic-stair-demo-and-continuous-roll-rework.md)에 있다.
+최신 이름, 전환식과 15.4M 검증값은
+[`14-roll-gait-and-hybrid-scone-gait.md`](14-roll-gait-and-hybrid-scone-gait.md)에 있다.
+현재 multi-turn 검증은 4초 동안 lower 실제 342~466°, upper/middle
+peak-to-peak 14~24°와 body-X +0.298 m를 동시에 측정했으며 termination은 0이다.
+
+## 15. 남아 있는 기술 부채와 권장 순서
 
 1. 실제 관절별 mechanical range와 zero offset을 측정해 임시 `±60°/90°` 제한을 교체한다.
 2. link별 collision geom과 self-collision filter를 실제 형상에 맞게 검증한다.
 3. 실물 IMU/odometry 기반으로 RL 관측과 reward에 대응하는 state estimator를 만든다.
 4. motor 전류·전압·온도 안전 제한과 비상정지를 RL 배포 계층 앞에 둔다.
 5. latency, sensor noise, friction, payload, motor strength randomization을 추가한다.
-6. `dynamixel-sdk`를 재현 가능한 hardware requirements에 명시한다.
+6. 통합 requirements의 버전 lock과 새 macOS/Linux 환경 설치 smoke를 자동화한다.
 7. reward ablation과 같은-hardware 반복 실험으로 각 논문 주장을 검증한다.
+8. 실물 stair rise/tread/nosing/friction과 모터 전류를 계측한 뒤
+   `scone-stair`의 torque·support margin·비상정지를 재튜닝한다.

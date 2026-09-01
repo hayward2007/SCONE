@@ -28,6 +28,7 @@ mjpython SCONE.py
 
 메뉴에서 다음을 선택할 수 있다.
 
+- 시뮬레이션 (자동 데모): hardcoded/improved/compare와 stairs-1..3 선택, 조종 입력 없음
 - 시뮬레이션 조종: profile, control 방식, terrain, 필요 시 RL checkpoint
 - 하드웨어 조종: 탐색된 serial port와 legacy discrete 제어
 - 하드웨어 다시 탐색: torque/position을 바꾸지 않는 ping
@@ -83,10 +84,60 @@ if probe.available:
 mjpython -m src.simulation
 ```
 
+조종 없이 hardcoded와 improved 계단 동작을 순서대로 보려면:
+
+```bash
+mjpython -m src.simulation --demo compare --terrain stairs-2
+```
+
+두 방식 모두 여섯 C-frame을 같은 기하 위상으로 정렬한다. hardcoded는 그
+전에 앞쪽 1단을 옛 코드의 270° 수직 자세로 만들고 fixed velocity open-loop로
+전환한다. improved는 180/184/195° partial brace와 공통 다회전 position
+target을 사용한다. 현재 headless에서 hardcoded는 20 cm에 실패하고 improved는
+세 높이를 모두 통과한다.
+자동 데모는 terminal joystick을 열지 않는다.
+
 argparse option은 다음 명령으로 확인한다.
 
 ```bash
 python -m src.simulation --help
+```
+
+계단 전용 synchronized-phase controller는 SCONE을 자동으로 side-on 자세로 만든다.
+`A`는 preset 계단의 `+Y` 상승, `D`는 반대 방향이며 W/S와 yaw는 이 경로에서
+비활성화된다.
+
+```bash
+mjpython -m src.simulation \
+  --control scone-stair \
+  --profile standard \
+  --terrain stairs-3
+```
+
+`scone-stair`는 MuJoCo 전용이다. 실물 적용 전에 후킹 기하, 모터 여유,
+마찰과 지지 조건을 [계단 알고리즘 문서](11-scone-stair-climbing.md)대로
+별도 계측한다.
+
+연속 회전 비교는 `roll-gait`, PPO/점접지 하이브리드는 `scone-gait`다.
+후자는 checkpoint와 그 checkpoint가 학습한 reference/stance가 필요하다.
+
+```bash
+mjpython -m src.simulation --control roll-gait --profile standard --terrain flat
+
+mjpython -m src.simulation \
+  --control scone-gait \
+  --checkpoint runs/walk_full_standard/checkpoints/scone_walk_15410928_steps.zip \
+  --rl-reference-motion hardcoded \
+  --rl-standing-pose-degrees \
+    135 135 180 180 225 225 240 240 240 240 240 240 255 255 255 255 255 255
+```
+
+문서의 H0–H4 전체 비교와 H3 튜닝 sweep은 headless로 다시 실행할 수 있다.
+출력은 한 실험당 JSON 한 줄이며 상단 성공, 시간, 절대 기계일, upright,
+contact force, phase 동기화 횟수, 상단까지의 실제 phase spread를 포함한다.
+
+```bash
+python -m src.simulation.stair_benchmark --all --tuning
 ```
 
 코드에서 모델만 만들 수 있다.
@@ -110,7 +161,7 @@ model = load_model(
 기본 reference와 보상 finite 여부:
 
 ```bash
-python -m src.rl.walk_learn --reference-motion non_rl \
+python -m src.rl.walk_learn --reference-motion tripod-gait \
   check --steps 500 --curriculum easy
 ```
 
@@ -129,16 +180,16 @@ python -m src.rl.walk_learn check \
 python -m src.rl.walk_learn \
   --terrain uneven \
   --terrain-seed 7 \
-  --reference-motion non_rl \
+  --reference-motion scone-gait \
   check \
   --steps 500
 ```
 
 출력되는 mean weighted reward term은 항의 부호와 scale을 보는 smoke 지표다. 학습 성능 결론으로 사용하지 않는다.
 
-Non-RL 기준을 선택하면 TensorBoard `state/` 아래에 다음 튜닝 지표가 추가된다.
+모델 기반 gait 기준을 선택하면 TensorBoard `state/` 아래에 다음 튜닝 지표가 추가된다.
 
-- `reference_cycle_frequency`: 현재 기준 모션 cadence. 시뮬레이션/RL Non-RL은 `0.7 Hz`
+- `reference_cycle_frequency`: 현재 기준 모션 cadence. `tripod-gait`는 `0.7 Hz`, `scone-gait`는 `0.65 Hz`
 - `reference_stride_clip_fraction`: 작업공간 한계에 걸린 다리 비율
 - `reference_ik_backoff_scale`: IK 재시도로 실제 적용된 발 오프셋 배율. 항상 1보다 작다면 stance·보폭을 다시 조정한다.
 
@@ -147,7 +198,7 @@ Non-RL 기준을 선택하면 TensorBoard `state/` 아래에 다음 튜닝 지�
 새 학습:
 
 ```bash
-python -m src.rl.walk_learn --reference-motion non_rl train \
+python -m src.rl.walk_learn --reference-motion tripod-gait train \
   --timesteps 1000000 \
   --curriculum easy \
   --num-envs 4 \
@@ -160,7 +211,7 @@ python -m src.rl.walk_learn --reference-motion non_rl train \
 학습 재개:
 
 ```bash
-python -m src.rl.walk_learn --reference-motion non_rl train \
+python -m src.rl.walk_learn --reference-motion tripod-gait train \
   --timesteps 1000000 \
   --curriculum easy \
   --num-envs 4 \
@@ -178,9 +229,16 @@ python -m src.rl.walk_learn --reference-motion non_rl train \
 
 SIGINT/SIGTERM을 보내면 현재 step을 마치고 final model/resume pointer를 남기는 경로를 사용한다.
 
-`--reference-motion non_rl`은 Phoenix식 연속 발 궤적과 IK를 기준으로 사용하며 CLI 최상단 권장값이다. `hardcoded`는 기존 사인파 tripod 기준을 보존한다. 기준 모션이 다른 checkpoint를 재개하면 action 의미가 달라지므로, 원래 설정과 반드시 일치시킨다.
+`--reference-motion tripod-gait`는 고전 교대 삼각보+IK를 사용한다. `scone-gait`는 여기에 부채꼴 rolling/creep sweep을 더한 실험 기준이며, `hardcoded`는 기존 사인파 tripod를 보존한다. `non_rl`은 `tripod-gait` 호환 별칭이다. 기준 모션이 다른 checkpoint를 재개하면 action 의미가 달라지므로, 원래 설정과 반드시 일치시킨다.
 
-Non-RL 기준 모션은 2026-08-31에 stride 작업공간과 IK backoff가 추가되었고, support point는 부채꼴 말단의 최저 0.1 mm 패치 중심으로 교정됐다. 시뮬레이션/RL cadence는 별도 actuator 추종성과 slip sweep 후 0.7 Hz를 사용한다. 기존 PPO는 무제한 simulation profile에서 학습됐으므로 RL reset도 그 동역학을 보존한다. `walking_speed=100`·XM acceleration 20 같은 물리 profile을 쓰는 새 학습은 기존 checkpoint를 resume하지 말고 환경 버전을 기록해 0 step부터 시작한다.
+두 gait의 정확한 기본값, reference+residual 합성, checkpoint 호환 표와
+튜닝 순서는 [`10-tripod-gait-and-scone-gait.md`](10-tripod-gait-and-scone-gait.md)를
+참고한다.
+현재 `roll-gait`/hybrid `scone-gait` route와 전환 속도는
+[`14-roll-gait-and-hybrid-scone-gait.md`](14-roll-gait-and-hybrid-scone-gait.md)를
+우선한다.
+
+`tripod-gait` 기준 모션은 2026-08-31에 stride 작업공간과 IK backoff가 추가되었고, support point는 부채꼴 말단의 최저 0.1 mm 패치 중심으로 교정됐다. RL reference는 checkpoint 의미를 보존해 0.7 Hz, 60/50 mm를 유지한다. 2026-09-01 후속 직진 진단 뒤 비-RL MuJoCo 조종만 1.0 Hz, lift 25 mm, 90/70 mm, profile 무제한, middle hold 2배를 opt-in한다. 기존 PPO도 무제한 simulation profile에서 학습됐으므로 RL reset 동역학은 변하지 않는다. 새 profile/dynamics 학습은 기존 checkpoint를 resume하지 말고 환경 버전을 기록해 0 step부터 시작한다.
 
 `--num-envs 1`은 단일 프로세스이고 2 이상은 `SubprocVecEnv`로 각 MuJoCo 환경을 별도 프로세스에서 실행한다. 환경 수를 늘리면 PPO rollout 크기도 `n_steps × num_envs`로 커지므로 CPU 사용률뿐 아니라 업데이트 지연과 메모리를 함께 확인한다.
 
@@ -189,14 +247,14 @@ Non-RL 기준 모션은 2026-08-31에 stride 작업공간과 IK backoff가 추�
 고정 명령 재생:
 
 ```bash
-mjpython -m src.rl.walk_learn --reference-motion non_rl enjoy \
+mjpython -m src.rl.walk_learn --reference-motion tripod-gait enjoy \
   runs/walk_full_standard/checkpoints/scone_walk_6100000_steps.zip \
   --command 0.25 0.0 0.0 \
   --curriculum full \
   --episodes 3
 ```
 
-실시간 조이스틱은 통합 launcher의 RL control 또는 `src.rl.joystick_control` API를 사용한다. 기본으로 neutral residual gate가 켜진다. `R`을 누르면 policy target을 일시 중단하고 같은 controller에서 Drive/Climb으로 전환하며, Walk 복귀 시 heading·기준 높이·residual 상태를 재정렬한다. `--raw-policy` option은 neutral gate 없이 policy 자체 bias를 진단할 때만 사용한다.
+실시간 조이스틱은 통합 launcher의 RL control 또는 `src.rl.joystick_control` API를 사용한다. 기본으로 neutral residual gate가 켜진다. `R`을 누르면 policy target을 일시 중단하고 같은 controller에서 Drive/Climb으로 전환하며, Walk 복귀 시 heading·기준 높이·residual 상태를 재정렬한다. `scone-gait`에서는 HUD의 `ppo/mix/hybrid` suffix로 speed supervisor 상태를 확인한다.
 
 68차원 checkpoint는 마지막 heading 두 관측이 없으므로 현재 70차원 관측의 앞 68개를 전달해 재생한다. 이 adapter를 학습 재개에 사용하지 않는다.
 
@@ -247,7 +305,8 @@ python -m unittest discover -s tests -v
 
 ```bash
 python -m unittest tests.test_actuators tests.test_api
-python -m unittest tests.test_kinematics tests.test_non_rl_walk
+python -m unittest tests.test_kinematics tests.test_tripod_gait tests.test_scone_gait
+python -m unittest tests.test_stair_geometry tests.test_stair_climber
 python -m unittest tests.test_simulation tests.test_terrain
 python -m unittest tests.test_remote_watch tests.test_rl_inquiry
 python -m unittest tests.test_rl_joystick tests.test_rl_reference_motion
@@ -259,8 +318,9 @@ python -m unittest tests.test_rl_joystick tests.test_rl_reference_motion
 |---|---|
 | actuator ID/register | actuator + API fake controller |
 | 초기화/모드 | API + simulation |
-| model joint/axis | kinematics + Non-RL + reference motion |
+| model joint/axis | kinematics + tripod-gait/scone-gait + reference motion |
 | terrain | terrain + simulation |
+| arc-wheel/계단 controller | stair geometry + stair climber + simulation |
 | reward/observation | remote-watch reward tests + environment check |
 | checkpoint/remote command | remote-watch + RL inquiry |
 | joystick | API joystick + RL joystick |
@@ -279,7 +339,7 @@ python -m unittest tests.test_rl_joystick tests.test_rl_reference_motion
 
 ## 11. 현재 운영상 주의사항
 
-- `requirements.txt`에는 현재 `InquirerPy`만 있고 실제 하드웨어에 필요한 `dynamixel-sdk`가 없다. 새 환경 재현을 위해 의존성 manifest 보완이 필요하다.
+- `requirements.txt`는 CLI·Dynamixel·MuJoCo·RL을 통합한다. 새 장치에서는 설치 뒤 대표 ID 1/7/13 ping과 MuJoCo import를 각각 확인한다.
 - reward/heading 비교 전에 `SconeWalkEnv.step()`의 heading target 이중 적분을 확인한다.
 - `runs/remote_watch/scone_walk_260000_steps.zip.part`는 미완성 파일이므로 policy로 열지 않는다.
 - `archive/ICRA`의 결과 표는 아직 실험 증거로 채워지지 않았다.

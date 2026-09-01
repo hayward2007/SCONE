@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import unittest
+from types import SimpleNamespace
 from unittest.mock import patch
 
 import numpy as np
@@ -8,6 +9,8 @@ import numpy as np
 from src.locomotion import VelocityCommand
 from src.rl.joystick_control import (
     NeutralResidualGate,
+    SconeHybridControlConfig,
+    SconeHybridController,
     _RLModeRouter,
     _VelocityMailbox,
 )
@@ -64,6 +67,93 @@ class NeutralResidualGateTests(unittest.TestCase):
 
         self.assertLess(float(np.linalg.norm(actions[0])), np.sqrt(18.0))
         np.testing.assert_array_equal(actions[-1], np.zeros(18))
+
+
+class SconeHybridControllerTests(unittest.TestCase):
+    class _FakeEnv:
+        _motion_profile = object()
+        model_path = object()
+        control_dt = 0.02
+        _phase = 0.25
+        default_degrees = np.arange(18, dtype=np.float64)
+
+        def __init__(self) -> None:
+            self.override = None
+
+        def set_reference_override(
+            self,
+            degrees,
+            *,
+            blend=1.0,
+            unwrapped_lower=False,
+        ) -> None:
+            self.override = (degrees, blend, unwrapped_lower)
+
+    class _FakeGait:
+        continuous_roll_degrees = np.full(6, 360.0)
+
+        def __init__(self, *args, **kwargs) -> None:
+            self.reset_calls = []
+            self.step_calls = []
+
+        def reset(self, **kwargs) -> None:
+            self.reset_calls.append(kwargs)
+
+        def set_continuous_roll_degrees(self, values) -> None:
+            self.roll_seed = np.asarray(values)
+
+        def step(self, command, dt):
+            self.step_calls.append((command, dt))
+            return SimpleNamespace(
+                converged=True,
+                failed_legs=(),
+                motor_degrees=np.array([220.0] * 12 + [620.0] * 6),
+            )
+
+    def test_yaw_and_slow_translation_remain_ppo_only(self) -> None:
+        env = self._FakeEnv()
+        with patch("src.rl.joystick_control.SconeGait", self._FakeGait):
+            hybrid = SconeHybridController(env)
+        action = np.linspace(-1.0, 1.0, 18, dtype=np.float32)
+
+        yaw_action = hybrid.apply(VelocityCommand(yaw_rate=0.8), action)
+        slow_action = hybrid.apply(VelocityCommand(vx=0.08), action)
+
+        np.testing.assert_array_equal(yaw_action, action)
+        np.testing.assert_array_equal(slow_action, action)
+        self.assertEqual(hybrid.last_blend, 0.0)
+        self.assertEqual(hybrid.gait.step_calls, [])
+
+    def test_fast_translation_uses_point_support_hybrid_reference(self) -> None:
+        env = self._FakeEnv()
+        with patch("src.rl.joystick_control.SconeGait", self._FakeGait):
+            hybrid = SconeHybridController(env)
+        action = np.ones(18, dtype=np.float32)
+
+        output = hybrid.apply(VelocityCommand(vx=0.5), action)
+
+        np.testing.assert_array_equal(output, np.zeros(18, dtype=np.float32))
+        self.assertEqual(hybrid.last_blend, 1.0)
+        self.assertEqual(hybrid.control_name(), "scone-gait/hybrid/roll-1.0turn")
+        self.assertEqual(env.override[1], 1.0)
+        self.assertTrue(env.override[2])
+        np.testing.assert_array_equal(
+            env.override[0],
+            np.array([220.0] * 12 + [620.0] * 6),
+        )
+
+    def test_transition_band_is_smooth(self) -> None:
+        config = SconeHybridControlConfig(
+            hybrid_start_speed=0.10,
+            hybrid_full_speed=0.20,
+        )
+
+        self.assertEqual(config.hybrid_blend(VelocityCommand(vx=0.10)), 0.0)
+        self.assertAlmostEqual(
+            config.hybrid_blend(VelocityCommand(vx=0.15)),
+            0.5,
+        )
+        self.assertEqual(config.hybrid_blend(VelocityCommand(vx=0.20)), 1.0)
 
 
 class RLModeRouterTests(unittest.TestCase):

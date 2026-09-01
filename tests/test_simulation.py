@@ -7,32 +7,41 @@ import mujoco
 import numpy as np
 
 from src.hardware import ControllerProtocol
-from src.locomotion import NonRLWalk, VelocityCommand
+from src.locomotion import SconeGait, TripodGait, VelocityCommand
 from src.main import SCONE
 from src.simulation import DEFAULT_MODEL_PATH, MuJoCoController, load_model
 from src.simulation.core.cli_bridge import (
-    NON_RL_SIMULATION_GAIT_CONFIG,
+    SCONE_GAIT_SIMULATION_CONFIG,
     SimulationControl,
+    TRIPOD_GAIT_SIMULATION_CONFIG,
+    configure_model_gait_controller,
     run,
 )
 from src.simulation.core.simulator_cli import build_parser
 
 
 class SimulationBackendTests(unittest.TestCase):
-    def test_non_rl_simulation_uses_ik_safe_stride(self) -> None:
-        self.assertEqual(NON_RL_SIMULATION_GAIT_CONFIG.max_stride, 0.060)
+    def test_tripod_gait_simulation_uses_scone_workspace_tuning(self) -> None:
+        self.assertEqual(TRIPOD_GAIT_SIMULATION_CONFIG.max_stride, 0.090)
         self.assertEqual(
-            NON_RL_SIMULATION_GAIT_CONFIG.max_lateral_stride,
-            0.050,
+            TRIPOD_GAIT_SIMULATION_CONFIG.max_lateral_stride,
+            0.070,
         )
-        self.assertEqual(NON_RL_SIMULATION_GAIT_CONFIG.cycle_frequency, 0.7)
+        self.assertEqual(TRIPOD_GAIT_SIMULATION_CONFIG.cycle_frequency, 1.0)
+        self.assertEqual(TRIPOD_GAIT_SIMULATION_CONFIG.step_height, 0.025)
         self.assertEqual(
-            NON_RL_SIMULATION_GAIT_CONFIG.ik_stride_backoff_attempts,
+            TRIPOD_GAIT_SIMULATION_CONFIG.ik_stride_backoff_attempts,
             4,
         )
         self.assertEqual(
-            NON_RL_SIMULATION_GAIT_CONFIG.ik_tolerance,
+            TRIPOD_GAIT_SIMULATION_CONFIG.ik_tolerance,
             1e-3,
+        )
+
+    def test_legacy_non_rl_name_normalizes_to_tripod_gait(self) -> None:
+        self.assertIs(
+            SimulationControl.parse("non_rl"),
+            SimulationControl.TRIPOD_GAIT,
         )
 
     def test_rl_control_routes_to_policy_runtime_without_legacy_viewer(self) -> None:
@@ -56,6 +65,61 @@ class SimulationBackendTests(unittest.TestCase):
         )
 
         self.assertEqual(arguments.rl_reference_motion, "hardcoded")
+
+    def test_cli_accepts_canonical_gait_names(self) -> None:
+        parser = build_parser()
+
+        self.assertEqual(
+            parser.parse_args(["--control", "tripod-gait"]).control,
+            "tripod-gait",
+        )
+        self.assertEqual(
+            parser.parse_args(["--control", "scone-gait"]).control,
+            "scone-gait",
+        )
+        self.assertEqual(
+            parser.parse_args(["--control", "roll-gait"]).control,
+            "roll-gait",
+        )
+        self.assertEqual(
+            parser.parse_args(["--control", "scone-stair"]).control,
+            "scone-stair",
+        )
+        self.assertEqual(
+            parser.parse_args(["--demo", "compare"]).demo,
+            "compare",
+        )
+
+    def test_scone_gait_routes_checkpoint_to_hybrid_policy_runtime(self) -> None:
+        with patch("src.rl.joystick_control.run_rl_joystick") as runner:
+            run(
+                control=SimulationControl.SCONE_GAIT,
+                checkpoint="policy.zip",
+                terrain="flat",
+            )
+
+        self.assertTrue(runner.call_args.kwargs["hybrid_scone"])
+
+    def test_roll_gait_is_distinct_from_scone_gait(self) -> None:
+        self.assertIsNot(SimulationControl.ROLL_GAIT, SimulationControl.SCONE_GAIT)
+        self.assertEqual(SimulationControl.ROLL_GAIT.value, "roll-gait")
+
+    def test_model_gait_stiffness_is_opt_in(self) -> None:
+        model = load_model(DEFAULT_MODEL_PATH, floating_base=True)
+        controller = MuJoCoController(model, mujoco.MjData(model), verbose=False)
+        try:
+            default_kp = controller._pid[7].kp
+            default_kd = controller._pid[7].kd
+            self.assertAlmostEqual(controller._pid[7].kp, default_kp)
+
+            configure_model_gait_controller(controller)
+
+            self.assertAlmostEqual(controller._pid[7].kp, 2.0 * default_kp)
+            self.assertAlmostEqual(controller._pid[7].kd, np.sqrt(2.0) * default_kd)
+            self.assertTrue(np.isinf(controller._profile_velocity[7]))
+            self.assertTrue(np.isinf(controller._profile_acceleration[7]))
+        finally:
+            controller.close()
 
     def test_model_maps_all_actuators_to_controller_contract(self) -> None:
         model = load_model(DEFAULT_MODEL_PATH)
@@ -123,7 +187,90 @@ class SimulationBackendTests(unittest.TestCase):
         finally:
             controller.close()
 
-    def test_standard_non_rl_walk_advances_in_dynamics_without_ik_failure(self) -> None:
+    def test_standard_tripod_gait_advances_without_ik_failure(self) -> None:
+        model = load_model(DEFAULT_MODEL_PATH, floating_base=True)
+        data = mujoco.MjData(model)
+        controller = MuJoCoController(model, data, verbose=False)
+        robot = SCONE(controller, profile="standard")
+
+        def advance_simulation(seconds: float) -> None:
+            steps = max(1, int(np.ceil(seconds / model.opt.timestep)))
+            for _ in range(steps):
+                controller.update(model.opt.timestep)
+                mujoco.mj_step(model, data)
+
+        try:
+            with patch("time.sleep", side_effect=advance_simulation):
+                robot.initialize()
+            configure_model_gait_controller(controller)
+            advance_simulation(0.5)
+
+            # Do not recenter on the gravity-sagged transient pose.  The
+            # selected Standard profile is the IK-safe gait origin in sim.
+            gait = TripodGait(
+                controller,
+                robot.profile,
+                config=TRIPOD_GAIT_SIMULATION_CONFIG,
+            )
+            root_body_id = mujoco.mj_name2id(
+                model,
+                mujoco.mjtObj.mjOBJ_BODY,
+                "UPPER_BODY_1",
+            )
+            start_position = data.xpos[root_body_id].copy()
+            start_rotation = data.xmat[root_body_id].reshape(3, 3).copy()
+            minimum_z = float(start_position[2])
+            previous_forward = 0.0
+            backward_distance = 0.0
+            maximum_abs_yaw = 0.0
+
+            for _ in range(400):
+                sample = gait.update(
+                    VelocityCommand(vx=gait.config.max_vx),
+                    dt=0.02,
+                    send=True,
+                )
+                self.assertTrue(sample.converged, sample.failed_legs)
+                advance_simulation(0.02)
+                minimum_z = min(minimum_z, float(data.xpos[root_body_id, 2]))
+                current_displacement = start_rotation.T @ (
+                    data.xpos[root_body_id] - start_position
+                )
+                forward_delta = float(current_displacement[0]) - previous_forward
+                previous_forward = float(current_displacement[0])
+                backward_distance += max(0.0, -forward_delta)
+                relative_rotation = (
+                    start_rotation.T
+                    @ data.xmat[root_body_id].reshape(3, 3)
+                )
+                maximum_abs_yaw = max(
+                    maximum_abs_yaw,
+                    abs(
+                        float(
+                            np.arctan2(
+                                relative_rotation[1, 0],
+                                relative_rotation[0, 0],
+                            )
+                        )
+                    ),
+                )
+
+            body_displacement = start_rotation.T @ (
+                data.xpos[root_body_id] - start_position
+            )
+            self.assertGreater(float(body_displacement[0]), 0.75)
+            self.assertLess(abs(float(body_displacement[1])), 0.025)
+            self.assertLess(backward_distance, 0.015)
+            self.assertLess(maximum_abs_yaw, np.radians(2.0))
+            self.assertGreater(minimum_z - float(start_position[2]), -0.005)
+            self.assertGreater(
+                float(data.xmat[root_body_id].reshape(3, 3)[2, 2]),
+                0.98,
+            )
+        finally:
+            controller.close()
+
+    def test_scone_gait_sector_roll_advances_and_stays_upright(self) -> None:
         model = load_model(DEFAULT_MODEL_PATH, floating_base=True)
         data = mujoco.MjData(model)
         controller = MuJoCoController(model, data, verbose=False)
@@ -139,12 +286,10 @@ class SimulationBackendTests(unittest.TestCase):
             with patch("time.sleep", side_effect=advance_simulation):
                 robot.initialize()
 
-            # Do not recenter on the gravity-sagged transient pose.  The
-            # selected Standard profile is the IK-safe gait origin in sim.
-            gait = NonRLWalk(
+            gait = SconeGait(
                 controller,
                 robot.profile,
-                config=NON_RL_SIMULATION_GAIT_CONFIG,
+                config=SCONE_GAIT_SIMULATION_CONFIG,
             )
             root_body_id = mujoco.mj_name2id(
                 model,
@@ -166,7 +311,7 @@ class SimulationBackendTests(unittest.TestCase):
             body_displacement = start_rotation.T @ (
                 data.xpos[root_body_id] - start_position
             )
-            self.assertGreater(float(body_displacement[0]), 0.08)
+            self.assertGreater(float(body_displacement[0]), 0.10)
             self.assertGreater(
                 float(data.xmat[root_body_id].reshape(3, 3)[2, 2]),
                 0.98,
@@ -213,7 +358,7 @@ class SimulationBackendTests(unittest.TestCase):
         finally:
             controller.close()
 
-    def test_climb_mode_advances_onto_easy_stairs(self) -> None:
+    def test_legacy_climb_stays_upright_but_does_not_fake_10cm_ascent(self) -> None:
         model = load_model(
             DEFAULT_MODEL_PATH,
             floating_base=True,
@@ -251,8 +396,13 @@ class SimulationBackendTests(unittest.TestCase):
                     robot.right()
 
             displacement = data.xpos[root_body_id] - start_position
-            self.assertGreater(float(displacement[1]), 0.30)
-            self.assertGreater(float(displacement[2]), 0.025)
+            # This regression originally used the former 35 mm stairs-1 and
+            # required a 0.30 m ascent. At the requested 100 mm riser the
+            # legacy open-loop Climb does not clear the edge; scone-stair is
+            # the validated adaptive path. Keep legacy stable without
+            # misclassifying small motion as a successful climb.
+            self.assertLess(float(displacement[1]), 0.10)
+            self.assertLess(float(displacement[2]), 0.02)
             self.assertGreater(
                 float(data.xmat[root_body_id].reshape(3, 3)[2, 2]),
                 0.98,

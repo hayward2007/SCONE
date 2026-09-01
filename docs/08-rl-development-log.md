@@ -1,5 +1,11 @@
 # SCONE RL·시뮬레이션 개발 기록
 
+> 2026-09-01 이름 변경: 아래 과거 기록의 `Non-RL`/`non_rl`은 현재
+> `TripodGait`/`tripod-gait`를 뜻한다. 새 SCONE 부채꼴 rolling/creep
+> RL bounded 기준은 `SconeGait`/`scone-gait`이며 `non_rl`은 호환 별칭으로만
+> 남았다. 비-RL MuJoCo 조종의 같은 표시 이름은 2026-09-01부터 lower를
+> 연속 회전하는 `SconeRollingGait`로 분리됐다.
+
 > 이 문서는 시행착오와 당시 판단을 보존하는 **개발 이력**이다. 현재 관측값,
 > 보상식, 실행 명령의 최종 기준은 [`src/rl/walk_learn.py`](../src/rl/walk_learn.py),
 > [`06-reward-function-guide.md`](06-reward-function-guide.md),
@@ -23,6 +29,8 @@
 | 말단 지지점 교정 | 부채꼴 끝의 한쪽 모서리를 IK 지지점으로 사용 | 최저 0.1 mm 패치 중심으로 바꿔 drift와 slip 감소 |
 | 기존 PPO 재생 회귀 | 학습 후 추가한 물리 profile 한계 때문에 15.4M policy가 전진 명령에서 후진 | RL reset을 학습 당시 무제한 profile로 복구하고 legacy 재생 기본을 hardcoded로 고정 |
 | 현재 병목 분석 | Non-RL 기준은 빠른데 학습된 policy가 다시 느리게 만듦 | 작업공간 포화, 말단 목표속도 초과, residual 포화와 구형 checkpoint 재사용이 함께 존재 |
+| 비-RL 보행 재설계 | 3-leg support 처짐, 60 mm 포화, scone-gait가 tripod와 유사 | 160/50·80 mm·middle hold 2배, lower continuous roll, B +72° phase, 자동 계단 데모 구현 |
+| 직진/전신 합성 재진단 | tripod 전후 접촉 혼합·yaw, scone-gait가 회전만 함 | tripod 1.0 Hz·90/70 mm·profile 무제한, scone lower 기본속도+연속회전 합성, B phase 60° 재튜닝 |
 
 ## 초기 설계와 상세 시행착오
 
@@ -848,3 +856,131 @@ RL reset에서 뒤늦게 추가한 profile 제한을 제거하고, 기존 PPO �
 다시 확인했고 전체 테스트 98개가 통과했다. 물리 profile을 반영한 새 정책이
 필요하면 기존 checkpoint를 resume하지 않고 별도 환경 버전에서 0 step부터
 학습해야 한다.
+
+## 2026-09-01: 자동 계단 데모와 continuous-roll 보행
+
+기존 interactive tripod를 실제 controller path로 6초 재현하니 0.0639 m/s,
+stride clipping 98.67%, root Z 위쪽 변화 19.91 mm였다. `qfrc_bias` 중력
+feed-forward는 settle 높이와 middle 오차를 악화해 제거했다. speed/cadence/
+stride/stiffness 후보 8개를 다시 실행해 비-RL 조종 전용으로 speed 160,
+XM acceleration 50, 0.8 Hz, 80/60 mm, middle stiffness 2배를 채택했다.
+결과는 0.1058 m/s, 최저 Z −0.10 mm였다. PPO reset/profile은 바꾸지 않았다.
+
+기존 bounded `SconeGait`는 lower를 ±30° 왕복해 외형상 tripod와 비슷했다.
+새 `SconeRollingGait`는 ID 13–18을 velocity mode로 연속 회전한다. 동기 회전은
+C자 개구가 겹쳐 root Z가 63.5 mm 빠졌고 arbitrary six-way phase는 lateral
+44.4 mm/upright 0.964였다. tripod B에 45/60/67.5/72/75/90°를 시험해
+72°, lower speed 175, stance ratio 0.8을 채택했다. 6초 0.9788 m,
+0.1631 m/s, lower 평균 3.05회전, 최저 Z −13.0 mm, IK 실패 0이었다.
+
+루트 메뉴는 `시뮬레이션 (자동 데모)`와 `시뮬레이션 조종`으로 분리했다.
+자동 데모의 hardcoded는 feedback 없이 lower 6개를 고정 회전하고, improved는
+정체/높은 단에서만 adaptive tripod assist를 사용한다. 재검증에서 stairs-1/2는
+둘 다 3.278/3.408초, stairs-3는 hardcoded 실패와 improved 4.718초/assist 1회가
+나왔다. 전체 후보표와 구현 경계는 12번 문서에 있다.
+
+## 2026-09-01: tripod 직진 안정화와 full-body scone 합성
+
+후속 viewer에서 tripod 전진/후진 접촉이 섞이고 방향이 틀어지는 증상을
+frame 단위로 다시 측정했다. 기존 0.8 Hz/80 mm는 `vx=0.18`에서 필요한
+112.5 mm stroke를 80 mm로 계속 잘라 8초 평균 clipping 약 97%, lower 목표
+진폭 93.94°, 역방향 누적 24.50 mm, 측면 51.77 mm, 최대 yaw 3.38°였다.
+1.0 Hz/90 mm에서는 이론 stroke가 정확히 90 mm가 되어 clipping과 큰 IK
+branch가 사라졌다. simulation profile limiter도 제거한 결과 8초 0.9469 m,
+역방향 3.67 mm, 측면 0.66 mm, yaw 1.17°, 20초 2.4263 m/IK 실패 0이었다.
+
+`SconeRollingGait`는 planner의 18관절 결과 중 lower position을 버리고 있었기
+때문에 회전-only처럼 보였다. upper/middle stride/lift를 55/20 mm로 키우고,
+lower 기본 offset의 미분을 0.35배로 continuous roll에 합성했다. full-body
+조건에서 phase 55–90°와 steering 0/0.1/0.15/0.2를 다시 sweep해 B +60°를
+선택했다. 6초 1.2556 m(0.2093 m/s), lower 3.09회전, upper/middle/lower-basic
+성분이 모두 0이 아니고 IK 실패도 없었다. 기존 PPO/RL bounded reference와
+실물 controller는 변경하지 않았다. 전체 후보와 기각한 heading 보정은
+12번 문서 17장에 기록했다.
+
+## 2026-09-01: 100/150/200 mm 계단 재검증
+
+`stairs-1/2/3`의 물리 rise를 각각 100/150/200 mm 세 단으로 변경했다.
+보강 전 H0/H4에서 100 mm는 4.920/8.228초, 150 mm는 H0 실패와 H4
+12.682초, 기존 170--240 mm tread의 200 mm는 둘 다 실패했다. 200 mm에서
+middle/upper/bank/phase/reverse/tread 후보를 실제 trial로 비교했고, shallow
+tread 최고 후보는 두 번째 단 `y≈0.65/z≈0.43 m`에서 정체했다.
+
+최종 `stairs-3`는 350 mm tread를 사용한다. 직접 회전 판정도 기존 0.75
+비율이 아니라 `rise + 3 mm <= 122.5 mm`로 바꿔 100 mm의 불필요 assist를
+제거했다. 최종 H4는 100 mm 4.920초/assist 0, 150 mm 12.682초/assist 2,
+200 mm 14.394초/assist 3으로 통과했고 H0는 150/200 mm에서 실패했다.
+전체 sweep와 한계는 11번 문서 12절에 기록했다.
+
+## 2026-09-01: 계단 모션을 여섯 말단 공통 위상으로 교정
+
+위 H4는 계단 모션을 Drive형 연속 회전과 tripod assist로 잘못 모델링했다.
+실제 정의에 맞춰 lower 여섯 개를 같은 기하 위상으로 정렬하고 하나의
+extended-position phase target을 함께 이동시키도록 교체했다. mirrored MJCF
+axis는 홀수 `θ`, 짝수 `360°-θ`로 변환한다. 새 결과와 과거 표의 폐기 범위는
+11번 문서 13절에 기록했다.
+
+## 2026-09-01: 옛 앞쪽 1단 270° 자세 재현과 완화
+
+Git 이력에서 상승 시 앞 stage-1 `(7,9,11)`을 270°로 내리는 자세를 확인해
+hardcoded 자동 데모에 복원했다. 그대로 고정하면 20 cm에서 실패하고 upright가
+크게 악화됐다. 180--270° coarse sweep, 접촉 전환부 1° sweep, 270° 시작 후
+회수, Drive damping 해제 대조를 실행한 뒤 improved에는 높이별
+`180/184/195°` partial brace를 채택했다. 상세 결과는 11번 문서 14절이다.
+
+## 2026-09-01: `roll-gait` 분리와 PPO/점접지 hybrid `scone-gait`
+
+연속 lower velocity 회전은 동작 의미에 맞춰 `roll-gait`/`RollGait`로
+분리하고, `SconeRollingGait*`는 import alias로만 남겼다. 새 `scone-gait`는
+checkpoint가 필수다. 평면 속도 0.10 m/s 이하는 원래 PPO, 0.18 m/s 이상은
+bounded full-body reference, 중간은 smoothstep으로 섞는다. 제자리 yaw는
+translation 속도가 0이므로 PPO-only다. reference 비율이 커질수록 PPO
+residual을 같은 비율로 줄여 학습하지 않은 reference와 action이 상쇄되지 않게
+했다.
+
+`SconeGait`의 sector 좌표는 stance 앞 55%를 고정 point-support로 유지하고,
+late stance에서만 30° bounded roll을 진행한 뒤 swing에서 되감도록 바꿨다.
+고속 후보 0.8–1.5 Hz를 실행해 1.2 Hz, duty 0.60, 90/70 mm stride, 25 mm
+lift를 채택했다. Standard/hardcoded 15.4M checkpoint, flat, seed 7의 4초
+최대 전진에서 새 hybrid는 body X +0.456 m, Y -0.013 m, yaw -2.2°,
+backtracking 0.007 m, termination 0이었다. 같은 checkpoint의 순수 PPO는
++0.918/+0.103 m, yaw -11.7°였다. hybrid는 더 느리지만 방향 drift가 작았으며,
+더 빠른 정책이라고 과장하지 않는다.
+
+### 후속 수정: bounded 왕복을 실제 누적 회전으로 교체
+
+GUI에서 말단 회전이 보이지 않는다는 재현 보고 뒤 목표각을 직접 계측했다.
+bounded 구현은 ID 13–18이 한 cycle에서 약 20~42° 움직였지만 swing에서 같은
+각도를 되감아 순 회전량이 0이었다. 따라서 “회전 성분이 있다”는 코드 해석과
+“실제로 구르지 않는다”는 화면 관찰이 동시에 맞았다.
+
+interactive 고속 route만 `continuous_rotation=True`로 바꿨다. stance 앞 55%는
+회전 gate를 0으로 유지하고, late stance에서 가속하며, 무부하 swing 앞 70%는
+같은 방향으로 회전을 계속한 뒤 착지 전 30%에서 감속한다. 다리별 각속도는
+`||[vx-ωy, vy+ωx]|| / 0.1225`로 구하고 360°/s로 제한한다. lower 최종 목표는
+`q_IK + 누적 회전각`이므로 몸통/1단/2단 보행과 실제 다회전이 동시에 남는다.
+
+첫 체크포인트 실행은 0.6초에 hard joint limit로 끝났다. 넘어짐이 아니라
+다회전 qpos를 기본각과 단순 비교한 판정 오류였다. 실제 MuJoCo qpos/target은
+계속 누적하되 PPO 관측은 360° 동등 위상으로 접고, interactive hybrid에서만
+lower hard-limit 항을 제외했다. checkpoint 기준각과 multi-turn 목표도 가장
+가까운 360° branch로 옮긴 뒤 smoothstep 보간해 불필요한 여러 바퀴 되감기를
+막았다. upper/1단 안전 범위는 바꾸지 않았다.
+
+Standard/hardcoded 15.4M checkpoint의 최종 4초 최대 전진은 body X +0.298 m,
+Y +0.0119 m, yaw -4.11°이며 종료가 없었다. 실제 ID 13–18은
+`+436.8/+434.1/+342.4/+344.8/-432.7/-460.3°`, ID 1–12 peak-to-peak는
+14.0~24.1°여서 보행과 회전의 동시 발생을 확인했다. 역방향 4초도 body X
+-0.407 m로 종료 없이 통과했고 말단 회전 부호가 반대로 바뀌었다.
+
+같은 checkpoint/`vx=0.5` 조건을 `mjpython` human viewer에서 200 frame(4초)
+실시간 pace로 다시 재생했다. 비정상 종료 없이 완료됐고 마지막 HUD는
+`scone-gait/hybrid/roll-1.3turn`이었다. headless 수치뿐 아니라 GUI route에서도
+한 바퀴 이상의 누적 회전 상태가 유지됨을 확인했다.
+
+계단 준비는 기존 custom controller가 건너뛰던 Drive→Climb 준비를 복구해
+Walk→Drive→Climb 후 brace/phase를 시작한다. stage-1 ID 7–12는 초기화에서
+position mode를 명시하고, 실물 mode/profile/goal/present를 Drive 진입 때
+read-back한다. Legacy settle hook도 물리 present-position 대기로 확장했다.
+MuJoCo Drive kd 2배는 실물 gain 변경이 아니다. 전체 구현, 수식, 설정과
+측정은 14번 문서에 기록했다.

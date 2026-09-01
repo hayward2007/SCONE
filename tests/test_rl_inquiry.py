@@ -74,7 +74,7 @@ class RLInquiryCommandTests(unittest.TestCase):
         self.assertIn("train", arguments)
         self.assertEqual(arguments[arguments.index("--terrain") + 1], "flat")
         self.assertEqual(
-            arguments[arguments.index("--reference-motion") + 1], "non_rl"
+            arguments[arguments.index("--reference-motion") + 1], "tripod-gait"
         )
         pose_start = arguments.index("--standing-pose-degrees") + 1
         self.assertEqual(
@@ -100,7 +100,7 @@ class RLInquiryCommandTests(unittest.TestCase):
         self.assertIn("nohup env PYTHONPATH=.", command)
         self.assertIn("-m src.rl.walk_learn", command)
         self.assertIn("--terrain flat --terrain-seed 7", command)
-        self.assertIn("--reference-motion non_rl", command)
+        self.assertIn("--reference-motion tripod-gait", command)
         self.assertIn("--standing-pose-degrees", command)
         self.assertIn("195 195 195 195 195 195 train", command)
         self.assertIn("runs/walk_easy_test/train.log", command)
@@ -309,7 +309,7 @@ class RLInquiryCommandTests(unittest.TestCase):
         self.assertEqual(name, "standard")
         self.assertEqual(degrees, STANDARD_STANDING_DEGREES)
 
-    def test_reference_motion_prompt_defaults_new_training_to_non_rl(self) -> None:
+    def test_reference_motion_prompt_defaults_new_training_to_tripod_gait(self) -> None:
         fake_inquirer = _FakeInquirer()
 
         with patch(
@@ -318,9 +318,10 @@ class RLInquiryCommandTests(unittest.TestCase):
         ):
             selection = prompt_reference_motion()
 
-        self.assertEqual(selection, "non_rl")
-        self.assertEqual(fake_inquirer.choices[0].value, "non_rl")
-        self.assertEqual(fake_inquirer.default, "non_rl")
+        self.assertEqual(selection, "tripod-gait")
+        self.assertEqual(fake_inquirer.choices[0].value, "tripod-gait")
+        self.assertEqual(fake_inquirer.choices[1].value, "scone-gait")
+        self.assertEqual(fake_inquirer.default, "tripod-gait")
 
     def test_reference_motion_prompt_can_restore_legacy_replay_reference(self) -> None:
         fake_inquirer = _FakeInquirer()
@@ -333,6 +334,20 @@ class RLInquiryCommandTests(unittest.TestCase):
 
         self.assertEqual(selection, "hardcoded")
         self.assertEqual(fake_inquirer.default, "hardcoded")
+
+    def test_legacy_non_rl_configuration_is_canonicalized(self) -> None:
+        config = TrainingConfig(
+            task="walk",
+            run_name="legacy-alias",
+            curriculum="easy",
+            timesteps=1,
+            num_envs=1,
+            checkpoint_every=1,
+            keep_checkpoints=1,
+            reference_motion="non_rl",
+        )
+
+        self.assertEqual(config.reference_motion, "tripod-gait")
 
 
 if __name__ == "__main__":

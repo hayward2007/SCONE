@@ -5,24 +5,26 @@ from __future__ import annotations
 from .types import SlopeProfile, StairProfile, TerrainType
 
 
-# Every physical step intentionally has a different rise, tread depth, and
-# width. The three presets then increase overall obstacle difficulty.
+# Each preset uses the requested fixed physical riser height. The 20 cm course
+# deliberately uses 35 cm treads: the former 17--24 cm treads trapped both
+# three-leg banks on adjacent vertical faces, whereas 35 cm leaves one stable
+# bank on a tread while the other performs the simulated hook assist.
 STAIR_PRESETS: dict[TerrainType, StairProfile] = {
     TerrainType.STAIRS_1: StairProfile(
-        rises=(0.035, 0.045, 0.055),
+        rises=(0.10, 0.10, 0.10),
         tread_depths=(0.30, 0.27, 0.24),
         widths=(0.85, 0.95, 1.05),
         landing_length=0.70,
     ),
     TerrainType.STAIRS_2: StairProfile(
-        rises=(0.055, 0.070, 0.085),
+        rises=(0.15, 0.15, 0.15),
         tread_depths=(0.27, 0.23, 0.20),
         widths=(0.90, 1.00, 1.10),
         landing_length=0.65,
     ),
     TerrainType.STAIRS_3: StairProfile(
-        rises=(0.080, 0.100, 0.120),
-        tread_depths=(0.24, 0.20, 0.17),
+        rises=(0.20, 0.20, 0.20),
+        tread_depths=(0.35, 0.35, 0.35),
         widths=(0.95, 1.05, 1.15),
         landing_length=0.60,
     ),

@@ -15,7 +15,9 @@ from .hardware import HardwareProbe, discover_hardware
 from .locomotion import (
     GaitConfig,
     LegacyVelocityAdapter,
-    NonRLWalk,
+    SconeGait,
+    SconeGaitConfig,
+    TripodGait,
     VelocityCommand,
 )
 from .main import RobotCommand, SCONE, UnsupportedCommandError
@@ -75,7 +77,7 @@ class JoystickState:
     def to_velocity_command(
         self, config: GaitConfig | JoystickLimits
     ) -> VelocityCommand:
-        """Scale UI axes to the body-frame command used by ``NonRLWalk``."""
+        """Scale UI axes to the body-frame command used by the gait."""
 
         return VelocityCommand(
             vx=self.y * config.max_vx,
@@ -155,7 +157,7 @@ def render_joystick_ui(
     command: VelocityCommand,
     *,
     profile_name: str,
-    control_name: str = "non_rl",
+    control_name: str = "tripod-gait",
     control_hint: str = "",
 ) -> str:
     """Render the current joystick position as a compact terminal dashboard."""
@@ -379,30 +381,77 @@ def run_velocity_joystick_cli(
             stop.set()
 
 
-def run_joystick_cli(
+def _run_gait_joystick_cli(
     robot: SCONE,
+    gait: TripodGait,
     *,
+    control_name: str,
     stop_event: threading.Event | None = None,
-    gait_config: GaitConfig | None = None,
     calibrate_from_controller: bool = True,
 ) -> None:
-    """Drive ``NonRLWalk`` from the common x/y/yaw terminal joystick."""
+    """Drive one model-based gait from the shared x/y/yaw joystick."""
 
-    if robot.profile_name == "sport":
-        print(
-            "[SCONE] Sport는 차체가 매우 낮아 삼각 보행 중 발의 지면 여유가 "
-            "상쇄될 수 있습니다. Non-RL 보행은 Standard 자세를 권장합니다."
-        )
-    gait = NonRLWalk(robot.controller, robot.profile, config=gait_config)
     if calibrate_from_controller:
         gait.reset_from_controller()
     run_velocity_joystick_cli(
         limits=gait.config,
         apply_command=lambda command, dt: gait.update(command, dt=dt, send=True),
         profile_name=robot.profile_name,
-        control_name="non_rl",
+        control_name=control_name,
         stop_event=stop_event,
     )
+
+
+def run_tripod_gait_joystick_cli(
+    robot: SCONE,
+    *,
+    stop_event: threading.Event | None = None,
+    gait_config: GaitConfig | None = None,
+    calibrate_from_controller: bool = True,
+) -> None:
+    """Drive the classic alternating ``tripod-gait`` controller."""
+
+    if robot.profile_name == "sport":
+        print(
+            "[SCONE] Sport는 차체가 매우 낮아 삼각 보행 중 발의 지면 여유가 "
+            "상쇄될 수 있습니다. tripod-gait는 Standard 자세를 권장합니다."
+        )
+    gait = TripodGait(robot.controller, robot.profile, config=gait_config)
+    _run_gait_joystick_cli(
+        robot,
+        gait,
+        control_name="tripod-gait",
+        stop_event=stop_event,
+        calibrate_from_controller=calibrate_from_controller,
+    )
+
+
+def run_scone_gait_joystick_cli(
+    robot: SCONE,
+    *,
+    stop_event: threading.Event | None = None,
+    gait_config: SconeGaitConfig | None = None,
+    calibrate_from_controller: bool = True,
+) -> None:
+    """Drive the experimental SCONE sector rolling/creep gait."""
+
+    if robot.profile_name == "sport":
+        print(
+            "[SCONE] scone-gait는 부채꼴 말단의 접지 여유가 필요한 실험 모드라 "
+            "Standard 자세를 권장합니다."
+        )
+    gait = SconeGait(robot.controller, robot.profile, config=gait_config)
+    _run_gait_joystick_cli(
+        robot,
+        gait,
+        control_name="scone-gait",
+        stop_event=stop_event,
+        calibrate_from_controller=calibrate_from_controller,
+    )
+
+
+# Compatibility name for code written before the gait names became explicit.
+run_joystick_cli = run_tripod_gait_joystick_cli
 
 
 def run_legacy_joystick_cli(
@@ -498,19 +547,31 @@ def main() -> int:
             action = inquirer.select(
                 message="SCONE 실행 메뉴",
                 choices=[
-                    Choice(value="simulation", name="시뮬레이션 조종"),
+                    Choice(value="simulation_demo", name="시뮬레이션 (자동 데모)"),
+                    Choice(value="simulation_control", name="시뮬레이션 조종"),
                     Choice(value="hardware", name=_hardware_label(probe)),
                     Choice(value="rediscover", name="하드웨어 다시 탐색"),
                     Choice(value="rl", name="강화학습 관리"),
                     Choice(value="quit", name="종료"),
                 ],
-                default="simulation",
+                default="simulation_control",
             ).execute()
         except (EOFError, KeyboardInterrupt):
             print("\n[SCONE] 런처를 종료합니다.")
             return 0
         try:
-            if action == "simulation":
+            if action == "simulation_demo":
+                from .simulation.core.simulator_cli import (
+                    select_stair_demo_strategy,
+                    select_stair_terrain,
+                )
+                from .simulation.core.stair_demo import run_automatic_stair_demo
+
+                run_automatic_stair_demo(
+                    select_stair_demo_strategy(),
+                    terrain=select_stair_terrain(),
+                )
+            elif action == "simulation_control":
                 from .simulation.core.cli_bridge import run
                 from .simulation.core.simulator_cli import (
                     select_rl_checkpoint,
@@ -519,7 +580,7 @@ def main() -> int:
                 )
 
                 control = select_simulation_control()
-                if control.value == "rl":
+                if control.value in ("rl", "scone-gait"):
                     checkpoint = select_rl_checkpoint()
                     from .rl.inquiry import (
                         prompt_reference_motion,
@@ -529,20 +590,24 @@ def main() -> int:
                     # Existing PPO checkpoints were trained with the original
                     # hardcoded sinusoidal reference. Keep replay aligned with
                     # that action meaning unless the user explicitly selects a
-                    # checkpoint trained on the newer Non-RL reference.
+                    # checkpoint trained on a model-based gait reference.
                     rl_reference_motion = prompt_reference_motion(
                         default="hardcoded"
                     )
                     stance_name, rl_standing_pose = prompt_standing_pose()
                     print(
-                        f"[RL] 시뮬레이션 기준: {rl_reference_motion} / "
+                        f"[RL] {control.value} 기준: {rl_reference_motion} / "
                         f"기본 자세: {stance_name}"
                     )
                 else:
                     checkpoint = None
                     rl_standing_pose = None
                     rl_reference_motion = None
-                profile = "sport" if control.value == "rl" else _select_profile()
+                profile = (
+                    "sport"
+                    if control.value in ("rl", "scone-gait")
+                    else _select_profile()
+                )
                 run_arguments = dict(
                     profile=profile,
                     terrain=select_terrain(),
@@ -582,5 +647,7 @@ __all__ = [
     "run_control_cli",
     "run_joystick_cli",
     "run_legacy_joystick_cli",
+    "run_scone_gait_joystick_cli",
+    "run_tripod_gait_joystick_cli",
     "run_velocity_joystick_cli",
 ]

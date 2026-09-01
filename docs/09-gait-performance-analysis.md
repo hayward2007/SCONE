@@ -1,5 +1,9 @@
 # Non-RL·Residual RL 보행 성능 분석과 개선 로드맵
 
+> 이름 변경 안내: 이 문서의 과거 `Non-RL` 수치는 현재
+> `tripod-gait`에 해당한다. 아래 continuous-roll 과거 수치는 현재
+> `roll-gait`이고, 새 `scone-gait`는 PPO/점접지 hybrid이므로 별도 비교한다.
+
 ## 1. 결론
 
 Non-RL이 하드코드보다 느려야 하는 구조적 이유는 없다. IK를 쓰는 비용은 학습
@@ -15,6 +19,25 @@ FPS에는 영향을 주지만, 생성된 관절 목표를 같은 50 Hz로 전송
 
 따라서 단순히 cadence나 모터 speed 숫자만 올리는 방식은 맞지 않는다. 명령 범위,
 접지 궤적, actuator-aware 시간 배분, residual 학습을 순서대로 다시 맞춰야 한다.
+
+### 1.1 2026-09-01 비-RL 조종 경로 적용 결과
+
+이 문서 아래의 60 mm/0.7 Hz 분석은 RL reference와 2026-08-31 기준을 설명하는
+역사적 측정으로 그대로 보존한다. 최초 비-RL MuJoCo 조종 sweep의
+80 mm/0.8 Hz, speed 160, acceleration 50은 평균 속도만 보면 나아졌지만 후속
+방향 진단에서 다시 교체됐다. 현재는 90/70 mm, 1.0 Hz, 25 mm lift, profile
+무제한, middle stiffness 2배다.
+
+| 경로 | 평균 속도 | root Z 하방 변화 | 비고 |
+|---|---:|---:|---|
+| 이전 interactive tripod | 0.0639 m/s | 0 mm, 위로 +19.91 mm 변동 | speed100/acc20, 60 mm |
+| 1차 tuned tripod | 0.1058 m/s | −0.10 mm | 유한 profile, 80 mm; 방향 흔들림으로 교체 |
+| 현재 SCONE-tuned tripod | 0.1184 m/s | −0.02 mm | 8초, 역방향 3.7 mm, 측면 0.7 mm, yaw 1.17° |
+| 현재 full-body `roll-gait` | 0.2093 m/s | −20.68 mm | 6초, lower 3.09회전, B +60° |
+| hybrid `scone-gait`, 15.4M 최대 입력 | 0.1140 m/s | 양의 높이, min upright≈1.000 | 4초 +0.456 m, Y −13 mm, yaw −2.2° |
+
+PPO/RL reference 값은 이 표로 자동 변경하지 않았다. 모든 후보·실패·phase
+가설은 [`12-automatic-stair-demo-and-continuous-roll-rework.md`](12-automatic-stair-demo-and-continuous-roll-rework.md)에 있다.
 
 ## 2. 비교 대상부터 분리해야 한다
 
