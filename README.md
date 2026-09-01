@@ -45,6 +45,10 @@ results, and adaptive controller are in
 The complete diagnosis and measured rework of motor limits, tripod support sag,
 continuous distal-frame rotation, and the no-input stair demo are in
 [`docs/12-automatic-stair-demo-and-continuous-roll-rework.md`](docs/12-automatic-stair-demo-and-continuous-roll-rework.md).
+The implementation and modification entry point for every major feature—from
+hardware and gait code to terrain, stair control, RL compatibility, and
+validation—is
+[`docs/13-feature-implementation-and-modification-guide.md`](docs/13-feature-implementation-and-modification-guide.md).
 
 `시뮬레이션 (자동 데모)` asks only for `hardcoded`, `improved`, or sequential
 `compare`, plus one stair preset. It does not open the terminal joystick. The

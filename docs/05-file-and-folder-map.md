@@ -31,6 +31,7 @@
 | [`10-tripod-gait-and-scone-gait.md`](10-tripod-gait-and-scone-gait.md) | 정식 gait 이름, 궤적 수식, IK, sector rolling/creep, CLI/RL 연결, 검증과 튜닝 절차 |
 | [`11-scone-stair-climbing.md`](11-scone-stair-climbing.md) | 부채꼴 후킹 조건·공식, 계단 가설 비교, 실패와 `scone-stair` 구현·검증 |
 | [`12-automatic-stair-demo-and-continuous-roll-rework.md`](12-automatic-stair-demo-and-continuous-roll-rework.md) | 자동 계단 viewer, 지지 처짐/속도 sweep, 연속 회전 phase 가설과 채택·기각 기록 |
+| [`13-feature-implementation-and-modification-guide.md`](13-feature-implementation-and-modification-guide.md) | 주요 기능별 구현 흐름, 기준 코드, 안전한 수정 순서, checkpoint 호환성과 검증 명령 |
 | [`variables/README.md`](variables/README.md) | 변수 사전 색인과 포함 규칙 |
 | [`variables/01-api-hardware-locomotion.md`](variables/01-api-hardware-locomotion.md) | API/CLI/hardware/locomotion 변수 |
 | [`variables/02-kinematics-simulation-terrain.md`](variables/02-kinematics-simulation-terrain.md) | kinematics/simulation/terrain 변수 |
