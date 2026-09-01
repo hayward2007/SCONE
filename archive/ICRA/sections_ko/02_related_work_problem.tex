@@ -2,75 +2,77 @@
 
 \subsection{회전 다리와 바퀴 다리}
 
-RHex는 힙마다 하나의 연속 회전 탄성 다리와 시계 기반 삼각보만으로 기계적
-단순성과 험지 이동성을 결합했고 \cite{saranli2001rhex,altendorfer2001rhex},
-X-RHex 계열은 이 형태를 연구 플랫폼으로 확장했다 \cite{galloway2010xrhex}.
-Whegs는 탄성 다중 스포크와 결합 구동으로 구동기 수를 줄였고
-\cite{quinn2002whegs}, Q-Whex는 준바퀴와 계단 형상에 따른 위상 패턴을 사용했다
-\cite{zhang2023qwhex}. 반원형 RHex 다리는 본 연구와 형태가 가장 가까우므로
-차이를 정확히 밝힐 필요가 있다. RHex의 다리는 단일 힙 회전으로 구동되는 탄성
-C이므로 접점과 몸체 자세가 같은 입력으로 결정된다. 본 연구의 C는 3자유도 다리의
-세 번째 관절이므로, 다리는 호를 정지시키거나 배치하거나 회전시키면서 몸체 자세를
-독립적으로 유지할 수 있다. 절제 실험이 검정하는 것은 C 형상이 아니라 바로 이
-분리다.
+RHex는 각 힙에 연속 회전하는 탄성 다리 하나만 두고, 시계 기반 삼각보행으로
+기계적 단순성과 험지 이동성을 함께 달성했다
+\cite{saranli2001rhex,altendorfer2001rhex}. 이후 전용 제어기를 통해 일반 크기의
+계단을 반복 등반하는 성능도 입증되었다 \cite{moore2002reliable}. X-RHex 계열은
+이 구조를 범용 연구 플랫폼으로 확장했다 \cite{galloway2010xrhex}. Whegs는 탄성 다중 스포크와 결합
+구동을 이용해 구동기 수를 줄였으며 \cite{quinn2002whegs}, Q-Whex는 준바퀴와
+계단 형상에 맞춘 위상 패턴을 사용했다 \cite{zhang2023qwhex}. C자 다리를 사용하는
+6족 로봇의 운동 및 동력 요구량도 모델링 후 실물 시험대에서 검증되었다
+\cite{vina2021cleg}. RHex의 반원형
+다리는 본 연구의 말단 형상과 가장 유사하므로 두 구조의 차이를 명확히 구분해야
+한다. RHex의 다리는 하나의 힙 회전으로 구동되는 탄성 C자 구조이기 때문에
+접촉점의 이동과 몸체 자세가 동일한 입력에 의해 결정된다. 반면 본 연구의 C자
+호는 3자유도 다리의 세 번째 관절이다. 따라서 호를 멈추거나 원하는 위치에
+배치하거나 회전시키는 동안에도 나머지 관절로 몸체 자세를 조절할 수 있다. 절제
+실험에서 검증하려는 핵심은 C자 형상 자체가 아니라 이러한 제어 권한의 분리다.
 
-두 번째 계열은 기구 자체를 변형한다. Wheel Transformer는 장애물에서 수동
-스포크를 전개하고 \cite{kim2014wheeltransformer}, Quattroped와 TurboQuad는 전용
-변형 자유도로 다리를 바퀴로 바꾼다 \cite{chen2014quattroped,chen2017turboquad}.
-두 체계를 모두 얻지만 변형 기구와 그 구동계가 비용이다. 세 번째 계열은 완전한
-다리에 바퀴 구동을 병치한다. Cassino Hexapod III는 인체형 다리 끝에 옴니휠을
-배치하고 \cite{tedeschi2017cassino}, ANYmal on Wheels는 바퀴 구속을 전신
-최적화에 포함하며
-\cite{bjelonic2019keep,bjelonic2021wholebody,hutter2016anymal}, 이륜 점프 로봇도
-같은 분리를 더 작은 형상에서 활용한다 \cite{klemm2019ascento}. 이들은 바퀴와
-다리의 동시 제어가 가치 있음을 보이지만 다리 사슬에 더해 바퀴 구동을 유지한다.
-본 설계는 하이브리드 이동 자체가 새롭다고 주장하지 않는다. 검증하려는 차이는
-\emph{액추에이터와 접점의 재사용}이다. 즉 말단 관절 하나가 불완전 호 하나의 발
-궤적, 구름 운동, 모서리 결합을 모두 생성하며 변형 상태도 추가 구동도 없다.
+두 번째 연구군은 기구의 형태를 직접 바꾼다. Wheel Transformer는 장애물과
+접촉하면 수동 스포크를 펼치고 \cite{kim2014wheeltransformer}, Quattroped와
+TurboQuad는 전용 변형 자유도를 이용해 다리를 바퀴로 전환한다
+\cite{chen2014quattroped,chen2017turboquad}. 두 이동 방식을 모두 확보할 수
+있지만, 별도의 변형 기구와 구동계가 필요하다. 세 번째 연구군은 관절 다리 끝에
+구동 바퀴를 추가한다. ASTERISK H는 감지한 장애물에 따라 구름 이동과 삼각보행을
+연속적으로 전환한다 \cite{yoshioka2008asterisk}. Cassino Hexapod III는 인체형 다리 끝에 옴니휠을 장착했고
+\cite{tedeschi2017cassino}, ANYmal on Wheels는 바퀴의 구름 구속을 전신 최적화에
+포함했다 \cite{bjelonic2019keep,bjelonic2021wholebody,hutter2016anymal}.
+이륜 점프 로봇도 작은 구조 안에서 다리와 바퀴의 제어 권한을 분리한다
+\cite{klemm2019ascento}. 이러한 연구는 다리와 바퀴를 동시에 제어할 때의 이점을
+보여주지만, 다리 관절과 별도로 바퀴 구동기를 유지한다. 본 연구는 하이브리드
+이동 자체의 신규성을 주장하지 않는다. 검증하려는 차별점은 \emph{액추에이터와
+접촉부의 재사용}이다. 하나의 말단 관절과 개방형 호가 발 궤적, 구름 운동, 계단
+모서리 걸림을 모두 만들며, 별도의 변형 상태나 추가 구동기가 필요하지 않다.
 
-학습 제어기는 강건한 다리 이동을 얻는 표준적 방법이 되었고
-\cite{hwangbo2019learning,lee2020learning,miki2022learning,rudin2022minutes},
-residual 형태는 구조화된 기준 궤적을 유지한 채 보정만 학습한다
-\cite{johannink2019residual,silver2018residual}. 본 연구는 residual policy를
-배포 스택의 저속 구간에서만 사용하며, \ref{sub:residual-ko}절에서 명시하듯 본
-논문이 보고하는 모든 실험의 운용점에서 이 항은 비활성이다.
-
-\subsection{운용 범위 문제}
+\subsection{운용 범위의 정식화}
 
 몸체 명령과 모드를
 \begin{equation}
  \vect{c}=[v_x,\;v_y,\;\omega_z]^\top\in\mathcal{C},\qquad
  m\in\{W,R,C\}                                                 \label{eq:command-ko}
 \end{equation}
-로 정의한다. 여기서 $\vect{q}\in\R^{18}$은 관절 벡터이고 $\Gamma_i$는 $i$번째
-호의 활성 접촉 집합이다. 모드마다 기구 $\mathcal{M}_m$을 바꾸는 대신 하나의 형태
-$\mathcal{M}$과 모드별 제어법칙을 사용한다.
+로 정의한다. 여기서 $\vect{q}\in\R^{18}$은 관절 벡터이고, $\Gamma_i$는 $i$번째
+호에서 활성화된 접촉의 집합이다. 모드에 따라 기구 $\mathcal{M}_m$을 바꾸는 대신,
+하나의 기구 $\mathcal{M}$에 서로 다른 제어 법칙을 적용한다.
 \begin{equation}
  \vect{q}^{\star}_{k}=\pi_m(\vect{x}_k,\vect{c}_k;\mathcal{M}),
  \quad \mathcal{M}_W=\mathcal{M}_R=\mathcal{M}_C.              \label{eq:reuse-ko}
 \end{equation}
-평가 대상은 최대속도 하나가 아니라
+평가 대상은 최대 속도 하나가 아니라
 \begin{equation}
  \mathcal{O}=\{\bar v_x, e_v, C_{\rm mt},D_{\rm slip},
  P_{\rm top}(h,d),t_{\rm top},t_{\rm switch}\}                \label{eq:envelope-ko}
 \end{equation}
-로 표현되는 운용 범위다. 가설은 세 가지다. H1은 협응 구름이 같은 모델의 보행 및
-말단 단독 회전보다 높은 평균 전진 속도에 도달한다는 것이다. H1을 명령 추종이
-아니라 속도로 서술한 것은 의도적이다. 고정 명령을 초과하는 제어기는 더 빨리
-이동하면서도 $e_v$에서는 나쁜 점수를 받기 때문이며, 두 값은
-\ref{sec:results-ko}절에서 분리해 보고한다. H2는 관절 협응이 호 회전만의 기하
-한계를 넘어 등반 가능한 계단 집합을 확장한다는 것이다. H3은 모드 전환이
-$60^\circ$ 기울기 한계를 넘지 않는다는 것이다.
+로 나타내는 운용 범위다. 검증할 가설은 세 가지다. H1은 관절 운동과 말단 회전을
+협응한 구름 주행이 동일 모델의 관절 보행 및 말단 단독 회전보다 높은 평균 전진
+속도를 낸다는 것이다. H1을 명령 추종 성능이 아닌 달성 속도로 표현한 데에는
+이유가 있다. 고정된 속도 명령을 초과하는 제어기는 실제로 더 빠르게 이동하면서도
+추종 오차 $e_v$는 커질 수 있기 때문이다. 따라서 \ref{sec:results-ko}절에서는
+평균 속도와 추종 오차를 별도로 보고한다. H2는 개방형 호 모델에서 말단 단독
+회전이 실패하는 계단 형상을 관절 협응으로 통과할 수 있다는 것이다. 개구부 자체의
+효과를 주장하려면 \ref{sec:method-ko}절에서 정의한 동일 조건 닫힌 바퀴 절제가
+필요하다. H3은 모드 전환 중 몸체 기울기가 $60^\circ$ 한계를 넘지 않는다는 것이다.
 
-표~\ref{tab:related-ko}의 정성 열도 여기서 정의한다. $J_i$를 다리 $i$의 관절
-속도에서 (말단 표면을 따르는 접촉 패치의 접선 이동, 몸체 기준 그 접점의 위치)
-쌍으로 가는 사상이라 하자. $\operatorname{rank}J_i=1$이어서 입력 하나가 둘을
-동시에 결정하면 \emph{결합}, 전용 구동이 추가 액추에이터를 대가로 둘을 독립시키면
-\emph{분리}, 본 연구처럼 세 관절이 유계 집합 위에서 쌍을 선택하되 말단 관절을
-공유하면 \emph{부분 분리}로 부른다.
+표~\ref{tab:related-ko}의 정성적 분류 기준도 여기서 정의한다. $J_i$를 다리 $i$의
+관절 속도로부터 (말단 표면을 따르는 접촉 패치의 접선 이동량, 몸체 좌표계에서 본
+접촉점 위치)의 쌍으로 가는 사상이라 하자. $\operatorname{rank}J_i=1$이어서 하나의
+입력이 두 값을 동시에 결정하면 \emph{결합}이라 한다. 별도의 구동기가 두 값을
+독립적으로 제어하면 \emph{분리}라 한다. 본 연구처럼 세 관절이 유계 영역 안에서
+두 값을 선택할 수 있지만 그중 말단 관절을 공유하는 경우는 \emph{부분 분리}로
+분류한다.
 
 \begin{table}[t]
-\caption{제안 플랫폼의 형태적 위치}
+\caption{제안 플랫폼의 형태학적 분류}
 \label{tab:related-ko}
 \centering\small
 \resizebox{\columnwidth}{!}{%

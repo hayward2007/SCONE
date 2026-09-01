@@ -4,7 +4,7 @@
 > 가능한 지적(M6, M8, M9, m1--m12, 빠진 그림, 참고문헌)은 모두 반영되었고,
 > 구현 대조 과정에서 더 큰 문제(Sec. IV가 결과를 만들지 않은 제어기를 서술)가
 > 발견되어 Sec. III/IV를 실행된 제어기 기준으로 재작성했다. 현재 빌드는 영문
-> 8쪽 / 한글 7쪽이다. 남은 작업은 `TODO_CODE_AND_THEORY.md`를 볼 것.
+> 영문 8쪽 / 한글 8쪽이다. 남은 작업은 `TODO_CODE_AND_THEORY.md`를 볼 것.
 
 > 이 문서는 저자가 아닌 **ICRA 리뷰어 관점**에서 작성한 모의 심사평이다.
 > 근거는 원고 본문, `benchmark/results/*.jsonl`, `src/locomotion/scone_gait.py`,

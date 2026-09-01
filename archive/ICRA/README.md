@@ -28,8 +28,10 @@ therefore avoid packages that only one of those toolchains carries:
   falls back to `xeCJK` with the system Noto CJK KR faces (`CJKspace=true`,
   because Korean is space-delimited).
 - `ieeeconf.cls` sets `\rmdefault` to `ptm`, which XeLaTeX cannot resolve in its
-  Unicode encoding; both roots load `fontspec` with TeX Gyre Termes, the
-  metric-compatible Times clone, so bold and italic runs are not silently lost.
+  Unicode encoding; both roots load `fontspec` with the macOS Times New Roman
+  family so bold and italic runs are not silently lost. This is intentionally a
+  local build choice and should be replaced by an embedded project font or a
+  TeX-distributed Times-compatible family for a machine-independent release.
 
 Figures are generated from the benchmark JSONL files by
 `figures/generate_figures.py`; `make` reruns it whenever those results change.
@@ -67,7 +69,7 @@ the text, so it cannot drift away from the equations it illustrates.
 | References | 1.0 |
 | **Total** | **8.0** |
 
-Current build: English 8 pages, Korean 7 pages, zero overfull boxes, zero
+Current build: English 8 pages, Korean 8 pages, zero overfull boxes, zero
 undefined references, and the two languages contain an identical multiset of
 numeric literals (checked by extracting `\d+\.\d+` from both PDFs).
 
@@ -92,6 +94,6 @@ over application background, implementation narration, and future work.
 6. Bibliographic fields added on 2026-09-01 carry verified authors, titles,
    venues and years; volume and page fields still need one publisher-record pass
    before submission.
-6. Follow the ICRA AI-use policy for the final wording and disclosure. Formatting
+7. Follow the ICRA AI-use policy for the final wording and disclosure. Formatting
    and grammar assistance are treated differently from generated technical
    content; retain an internal record of how assistance was used.

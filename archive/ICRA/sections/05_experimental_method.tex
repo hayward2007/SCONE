@@ -1,4 +1,4 @@
-\section{EXPERIMENTAL METHOD}
+\section{EXPERIMENTAL METHOD}\label{sec:method}
 
 \subsection{Reproducible Simulation Protocol}
 
@@ -24,6 +24,18 @@ command activity rather than tuned per condition. Neither condition was
 separately optimized for maximum speed, so the comparison establishes the
 qualitative ordering of the three regimes on one model and not the best speed
 attainable by any of them.
+
+To turn this development ablation into a publication comparison, we additionally
+define a locked validation protocol. All three restrictions use one common gait
+parameter set, actuator limits, initial distal phase, and paired perturbation
+sample. Contact geometry is crossed with control authority: the exported open arc
+is compared with a closed cylinder having the same radius, width, body mass,
+inertia, actuator, and collision parameters. For each terrain seed, every
+geometry--controller pair receives the same mass, friction, actuator-strength,
+base-pose, and gait-phase perturbation. The protocol and its random seeds are
+written to a manifest before execution. This matched experiment is intentionally
+reported as required validation rather than retrofitted into the single-run
+numbers below.
 
 The stair set contains three 3-step profiles: $(h,d)=(0.10,0.24)$,
 $(0.15,0.20)$, and $(0.20,0.35)\,$m, where $d$ is the minimum tread. Strategies
@@ -66,5 +78,8 @@ Every trial writes one record carrying the source revision, the seed, and all
 model scale factors, so each reported number is traceable to the configuration
 that produced it. The nominal flat, stair, and transition conditions are single
 deterministic trials and the uneven-terrain condition uses three seeds; they
-support reproduction and ablation ordering, not confidence intervals. No
-physical measurement enters any table, figure, or conclusion in this paper.
+support reproduction and descriptive ablation ordering, not causal attribution
+or confidence intervals. The locked validation protocol uses paired trials,
+Wilson intervals for binary success, and deterministic bootstrap intervals for
+continuous paired differences. No physical measurement enters any table, figure,
+or conclusion in this paper.

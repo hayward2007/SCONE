@@ -10,9 +10,10 @@ six-second window). Values are descriptive; error bars are intentionally absent.
 \end{figure*}
 
 Table~\ref{tab:flat} and Fig.~\ref{fig:flat} show different trade-offs.
-Coordinated rolling reached $0.200\,\mathrm{m\,s^{-1}}$, exceeding the
+Coordinated arc locomotion reached $0.200\,\mathrm{m\,s^{-1}}$, exceeding the
 $0.18\,\mathrm{m\,s^{-1}}$ command by $11.2\%$ and travelling $71\%$ faster than
-articulated walking, which supports H1 as stated. The same table refutes the
+articulated walking. This is descriptively consistent with H1, but the unequal
+gait parameters prevent a causal claim. The same table refutes the
 stronger reading of H1 that we deliberately avoided: measured against the
 constant command, walking has the smallest tracking error
 ($e_v=0.097$ against $0.253$ and $0.268\,\mathrm{m\,s^{-1}}$), because rolling
@@ -20,8 +21,8 @@ overshoots the command rather than following it. Rolling also consumed
 $3.18\times$ the absolute mechanical work and accumulated $6.23\times$ the
 contact slip of walking. Distal-only rotation was both slower and more expensive
 than walking, so the arc by itself does not explain the speed: in this model the
-gain comes from coordinating posture with rotation, and it is bought with slip
-and work rather than with efficiency.
+gain is associated with coordinating posture and rotation, and it is bought with
+slip and work rather than with efficiency.
 
 \begin{table}[t]
 \caption{Flat nominal trial with a 0.18 m/s forward command}
@@ -34,7 +35,7 @@ Controller & $\bar v_x$ & $e_v$ & $C_{\rm mt}$ & slip\\
 \midrule
 Articulated walk & 0.117 & \textbf{0.097} & \textbf{0.661} & \textbf{0.212}\\
 Distal only & 0.090 & 0.268 & 2.576 & 1.603\\
-Full rolling & \textbf{0.200} & 0.253 & 1.227 & 1.323\\
+Coordinated arc & \textbf{0.200} & 0.253 & 1.227 & 1.323\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -47,12 +48,12 @@ slip over the six-second window against $1.323\,$m measured, an error of $4.2\%$
 For distal-only rotation the same expression predicts $1.93\,$m against $1.603\,$m
 measured; it over-predicts by $20\%$ because the alignment factor $A_i$ of
 (\ref{eq:align}) falls below unity when the body does not follow the contact.
-The agreement identifies the cause of the slip precisely: the rolling rate of
-(\ref{eq:rollcmd}) is scaled by normalized command activity and not by the
-no-slip rate of (\ref{eq:rollrate}), so a fixed fraction of the commanded surface
-speed is dissipated at the contact. This is a property of the controller that
-produced these numbers, and it is the first quantity the phase-gated variant of
-Sec.~\ref{sub:gate} is intended to remove.
+This arithmetic is a consistency check, not an independent prediction, because
+$\bar v_x$ is measured from the same trial and contact alignment varies over the
+cycle. It nevertheless shows that the fixed activity-scaled rolling command can
+create a large surface/body-speed mismatch. The reported slip therefore
+characterizes this controller setting rather than an intrinsic property of the
+arc geometry.
 
 \subsection{Stair Coordination Ablation}
 
@@ -64,19 +65,17 @@ reach the landing; the binary outcomes are tabulated in Table~\ref{tab:stairs}.}
 \label{fig:stairs}
 \end{figure}
 
-Table~\ref{tab:stairs} separates the three climbing mechanisms of
-Sec.~\ref{sec:results} along the reference line of (\ref{eq:riserlimit}).
-At $100\,$mm, below the closed-wheel limit $h_{\rm cw}=122.5\,$mm, every
-strategy succeeded, as a wheel of the same radius would. At $150\,$mm
-($1.22r_o$), which no closed wheel of this radius can pivot over, distal-only
-rotation still reached the landing in $14.960\,$s with no articulation
-whatsoever; since the riser is well inside the opening chord
-($150<l_o=226\,$mm), this isolates the open sector acting as an edge hook and is
-the clearest evidence in this study that the opening, not merely the distal
-degree of freedom, carries function. At $200\,$mm ($1.63r_o$) both restricted
-strategies failed and only the coordinated controller reached the top, in
-$5.964\,$s with $88.18\,$J of work, which places the remaining capability on
-articulation. Speed and safety did not coincide: at $150\,$mm the open-loop
+Table~\ref{tab:stairs} compares three controller restrictions on the same open-arc
+model. At $100\,$mm every strategy succeeded. At $150\,$mm ($1.22r_o$),
+distal-only rotation reached the landing in $14.960\,$s with no articulation;
+because the riser fits inside the opening chord ($150<l_o=226\,$mm), this outcome
+is consistent with edge engagement. It does not by itself isolate the opening:
+an actuated closed wheel can apply axle torque, so the matched closed-wheel
+control defined in Sec.~\ref{sec:method} is required. At $200\,$mm ($1.63r_o$)
+both restricted strategies failed and only the coordinated controller reached
+the top, in $5.964\,$s with $88.18\,$J of work. This supports H2 only for the
+tested open-arc controller restrictions. Speed and safety did not coincide: at
+$150\,$mm the open-loop
 condition was fastest ($5.546\,$s) but fell to $u_z=0.459$, close to the
 $\cos60^\circ$ termination boundary, whereas the coordinated controller held
 $u_z=0.755$.
@@ -106,5 +105,5 @@ both directions, and neither trial produced forbidden collisions or IK failures,
 so H3 was not violated in either direction. On randomized uneven terrain, all
 nine short trials executed without the tilt termination: mean $\bar v_x$ over
 three seeds was $0.0768\pm0.0043$, $0.1025\pm0.0356$, and
-$0.2009\pm0.0126\,\mathrm{m\,s^{-1}}$ for walk, distal-only, and full rolling.
+$0.2009\pm0.0126\,\mathrm{m\,s^{-1}}$ for walk, distal-only, and coordinated arc.
 The sample size and $2\,$s window do not establish robust-terrain superiority.

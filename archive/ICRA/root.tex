@@ -6,14 +6,12 @@
 \IEEEoverridecommandlockouts
 \overrideIEEEmargins
 
-% ieeeconf sets \rmdefault to ptm (Times), which XeLaTeX cannot resolve in its
-% Unicode (TU) encoding, silently degrading every bold/italic run. TeX Gyre
-% Termes is the metric-compatible Times clone shipped with TeX Live, so the
-% manuscript keeps the required IEEE Times appearance with a complete family.
+% ieeeconf's legacy ptm family is unavailable in XeTeX's Unicode encoding.
+% Use the complete macOS Times family to preserve the IEEE appearance.
 \usepackage{fontspec}
-\setmainfont{TeX Gyre Termes}
-\setsansfont{TeX Gyre Heros}
-\setmonofont{TeX Gyre Cursor}
+\setmainfont{Times New Roman}
+\setsansfont{Arial}
+\setmonofont{Menlo}
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
 \usepackage{cite}
@@ -29,10 +27,10 @@
 % and a public repository under that name must be closed or anonymously
 % mirrored for the review period.
 \newcommand{\robotname}{the proposed platform}
-\newcommand{\gaitname}{SCONE-gait}
+\newcommand{\gaitname}{Arc-Reuse Gait}
 
 \title{\LARGE \bf
-An Actuated Arc--Leg Hexapod for Walking, Rolling, and Stair-Edge Locomotion}
+Actuator and Contact Reuse in an Articulated Arc--Leg Hexapod}
 \author{\mbox{}}
 
 \begin{document}
@@ -45,25 +43,24 @@ Wheels transport efficiently on level ground, whereas articulated legs place
 contacts across discontinuities; conventional wheel--leg hybrids commonly retain
 both mechanisms and their associated actuation. We study a different compromise:
 each of six 3-DoF legs terminates in one actuated, open C-shaped arc that is
-reused as a planted foot, a rolling contact, and a stair-edge hook. One
-controller runs the alternating-tripod walking reference and continuous arc
-rotation on the same six distal joints at the same instant: those joints are
-placed in velocity mode and the rolling rate is superposed on the differentiated
-walking reference, so neither a mode switch nor a hardware change is required.
-In a 500-Hz MuJoCo model, a same-platform ablation at a commanded
-$0.18\,\mathrm{m\,s^{-1}}$ yielded $0.117\,\mathrm{m\,s^{-1}}$ for articulated
-walking, $0.090\,\mathrm{m\,s^{-1}}$ for distal-only rotation, and
-$0.200\,\mathrm{m\,s^{-1}}$ for full-body rolling. A closed-wheel moment balance
-places a $122.5\,\mathrm{mm}$ riser limit on rotation over a rim; on three
-three-step geometries, rotation alone nevertheless cleared a $0.15\,\mathrm{m}$
-riser, which isolates the open sector acting as a hook, whereas only the
-coordinated controller reached the top of the $0.20\,\mathrm{m}$ riser with
-$0.35\,\mathrm{m}$ tread, which isolates articulation. Walk--roll and roll--walk
-mode switches completed in $0.342$ and $0.660\,\mathrm{s}$. These deterministic simulation trials establish a
-reproducible operating envelope and isolate the benefit of coordinating
-articulation with the shared arc contact. The study is a simulation-scope design
-analysis and does not yet validate physical speed, endurance, or stair
-reliability.
+reused as a planted foot, a rolling contact, and a candidate stair-edge hook.
+One controller runs an alternating-tripod reference and continuous arc rotation
+on the same six distal joints: the distal rolling rate is superposed on the
+differentiated walking reference, requiring neither a dedicated wheel actuator
+nor a mechanical transformation. In a 500-Hz MuJoCo development model, an
+as-implemented controller comparison at a commanded $0.18\,\mathrm{m\,s^{-1}}$
+yielded $0.117\,\mathrm{m\,s^{-1}}$ for articulated walking,
+$0.090\,\mathrm{m\,s^{-1}}$ for distal-only rotation, and
+$0.200\,\mathrm{m\,s^{-1}}$ for coordinated arc locomotion. Distal-only
+rotation reached the upper landing of a three-step $0.15\,\mathrm{m}$-riser
+profile, while only the coordinated controller reached the landing of the
+$0.20\,\mathrm{m}$-riser, $0.35\,\mathrm{m}$-tread profile. A force--torque
+balance shows why a radius-only wheel-height limit is insufficient for an
+actuated distal joint; a matched closed-wheel control is therefore required to
+attribute the $0.15\,\mathrm{m}$ outcome to the opening. Walk--roll and
+roll--walk control transitions completed in $0.342$ and $0.660\,\mathrm{s}$.
+These deterministic trials define hypotheses and a reproducible validation
+protocol, not physical performance or statistical superiority.
 \end{abstract}
 
 \input{sections/01_introduction}
