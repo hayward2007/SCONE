@@ -73,6 +73,11 @@ class GaitConfig:
     max_vx: float = 0.18
     max_vy: float = 0.12
     max_yaw_rate: float = 0.9
+    # Evaluate omega x r about the nominal footprint centroid rather than
+    # about the exported chassis frame origin. The origin sits ~0.157 m
+    # outside the support polygon centre, so the legacy behaviour turned a
+    # pure yaw command into a yaw plus a lateral translation.
+    yaw_about_footprint_centroid: bool = True
     command_time_constant: float = 0.15
     idle_epsilon: float = 1e-3
     ik_tolerance: float = 1e-4
@@ -348,6 +353,8 @@ class TripodGait:
 
         vx, vy, yaw_rate = command
         x, y = self._nominal_feet[leg - 1, :2]
+        if self.config.yaw_about_footprint_centroid:
+            x, y = np.array([x, y]) - self._nominal_feet[:, :2].mean(axis=0)
         point_velocity = np.array(
             [vx - yaw_rate * y, vy + yaw_rate * x], dtype=np.float64
         )
