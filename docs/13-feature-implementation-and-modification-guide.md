@@ -613,33 +613,42 @@ arc-wheel 외반경, 내반경, opening angle을 묶고 다음 계산을 제공�
 - 필요한 마찰계수
 - support polygon margin
 
-현재 외반경 `R = 122.5 mm`이고
-`SconeStairConfig.direct_roll_clearance = 3 mm`이므로 단순 접근의
-direct-roll 분류는 대략 `rise + 3 mm <= 122.5 mm`다. 이는 기하 1차
-판정이며 실제 성공 보장이 아니다.
+현재 외반경은 `R = 122.5 mm`다. `rise + clearance <= R` 같은 식은 후킹
+가능성을 검토하는 기하 분석에는 남아 있지만, 현재 계단 controller의 모드
+전환 조건은 아니다. 현재 구현은 모든 높이에서 먼저 공통 위상을 획득한다.
 
 전체 공식과 가정은
 [`11-scone-stair-climbing.md`](11-scone-stair-climbing.md)를 기준으로 한다.
 
-### 12.2 adaptive `scone-stair`
+### 12.2 synchronized-phase `scone-stair`
 
-[`SconeStairClimber`](../src/simulation/core/stair_climber.py)은 정지
-`IDLE`에서 시작하고, 명령 중에는 두 active 상태를 오간다.
+[`SconeStairClimber`](../src/simulation/core/stair_climber.py)은 주행 Drive와
+별개의 계단 모션이다. 정지 `IDLE`에서 시작하고 다음 상태를 거친다.
 
 ```text
 IDLE
-  └─ command ─> ROLLING
-                   ├─ progress sufficient ─> ROLLING
-                   ├─ known tall riser ─────> TRIPOD_ASSIST
-                   └─ stall detected ───────> TRIPOD_ASSIST
-                                                └─ phases complete ─> ROLLING
+  └─ prepare ─> SYNCHRONIZING
+                    └─ six targets settled ─> IDLE
+                           └─ command ─> CLIMBING
+                                            └─ command 0 ─> IDLE/phase hold
 ```
 
-`ROLLING`은 여섯 lower를 함께 회전한다. `TRIPOD_ASSIST`는
-`(1,4,5)`와 `(2,3,6)` bank를 교대하며 support middle 250°, swing middle
-165°, support/swing lower velocity 105/185를 smooth transition으로 적용한다.
-0.80초 동안 진행이 25 mm 미만이면 stall로 판단한다. 150/200 mm처럼
-direct-roll 범위를 넘는 알려진 preset은 첫 riser 전에 pre-hook을 시작한다.
+하나의 wrap하지 않는 기하 위상 `θ`를 사용한다. 현재 MJCF에서 홀수/짝수
+lower joint 축이 반대이므로 실제 C-frame 각도를 같게 하려면 목표는 다음과
+같다.
+
+```text
+odd lower target  = θ
+even lower target = 360° - θ
+θ[k+1] = θ[k] - v_phase × (0.229 × 6 deg/s) × dt
+```
+
+lower 여섯 개는 `EXTENDED_POSITION` mode를 유지한다. 따라서 계단 모서리에
+걸린 모터가 지연되어도 동일한 공통 목표로 돌아오며, 서로 다른 tripod lower
+속도나 Drive velocity는 보내지 않는다. lower 위상 전에 진행 방향 앞쪽 1단
+IDs `(7,9,11)`을 높이별로 `180/184/195°`에 둔다. 현재 측정 기반 lower
+선택값은 100 mm `60°/250`, 150 mm `60°/200`, 200 mm `90°/200`이다. 앞은
+시작 위상, 뒤는 DYNAMIXEL velocity 수치 단위의 phase rate다.
 
 `prepare_scone_stair_pose()`는 Legacy Walk에서 네 번 회전해 course `+Y`에
 side-on으로 놓고 Drive 자세로 전환한다. 이 준비 sequence는 terrain 방향과
@@ -650,25 +659,30 @@ side-on으로 놓고 Drive 자세로 전환한다. 이 준비 sequence는 terrai
 [`stair_demo.py`](../src/simulation/core/stair_demo.py)는 조종 입력 없이 다음을
 실행한다.
 
-- `hardcoded`: 상태 feedback 없이 lower velocity 150 고정
-- `improved`: `SconeStairClimber`
+- `hardcoded`: 옛 코드처럼 앞쪽 1단 270° 수직 자세를 만든 뒤 lower 60°를
+  한 번 획득하고 velocity 200 open-loop
+- `improved`: 높이별 앞 1단 partial brace와 공통 lower 위상 목표를 계속
+  추종하는 `SconeStairClimber`
 - `compare`: 두 viewer를 순서대로 실행
 
-[`stair_benchmark.py`](../src/simulation/stair_benchmark.py)는 GUI 없이 H0–H4와
-튜닝 variant를 같은 준비 조건에서 JSONL로 출력한다.
+[`stair_benchmark.py`](../src/simulation/stair_benchmark.py)는 GUI 없이 기존
+H0–H4 기록과 새 `synchronized-open-loop` 기준선을 같은 준비 조건에서
+JSONL로 출력한다.
 
 계단 controller를 수정할 때는:
 
-1. geometry predicate와 config validation 수정
-2. state transition 단위 테스트
+1. odd/even physical phase 변환과 config validation 수정
+2. phase acquisition/state transition 단위 테스트
 3. headless 동일 조건 benchmark
 4. 자동 데모 result/timeout 테스트
 5. macOS `mjpython` viewer에서 실제 route 확인
 6. 시도·실패·채택 이유를 계단 문서에 기록
 
-현재 결정론적 결과는 100 mm에서 두 방식이 통과하고, 150/200 mm에서는 fixed
-rolling이 제한 시간 안에 실패하며 adaptive가 통과한다. 이는 현재 model과
-마찰 설정의 simulation 결과이지 실물 성능 보증이 아니다.
+현재 결정론적 headless에서 hardcoded는 100/150 mm를 `3.804/4.268 s`에
+통과하지만 upright가 `0.608/0.438`까지 내려가고 200 mm에는 실패한다.
+improved는 `2.594/4.194/5.996 s`, upright `0.912/0.752/0.760`으로 세 높이를
+통과한다. 이는 현재 model과 마찰 설정의 simulation 결과이지 실물 성능
+보증이 아니다.
 
 ---
 
@@ -890,7 +904,7 @@ reset은 기존 run을 즉시 삭제하지 않고 backup으로 이동한다. pau
 2. hardcoded baseline을 유지해 같은 환경에서 비교한다.
 3. state transition과 actuator target을 단위 테스트한다.
 4. headless benchmark에서 성공 여부뿐 아니라 시간, work, upright, contact,
-   assist 횟수를 비교한다.
+   phase sync/spread를 비교한다.
 5. viewer에서 조기 timeout, 전복, lateral escape를 확인한다.
 6. 실패 후보도 `docs/11` 또는 `docs/12`에 남긴다.
 

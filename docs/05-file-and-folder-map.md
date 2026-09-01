@@ -97,7 +97,7 @@
 | [`model.py`](../src/simulation/model.py) | `core.model` 호환 import |
 | [`pid.py`](../src/simulation/pid.py) | `core.pid` 호환 import |
 | [`simulator_cli.py`](../src/simulation/simulator_cli.py) | `core.simulator_cli` 호환 import |
-| [`stair_benchmark.py`](../src/simulation/stair_benchmark.py) | H0–H4와 H3 파라미터 변형의 headless 동일 조건 측정·JSONL 출력 |
+| [`stair_benchmark.py`](../src/simulation/stair_benchmark.py) | 과거 H0–H4, synchronized open-loop/closed-loop, H3 변형의 headless 동일 조건 측정·JSONL 출력 |
 
 ### `src/simulation/core/`
 
@@ -109,8 +109,8 @@
 | [`controller.py`](../src/simulation/core/controller.py) | 이름 기반 18 motor 매핑, profile setpoint, mode/torque/position/velocity API |
 | [`cli_bridge.py`](../src/simulation/core/cli_bridge.py) | old/tripod-gait/scone-gait/scone-stair/RL control을 viewer와 물리 loop에 연결 |
 | [`scone_rolling_gait.py`](../src/simulation/core/scone_rolling_gait.py) | 상·중단 IK stabilizer와 하단 여섯 연속 회전/phase stagger를 결합한 MuJoCo gait |
-| [`stair_climber.py`](../src/simulation/core/stair_climber.py) | 연속 회전과 조건부 대각 삼각보 assist를 결합한 MuJoCo 계단 controller |
-| [`stair_demo.py`](../src/simulation/core/stair_demo.py) | no-feedback baseline, improved 자동 worker, hardcoded/improved/compare viewer |
+| [`stair_climber.py`](../src/simulation/core/stair_climber.py) | 높이별 앞 1단 brace와 여섯 부채꼴 공통 기하 위상을 결합한 MuJoCo 계단 controller |
+| [`stair_demo.py`](../src/simulation/core/stair_demo.py) | 옛 270° hardcoded baseline, partial-brace closed-loop improved worker, compare viewer |
 | [`simulator_cli.py`](../src/simulation/core/simulator_cli.py) | argparse와 대화형 시뮬레이션 선택 UI |
 | [`viewer.py`](../src/simulation/core/viewer.py) | passive viewer 카메라 추적·가시 그룹 설정 |
 

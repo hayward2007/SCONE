@@ -951,3 +951,301 @@ viewer loop를 조사하니 physics timestep 2 ms마다 `viewer.sync()`까지 �
   근거가 아니다.
 - 실물 적용 전 CAD mechanical range, TPU 접촉, 모터 current/temperature,
   tether와 비상정지를 갖춘 단일 riser 검증이 먼저다.
+
+---
+
+## 13. 2026-09-01 계단 모션 정의 수정: 주행이 아닌 여섯 프레임 공통 위상
+
+> 이 절이 현재 구현의 기준이다. 1--12절의 pure rolling, 정체 감지,
+> `TRIPOD_ASSIST`, assist 횟수와 H0/H4 표는 당시 시도 기록이며 현재
+> `SconeStairClimber`의 동작 설명으로 사용하지 않는다.
+
+### 13.1 잘못 구현했던 점
+
+실물 Legacy [`Climb`](../src/locomotion/climb.py)은 `_side_stance()`에서 lower
+여섯 개를 같은 계단 접촉 자세로 정렬하고, `_run()`에서 여섯 개에 같은 계단
+회전 명령을 보낸다. 반면 직전 MuJoCo `scone-stair`는 다음 순서였다.
+
+1. Drive 자세에서 lower 여섯 개를 velocity mode로 계속 회전
+2. 높거나 정체된 구간에서 두 tripod의 lower 속도를 서로 다르게 분리
+3. assist 종료 뒤 다시 Drive형 연속 회전
+
+이 방식은 “여섯 부채꼴 프레임의 위상이 같은 별도 계단 모션”을 구현하지
+않았다. 특히 시작 위상 획득 없이 각 모터가 free-run하고, assist 중에는
+의도적으로 위상을 깨므로 계단 이동이 주행처럼 보이는 것이 정상적인 결과였다.
+
+### 13.2 MuJoCo에서 같은 물리 위상을 만드는 식
+
+현재 MJCF의 lower joint axis는 홀수 ID와 짝수 ID가 반대 방향이다. 따라서
+숫자로 같은 joint angle을 보내는 것이 아니라 다음 mirrored target이 같은
+**기하학적 C-frame 위상**을 만든다.
+
+```text
+q_odd(θ)  = θ
+q_even(θ) = 360° - θ
+```
+
+`θ`는 wrap하지 않는다. `EXTENDED_POSITION` mode에서 여러 회전 동안 같은
+관계를 유지하기 위해서다. 상승 명령의 50 Hz update는 다음과 같다.
+
+```text
+ωdeg = velocity_unit × 0.229 rpm/unit × 6 deg/(s·rpm)
+θ[k+1] = θ[k] - ωdeg × |vy|/max_vy × Δt
+```
+
+양의 `vy`가 계단 preset의 `+Y` 상승 방향이므로 `θ`를 감소시킨다. command가
+0이면 velocity 0을 보내는 대신 마지막 공통 position target을 hold한다.
+
+명령 위상 spread는 구조적으로 항상 `0°`다. 다만 모서리에 걸린 관절은
+토크·접촉 때문에 실제 각도가 순간 지연될 수 있다. 문서와 benchmark의
+`maximum_phase_spread_to_top_degrees`는 이 **실제 접촉 지연**을 측정하며,
+“서로 다른 위상을 명령했다”는 뜻이 아니다.
+
+### 13.3 두 자동 데모의 공정한 비교
+
+두 전략 모두 side-on 자세 뒤 공통 기하 위상을 먼저 획득한다. 개방루프는 모든
+preset에서 고정 60°이고, improved는 200 mm에서 sweep으로 선택한 90°를 쓴다.
+
+| 전략 | 위상 획득 뒤 동작 | 목적 |
+|---|---|---|
+| `hardcoded` / `synchronized-open-loop` | velocity mode, 고정 200 | 한 번만 맞춘 기존식 개방루프 기준선 |
+| `improved` / `adaptive` | extended-position mode, 하나의 `θ` target 계속 갱신 | 접촉 뒤 위상 회수와 높이별 튜닝 |
+
+따라서 새 비교는 “아무 위상에서 주행 대 후킹 assist”가 아니라 “같은 계단
+모션을 개방루프로 실행 대 폐루프로 실행”이다.
+
+### 13.4 효율 후보 sweep과 채택값
+
+공통 위상 시작각 `60/90/120°`, phase velocity `150/175/200/225/250`, lower
+position stiffness `1.0--3.0×` 후보를 결정론적 MuJoCo trial로 비교했다.
+상단 시간만 줄이는 후보는 채택하지 않고 절대 관절일, minimum upright,
+peak contact도 함께 봤다.
+
+- 100 mm: `60°/250`은 `60°/200`보다 빠르고(`2.604 vs 3.072 s`) 일도
+  적었다(`42.708 vs 46.833 J`). peak contact는 둘 다 약 83.0 N이었다.
+- 150 mm: 속도 225/250은 peak contact가 `177/186 N`까지 올라 제외했다.
+  200은 80.5 N으로 가장 부드러운 후보여서 속도보다 충격을 우선했다.
+- 200 mm: `90°/200`은 `60°/200`보다 시간 `8.440→7.316 s`, 일
+  `100.361→94.272 J`를 줄이면서 peak contact는 `93.044→94.095 N`으로
+  거의 같았다.
+- lower stiffness 1.5× 이상은 일부 높이를 빠르게 했지만 100/150 mm의
+  contact 결과가 불안정해 기본 1.0×를 유지했다.
+
+최종 rise 기반 선택은 다음과 같다.
+
+| 최대 rise | 시작 공통 위상 | phase velocity |
+|---:|---:|---:|
+| `h <= 0.125 m` | 60° | 250 |
+| `0.125 < h < 0.175 m` | 60° | 200 |
+| `h >= 0.175 m` | 90° | 200 |
+
+이 경계는 현재 세 preset을 위한 simulation tuning이다. 실물 적용 시에는
+계단 높이 센서/추정기와 모터 current 한계가 먼저 필요하다.
+
+### 13.5 최종 100/150/200 mm headless 결과
+
+setup의 1.5초 phase acquisition은 ascent 시간과 일에서 제외했다. 상단 Y/Z를
+동시에 처음 만족하면 즉시 command를 정지했다.
+
+| terrain | open-loop 시간 / 일 | improved 시간 / 일 | improved upright / peak contact |
+|---|---:|---:|---:|
+| stairs-1, 100 mm | 3.244 s / 44.444 J | **2.604 s / 42.708 J** | 0.912 / 83.026 N |
+| stairs-2, 150 mm | **5.536 s / 79.014 J** | 8.096 s / 107.677 J | 0.764 / **80.525 N** |
+| stairs-3, 200 mm | 12.476 s / 107.374 J | **7.316 s / 94.272 J** | 0.808 / 94.095 N |
+
+| terrain | open-loop 최대/상단 spread | improved 최대/상단 spread |
+|---|---:|---:|
+| stairs-1 | 55.99° / 36.56° | **14.94° / 2.29°** |
+| stairs-2 | 83.32° / 5.27° | 90.09° / 9.32° |
+| stairs-3 | 24.61° / 2.99° | 30.67° / **1.23°** |
+
+150 mm improved는 시간과 일이 더 크다. 이를 “모든 지표가 개선됐다”고
+해석하지 않는다. 이 preset에서는 폐루프가 모서리를 오래 hold하면서 최대
+spread도 조금 커졌지만 peak contact를 약 51% 낮췄다. 100/200 mm에서는
+시간이 각각 약 20%, 41% 줄었고, 200 mm의 일도 약 12% 줄었다.
+
+재현 명령:
+
+```bash
+python -m src.simulation.stair_benchmark \
+  --terrain stairs-1 --terrain stairs-2 --terrain stairs-3 \
+  --strategy synchronized-open-loop --strategy adaptive
+
+mjpython -m src.simulation --demo compare --terrain stairs-2
+```
+
+### 13.6 코드 수정 지점
+
+- 시작 위상/속도/경계: `SconeStairConfig`
+- odd/even 축 변환: `synchronized_lower_degrees()`
+- 실제 위상 진단: `synchronized_phase_spread_degrees()`
+- 준비/활성/hold: `SconeStairClimber.prepare()/activate()/stop()`
+- 50 Hz 위상 적분: `SconeStairClimber.update()`
+- 개방루프 기준선: `HardcodedStairRoller`
+- 자동 비교: `run_automatic_stair_demo()`
+- headless 수치: `stair_benchmark.py`
+
+변경 뒤에는 `tests.test_stair_climber`로 세 높이 상단 통과, 공통 phase mapping,
+상태·config 경계를 확인하고 `tests.test_stair_demo`로 baseline의 “정렬 후
+velocity 전환”을 확인한다. 실물 하드웨어에는 이 simulation-only controller를
+자동 연결하지 않는다.
+
+최종 source에서 `python -m compileall -q SCONE.py src tests`와
+`python -m unittest discover -s tests -v`를 실행해 125개 테스트가 통과했다.
+실제 macOS `mjpython --demo compare --terrain stairs-2`도 실행했다. 첫 구현은
+첫 창 직후 두 번째 창을 열어 Cocoa teardown과 경합하며 `another MuJoCo viewer
+is already open`으로 실패했다. compare 전략 사이에 macOS 전용 1초 teardown
+대기를 추가하고 재실행하자 hardcoded `6.84 s`, improved `6.87 s`에 두 창이
+순서대로 상단에 도달하고 종료됐다. GUI 시간은 렌더/thread scheduling이
+포함되므로 위 headless 성능표와 섞지 않는다.
+
+---
+
+## 14. 옛 270° 앞쪽 1단 수직 자세 재현과 partial-brace 최적화
+
+> 이 절이 현재 구현의 최종 기준이다. 13절의 lower 공통 위상 원리는 그대로
+> 유지하고, lower 회전 전에 실행하는 앞쪽 1단 자세를 추가했다. 13.5절의
+> 성능표는 이 brace 추가 전 결과다.
+
+### 14.1 Git 이력에서 확인한 옛 하드코딩
+
+현재와 과거 commit `a6b45ca`, `b353bc5`의 `Climb.left()`를 대조했다. 계단
+상승 방향에서 `_side_stance()`/`__left_stance()`는 다음을 수행한다.
+
+```text
+leading stage-1 group = MIDDLE_RIGHT = IDs (7, 9, 11)
+leading stage-1 target = 270°
+all terminal-frame target = 270°
+then lower six actuators rotate together
+```
+
+현재 side-on pose에서 joint parent body의 world Y를 확인하면 `(7,9,11)`의
+Y가 약 `-0.051/-0.031/-0.012 m`, `(8,10,12)`는 약
+`-0.354/-0.335/-0.316 m`다. preset 상승이 `+Y`이므로 `(7,9,11)`이 실제
+진행 방향 앞쪽 묶음이다.
+
+이번 비교는 사용자가 지적한 **앞쪽 1단 270° 자세**만 정확히 분리해
+검증했다. lower에는 13절에서 수정한 odd `θ` / even `360°-θ` 공통 기하
+위상을 유지했다. 옛 lower raw direction 오류까지 다시 넣어 결과를 혼동하지
+않았다.
+
+### 14.2 270° 고정 자세의 직접 결과
+
+앞쪽 1단을 270°로 먼저 정착시키고 lower 공통 위상을 폐루프로 회전한 결과다.
+
+| rise | 시간 / 일 | minimum upright | peak contact | 판정 |
+|---:|---:|---:|---:|---|
+| 100 mm | 3.290 s / 50.5 J | 0.606 | 56.4 N | 통과하지만 크게 기울어짐 |
+| 150 mm | 8.054 s / 141.0 J | 0.437 | 84.8 N | 통과하지만 자세 불안정 |
+| 200 mm | 실패 | — | — | 첫 구간 정체 |
+
+Drive 전용 stage-1 damping 2배를 옛 `Climb`처럼 해제해도 결론은 같았다.
+100/150 mm upright는 `0.606/0.450`, 200 mm는 실패했다. 따라서 결과가
+simulation damping 하나 때문에 생긴 것은 아니다.
+
+반대쪽 `(8,10,12)`을 270°로 내리면 100/150 mm는 `2.258/3.222 s`로
+빨랐지만 그 묶음은 진행 방향 앞쪽이 아니고 200 mm에서 전복해 제외했다.
+
+### 14.3 실행한 자세 변형
+
+#### 고정 각도 sweep
+
+앞쪽 IDs `(7,9,11)`을 `180, 195, 210, 225, 240, 255, 270°`로 고정해 세
+높이를 모두 실행하고, 접촉 전환 구간은 추가로 1° 간격으로 재실행했다.
+
+- 100 mm: 210°가 `2.450 s / 36.5 J / upright 0.839 / 70.8 N`이었지만,
+  기존 중립 180°의 upright 0.912를 희생할 만큼 시간 이득이 크지 않아 중립을
+  유지했다.
+- 150 mm: 183--190°에서 약 4.13--4.27초의 plateau가 확인됐다. 184°는
+  `4.194 s / 65.5 J / upright 0.752 / 84.4 N`으로 안정성과 충격 균형이
+  가장 좋았다.
+- 200 mm: 195--198°에서 약 5.82--6.00초 plateau가 확인됐다. 195°는
+  `5.996 s / 86.3 J / upright 0.760 / 93.0 N`으로 196--200°보다 peak
+  contact가 낮아 채택했다.
+
+#### 270° 수직 시작 후 회수
+
+옛 자세를 시작 순간에 완전히 재현한 뒤 `0.2/0.5/1.0/1.5 s` 동안 선택
+각도로 smoothstep 회수하는 후보도 실행했다. profile velocity 한계 때문에
+0.2/0.5초 명령의 실제 움직임은 거의 같았다.
+
+| rise | 수직 시작→선택각 | 결과 | 같은 선택각 고정 대비 |
+|---:|---:|---:|---|
+| 100 mm | 270→210° | 3.352 s / 56.3 J | 느리고 일 증가 |
+| 150 mm | 270→185° | 5.198 s / 81.3 J | 느리고 일 증가 |
+| 200 mm | 270→200° | 4.982 s / 79.6 J / 106.5 N | 시간 동일, 일·충격 증가 |
+
+수직 자세의 초기 potential/contact transient만 추가하고 지속적인 효율 이득이
+없어 기각했다.
+
+### 14.4 최종 알고리즘
+
+1. Legacy Walk를 네 번 회전해 course `+Y`에 side-on 정렬한다.
+2. 앞쪽 1단 `(7,9,11)`을 최대 rise에 따라 `180/184/195°`로 이동한다.
+3. 그 자세가 하중 허용오차 안에 들어오면 lower 여섯 개를 공통 기하 위상
+   `60/60/90°`로 정렬한다.
+4. lower는 `EXTENDED_POSITION`을 유지하고 공통 `θ`를 속도
+   `250/200/200`으로 이동한다.
+5. 상승 명령이 0이면 앞 1단과 마지막 lower 위상을 hold한다.
+
+hardcoded 자동 데모는 2단계에서 옛 270°를 사용하고, lower 정렬 뒤 velocity
+200 open-loop로 전환한다. improved는 위 높이별 partial brace와 lower
+closed-loop를 사용한다.
+
+### 14.5 최종 headless 비교
+
+앞 1단과 lower 위상 준비 시간·일은 ascent 지표에서 제외했다. actual angle은
+lower 위상 준비까지 끝난 뒤 세 앞 관절의 평균이다.
+
+| terrain | hardcoded target/actual | hardcoded 결과 | improved target/actual | improved 결과 |
+|---|---:|---:|---:|---:|
+| stairs-1, 100 mm | 270/271.2° | 3.804 s / 50.104 J / upright 0.608 | 180/176.9° | **2.594 s / 42.424 J / upright 0.912** |
+| stairs-2, 150 mm | 270/271.2° | 4.268 s / 64.369 J / upright 0.438 | 184/181.0° | **4.194 s / 65.464 J / upright 0.752** |
+| stairs-3, 200 mm | 270/271.2° | 16초 내 실패 | 195/190.3° | **5.996 s / 86.295 J / upright 0.760** |
+
+15 cm에서는 hardcoded가 일만 약 1.7% 적고 시간도 거의 같다. 개선의 핵심은
+속도가 아니라 upright `0.438→0.752`다. 20 cm에서는 수직 고정 자세가
+실패하지만 partial brace는 통과한다. brace 도입 전 improved 대비 15 cm는
+`8.096→4.194 s`, 20 cm는 `7.316→5.996 s`로 줄었다.
+
+### 14.6 구현과 수정 위치
+
+- 그룹 정의: `Actuator.Index.MIDDLE_RIGHT == (7,9,11)`
+- improved 각도: `SconeStairConfig.neutral/medium/tall_front_stage1_degrees`
+- hardcoded 옛 각도: `legacy_front_stage1_degrees`
+- 준비 속도/허용오차: `front_stage1_profile_velocity`,
+  `front_stage1_tolerance_raw`, `front_stage1_sync_timeout`
+- 자세 획득: `SconeStairClimber.prepare_front_stage1()`
+- hardcoded 재현: `HardcodedStairRoller.prepare_front_stage1()`
+- 결과 필드: `front_stage1_degrees`, `front_stage1_actual_degrees`,
+  `front_stage1_sync_entries_to_top`
+
+재현 명령은 다음과 같다.
+
+```bash
+python -m src.simulation.stair_benchmark \
+  --terrain stairs-1 --terrain stairs-2 --terrain stairs-3 \
+  --strategy synchronized-open-loop --strategy adaptive
+
+mjpython -m src.simulation --demo compare --terrain stairs-2
+```
+
+이 값은 현재 MJCF의 결정론적 contact 전환에 민감하다. 150 mm에서 181→184°,
+200 mm에서 194→195° 사이에 동작 분기가 있으므로 실물 일반화 전에 payload,
+마찰, nosing, 시작 yaw와 각도 오차 sweep이 추가로 필요하다.
+
+### 14.7 실제 macOS viewer smoke
+
+최종 코드로 `mjpython --demo compare`를 실제 실행했다.
+
+| terrain | hardcoded | improved |
+|---|---|---|
+| stairs-2 | 4.26 s 통과, front target/actual 270/276.6° | 5.51 s 통과, 184/181.4° |
+| stairs-3 | 16 s 실패, final y/z 0.288/0.213 m, 270/276.8° | **5.94 s 통과**, final y/z 1.189/0.528 m, 195/193.8° |
+
+GUI 시간은 render/thread scheduling에 따라 15 cm improved가 다른 run에서
+4.17초도 나왔으므로 성능표에 섞지 않는다. viewer smoke의 판정은 옛 수직
+자세가 실제로 보이고, 20 cm hardcoded 실패와 partial-brace improved 통과가
+같은 상단 Y/Z 조건에서 재현됐다는 것이다.
+
+최종 `compileall`과 전체 `unittest discover` 125개도 통과했다.

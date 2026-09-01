@@ -39,8 +39,8 @@ hardcoded/model-based gait performance diagnosis and prioritized roadmap are in
 The complete `tripod-gait`/`scone-gait` algorithm, compatibility, validation,
 and tuning guide is in
 [`docs/10-tripod-gait-and-scone-gait.md`](docs/10-tripod-gait-and-scone-gait.md).
-The arc-wheel hooking equations, compared stair hypotheses, measured simulation
-results, and adaptive controller are in
+The arc-wheel hooking equations, historical stair hypotheses, synchronized-phase
+controller, and measured simulation results are in
 [`docs/11-scone-stair-climbing.md`](docs/11-scone-stair-climbing.md).
 The complete diagnosis and measured rework of motor limits, tripod support sag,
 continuous distal-frame rotation, and the no-input stair demo are in
@@ -51,10 +51,12 @@ validation—is
 [`docs/13-feature-implementation-and-modification-guide.md`](docs/13-feature-implementation-and-modification-guide.md).
 
 `시뮬레이션 (자동 데모)` asks only for `hardcoded`, `improved`, or sequential
-`compare`, plus one stair preset. It does not open the terminal joystick. The
-100/150/200 mm riser presets now separate direct rolling from active hooking:
-fixed rolling passes `stairs-1`, while adaptive hooking is required for
-`stairs-2` and `stairs-3` in the current model.
+`compare`, plus one stair preset. It does not open the terminal joystick.
+Both strategies first align the six terminal C-frames to one geometric phase.
+`hardcoded` first reproduces Legacy Climb's 270-degree vertical leading
+stage-1 pose and then free-runs in velocity mode. `improved` uses a measured
+180/184/195-degree brace for 100/150/200 mm risers and keeps one unwrapped phase
+target in extended-position mode.
 
 After choosing simulation control, select one locomotion implementation:
 
@@ -69,9 +71,11 @@ After choosing simulation control, select one locomotion implementation:
   adds the stage-2 basic-gait angular-rate term to continuous distal-frame
   rotation, and keeps tripod B 60° out of phase so the C-frame openings do not
   unload together.
-- `scone-stair`: turns SCONE side-on, keeps all six sectors rolling on easy
-  stairs, and conditionally applies an alternating-tripod hook assist on tall
-  stairs or after a detected stall. This path is simulation-only.
+- `scone-stair`: turns SCONE side-on, synchronizes all six terminal frames, and
+  places leading stage-1 IDs 7/9/11 in a rise-dependent brace before advancing
+  one shared closed-loop phase. Odd/even MuJoCo axes receive mirrored joint
+  targets that represent the same physical C-frame angle. This path is
+  simulation-only.
 - `RL control`: asks for a local `runs/**/*.zip` PPO checkpoint, standing pose,
   and residual reference. It runs PPO Walk at 50 Hz and also accepts `R` to
   cycle through legacy Drive/Climb without replacing the shared controller.
@@ -171,10 +175,10 @@ src/simulation/
     pid.py                       voltage-input DC motor position loop
     cli_bridge.py                one viewer + common terminal CLI integration
     scone_rolling_gait.py        continuous distal-frame velocity gait for MuJoCo
-    stair_climber.py             simulation-only adaptive stair state machine
+    stair_climber.py             synchronized-phase stair motion for MuJoCo
     stair_demo.py                no-input hardcoded/improved/compare stair viewer
     simulator_cli.py             direct simulation entry point and terrain menu
-  stair_benchmark.py             reproducible H0-H4/tuning headless comparison
+  stair_benchmark.py             historical + synchronized headless comparison
   terrain/
     types.py                     terrain names and validated parameter types
     presets.py                   explicit stair/slope difficulty dimensions

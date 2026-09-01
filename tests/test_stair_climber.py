@@ -6,20 +6,25 @@ from unittest.mock import patch
 import mujoco
 import numpy as np
 
+from src.hardware import Actuator
 from src.locomotion import VelocityCommand
 from src.main import SCONE
 from src.simulation import MuJoCoController, load_model
 from src.simulation.core.stair_climber import (
     SconeStairClimber,
+    SconeStairConfig,
     StairControlState,
     prepare_scone_stair_pose,
+    synchronized_lower_degrees,
 )
 from src.simulation.terrain import STAIR_PRESETS, TerrainType
 
 
 class SconeStairClimberTests(unittest.TestCase):
     @staticmethod
-    def _run_ascent(terrain: TerrainType) -> tuple[SconeStairClimber, float]:
+    def _run_ascent(
+        terrain: TerrainType,
+    ) -> tuple[SconeStairClimber, float, float, bool]:
         model = load_model(floating_base=True, terrain=terrain)
         data = mujoco.MjData(model)
         controller = MuJoCoController(model, data, verbose=False)
@@ -46,7 +51,32 @@ class SconeStairClimberTests(unittest.TestCase):
             with patch("time.sleep", side_effect=advance):
                 robot.initialize()
                 prepare_scone_stair_pose(robot)
+
+            climber = SconeStairClimber(controller, terrain=terrain)
+            front_targets = climber.prepare_front_stage1()
+            advance(1.5)
+            for motor_id, target in front_targets.items():
+                actual = controller.get_position(motor_id)
+                if abs(actual - target) > climber.config.front_stage1_tolerance_raw:
+                    raise AssertionError(
+                        f"ID {motor_id} front brace did not synchronize: "
+                        f"target={target}, actual={actual}"
+                    )
+            raw_targets = climber.prepare()
+            advance(1.5)
+            for motor_id, target in raw_targets.items():
+                actual = controller.get_position(motor_id)
+                if abs(actual - target) > climber.config.phase_tolerance_raw:
+                    raise AssertionError(
+                        f"ID {motor_id} phase did not synchronize: "
+                        f"target={target}, actual={actual}"
+                    )
+            climber.activate()
+
+            # Synchronization is a setup motion, so ascent timing/height starts
+            # only after all six C-frames have acquired the common phase.
             start_z = float(data.xpos[root_id, 2])
+            minimum_upright = 1.0
             profile = STAIR_PRESETS[terrain]
             top_y = (
                 0.35
@@ -54,7 +84,6 @@ class SconeStairClimberTests(unittest.TestCase):
                 + 0.4 * profile.tread_depths[-1]
             )
             top_z = start_z + 0.70 * profile.total_height
-            climber = SconeStairClimber(controller, terrain=terrain)
             reached_top = False
             for _ in range(900):
                 climber.update(
@@ -68,32 +97,73 @@ class SconeStairClimberTests(unittest.TestCase):
                 ):
                     reached_top = True
                     break
+            spread = climber.maximum_phase_spread_degrees
             climber.stop()
-            if not reached_top:
-                raise AssertionError(
-                    f"{terrain.value} top not reached: "
-                    f"root={data.xpos[root_id].tolist()}"
-                )
-            return climber, minimum_upright
+            return climber, minimum_upright, spread, reached_top
         finally:
             controller.close()
 
-    def test_easy_stairs_keep_roll_only_path(self) -> None:
-        climber, minimum_upright = self._run_ascent(TerrainType.STAIRS_1)
+    def test_geometric_phase_mirrors_even_model_axes(self) -> None:
+        targets = synchronized_lower_degrees(60.0)
+        self.assertEqual(
+            targets,
+            {13: 60.0, 14: 300.0, 15: 60.0, 16: 300.0, 17: 60.0, 18: 300.0},
+        )
+        unwrapped = synchronized_lower_degrees(-10.0)
+        self.assertEqual(unwrapped[13], -10.0)
+        self.assertEqual(unwrapped[14], 370.0)
 
-        self.assertFalse(climber.tall_stair)
-        self.assertTrue(climber.direct_roll_reachable)
-        self.assertEqual(climber.assist_entries, 0)
-        self.assertGreater(minimum_upright, 0.90)
+    def test_all_stair_heights_climb_with_one_common_phase(self) -> None:
+        for terrain in (
+            TerrainType.STAIRS_1,
+            TerrainType.STAIRS_2,
+            TerrainType.STAIRS_3,
+        ):
+            with self.subTest(terrain=terrain.value):
+                climber, minimum_upright, spread, reached_top = self._run_ascent(
+                    terrain
+                )
+                self.assertTrue(reached_top)
+                self.assertEqual(climber.phase_sync_entries, 1)
+                self.assertEqual(climber.front_stage1_sync_entries, 1)
+                self.assertEqual(
+                    climber.initial_phase_degrees,
+                    90.0 if terrain is TerrainType.STAIRS_3 else 60.0,
+                )
+                self.assertEqual(
+                    climber.selected_phase_velocity,
+                    250.0 if terrain is TerrainType.STAIRS_1 else 200.0,
+                )
+                self.assertEqual(
+                    climber.front_stage1_degrees,
+                    {
+                        TerrainType.STAIRS_1: 180.0,
+                        TerrainType.STAIRS_2: 184.0,
+                        TerrainType.STAIRS_3: 195.0,
+                    }[terrain],
+                )
+                # Commands are exactly phase-identical.  Loaded joints may
+                # physically lag while hooked on an edge; keep that transient
+                # below the 135-degree C-frame opening rather than pretending
+                # the rigid contact can maintain zero measured error.
+                self.assertLess(spread, 100.0)
+                self.assertIs(climber.state, StairControlState.IDLE)
+                self.assertGreater(minimum_upright, 0.70)
+                self.assertTrue(
+                    all(
+                        climber.controller.get_mode(motor_id)
+                        == Actuator.OperatingMode.EXTENDED_POSITION
+                        for motor_id in Actuator.Index.LOWER
+                    )
+                )
 
-    def test_tall_stairs_use_tripod_assist_without_falling(self) -> None:
-        climber, minimum_upright = self._run_ascent(TerrainType.STAIRS_3)
-
-        self.assertTrue(climber.tall_stair)
-        self.assertFalse(climber.direct_roll_reachable)
-        self.assertGreaterEqual(climber.assist_entries, 1)
-        self.assertIs(climber.state, StairControlState.IDLE)
-        self.assertGreater(minimum_upright, 0.65)
+    def test_configuration_rejects_invalid_phase_and_rate(self) -> None:
+        with self.assertRaises(ValueError):
+            SconeStairConfig(synchronized_phase_degrees=360.0)
+        with self.assertRaises(ValueError):
+            SconeStairConfig(phase_velocity=0.0)
+        with self.assertRaises(ValueError):
+            SconeStairConfig(tall_front_stage1_degrees=361.0)
 
 
 if __name__ == "__main__":

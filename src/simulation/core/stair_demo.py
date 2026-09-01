@@ -12,6 +12,7 @@ from pathlib import Path
 
 import mujoco
 import mujoco.viewer
+import numpy as np
 
 from ...hardware import Actuator
 from ...locomotion import VelocityCommand
@@ -19,7 +20,13 @@ from ...main import SCONE
 from ..terrain import STAIR_PRESETS, TerrainType
 from .controller import MuJoCoController
 from .model import DEFAULT_MODEL_PATH, load_model
-from .stair_climber import SconeStairClimber, prepare_scone_stair_pose
+from .stair_climber import (
+    SconeStairClimber,
+    SconeStairConfig,
+    prepare_scone_stair_pose,
+    synchronized_lower_degrees,
+    synchronized_phase_spread_degrees,
+)
 from .viewer import configure_simulation_viewer
 
 
@@ -48,33 +55,116 @@ class StairDemoResult:
     time_to_top_seconds: float | None
     final_y: float
     final_z: float
-    assist_entries: int
+    front_stage1_degrees: float
+    front_stage1_actual_degrees: float
+    front_stage1_sync_entries: int
+    phase_sync_entries: int
+    maximum_phase_spread_degrees: float
 
 
 class HardcodedStairRoller:
-    """Fixed six-frame rotation used as the no-feedback baseline."""
+    """Legacy vertical front brace plus open-loop lower velocity baseline.
 
-    def __init__(self, controller: MuJoCoController, *, velocity: int = 150) -> None:
+    This preserves the defining all-six-sector stair phase but does not correct
+    contact-induced phase drift after switching to velocity mode.  The improved
+    controller advances the same phase with extended-position feedback.
+    """
+
+    def __init__(
+        self,
+        controller: MuJoCoController,
+        *,
+        velocity: int = 200,
+        config: SconeStairConfig | None = None,
+    ) -> None:
         if velocity <= 0:
             raise ValueError("hardcoded stair velocity must be positive")
         self.controller = controller
         self.velocity = velocity
+        self.config = config or SconeStairConfig()
+        self.phase_degrees = self.config.synchronized_phase_degrees
+        self.front_stage1_degrees = self.config.legacy_front_stage1_degrees
+        self.front_stage1_sync_entries = 0
+        self.phase_sync_entries = 0
+        self.maximum_phase_spread_degrees = 0.0
+        self._prepared = False
         self._active = False
 
-    def update(self) -> None:
-        if not self._active:
-            self.controller.set_all_mode(Actuator.OperatingMode.VELOCITY)
-            self._active = True
-        # Stair pose advances along world +Y; this is negative raw velocity
-        # before the odd/even mirrored-axis adapter.
-        self.controller.set_velocities(
-            self.controller.arc_wheel_velocities(-self.velocity)
-        )
+    def prepare_front_stage1(self) -> dict[int, int]:
+        """Reproduce Legacy Climb's fully vertical leading stage-1 pose."""
 
-    def stop(self) -> None:
+        self.controller.set_speeds(
+            {
+                motor_id: self.config.front_stage1_profile_velocity
+                for motor_id in Actuator.Index.MIDDLE_RIGHT
+            }
+        )
+        targets = {
+            motor_id: self.front_stage1_degrees
+            for motor_id in Actuator.Index.MIDDLE_RIGHT
+        }
+        self.controller.set_positions(targets)
+        self.front_stage1_sync_entries += 1
+        return {
+            motor_id: self.controller.degrees_to_raw(motor_id, degrees)
+            for motor_id, degrees in targets.items()
+        }
+
+    def prepare(self) -> dict[int, int]:
+        self.controller.set_all_mode(Actuator.OperatingMode.POSITION)
+        self.controller.set_speeds(
+            {
+                motor_id: self.config.profile_velocity
+                for motor_id in Actuator.Index.LOWER
+            }
+        )
+        self.controller.set_accelerations(
+            {
+                motor_id: self.config.profile_acceleration
+                for motor_id in Actuator.Index.LOWER
+            }
+        )
+        targets = synchronized_lower_degrees(self.phase_degrees)
+        self.controller.set_positions(targets)
+        self.phase_sync_entries += 1
+        self._prepared = True
+        return {
+            motor_id: self.controller.degrees_to_raw(motor_id, degrees)
+            for motor_id, degrees in targets.items()
+        }
+
+    def activate(self) -> None:
+        if not self._prepared:
+            raise RuntimeError("prepare HardcodedStairRoller before activating it")
+        self.controller.set_all_mode(Actuator.OperatingMode.VELOCITY)
         self.controller.set_velocities(
             {motor_id: 0 for motor_id in Actuator.Index.LOWER}
         )
+        self._active = True
+        self._record_phase_spread()
+
+    def _record_phase_spread(self) -> None:
+        self.maximum_phase_spread_degrees = max(
+            self.maximum_phase_spread_degrees,
+            synchronized_phase_spread_degrees(self.controller),
+        )
+
+    def update(self) -> None:
+        if not self._active:
+            raise RuntimeError("prepare and activate HardcodedStairRoller first")
+        # Negative odd geometric phase is the preset world +Y ascent direction.
+        self.controller.set_velocities(
+            self.controller.arc_wheel_velocities(-self.velocity)
+        )
+        self._record_phase_spread()
+
+    def stop(self) -> None:
+        if self._active:
+            self.controller.set_velocities(
+                {motor_id: 0 for motor_id in Actuator.Index.LOWER}
+            )
+            self._record_phase_spread()
+        self._active = False
 
 
 def _top_thresholds(terrain: TerrainType, start_z: float) -> tuple[float, float]:
@@ -117,13 +207,59 @@ def _run_single_demo(
         try:
             robot.initialize()
             prepare_scone_stair_pose(robot)
+            if strategy is StairDemoStrategy.HARDCODED:
+                hardcoded = HardcodedStairRoller(controller)
+                front_targets = hardcoded.prepare_front_stage1()
+                front_tolerance = hardcoded.config.front_stage1_tolerance_raw
+                front_timeout = hardcoded.config.front_stage1_sync_timeout
+                phase_tolerance = hardcoded.config.phase_tolerance_raw
+                phase_timeout = hardcoded.config.phase_sync_timeout
+            else:
+                improved = SconeStairClimber(controller, terrain=terrain)
+                front_targets = improved.prepare_front_stage1()
+                front_tolerance = improved.config.front_stage1_tolerance_raw
+                front_timeout = improved.config.front_stage1_sync_timeout
+                phase_tolerance = improved.config.phase_tolerance_raw
+                phase_timeout = improved.config.phase_sync_timeout
+            if not controller.wait_until_raw_positions(
+                front_targets,
+                tolerance=front_tolerance,
+                timeout=front_timeout,
+            ):
+                raise RuntimeError(
+                    "automatic stair demo could not acquire its front stage-1 brace"
+                )
+            if hardcoded is not None:
+                phase_targets = hardcoded.prepare()
+            else:
+                assert improved is not None
+                phase_targets = improved.prepare()
+            if not controller.wait_until_raw_positions(
+                phase_targets,
+                tolerance=phase_tolerance,
+                timeout=phase_timeout,
+            ):
+                raise RuntimeError(
+                    "automatic stair demo could not synchronize all six C-frames"
+                )
+            # Record after lower phase acquisition so GUI and headless
+            # benchmark report the same loaded front-brace state.
+            front_stage1_actual_degrees = float(
+                np.mean(
+                    [
+                        controller.get_position(motor_id) / 4096.0 * 360.0
+                        for motor_id in Actuator.Index.MIDDLE_RIGHT
+                    ]
+                )
+            )
+            if hardcoded is not None:
+                hardcoded.activate()
+            else:
+                assert improved is not None
+                improved.activate()
             with controller.lock:
                 start_z = float(data.xpos[root_id, 2])
             top_y, top_z = _top_thresholds(terrain, start_z)
-            if strategy is StairDemoStrategy.HARDCODED:
-                hardcoded = HardcodedStairRoller(controller)
-            else:
-                improved = SconeStairClimber(controller, terrain=terrain)
 
             with controller.lock:
                 simulation_started_at = float(data.time)
@@ -180,7 +316,27 @@ def _run_single_demo(
                     time_to_top_seconds=reached_at,
                     final_y=final_y,
                     final_z=final_z,
-                    assist_entries=0 if improved is None else improved.assist_entries,
+                    front_stage1_degrees=(
+                        hardcoded.front_stage1_degrees
+                        if hardcoded is not None
+                        else improved.front_stage1_degrees
+                    ),
+                    front_stage1_actual_degrees=front_stage1_actual_degrees,
+                    front_stage1_sync_entries=(
+                        hardcoded.front_stage1_sync_entries
+                        if hardcoded is not None
+                        else improved.front_stage1_sync_entries
+                    ),
+                    phase_sync_entries=(
+                        hardcoded.phase_sync_entries
+                        if hardcoded is not None
+                        else improved.phase_sync_entries
+                    ),
+                    maximum_phase_spread_degrees=(
+                        hardcoded.maximum_phase_spread_degrees
+                        if hardcoded is not None
+                        else improved.maximum_phase_spread_degrees
+                    ),
                 )
             )
         except BaseException as error:
@@ -228,7 +384,10 @@ def _run_single_demo(
                 if remaining > 0.0:
                     time.sleep(remaining)
     except RuntimeError as error:
-        if sys.platform == "darwin" and "mjpython" not in Path(sys.executable).name:
+        if (
+            sys.platform == "darwin"
+            and "launch_passive requires" in str(error)
+        ):
             raise RuntimeError(
                 "On macOS launch the SCONE CLI with `mjpython SCONE.py`."
             ) from error
@@ -252,7 +411,10 @@ def _run_single_demo(
     print(
         f"[SIM DEMO] {strategy.value}: {outcome}; "
         f"final y/z={result.final_y:.3f}/{result.final_z:.3f} m, "
-        f"assist={result.assist_entries}"
+        f"front-stage1 target/actual={result.front_stage1_degrees:.1f}/"
+        f"{result.front_stage1_actual_degrees:.1f} deg, "
+        f"phase-sync={result.phase_sync_entries}, "
+        f"max phase spread={result.maximum_phase_spread_degrees:.2f} deg"
     )
     return result
 
@@ -277,15 +439,22 @@ def run_automatic_stair_demo(
         if parsed_strategy is StairDemoStrategy.COMPARE
         else (parsed_strategy,)
     )
-    return tuple(
-        _run_single_demo(
-            selected,
-            parsed_terrain,
-            model_path=model_path,
-            timeout_seconds=timeout_seconds,
+    results = []
+    for index, selected in enumerate(strategies):
+        if index and sys.platform == "darwin":
+            # MuJoCo's Cocoa viewer closes asynchronously on its UI thread.
+            # Launching the second compare window immediately can race that
+            # teardown and raise "another MuJoCo viewer is already open".
+            time.sleep(1.0)
+        results.append(
+            _run_single_demo(
+                selected,
+                parsed_terrain,
+                model_path=model_path,
+                timeout_seconds=timeout_seconds,
+            )
         )
-        for selected in strategies
-    )
+    return tuple(results)
 
 
 __all__ = [

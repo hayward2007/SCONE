@@ -259,7 +259,7 @@ XML의 `<dcmotor nominal>`과 Python 사양은 함께 바꿔야 한다.
 | `_previous_lower_offset` | 다음 frame 미분을 위한 이전 lower 기본 보행 offset |
 | `_active` | phase 준비 뒤 velocity mode가 활성화됐는지 여부 |
 | `StairDemoStrategy` | `hardcoded`, `improved`, `compare` |
-| `HardcodedStairRoller.velocity` | `150`; feedback 없는 계단 baseline |
+| `HardcodedStairRoller.velocity` | `200`; 1회 동기화 뒤 feedback 없는 계단 baseline |
 | `timeout_seconds` | 기본 `16 s`; 자동 상단 판정 최대 시간 |
 | `time_to_top_seconds` | root Y/Z가 상단 조건을 처음 동시에 만족한 시각 |
 
@@ -287,20 +287,24 @@ XML의 `<dcmotor nominal>`과 Python 사양은 함께 바꿔야 한다.
 
 | 이름 | 기본값/목적 |
 |---|---|
-| `StairControlState` | `idle`, `rolling`, `tripod-assist` |
+| `StairControlState` | `idle`, `synchronizing`, `climbing` |
 | `max_vy` | `0.12 m/s`; A/D 명령 scale |
-| `rolling_velocity` | `150`; 여섯 하단 sector의 기본 goal velocity |
-| `assist_support_velocity/assist_swing_velocity` | `105/185`; tripod 지지/스윙 sector 속도 |
-| `support_middle_degrees/swing_middle_degrees` | `250°/165°`; 대각 삼각보 후킹/회수 자세 |
-| `neutral_middle_degrees` | `180°`; rolling 자세 |
-| `assist_phase_seconds/count` | `0.75 s`, `6`; 교대 phase 길이와 총 횟수 |
-| `transition_seconds` | `0.18 s`; phase target smoothstep 전환 |
-| `stall_window_seconds` | `0.80 s`; 진행량 평가 창 |
-| `minimum_progress_metres` | `0.025 m`; 이보다 작으면 stall assist 진입 |
-| `direct_roll_clearance` | `.003 m`; `rise + clearance <= outer radius` 직접 회전 판정 |
-| `first_riser_y/prehook_distance` | `0.35/0.27 m`; procedural stair의 첫 riser와 조기 assist 거리 |
-| `assist_entries` | 실행 중 assist 진입 횟수; 검증/진단 상태 |
-| `_known_prehook_used` | 알려진 높은 단 조건의 반복 진입을 막는 1회 latch |
+| `synchronized_phase_degrees` | `60°`; 100/150 mm 시작 공통 위상 |
+| `tall_synchronized_phase_degrees` | `90°`; 200 mm 시작 공통 위상 |
+| `neutral/medium/tall_front_stage1_degrees` | `180/184/195°`; improved 앞쪽 1단 `(7,9,11)` 높이별 지지 자세 |
+| `legacy_front_stage1_degrees` | `270°`; hardcoded 옛 수직 자세 재현값 |
+| `front_stage1_profile_velocity` | `100`; 앞쪽 1단 자세 획득 profile |
+| `front_stage1_tolerance_raw/sync_timeout` | `256/4.0 s`; 하중 지지 관절의 준비 허용오차와 timeout |
+| `phase_velocity` | `200`; 150/200 mm 공통 위상 속도, DYNAMIXEL velocity 수치 단위 |
+| `easy_phase_velocity` | `250`; 100 mm에서 측정상 더 빠르고 일이 적었던 속도 |
+| `easy_rise_limit/tall_rise_threshold` | `0.125/0.175 m`; 위 phase/speed 조합 선택 경계 |
+| `profile_velocity/profile_acceleration` | `240/80`; extended-position setpoint profile |
+| `phase_tolerance_raw/phase_sync_timeout` | `96/4.0 s`; 시작 위상 획득 판정 |
+| `phase_degrees` | wrap하지 않는 현재 공통 위상 `θ`; 다회전 누적 |
+| `selected_phase_velocity` | 현재 preset rise로 선택한 위상 속도 |
+| `phase_sync_entries` | 시작 위상 정렬 횟수 |
+| `front_stage1_sync_entries` | 앞쪽 1단 지지 자세 획득 횟수 |
+| `maximum_phase_spread_degrees` | 접촉 하중을 포함한 여섯 실제 기하 위상의 최대 순간 spread |
 
 이 값은 현재 MuJoCo preset 튜닝값이며 실물 모터·마찰 안전 한계가 아니다.
 

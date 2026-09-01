@@ -25,8 +25,8 @@
 | `test_scone_gait.py` | sector tangent/극성, lower frame sweep, 설정 범위 | SCONE rolling/creep 생성과 idle 안전성 |
 | `test_scone_rolling_gait.py` | 6초 floating simulation, lower 시작/끝 radian, min Z/upright, upper/middle/basic-lower 진폭 | 60° phase, 2.5회 이상 연속 회전, 기본 lower 속도 합성, 0.8 m 전진, drift/height/IK 경계 |
 | `test_stair_geometry.py` | 현재 sector 치수, 100/150/200 mm 직접 reach 분류, 120 mm 경계, torque·friction·support hull | 후킹 분석 수식과 입력 검증 |
-| `test_stair_climber.py` | 실제 floating MuJoCo `stairs-1/3`, top/upright/assist 횟수 | 쉬운 계단 roll-only와 높은 계단 adaptive assist 회귀 |
-| `test_stair_demo.py` | enum/parser, compiled stairs model, direct CLI mock | 자동 전략/terrain 경계, hardcoded velocity mode, stairs-2 기본 route |
+| `test_stair_climber.py` | 실제 floating MuJoCo `stairs-1/2/3`, 앞 1단 brace, top/upright/phase spread | 높이별 180/184/195°와 odd/even 공통 위상 회귀 |
+| `test_stair_demo.py` | enum/parser, 270° hardcoded front brace, compiled stairs model, direct CLI mock | 자동 전략/terrain 경계, 옛 자세 후 velocity 전환, stairs-2 기본 route |
 | `test_simulation.py` | compiled model/controller, control enum, patched launchers | 18-actuator protocol, mode cycle, wheel sign, target wait, Drive 댐핑과 control route |
 | `test_terrain.py` | 모든 `TerrainType`, 동일/다른 seed XML, fake camera | preset compile, visibility group 0, reproducibility, fixed base, camera cap |
 | `test_remote_watch.py` | temporary ZIP, local source, reward mock state, 68/70 fake policy | one-sided height, idle action, 합계 중복 방지, atomic checkpoint, replay compatibility |

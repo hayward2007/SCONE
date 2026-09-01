@@ -24,12 +24,18 @@ from ..locomotion import VelocityCommand
 from ..main import SCONE
 from .core.controller import MuJoCoController
 from .core.model import load_model
-from .core.stair_climber import SconeStairClimber, prepare_scone_stair_pose
+from .core.stair_demo import HardcodedStairRoller
+from .core.stair_climber import (
+    SconeStairClimber,
+    prepare_scone_stair_pose,
+    synchronized_phase_spread_degrees,
+)
 from .terrain import STAIR_PRESETS, TerrainType
 
 
 HYPOTHESES = (
     "pure-rolling",
+    "synchronized-open-loop",
     "legacy-climb",
     "tripod-hook",
     "hybrid",
@@ -60,6 +66,12 @@ class StairBenchmarkResult:
     final_y: float
     final_z: float
     assist_entries_to_top: int | None = None
+    front_stage1_degrees: float | None = None
+    front_stage1_actual_degrees: float | None = None
+    front_stage1_sync_entries_to_top: int | None = None
+    phase_sync_entries_to_top: int | None = None
+    maximum_phase_spread_to_top_degrees: float | None = None
+    phase_spread_at_top_degrees: float | None = None
 
 
 class _Trial:
@@ -170,6 +182,12 @@ class _Trial:
         start_work: float,
         *,
         assist_entries_to_top: int | None = None,
+        front_stage1_degrees: float | None = None,
+        front_stage1_actual_degrees: float | None = None,
+        front_stage1_sync_entries_to_top: int | None = None,
+        phase_sync_entries_to_top: int | None = None,
+        maximum_phase_spread_to_top_degrees: float | None = None,
+        phase_spread_at_top_degrees: float | None = None,
     ) -> StairBenchmarkResult:
         final = self.data.xpos[self.root_id]
         return StairBenchmarkResult(
@@ -187,6 +205,14 @@ class _Trial:
             final_y=float(final[1]),
             final_z=float(final[2]),
             assist_entries_to_top=assist_entries_to_top,
+            front_stage1_degrees=front_stage1_degrees,
+            front_stage1_actual_degrees=front_stage1_actual_degrees,
+            front_stage1_sync_entries_to_top=front_stage1_sync_entries_to_top,
+            phase_sync_entries_to_top=phase_sync_entries_to_top,
+            maximum_phase_spread_to_top_degrees=(
+                maximum_phase_spread_to_top_degrees
+            ),
+            phase_spread_at_top_degrees=phase_spread_at_top_degrees,
         )
 
 
@@ -284,7 +310,7 @@ def run_hypothesis(
     terrain: TerrainType | str,
     strategy: str,
 ) -> StairBenchmarkResult:
-    """Run one H0-H4 comparison from the shared side-on initial state."""
+    """Run one historical or synchronized comparison from a side-on state."""
 
     parsed_terrain = TerrainType.parse(terrain)
     if parsed_terrain not in STAIR_PRESETS:
@@ -292,15 +318,67 @@ def run_hypothesis(
     if strategy not in HYPOTHESES:
         raise ValueError(f"unknown stair strategy: {strategy}")
     trial = _Trial(parsed_terrain)
-    assist_entries_to_top: int | None = None
+    phase_sync_entries_to_top: int | None = None
+    front_stage1_degrees: float | None = None
+    front_stage1_actual_degrees: float | None = None
+    front_stage1_sync_entries_to_top: int | None = None
+    maximum_phase_spread_to_top_degrees: float | None = None
+    phase_spread_at_top_degrees: float | None = None
     try:
         start = trial.prepare_side_on()
+
+        if strategy in ("adaptive", "synchronized-open-loop"):
+            # Phase acquisition is a setup operation, not ascent.  The fixed
+            # baseline uses 60 degrees on every preset; the improved controller
+            # may select its measured tall-stair phase before measurement.
+            if strategy == "adaptive":
+                phase_controller: SconeStairClimber | HardcodedStairRoller = (
+                    SconeStairClimber(trial.controller, terrain=parsed_terrain)
+                )
+            else:
+                phase_controller = HardcodedStairRoller(trial.controller)
+            front_targets = phase_controller.prepare_front_stage1()
+            trial.advance(1.5)
+            for motor_id, target in front_targets.items():
+                actual = trial.controller.get_position(motor_id)
+                if (
+                    abs(actual - target)
+                    > phase_controller.config.front_stage1_tolerance_raw
+                ):
+                    raise RuntimeError(
+                        f"ID {motor_id} failed front stage-1 brace acquisition: "
+                        f"target={target}, actual={actual}"
+                    )
+            raw_targets = phase_controller.prepare()
+            trial.advance(1.5)
+            for motor_id, target in raw_targets.items():
+                actual = trial.controller.get_position(motor_id)
+                if abs(actual - target) > phase_controller.config.phase_tolerance_raw:
+                    raise RuntimeError(
+                        f"ID {motor_id} failed common-phase acquisition: "
+                        f"target={target}, actual={actual}"
+                    )
+            phase_controller.activate()
+            front_stage1_degrees = phase_controller.front_stage1_degrees
+            front_stage1_actual_degrees = float(
+                np.mean(
+                    [
+                        trial.controller.get_position(motor_id) / 4096.0 * 360.0
+                        for motor_id in Actuator.Index.MIDDLE_RIGHT
+                    ]
+                )
+            )
+            start = trial.data.xpos[trial.root_id].copy()
+
         trial.begin_measurement(start)
         start_time = trial.elapsed
         start_work = trial.work
 
         if strategy == "adaptive":
-            climber = SconeStairClimber(trial.controller, terrain=parsed_terrain)
+            assert isinstance(phase_controller, SconeStairClimber)
+            # Reuse the prepared controller instead of resetting the acquired
+            # phase and position-mode setpoints.
+            climber = phase_controller
             for _ in range(800):
                 climber.update(
                     VelocityCommand(vy=climber.config.max_vy),
@@ -309,10 +387,49 @@ def run_hypothesis(
                 trial.advance(0.02)
                 if (
                     trial.time_to_top is not None
-                    and assist_entries_to_top is None
+                    and maximum_phase_spread_to_top_degrees is None
                 ):
-                    assist_entries_to_top = climber.assist_entries
+                    phase_sync_entries_to_top = climber.phase_sync_entries
+                    front_stage1_sync_entries_to_top = (
+                        climber.front_stage1_sync_entries
+                    )
+                    maximum_phase_spread_to_top_degrees = (
+                        climber.maximum_phase_spread_degrees
+                    )
+                    phase_spread_at_top_degrees = (
+                        synchronized_phase_spread_degrees(trial.controller)
+                    )
+                    break
             climber.stop()
+            if trial.time_to_top is None:
+                maximum_phase_spread_to_top_degrees = (
+                    climber.maximum_phase_spread_degrees
+                )
+        elif strategy == "synchronized-open-loop":
+            assert isinstance(phase_controller, HardcodedStairRoller)
+            for _ in range(800):
+                phase_controller.update()
+                trial.advance(0.02)
+                if (
+                    trial.time_to_top is not None
+                    and maximum_phase_spread_to_top_degrees is None
+                ):
+                    phase_sync_entries_to_top = phase_controller.phase_sync_entries
+                    front_stage1_sync_entries_to_top = (
+                        phase_controller.front_stage1_sync_entries
+                    )
+                    maximum_phase_spread_to_top_degrees = (
+                        phase_controller.maximum_phase_spread_degrees
+                    )
+                    phase_spread_at_top_degrees = (
+                        synchronized_phase_spread_degrees(trial.controller)
+                    )
+                    break
+            phase_controller.stop()
+            if trial.time_to_top is None:
+                maximum_phase_spread_to_top_degrees = (
+                    phase_controller.maximum_phase_spread_degrees
+                )
         elif strategy == "pure-rolling":
             trial.controller.set_all_mode(Actuator.OperatingMode.VELOCITY)
             trial.controller.set_velocities(
@@ -349,7 +466,14 @@ def run_hypothesis(
             strategy,
             start_time,
             start_work,
-            assist_entries_to_top=assist_entries_to_top,
+            front_stage1_degrees=front_stage1_degrees,
+            front_stage1_actual_degrees=front_stage1_actual_degrees,
+            front_stage1_sync_entries_to_top=front_stage1_sync_entries_to_top,
+            phase_sync_entries_to_top=phase_sync_entries_to_top,
+            maximum_phase_spread_to_top_degrees=(
+                maximum_phase_spread_to_top_degrees
+            ),
+            phase_spread_at_top_degrees=phase_spread_at_top_degrees,
         )
     finally:
         trial.close()
@@ -404,12 +528,12 @@ def _build_parser() -> argparse.ArgumentParser:
         "--strategy",
         action="append",
         choices=HYPOTHESES,
-        help="H0-H4 strategy; repeat for multiple strategies",
+        help="historical or synchronized strategy; repeat for multiple strategies",
     )
     parser.add_argument(
         "--all",
         action="store_true",
-        help="run all H0-H4 strategies on all three stair presets",
+        help="run every strategy on all three stair presets",
     )
     parser.add_argument(
         "--tuning",

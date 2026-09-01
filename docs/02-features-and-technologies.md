@@ -25,8 +25,10 @@
 - `scone-gait` 조종은 몸통/상단과 1단 기본 보행 position을 보내고, 2단 기본
   보행 목표의 시간 미분을 하단 C자 프레임 연속 회전 속도에 합성한다. 두
   대각 tripod의 개구 phase는 60° 벌려 동시 지지 상실을 줄인다.
-- 계단에서는 연속 C-sector 회전을 우선하고 높은 단/정체 때만 대각 삼각보
-  후킹 assist를 사용하는 `scone-stair`를 제공한다. 현재는 시뮬레이션 전용이다.
+- 계단에서는 lower 여섯 개를 한 기하 위상으로 정렬한 뒤 하나의 다회전
+  position target을 함께 전진시키는 `scone-stair`를 제공한다. 앞쪽 1단 세
+  관절은 높이별 partial brace로 지지하고, 접촉 하중으로 생긴 lower 위상
+  지연은 각 position loop가 회수한다. 현재는 시뮬레이션 전용이다.
 - 시뮬레이션 Legacy/RL 조종 중 `R`로 Walk→Drive→Climb→Walk 상태를 전환한다.
 
 ### 기구학
@@ -50,8 +52,9 @@
 - legacy 모드 전환 시 고정 sleep 뒤 바로 다음 명령을 보내지 않고, 시뮬레이션 관절이 허용 오차 안에 도달했는지 기다린다.
 - arc-wheel 반경·opening chord·sharp-edge pivot 토크·마찰 요구량·지지다각형
   margin을 계산하는 계단 분석 API를 제공한다.
-- 키 입력 없이 fixed hardcoded rolling과 adaptive stair controller를 순서대로
-  보여 주는 자동 viewer와 `--demo` CLI를 제공한다.
+- 키 입력 없이 옛 270° 앞다리 수직 자세+open-loop lower를 재현하는 hardcoded와
+  높이별 partial brace+공통 위상 폐루프 improved를 순서대로 보여 주는 자동
+  viewer와 `--demo` CLI를 제공한다.
 
 ### 강화학습
 

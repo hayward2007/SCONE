@@ -90,9 +90,12 @@ mjpython -m src.simulation
 mjpython -m src.simulation --demo compare --terrain stairs-2
 ```
 
-현재 100 mm `stairs-1`은 두 방식이 같은 시각에 통과한다. 150 mm
-`stairs-2`와 200 mm `stairs-3`에서는 fixed rolling이 제한 시간 안에 실패하고
-adaptive assist가 통과한다. 자동 데모는 terminal joystick을 열지 않는다.
+두 방식 모두 여섯 C-frame을 같은 기하 위상으로 정렬한다. hardcoded는 그
+전에 앞쪽 1단을 옛 코드의 270° 수직 자세로 만들고 fixed velocity open-loop로
+전환한다. improved는 180/184/195° partial brace와 공통 다회전 position
+target을 사용한다. 현재 headless에서 hardcoded는 20 cm에 실패하고 improved는
+세 높이를 모두 통과한다.
+자동 데모는 terminal joystick을 열지 않는다.
 
 argparse option은 다음 명령으로 확인한다.
 
@@ -100,7 +103,7 @@ argparse option은 다음 명령으로 확인한다.
 python -m src.simulation --help
 ```
 
-계단 전용 adaptive controller는 SCONE을 자동으로 side-on Drive 자세로 만든다.
+계단 전용 synchronized-phase controller는 SCONE을 자동으로 side-on 자세로 만든다.
 `A`는 preset 계단의 `+Y` 상승, `D`는 반대 방향이며 W/S와 yaw는 이 경로에서
 비활성화된다.
 
@@ -117,7 +120,7 @@ mjpython -m src.simulation \
 
 문서의 H0–H4 전체 비교와 H3 튜닝 sweep은 headless로 다시 실행할 수 있다.
 출력은 한 실험당 JSON 한 줄이며 상단 성공, 시간, 절대 기계일, upright,
-contact force와 adaptive assist 횟수를 포함한다.
+contact force, phase 동기화 횟수, 상단까지의 실제 phase spread를 포함한다.
 
 ```bash
 python -m src.simulation.stair_benchmark --all --tuning

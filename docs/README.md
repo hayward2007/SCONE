@@ -15,8 +15,8 @@
 9. [RL·시뮬레이션 개발 기록](08-rl-development-log.md) — 초기 설계부터 실패·수정·검증까지의 이력
 10. [보행 성능 분석과 개선 로드맵](09-gait-performance-analysis.md) — 하드코드/Non-RL/RL 수치 비교와 우선순위
 11. [`tripod-gait`와 `scone-gait` 상세 가이드](10-tripod-gait-and-scone-gait.md) — 이름·수식·IK·부채꼴 rolling/creep·CLI/RL·검증·튜닝 전체 설명
-12. [SCONE 부채꼴 후킹과 계단 알고리즘](11-scone-stair-climbing.md) — 후킹 기하·토크·마찰·안정 조건, 다섯 가설의 동일 조건 비교, `scone-stair` 구현·실패·검증
-13. [자동 계단 데모와 연속 회전형 `scone-gait` 재설계](12-automatic-stair-demo-and-continuous-roll-rework.md) — 입력 없는 hardcoded/improved 비교, 세 다리 지지 처짐, motor profile·보폭 sweep, C자 말단 연속 회전 phase 가설과 최종 수치
+12. [SCONE 부채꼴 후킹과 계단 알고리즘](11-scone-stair-climbing.md) — 후킹 기하·토크·마찰·안정 조건, 여섯 프레임 공통 위상, 옛 앞 1단 270° 재현과 partial-brace sweep·최종 수치
+13. [자동 계단 데모와 연속 회전형 `scone-gait` 재설계](12-automatic-stair-demo-and-continuous-roll-rework.md) — 입력 없는 synchronized open/closed-loop 비교, 세 다리 지지 처짐, motor profile·보폭 sweep, C자 말단 연속 회전 phase 가설
 14. [기능 구현 및 코드 수정 가이드](13-feature-implementation-and-modification-guide.md) — launcher·하드웨어·Legacy·FK/IK·MuJoCo·terrain·두 gait·계단·RL·원격 학습의 구현 흐름, 수정 절차, 호환 경계와 검증 기준
 
 ## 문서 범위와 표기

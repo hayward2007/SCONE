@@ -746,3 +746,46 @@ hardcoded는 16 simulation s 내 실패(final 1.105/0.522 m), improved는
 10.978초에 상단(final 1.181/0.624 m, assist 2회)에 도달했다. 이 GUI 시간은
 thread/settle 차이가 있으므로 headless 성능표와 합치지 않고 route smoke로만
 사용한다. 최종 `compileall`과 전체 `unittest discover` 123개도 통과했다.
+
+## 19. 계단 모션 공통 위상 교정
+
+18절까지의 자동 계단 데모는 lower를 Drive처럼 free-run한 뒤 tripod assist를
+섞었다. 사용자가 지적한 실제 계단 모션의 정의는 “여섯 부채꼴 말단의 위상이
+모두 같은 상태로 회전”이다. 이에 따라 현재 구현은 다음처럼 바뀌었다.
+
+- hardcoded도 먼저 여섯 프레임을 한 기하 위상으로 정렬한다.
+- improved는 lower를 `EXTENDED_POSITION` mode에 두고 wrap하지 않는 하나의
+  phase target을 계속 보낸다.
+- MuJoCo의 mirrored axis 때문에 odd target `θ`, even target `360°-θ`가 같은
+  물리 위상이다.
+- tripod별 lower 속도, 정체 detector, pre-hook assist를 production 경로에서
+  제거했다.
+- 100/150/200 mm에 `60°/250`, `60°/200`, `90°/200`을 사용한다.
+
+새 headless 비교에서 open-loop/improved 상단 시간은 각각 100 mm
+`3.244/2.604 s`, 150 mm `5.536/8.096 s`, 200 mm `12.476/7.316 s`였다.
+150 mm improved가 느린 대신 peak contact는 `165.806→80.525 N`으로 줄었다.
+전체 phase/speed/stiffness sweep, 실제 위상 spread와 한계는
+[`11-scone-stair-climbing.md`](11-scone-stair-climbing.md) 13절에 있다.
+현재 변경 뒤 전체 회귀는 125개가 통과했다.
+
+macOS 실제 `compare/stairs-2` 재실행에서는 첫 viewer teardown 직후 두 번째
+viewer를 열 때 MuJoCo 단일-window 제약과 경합했다. 두 전략 사이에 1초를
+기다리도록 고친 뒤 hardcoded 6.84초, improved 6.87초로 두 창이 모두 자동
+완료됐다.
+
+## 20. 옛 270° 앞쪽 1단 자세 반영
+
+Git 이력의 `Climb.left()`는 진행 방향 앞쪽 stage-1 IDs `(7,9,11)`을 270°로
+내린 뒤 lower를 회전했다. 새 hardcoded 데모는 이 자세를 재현한다. 그러나
+270° 고정은 100/150 mm upright를 `0.608/0.438`까지 낮추고 200 mm에서
+실패했다.
+
+앞 1단 각도 coarse/local sweep과 270° 시작 후 회수 후보를 모두 실행한 뒤,
+improved는 100/150/200 mm에 `180/184/195°`를 사용하도록 바꿨다. 최종
+headless 시간은 `2.594/4.194/5.996 s`이며 세 높이를 모두 통과한다. 전체
+후보·기각 이유·actual angle은 11번 문서 14절에 있다.
+
+최종 macOS viewer에서 stairs-3 hardcoded는 16초 실패(final
+`0.288/0.213 m`), improved는 5.94초 통과(final `1.189/0.528 m`)로 같은
+차이가 재현됐다. 앞 1단 target/actual은 각각 `270/276.8°`, `195/193.8°`였다.

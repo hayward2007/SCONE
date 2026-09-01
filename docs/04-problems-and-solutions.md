@@ -201,6 +201,13 @@ body center velocity나 단순 foot body velocity는 실제 타이어-지면 접
 100/150/200 mm 재검증과 shallow-tread 실패 sweep는 이 절 끝과
 11번 문서 12절을 기준으로 본다.
 
+> **현재 구현 교정:** 이 절의 `ROLLING/TRIPOD_ASSIST` controller는 더 이상
+> production `SconeStairClimber`가 아니다. 실제 계단 모션은 lower 여섯 개의
+> 기하 위상을 동일하게 유지해야 한다는 정의에 따라, 2026-09-01에 하나의
+> extended-position 위상 `θ`를 추종하는 방식으로 교체했다. 최신 원인·수식·
+> 100/150/200 mm 공통 위상 결과는 11번 문서 13절, 옛 270° 앞다리 자세를
+> 반영한 최종 결과는 14절을 기준으로 한다.
+
 ### 비교한 접근
 
 - 여섯 C-sector를 같은 속도로 계속 돌리는 pure rolling

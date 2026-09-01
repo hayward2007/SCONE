@@ -73,16 +73,22 @@ tangent는 MJCF `TIRE_n` mesh에서 수치적으로 측정하고, 명령 body tw
 ```text
 A/D의 vy 명령
    → 계단 진행축 +Y에 맞춘 side-on Drive 자세
-   → ROLLING: 여섯 C-sector 연속 회전
-   → 알려진 최대 rise / R ≥ 0.75 또는 0.8초 진행 < 25 mm?
-       ├─ 아니오: ROLLING 유지
-       └─ 예: 하단 회전 phase 동기화
-              → tripod A/B middle 자세와 회전속도 교대
-              → 6 phase 뒤 ROLLING 복귀
+   → FRONT BRACE: 앞쪽 1단 IDs 7/9/11 자세 획득
+       ├─ 100 mm: 180°
+       ├─ 150 mm: 184°
+       └─ 200 mm: 195°
+   → SYNCHRONIZING: 하나의 기하 위상 θ로 여섯 C-sector 정렬
+       홀수 lower = θ, 짝수 lower = 360° - θ
+   → CLIMBING: θ를 extended-position 목표로 연속 적분
+       ├─ 100 mm: θ0=60°, phase velocity=250
+       ├─ 150 mm: θ0=60°, phase velocity=200
+       └─ 200 mm: θ0=90°, phase velocity=200
+   → 명령 0: 마지막 공통 위상 hold
 ```
 
 이 경로는 일반 보행 `scone-gait`나 PPO reference가 아니라 계단 전용
-MuJoCo state machine이다. 실물 계단 치수·마찰·전류가 아직 입력되지 않았기
+MuJoCo motion이다. lower를 서로 다른 tripod 속도로 나누지 않으며 Drive의
+velocity 명령도 사용하지 않는다. 실물 계단 치수·마찰·전류가 아직 입력되지 않았기
 때문에 `MuJoCoController` 이외의 controller를 거부한다. 세부 조건과 비교
 실험은 [`11-scone-stair-climbing.md`](11-scone-stair-climbing.md)에 있다.
 

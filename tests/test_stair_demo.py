@@ -25,11 +25,19 @@ class StairDemoTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             run_automatic_stair_demo("improved", terrain="flat")
 
-    def test_hardcoded_baseline_has_no_feedback_state(self) -> None:
+    def test_hardcoded_baseline_synchronizes_then_uses_open_loop_velocity(self) -> None:
         model = load_model(floating_base=True, terrain="stairs-1")
         controller = MuJoCoController(model, mujoco.MjData(model), verbose=False)
         try:
             baseline = HardcodedStairRoller(controller, velocity=150)
+            front_targets = baseline.prepare_front_stage1()
+            self.assertEqual(front_targets, {7: 3072, 9: 3072, 11: 3072})
+            targets = baseline.prepare()
+            self.assertEqual(
+                targets,
+                {13: 682, 14: 3413, 15: 682, 16: 3413, 17: 682, 18: 3413},
+            )
+            baseline.activate()
             baseline.update()
             self.assertTrue(
                 all(
@@ -50,6 +58,9 @@ class StairDemoTests(unittest.TestCase):
                 ),
             )
             baseline.stop()
+            self.assertEqual(baseline.front_stage1_degrees, 270.0)
+            self.assertEqual(baseline.front_stage1_sync_entries, 1)
+            self.assertEqual(baseline.phase_sync_entries, 1)
         finally:
             controller.close()
 
@@ -63,6 +74,23 @@ class StairDemoTests(unittest.TestCase):
         demo.assert_called_once()
         self.assertEqual(demo.call_args.args[0], "compare")
         self.assertEqual(demo.call_args.kwargs["terrain"].value, "stairs-2")
+
+    def test_compare_waits_for_macos_viewer_teardown(self) -> None:
+        from unittest.mock import call, patch
+
+        with (
+            patch(
+                "src.simulation.core.stair_demo._run_single_demo",
+                side_effect=("hardcoded-result", "improved-result"),
+            ) as run_single,
+            patch("src.simulation.core.stair_demo.time.sleep") as sleep,
+            patch("src.simulation.core.stair_demo.sys.platform", "darwin"),
+        ):
+            results = run_automatic_stair_demo("compare", terrain="stairs-2")
+
+        self.assertEqual(results, ("hardcoded-result", "improved-result"))
+        self.assertEqual(run_single.call_count, 2)
+        self.assertEqual(sleep.call_args_list, [call(1.0)])
 
 
 if __name__ == "__main__":

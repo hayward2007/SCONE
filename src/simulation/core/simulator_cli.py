@@ -179,8 +179,8 @@ def select_simulation_control() -> SimulationControl:
             Choice(
                 value=SimulationControl.SCONE_STAIR,
                 name=(
-                    "scone-stair · 연속 회전 + 대각 삼각보 후킹 "
-                    "계단 전용 (시뮬레이션)"
+                    "scone-stair · 여섯 부채꼴 공통 위상 폐루프 "
+                    "계단 모션 (시뮬레이션)"
                 ),
             ),
             Choice(
@@ -209,15 +209,15 @@ def select_stair_demo_strategy() -> StairDemoStrategy:
         choices=[
             Choice(
                 value=StairDemoStrategy.COMPARE,
-                name="비교 · 하드코딩 연속 회전 후 개선형 adaptive 후킹",
+                name="비교 · 공통 위상 개방루프 후 폐루프 개선형",
             ),
             Choice(
                 value=StairDemoStrategy.HARDCODED,
-                name="하드코딩 · 센서/상태 전환 없는 고정 연속 회전",
+                name="하드코딩 · 앞 1단 270° 수직 + 고정 속도 개방루프",
             ),
             Choice(
                 value=StairDemoStrategy.IMPROVED,
-                name="개선형 · 연속 주행 + 정체 감지 + 교대 삼각 후킹",
+                name="개선형 · 높이별 앞 1단 지지 + 공통 위상 폐루프",
             ),
         ],
         default=StairDemoStrategy.COMPARE,

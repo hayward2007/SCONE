@@ -43,9 +43,12 @@ SCONE은 18개의 Dynamixel 액추에이터를 사용하는 6족 로봇을 하�
 ### `scone-stair` 계단 전용 제어
 
 `SconeStairClimber`는 계단에 SCONE을 옆으로 정렬한 뒤 C자형 말단 여섯 개를
-계속 굴리는 방식을 기본으로 사용한다. 높은 단이 미리 알려졌거나 0.8초 동안
-진행량이 25 mm보다 작으면, 두 대각 삼각보를 번갈아 지지·스윙시키는 후킹
-assist를 여섯 phase만 적용하고 다시 연속 회전으로 돌아간다. 현재 구현과
+하나의 기하 위상으로 먼저 정렬한다. 그 뒤 lower를 Drive velocity mode로
+주행시키거나 두 tripod로 나누지 않고, extended-position mode에서 공통 위상
+목표를 계속 이동시킨다. 그 전에 진행 방향 앞쪽 1단 `(7,9,11)`을
+100/150/200 mm에서 각각 `180/184/195°`로 배치한다. MuJoCo의 짝수 lower 축은 반대이므로 홀수에는 `θ`,
+짝수에는 `360°-θ`를 보내야 실제 부채꼴 프레임의 위상이 같다. 100/150/200 mm
+rise에는 측정된 시작 위상·속도 조합을 선택한다. 현재 구현과
 검증은 MuJoCo에 한정되며 실물 controller 경로에는 연결하지 않았다. 기하
 조건, 가설 비교와 수치는
 [`11-scone-stair-climbing.md`](11-scone-stair-climbing.md)를 따른다.
