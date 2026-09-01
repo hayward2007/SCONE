@@ -208,7 +208,7 @@ HUD의 `grid`, `point_column`, `point_row`, `yaw_column`, `yaw_bar`, `motion`은
 | `_error` | worker 예외를 호출 thread로 다시 전달 |
 | `_worker` | blocking legacy stride를 terminal/viewer와 분리하는 daemon thread |
 
-## 11. `src/locomotion/non_rl_walk.py`
+## 11. `src/locomotion/tripod_gait.py`와 `scone_gait.py`
 
 ### 데이터 클래스와 상수
 
@@ -216,11 +216,11 @@ HUD의 `grid`, `point_column`, `point_row`, `yaw_column`, `yaw_bar`, `motion`은
 |---|---|
 | `VelocityCommand.vx/vy/yaw_rate` | body 명령 3축; `from_array`는 shape `(3,)` 강제 |
 | `GaitConfig.control_frequency` | `50 Hz`; frame 생성/전송 속도 |
-| `cycle_frequency` | 실물 공용 기본 `0.8 Hz`; 시뮬레이션/RL은 `0.7 Hz` |
+| `cycle_frequency` | 공용 기본 `0.8 Hz`; 비-RL MuJoCo 조종 `0.8 Hz`, RL tripod reference만 `0.7 Hz` |
 | `duty_factor` | `0.5`; 한 다리가 stance에 있는 cycle 비율 |
 | `step_height` | `0.035 m`; swing lift 높이 |
-| `max_stride` | `0.070 m`; 전후 발 궤적 한계. 시뮬레이션/RL은 `0.060 m` |
-| `max_lateral_stride` | 기본 `None`이면 `max_stride`와 동일. 시뮬레이션/RL은 `0.050 m` |
+| `max_stride` | `0.070 m`; 전후 발 궤적 한계. 비-RL MuJoCo 조종은 `0.080 m`, RL reference는 `0.060 m` |
+| `max_lateral_stride` | 기본 `None`이면 `max_stride`와 동일. 비-RL MuJoCo 조종은 `0.060 m`, RL reference는 `0.050 m` |
 | `max_vx/max_vy/max_yaw_rate` | `0.18/0.12/0.9`; 명령 clamp |
 | `command_time_constant` | `0.15 s`; low-pass command 응답 시간 |
 | `idle_epsilon` | `1e-3`; 명령을 정지로 판단하는 기준 |
@@ -242,7 +242,7 @@ HUD의 `grid`, `point_column`, `point_row`, `yaw_column`, `yaw_bar`, `motion`은
 | `TRIPOD_A/B` | `(1,4,5)` / `(2,3,6)` |
 | `PHASE_OFFSETS` | A 다리 `0.0`, B 다리 `0.5`로 반 cycle 분리 |
 
-### `NonRLWalk` 상태
+### `TripodGait` 상태
 
 | 이름 | 목적·사용처 |
 |---|---|
@@ -263,6 +263,15 @@ HUD의 `grid`, `point_column`, `point_row`, `yaw_column`, `yaw_bar`, `motion`은
 | `SUPPORT_PATCH_DEPTH` | `1e-4 m`; 부채꼴 말단 접촉 폭 중심을 구하는 최저 패치 두께 |
 | `world_from_body/world_from_geom/world_from_tire` | support patch를 world↔body↔tire local 좌표로 바꾸는 회전행렬 |
 | `point_velocity` | body translation에 yaw 접선 `[-ωy, ωx]`를 더한 각 발의 목표 지면 속도 |
+
+`SconeGaitConfig`는 `sector_sweep_degrees`, `rolling_blend`,
+`steering_blend`, `max_steering_degrees`, `minimum_roll_alignment`를 추가한다.
+`SconeGait`는 각 말단 mesh의 `_nominal_roll_angles`와
+`_steering_gains`를 자세마다 보정해 bounded stance/swing sector sweep에 사용한다.
+비-RL simulation의 continuous `SconeRollingGait` 변수는
+[`02-kinematics-simulation-terrain.md`](02-kinematics-simulation-terrain.md)에
+분리해 기록한다.
+이전 `non_rl_walk.py`와 `NonRLWalk`는 `TripodGait` 호환 별칭이다.
 | `stride` | 속도와 stance 시간을 곱하고 전후/측면 타원형 작업공간으로 제한한 이동 벡터 |
 | `ik_backoff_scale` | 실패 target을 nominal 쪽으로 축소하는 누적 배율 |
 | `stance_progress/swing_progress` | 각 구간 내부의 0–1 보간 위치 |

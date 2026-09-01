@@ -18,7 +18,8 @@ position, then displays:
 
 ```text
 ? SCONE 실행 메뉴
-❯ 시뮬레이션 조종
+❯ 시뮬레이션 (자동 데모)
+  시뮬레이션 조종
   하드웨어 조종 (/dev/...) or 하드웨어 조종 (현재 불가)
   하드웨어 다시 탐색
   강화학습 관리
@@ -33,15 +34,36 @@ and the complete learning/checkpoint runbook is in
 [`docs/07-running-testing-and-operations.md`](docs/07-running-testing-and-operations.md).
 The RL/simulation history is in
 [`docs/08-rl-development-log.md`](docs/08-rl-development-log.md), and the latest
-hardcoded/Non-RL performance diagnosis and prioritized roadmap are in
+hardcoded/model-based gait performance diagnosis and prioritized roadmap are in
 [`docs/09-gait-performance-analysis.md`](docs/09-gait-performance-analysis.md).
+The complete `tripod-gait`/`scone-gait` algorithm, compatibility, validation,
+and tuning guide is in
+[`docs/10-tripod-gait-and-scone-gait.md`](docs/10-tripod-gait-and-scone-gait.md).
+The arc-wheel hooking equations, compared stair hypotheses, measured simulation
+results, and adaptive controller are in
+[`docs/11-scone-stair-climbing.md`](docs/11-scone-stair-climbing.md).
+The complete diagnosis and measured rework of motor limits, tripod support sag,
+continuous distal-frame rotation, and the no-input stair demo are in
+[`docs/12-automatic-stair-demo-and-continuous-roll-rework.md`](docs/12-automatic-stair-demo-and-continuous-roll-rework.md).
+
+`시뮬레이션 (자동 데모)` asks only for `hardcoded`, `improved`, or sequential
+`compare`, plus one stair preset. It does not open the terminal joystick. The
+default `stairs-2` lets both fixed rolling and adaptive rolling climb; use
+`stairs-3` to see fixed rolling stall while adaptive tripod hook assist passes.
 
 After choosing simulation control, select one locomotion implementation:
 
 - `Legacy mode control`: adapts terminal input to the original blocking
   Walk/Drive/Climb state machine. Press `R` to cycle modes. Walk uses W/S and
   yaw; Drive/Climb use A/D for their left/right motion.
-- `Non-RL control`: sends all three axes to the model-based `NonRLWalk` gait.
+- `tripod-gait`: sends all three axes to the classic alternating-tripod + IK gait;
+  the MuJoCo route uses the measured 0.8 Hz, 80 mm, finite-speed configuration.
+- `scone-gait`: continuously rotates the six fan-shaped distal frames in velocity
+  mode while a small tripod IK motion stabilizes and steers the body. Tripod B
+  starts 72° out of phase so all C-frame openings do not unload together.
+- `scone-stair`: turns SCONE side-on, keeps all six sectors rolling on easy
+  stairs, and conditionally applies an alternating-tripod hook assist on tall
+  stairs or after a detected stall. This path is simulation-only.
 - `RL control`: asks for a local `runs/**/*.zip` PPO checkpoint, standing pose,
   and residual reference. It runs PPO Walk at 50 Hz and also accepts `R` to
   cycle through legacy Drive/Climb without replacing the shared controller.
@@ -96,8 +118,12 @@ by implementing `src.hardware.ControllerProtocol` and passing it to
 terminal key
   -> src.cli normalized x/y/yaw joystick
        -> LegacyVelocityAdapter -> src.main.SCONE old motions
-       -> NonRLWalk -> ControllerProtocol -> MuJoCoController
+       -> TripodGait / SconeRollingGait -> MuJoCoController
+       -> SconeStairClimber -> rolling / tripod-assist -> MuJoCoController
        -> PPO policy -> SconeWalkEnv residual action -> MuJoCoController
+
+no-input automatic demo
+  -> HardcodedStairRoller / SconeStairClimber -> MuJoCoController
 ```
 
 The terminal owns the only keyboard map. Each locomotion implementation consumes
@@ -122,7 +148,10 @@ src/locomotion/
   profile.py                     Standard/Sport posture and speed values
   walk.py, drive.py, climb.py    backend-independent motion sequences
   legacy_velocity.py             x/y/yaw adapter for blocking old motions
-  non_rl_walk.py                 Phoenix-style velocity gait + model-based IK
+  tripod_gait.py                 classic alternating-tripod gait + model-based IK
+  scone_gait.py                  bounded SCONE sector reference used by RL
+  stair_geometry.py              arc-wheel/stair reach, torque, friction, stability checks
+  non_rl_walk.py                 compatibility imports for the former name
 src/kinematics/
   leg.py                         model-derived FK/Jacobian/numerical IK per leg
   robot.py                       six-leg FK/IK and actuator-order conversion
@@ -133,7 +162,11 @@ src/simulation/
     controller.py                virtual DYNAMIXEL implementation
     pid.py                       voltage-input DC motor position loop
     cli_bridge.py                one viewer + common terminal CLI integration
+    scone_rolling_gait.py        continuous distal-frame velocity gait for MuJoCo
+    stair_climber.py             simulation-only adaptive stair state machine
+    stair_demo.py                no-input hardcoded/improved/compare stair viewer
     simulator_cli.py             direct simulation entry point and terrain menu
+  stair_benchmark.py             reproducible H0-H4/tuning headless comparison
   terrain/
     types.py                     terrain names and validated parameter types
     presets.py                   explicit stair/slope difficulty dimensions
@@ -238,9 +271,9 @@ For a calibrated tire/contact point instead of the tire-frame origin, pass its
 local coordinate with `LegKinematics(..., end_effector_point=[x, y, z])` or use
 the `end_effector_points` mapping on `RobotKinematics`.
 
-## Non-RL Phoenix-style gait
+## `tripod-gait` and `scone-gait`
 
-`NonRLWalk` is a continuous, model-based gait engine separate from the legacy
+`TripodGait` is a continuous, model-based gait engine separate from the legacy
 discrete `Walk` motions. It accepts body-frame `[vx, vy, yaw_rate]`, generates
 alternating tripod foot trajectories, solves all six legs through the MJCF IK,
 and produces one batch of 18 motor positions.
@@ -248,7 +281,7 @@ and produces one batch of 18 motor positions.
 ```python
 import SCONE
 
-gait = SCONE.NonRLWalk(controller, profile="sport")
+gait = SCONE.TripodGait(controller, profile="sport")
 
 # Call at 50 Hz. Units: m/s, m/s, rad/s.
 sample = gait.update(
@@ -266,15 +299,32 @@ Yaw uses `omega × r` at each nominal foot position, so turning is not a shared
 sideways offset. Command filtering, velocity/stride limits, and an all-or-none
 IK send guard are enabled by default in `GaitConfig`.
 
-The shared physical default keeps a fixed 0.8 Hz cadence. MuJoCo and
-residual-RL use a measured 0.7 Hz cadence and a 60/50 mm fore-aft/lateral
-elliptical workspace; an IK-failed frame can shrink its foot offsets up to four
-times before it is rejected. Each sample reports cadence, stride clipping, and
-the applied IK backoff scale for diagnostics.
+The shared physical default keeps a fixed 0.8 Hz cadence. Interactive MuJoCo
+`tripod-gait` now uses 0.8 Hz and an 80/60 mm fore-aft/lateral workspace with
+finite speed 160, acceleration 50, and a simulation-only 2x middle-joint hold.
+The residual-RL reference deliberately remains at its checkpoint-compatible
+0.7 Hz and 60/50 mm configuration. An IK-failed frame can shrink its foot
+offsets up to four times before it is rejected.
 Legacy PPO checkpoints were trained with the simulation controller's unlimited
 profile velocity/acceleration, so RL reset preserves that actuator behavior.
-Physical/Non-RL controller benchmarks still apply the selected motion profile;
+Physical model-based gait benchmarks still apply the selected motion profile;
 do not compare or resume policies across those dynamics without retraining.
+
+`SconeGait` is the bounded 18-position reference used for RL compatibility. The
+interactive simulation route instead uses `SconeRollingGait`: it reuses the mesh
+tangent/IK solution for IDs 1..12, switches IDs 13..18 to velocity mode, and
+continuously rotates them. This is a simulation-only split because a many-turn
+velocity state cannot be represented by the existing 18-position residual
+reference without retraining.
+
+```python
+scone_gait = SCONE.SconeGait(controller, profile="standard")
+sample = scone_gait.update(
+    SCONE.VelocityCommand(vx=0.04, vy=0.02, yaw_rate=0.15),
+    dt=0.02,
+    send=True,
+)
+```
 
 The gait does not treat the centre of `TIRE_n` as a foot. At startup it loads
 the collision mesh from `model.xml`, applies the selected profile pose, and
@@ -306,8 +356,8 @@ python -m src.rl
 ```
 
 The same menu is available as `4. 강화학습 관리` from `mjpython SCONE.py`. It
-asks for the residual reference (`non_rl` is recommended and shown first, while
-`hardcoded` preserves the older sinusoidal tripod), curriculum, terrain,
+asks for the residual reference (`tripod-gait`, experimental `scone-gait`, or
+legacy `hardcoded`), curriculum, terrain,
 standing pose, timestep count, checkpoint interval, and local/SSH destination.
 For SSH training it probes physical/logical CPU cores, available memory, and
 load before asking for `num_envs`. The editable recommendation reserves one
@@ -347,26 +397,35 @@ The original run name is then free for a clean training run.
 ## Direct commands
 
 ```bash
-# Old and Non-RL joystick control
+# Old and model-based gait joystick control
 mjpython -m src.simulation --control old --profile standard
-mjpython -m src.simulation --control non_rl --profile sport --terrain mixed
+mjpython -m src.simulation --control tripod-gait --profile standard --terrain mixed
+mjpython -m src.simulation --control scone-gait --profile standard --terrain flat
+mjpython -m src.simulation --control scone-stair --profile standard --terrain stairs-3
+
+# No-input stair viewers (compare opens hardcoded, then improved)
+mjpython -m src.simulation --demo compare --terrain stairs-2
+mjpython -m src.simulation --demo improved --terrain stairs-3
 
 # RL joystick control with a downloaded/trained checkpoint
 mjpython -m src.simulation --control rl \
   --checkpoint runs/remote_watch/scone_walk_700000_steps.zip \
-  --rl-reference-motion non_rl \
+  --rl-reference-motion tripod-gait \
   --terrain flat
 
 # RL environment smoke check
-PYTHONPATH=. python -m src.rl.walk_learn --reference-motion non_rl check \
+PYTHONPATH=. python -m src.rl.walk_learn --reference-motion scone-gait check \
   --steps 5 --curriculum easy
 
 # PPO training
-PYTHONPATH=. python -m src.rl.walk_learn --reference-motion non_rl train \
+PYTHONPATH=. python -m src.rl.walk_learn --reference-motion tripod-gait train \
   --curriculum easy --timesteps 1000000 --num-envs 4
 
 # Unit and integration-contract tests
 python -m unittest discover -s tests -v
+
+# Re-run every stair hypothesis and the H3 tuning sweep as JSON Lines
+python -m src.simulation.stair_benchmark --all --tuning
 ```
 
 The locomotion reward configuration is defined by `RewardConfig` in

@@ -5,7 +5,7 @@ import unittest
 import mujoco
 import numpy as np
 
-from src.locomotion.non_rl_walk import GaitConfig, NonRLWalk, VelocityCommand
+from src.locomotion.tripod_gait import GaitConfig, TripodGait, VelocityCommand
 from src.locomotion.profile import STANDARD
 
 
@@ -21,9 +21,9 @@ class RecordingController:
         return self.raw_positions[motor_id]
 
 
-class NonRLWalkTests(unittest.TestCase):
+class TripodGaitTests(unittest.TestCase):
     def setUp(self) -> None:
-        self.gait = NonRLWalk(
+        self.gait = TripodGait(
             config=GaitConfig(
                 command_time_constant=0.0,
                 ik_tolerance=2e-4,
@@ -79,11 +79,11 @@ class NonRLWalkTests(unittest.TestCase):
         _, stance_at_zero = self.gait.foot_targets(command, phase=0.0)
         _, stance_at_half = self.gait.foot_targets(command, phase=0.5)
 
-        self.assertEqual(stance_at_zero, NonRLWalk.TRIPOD_A)
-        self.assertEqual(stance_at_half, NonRLWalk.TRIPOD_B)
+        self.assertEqual(stance_at_zero, TripodGait.TRIPOD_A)
+        self.assertEqual(stance_at_half, TripodGait.TRIPOD_B)
 
     def test_gait_uses_fixed_hardware_compatible_cadence(self) -> None:
-        gait = NonRLWalk(
+        gait = TripodGait(
             config=GaitConfig(
                 cycle_frequency=0.8,
                 max_vx=0.5,
@@ -96,7 +96,7 @@ class NonRLWalkTests(unittest.TestCase):
         self.assertAlmostEqual(sample.cycle_frequency, 0.8)
 
     def test_sample_reports_stride_clipping(self) -> None:
-        gait = NonRLWalk(
+        gait = TripodGait(
             config=GaitConfig(
                 cycle_frequency=0.7,
                 max_stride=0.060,
@@ -130,7 +130,7 @@ class NonRLWalkTests(unittest.TestCase):
             self.assertTrue(np.all(sample.motor_degrees <= 360.0))
 
     def test_standard_stance_solves_full_forward_stride(self) -> None:
-        gait = NonRLWalk(
+        gait = TripodGait(
             profile=STANDARD,
             config=GaitConfig(
                 command_time_constant=0.0,
@@ -147,7 +147,7 @@ class NonRLWalkTests(unittest.TestCase):
             self.assertTrue(sample.converged, sample.failed_legs)
 
     def test_standard_stance_solves_tuned_lateral_stride(self) -> None:
-        gait = NonRLWalk(
+        gait = TripodGait(
             profile=STANDARD,
             config=GaitConfig(
                 command_time_constant=0.0,
@@ -167,7 +167,7 @@ class NonRLWalkTests(unittest.TestCase):
                 self.assertTrue(sample.converged, sample.failed_legs)
 
     def test_standard_stance_solves_combined_tuned_stride(self) -> None:
-        gait = NonRLWalk(
+        gait = TripodGait(
             profile=STANDARD,
             config=GaitConfig(
                 command_time_constant=0.0,
@@ -187,7 +187,7 @@ class NonRLWalkTests(unittest.TestCase):
             self.assertTrue(sample.converged, sample.failed_legs)
 
     def test_ik_backoff_recovers_oversized_combined_stride(self) -> None:
-        gait = NonRLWalk(
+        gait = TripodGait(
             profile=STANDARD,
             config=GaitConfig(
                 command_time_constant=0.0,
@@ -214,7 +214,7 @@ class NonRLWalkTests(unittest.TestCase):
 
     def test_send_is_one_batch_of_eighteen_positions(self) -> None:
         controller = RecordingController()
-        gait = NonRLWalk(
+        gait = TripodGait(
             controller=controller,
             config=GaitConfig(command_time_constant=0.0),
         )
@@ -226,7 +226,7 @@ class NonRLWalkTests(unittest.TestCase):
 
     def test_reset_from_controller_uses_present_raw_positions(self) -> None:
         controller = RecordingController()
-        gait = NonRLWalk(controller=controller)
+        gait = TripodGait(controller=controller)
 
         degrees = gait.reset_from_controller()
 

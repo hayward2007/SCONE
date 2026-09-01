@@ -134,7 +134,9 @@ def run_rl_joystick(
 
     Replay defaults to the original hardcoded residual reference because the
     pre-selection checkpoints were trained against that exact action meaning.
-    A Non-RL-trained checkpoint must opt into ``reference_motion="non_rl"``.
+    A gait-referenced checkpoint must select the same ``tripod-gait`` or
+    ``scone-gait`` reference used during training. ``non_rl`` remains a legacy
+    alias for ``tripod-gait``.
     """
 
     checkpoint_path = Path(checkpoint).expanduser().resolve()

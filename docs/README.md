@@ -1,6 +1,6 @@
 # SCONE 프로젝트 문서
 
-이 문서는 2026-08-31 기준 SCONE 저장소 전체를 설명한다. 현재 RL·시뮬레이션 코드, `runs/`의 학습 산출물 구조, `archive/`의 논문·도면·구형 코드도 함께 조사했다. 코드와 과거 문서의 설명이 다를 때는 현재 코드와 테스트를 우선한다.
+이 문서는 2026-09-01 기준 SCONE 저장소 전체를 설명한다. 현재 RL·시뮬레이션 코드, `runs/`의 학습 산출물 구조, `archive/`의 논문·도면·구형 코드도 함께 조사했다. 코드와 과거 문서의 설명이 다를 때는 현재 코드와 테스트를 우선한다.
 
 ## 문서 읽는 순서
 
@@ -14,6 +14,9 @@
 8. [실행·학습·운영·검증](07-running-testing-and-operations.md) — 설치, CLI, 테스트, 체크포인트 운영
 9. [RL·시뮬레이션 개발 기록](08-rl-development-log.md) — 초기 설계부터 실패·수정·검증까지의 이력
 10. [보행 성능 분석과 개선 로드맵](09-gait-performance-analysis.md) — 하드코드/Non-RL/RL 수치 비교와 우선순위
+11. [`tripod-gait`와 `scone-gait` 상세 가이드](10-tripod-gait-and-scone-gait.md) — 이름·수식·IK·부채꼴 rolling/creep·CLI/RL·검증·튜닝 전체 설명
+12. [SCONE 부채꼴 후킹과 계단 알고리즘](11-scone-stair-climbing.md) — 후킹 기하·토크·마찰·안정 조건, 다섯 가설의 동일 조건 비교, `scone-stair` 구현·실패·검증
+13. [자동 계단 데모와 연속 회전형 `scone-gait` 재설계](12-automatic-stair-demo-and-continuous-roll-rework.md) — 입력 없는 hardcoded/improved 비교, 세 다리 지지 처짐, motor profile·보폭 sweep, C자 말단 연속 회전 phase 가설과 최종 수치
 
 ## 문서 범위와 표기
 
@@ -29,5 +32,8 @@
 - 현재 시뮬레이터는 액추에이터 이름(`A01_` … `A18_`)을 통해 관절을 찾는다. 과거의 고정 mirror-pair 재배열 방식은 현재 구현이 아니다.
 - 실물 장치 코드는 보존되어 있으며 시뮬레이션의 좌우 축 보정은 MJCF 모델에서 처리한다.
 - RL 정책은 시뮬레이션에서 학습·재생한다. 실제 로봇에 바로 배포하는 상태 추정·안전 계층은 아직 완성된 기능이 아니다.
-- Residual RL 기준 모션은 새 실행에서 `non_rl`이 권장 기본값이다. 기존 작업 기록에는 호환성을 위해 `hardcoded` 기본값이 적용될 수 있으므로 재개 전에 저장 설정을 확인한다.
+- Residual RL 기준 모션은 새 실행에서 `tripod-gait`가 기본값이며 `scone-gait`는 실험 선택지다. 기존 작업 기록에는 `hardcoded` 또는 `non_rl`이 저장돼 있을 수 있으므로 재개 전에 설정을 확인한다.
+- 두 gait를 수정하거나 새 checkpoint를 학습하기 전에는 [`10-tripod-gait-and-scone-gait.md`](10-tripod-gait-and-scone-gait.md)의 reference 호환성, 동역학 검증값, 실물 진입 조건을 먼저 확인한다.
+- `scone-stair`는 현재 MuJoCo 전용이다. 실물 계단 적용 전에는 [`11-scone-stair-climbing.md`](11-scone-stair-climbing.md)의 마찰·모터 전류·nosing·지지다각형 실측 항목을 먼저 검증한다.
+- 시뮬레이션 조종의 `scone-gait`는 이제 lower velocity-mode 연속 회전이고, RL의 `scone-gait`는 checkpoint 호환을 위한 bounded position reference다. 두 의미와 측정 근거는 [`12-automatic-stair-demo-and-continuous-roll-rework.md`](12-automatic-stair-demo-and-continuous-roll-rework.md)를 따른다.
 - 시뮬레이션 전용 모드 전환 보정, Drive 1단 댐핑, 지형 카메라는 실물 Dynamixel controller의 명령 변환을 변경하지 않는다.

@@ -5,6 +5,8 @@ from .core.simulator_cli import (
     main,
     select_rl_checkpoint,
     select_simulation_control,
+    select_stair_demo_strategy,
+    select_stair_terrain,
     select_terrain,
 )
 
@@ -14,5 +16,7 @@ __all__ = [
     "main",
     "select_rl_checkpoint",
     "select_simulation_control",
+    "select_stair_demo_strategy",
+    "select_stair_terrain",
     "select_terrain",
 ]

@@ -51,14 +51,26 @@ TERRAIN_OPTIONS = (
 )
 REFERENCE_MOTION_OPTIONS = (
     (
-        "non_rl",
-        "Non-RL 알고리즘 · 이 기준으로 학습한 PPO 전용",
+        "tripod-gait",
+        "tripod-gait · 고전 교대 삼각보 + IK",
+    ),
+    (
+        "scone-gait",
+        "scone-gait · 부채꼴 rolling/creep 기준 (실험)",
     ),
     (
         "hardcoded",
         "하드코딩 모션 · 기존 PPO 학습 기준 (재생 권장)",
     ),
 )
+REFERENCE_MOTION_ALIASES = {"non_rl": "tripod-gait"}
+REFERENCE_MOTION_VALUES = {
+    value for value, _ in REFERENCE_MOTION_OPTIONS
+} | set(REFERENCE_MOTION_ALIASES)
+
+
+def normalize_reference_motion(value: str) -> str:
+    return REFERENCE_MOTION_ALIASES.get(value, value)
 
 
 @dataclass(frozen=True)
@@ -96,7 +108,7 @@ class TrainingConfig:
     terrain_seed: int = 7
     seed: int = 0
     device: str = "auto"
-    reference_motion: str = "non_rl"
+    reference_motion: str = "tripod-gait"
     standing_pose_name: str = "sport"
     standing_pose_degrees: tuple[float, ...] = SPORT_STANDING_DEGREES
 
@@ -105,10 +117,13 @@ class TrainingConfig:
             raise ValueError(f"unknown training task: {self.task}")
         if self.curriculum not in {"easy", "medium", "full"}:
             raise ValueError(f"unknown curriculum: {self.curriculum}")
-        if self.reference_motion not in {
-            value for value, _ in REFERENCE_MOTION_OPTIONS
-        }:
+        if self.reference_motion not in REFERENCE_MOTION_VALUES:
             raise ValueError(f"unknown reference motion: {self.reference_motion}")
+        object.__setattr__(
+            self,
+            "reference_motion",
+            normalize_reference_motion(self.reference_motion),
+        )
         if SAFE_NAME.fullmatch(self.run_name) is None:
             raise ValueError(
                 "run name may contain only letters, digits, '.', '_', and '-'"
@@ -245,7 +260,7 @@ class RemoteJob:
     device: str = "auto"
     # Records created before this field existed used the hand-authored gait.
     # Keep that compatibility default while new TrainingConfig defaults to
-    # the recommended Non-RL reference explicitly.
+    # the canonical tripod-gait reference explicitly.
     reference_motion: str = "hardcoded"
     standing_pose_name: str = "sport"
     standing_pose_degrees: tuple[float, ...] = SPORT_STANDING_DEGREES
@@ -260,10 +275,13 @@ class RemoteJob:
             raise ValueError(f"unknown terrain: {self.terrain}")
         if self.curriculum not in {"easy", "medium", "full"}:
             raise ValueError(f"unknown curriculum: {self.curriculum}")
-        if self.reference_motion not in {
-            value for value, _ in REFERENCE_MOTION_OPTIONS
-        }:
+        if self.reference_motion not in REFERENCE_MOTION_VALUES:
             raise ValueError(f"unknown reference motion: {self.reference_motion}")
+        object.__setattr__(
+            self,
+            "reference_motion",
+            normalize_reference_motion(self.reference_motion),
+        )
         for name in ("num_envs", "checkpoint_every", "keep_checkpoints"):
             if getattr(self, name) < 1:
                 raise ValueError(f"{name} must be at least 1")
@@ -791,7 +809,7 @@ def run_environment_check(
     terrain: str,
     steps: int,
     random_actions: bool,
-    reference_motion: str = "non_rl",
+    reference_motion: str = "tripod-gait",
     standing_pose_degrees: Sequence[float] = SPORT_STANDING_DEGREES,
 ) -> int:
     """Run the environment/reward smoke check before committing to training."""
@@ -1364,9 +1382,10 @@ def prompt_standing_pose() -> tuple[str, tuple[float, ...]]:
     return f"custom(M={middle:g},L={lower:g})", validate_standing_pose(pose)
 
 
-def prompt_reference_motion(*, default: str = "non_rl") -> str:
+def prompt_reference_motion(*, default: str = "tripod-gait") -> str:
     """Choose the baseline that the residual policy will correct."""
 
+    default = normalize_reference_motion(default)
     if default not in {value for value, _ in REFERENCE_MOTION_OPTIONS}:
         raise ValueError(f"unknown default reference motion: {default}")
     inquirer, Choice = _inquirer()
@@ -1392,7 +1411,7 @@ def _prompt_training_config(
         message="무엇을 학습할까요?",
         choices=[Choice(value=item.key, name=item.label) for item in TRAINING_TASKS.values()],
     ).execute()
-    reference_motion = prompt_reference_motion(default="hardcoded")
+    reference_motion = prompt_reference_motion(default="tripod-gait")
     curriculum = inquirer.select(
         message="학습 범위(커리큘럼)를 선택하세요.",
         choices=[
@@ -1496,7 +1515,7 @@ def _manual_remote_job() -> RemoteJob:
         choices=[Choice(value=value, name=label) for value, label in TERRAIN_OPTIONS],
         default="flat",
     ).execute()
-    reference_motion = prompt_reference_motion()
+    reference_motion = prompt_reference_motion(default="tripod-gait")
     standing_pose_name, standing_pose_degrees = prompt_standing_pose()
     return RemoteJob(
         host=settings.host,
@@ -1623,7 +1642,7 @@ def _start_training_flow() -> None:
 
 def _environment_check_flow() -> None:
     inquirer, Choice = _inquirer()
-    reference_motion = prompt_reference_motion()
+    reference_motion = prompt_reference_motion(default="tripod-gait")
     curriculum = inquirer.select(
         message="테스트할 커리큘럼을 선택하세요.",
         choices=["easy", "medium", "full"],
@@ -1664,7 +1683,7 @@ def _view_model_flow() -> None:
     checkpoint = _prompt_local_model()
     if checkpoint is None:
         return
-    reference_motion = prompt_reference_motion()
+    reference_motion = prompt_reference_motion(default="hardcoded")
     vx = float(inquirer.number(message="전진 속도 vx (m/s)", default=0.25, float_allowed=True).execute())
     vy = float(inquirer.number(message="측면 속도 vy (m/s)", default=0.0, float_allowed=True).execute())
     yaw = float(inquirer.number(message="회전 속도 (rad/s)", default=0.0, float_allowed=True).execute())

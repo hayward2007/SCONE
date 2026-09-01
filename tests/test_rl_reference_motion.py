@@ -61,12 +61,16 @@ class ResidualReferenceMotionTests(unittest.TestCase):
         dummy.assert_not_called()
 
     def test_reference_default_depends_on_training_or_replay(self) -> None:
-        self.assertEqual(_resolve_reference_motion("train", None), "non_rl")
-        self.assertEqual(_resolve_reference_motion("check", None), "non_rl")
+        self.assertEqual(_resolve_reference_motion("train", None), "tripod-gait")
+        self.assertEqual(_resolve_reference_motion("check", None), "tripod-gait")
         self.assertEqual(_resolve_reference_motion("enjoy", None), "hardcoded")
         self.assertEqual(
             _resolve_reference_motion("enjoy", "non_rl"),
-            "non_rl",
+            "tripod-gait",
+        )
+        self.assertEqual(
+            _resolve_reference_motion("train", "scone-gait"),
+            "scone-gait",
         )
 
     def test_one_training_env_avoids_subprocess_overhead(self) -> None:
@@ -96,22 +100,22 @@ class ResidualReferenceMotionTests(unittest.TestCase):
         self.assertGreater(left_yaw, 0.1)
         self.assertLess(right_yaw, -0.1)
 
-    def test_non_rl_reference_keeps_hardcoded_command_directions(self) -> None:
+    def test_tripod_gait_reference_keeps_hardcoded_command_directions(self) -> None:
         forward, _ = self._rollout(
             [0.25, 0.0, 0.0],
-            reference_motion="non_rl",
+            reference_motion="tripod-gait",
         )
         reverse, _ = self._rollout(
             [-0.25, 0.0, 0.0],
-            reference_motion="non_rl",
+            reference_motion="tripod-gait",
         )
         _, left_yaw = self._rollout(
             [0.0, 0.0, 0.4],
-            reference_motion="non_rl",
+            reference_motion="tripod-gait",
         )
         _, right_yaw = self._rollout(
             [0.0, 0.0, -0.4],
-            reference_motion="non_rl",
+            reference_motion="tripod-gait",
         )
 
         self.assertGreater(float(forward[0]), 0.01)
@@ -132,11 +136,11 @@ class ResidualReferenceMotionTests(unittest.TestCase):
         finally:
             env.close()
 
-    def test_non_rl_reference_supplies_lateral_ik_motion(self) -> None:
+    def test_tripod_gait_reference_supplies_lateral_ik_motion(self) -> None:
         env = SconeWalkEnv(
             fixed_command=[0.0, 0.2, 0.0],
             standing_pose_degrees=STANDARD_STANDING_DEGREES,
-            reference_motion="non_rl",
+            reference_motion="tripod-gait",
         )
         try:
             env.reset(seed=7)
@@ -148,7 +152,7 @@ class ResidualReferenceMotionTests(unittest.TestCase):
                 float(np.max(np.abs(reference - env.default_degrees))),
                 0.1,
             )
-            self.assertAlmostEqual(env._phase, env._non_rl_reference.phase)
+            self.assertAlmostEqual(env._phase, env._reference_gait.phase)
             self.assertEqual(env._reference_cycle_frequency, 0.7)
             self.assertGreater(env._reference_stride_clip_fraction, 0.0)
             self.assertGreater(env._reference_ik_backoff_scale, 0.0)
@@ -156,8 +160,41 @@ class ResidualReferenceMotionTests(unittest.TestCase):
         finally:
             env.close()
 
+    def test_scone_gait_reference_uses_sector_roll_controller(self) -> None:
+        tripod = SconeWalkEnv(
+            fixed_command=[0.2, 0.0, 0.0],
+            standing_pose_degrees=STANDARD_STANDING_DEGREES,
+            reference_motion="tripod-gait",
+        )
+        scone = SconeWalkEnv(
+            fixed_command=[0.2, 0.0, 0.0],
+            standing_pose_degrees=STANDARD_STANDING_DEGREES,
+            reference_motion="scone-gait",
+        )
+        try:
+            tripod.reset(seed=7)
+            scone.reset(seed=7)
+            tripod_reference = tripod._reference_motion_degrees()
+            scone_reference = scone._reference_motion_degrees()
+
+            self.assertEqual(type(tripod._reference_gait).__name__, "TripodGait")
+            self.assertEqual(type(scone._reference_gait).__name__, "SconeGait")
+            self.assertGreater(
+                float(
+                    np.max(
+                        np.abs(
+                            scone_reference[12:] - tripod_reference[12:]
+                        )
+                    )
+                ),
+                0.1,
+            )
+        finally:
+            tripod.close()
+            scone.close()
+
     def test_rl_env_preserves_checkpoint_training_motion_profile(self) -> None:
-        for reference_motion in ("hardcoded", "non_rl"):
+        for reference_motion in ("hardcoded", "tripod-gait", "scone-gait"):
             with self.subTest(reference_motion=reference_motion):
                 env = SconeWalkEnv(
                     standing_pose_degrees=STANDARD_STANDING_DEGREES,

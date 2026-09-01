@@ -21,13 +21,18 @@
 | `test_actuators.py` | ID 1/6/7/12/13/18, `Register`, model objects | ID 경계에서 모델/protocol/control table이 바뀌는 규칙 |
 | `test_api.py` | `FakeController`, command call log, fake Inquirer answers, `KeyboardJoystick(now=...)` | 초기화·종료 순서, CLI route, 키 timeout/독립 축/neutral 전송 |
 | `test_kinematics.py` | center raw 2048, 180°, 0 rad, nominal/perturbed joint arrays | 단위 변환과 FK→IK round trip, actuator ordering |
-| `test_non_rl_walk.py` | `GaitConfig`, phase 0/0.5, nominal feet, fake position batch | tripod alternation, idle, yaw 접선 속도, IK safety, 50 mm sim stride |
+| `test_tripod_gait.py` | `GaitConfig`, phase 0/0.5, nominal feet, fake position batch | tripod alternation, idle, yaw 접선 속도, IK safety |
+| `test_scone_gait.py` | sector tangent/극성, lower frame sweep, 설정 범위 | SCONE rolling/creep 생성과 idle 안전성 |
+| `test_scone_rolling_gait.py` | 6초 floating simulation, lower 시작/끝 radian, min Z/upright | 72° phase, 2.5회 이상 연속 회전, 0.8 m 전진, drift/height/IK 경계 |
+| `test_stair_geometry.py` | 현재 sector 치수, 120 mm reach/clearance, torque·friction·support hull | 후킹 분석 수식과 입력 검증 |
+| `test_stair_climber.py` | 실제 floating MuJoCo `stairs-1/3`, top/upright/assist 횟수 | 쉬운 계단 roll-only와 높은 계단 adaptive assist 회귀 |
+| `test_stair_demo.py` | enum/parser, compiled stairs model, direct CLI mock | 자동 전략/terrain 경계, hardcoded velocity mode, stairs-2 기본 route |
 | `test_simulation.py` | compiled model/controller, control enum, patched launchers | 18-actuator protocol, mode cycle, wheel sign, target wait, Drive 댐핑과 control route |
 | `test_terrain.py` | 모든 `TerrainType`, 동일/다른 seed XML, fake camera | preset compile, visibility group 0, reproducibility, fixed base, camera cap |
 | `test_remote_watch.py` | temporary ZIP, local source, reward mock state, 68/70 fake policy | one-sided height, idle action, 합계 중복 방지, atomic checkpoint, replay compatibility |
 | `test_rl_inquiry.py` | `TrainingConfig`, `RemoteJob`, mocked subprocess/prompt/capacity | shell quoting, 이름/port 검증, venv, SIGTERM pause, reset backup, stance/reference/병렬 추천 |
 | `test_rl_joystick.py` | active/neutral command, residual action, fake mode robot | neutral gate와 RL→Drive→Climb→RL routing |
-| `test_rl_reference_motion.py` | hardcoded/Non-RL reference, vx/yaw/vy command | 전진/후진/yaw 부호와 reference별 lateral 처리 |
+| `test_rl_reference_motion.py` | hardcoded/tripod-gait/scone-gait reference, vx/yaw/vy command | 전진/후진/yaw 부호와 reference별 lateral 처리 |
 
 테스트 tolerance는 기구학/부동소수점 비교의 허용 오차다. 안전 범위나 실제 로봇 허용 오차로 재사용하면 안 된다.
 
@@ -124,7 +129,7 @@ PID는 시간이 지나면 재사용될 수 있으므로 run 상태 명령은 PI
 
 | 자료 | 주요 값/용도 |
 |---|---|
-| `SCONEv2 Arc-Shaped Wheel.pdf` | 직경 약 244.94 mm, 폭 44 mm, 반경 R112.5/R122.5, 호각 148.27° 설계 참고 |
+| `SCONEv2 Arc-Shaped Wheel.pdf` | 직경 약 244.94 mm, 폭 44 mm, 반경 R112.5/R122.5, 내부 표기각 148.27° 설계 참고. 이 각을 tire opening으로 사용하지 않음 |
 | 영문/국문 초기 논문 | 18 actuator, parallel link와 240° 계열 arc wheel 개념, 외부전원 속도/한계의 역사 기록 |
 | `SCONEv1.obj` | 전체 구형 mesh; 약 29,208 vertex/58,428 face |
 | `SCONEv2.obj` | 전체 신형 mesh; 약 48,008 vertex/96,952 face |

@@ -1,5 +1,11 @@
 # SCONE RL·시뮬레이션 개발 기록
 
+> 2026-09-01 이름 변경: 아래 과거 기록의 `Non-RL`/`non_rl`은 현재
+> `TripodGait`/`tripod-gait`를 뜻한다. 새 SCONE 부채꼴 rolling/creep
+> RL bounded 기준은 `SconeGait`/`scone-gait`이며 `non_rl`은 호환 별칭으로만
+> 남았다. 비-RL MuJoCo 조종의 같은 표시 이름은 2026-09-01부터 lower를
+> 연속 회전하는 `SconeRollingGait`로 분리됐다.
+
 > 이 문서는 시행착오와 당시 판단을 보존하는 **개발 이력**이다. 현재 관측값,
 > 보상식, 실행 명령의 최종 기준은 [`src/rl/walk_learn.py`](../src/rl/walk_learn.py),
 > [`06-reward-function-guide.md`](06-reward-function-guide.md),
@@ -23,6 +29,7 @@
 | 말단 지지점 교정 | 부채꼴 끝의 한쪽 모서리를 IK 지지점으로 사용 | 최저 0.1 mm 패치 중심으로 바꿔 drift와 slip 감소 |
 | 기존 PPO 재생 회귀 | 학습 후 추가한 물리 profile 한계 때문에 15.4M policy가 전진 명령에서 후진 | RL reset을 학습 당시 무제한 profile로 복구하고 legacy 재생 기본을 hardcoded로 고정 |
 | 현재 병목 분석 | Non-RL 기준은 빠른데 학습된 policy가 다시 느리게 만듦 | 작업공간 포화, 말단 목표속도 초과, residual 포화와 구형 checkpoint 재사용이 함께 존재 |
+| 비-RL 보행 재설계 | 3-leg support 처짐, 60 mm 포화, scone-gait가 tripod와 유사 | 160/50·80 mm·middle hold 2배, lower continuous roll, B +72° phase, 자동 계단 데모 구현 |
 
 ## 초기 설계와 상세 시행착오
 
@@ -848,3 +855,25 @@ RL reset에서 뒤늦게 추가한 profile 제한을 제거하고, 기존 PPO �
 다시 확인했고 전체 테스트 98개가 통과했다. 물리 profile을 반영한 새 정책이
 필요하면 기존 checkpoint를 resume하지 않고 별도 환경 버전에서 0 step부터
 학습해야 한다.
+
+## 2026-09-01: 자동 계단 데모와 continuous-roll 보행
+
+기존 interactive tripod를 실제 controller path로 6초 재현하니 0.0639 m/s,
+stride clipping 98.67%, root Z 위쪽 변화 19.91 mm였다. `qfrc_bias` 중력
+feed-forward는 settle 높이와 middle 오차를 악화해 제거했다. speed/cadence/
+stride/stiffness 후보 8개를 다시 실행해 비-RL 조종 전용으로 speed 160,
+XM acceleration 50, 0.8 Hz, 80/60 mm, middle stiffness 2배를 채택했다.
+결과는 0.1058 m/s, 최저 Z −0.10 mm였다. PPO reset/profile은 바꾸지 않았다.
+
+기존 bounded `SconeGait`는 lower를 ±30° 왕복해 외형상 tripod와 비슷했다.
+새 `SconeRollingGait`는 ID 13–18을 velocity mode로 연속 회전한다. 동기 회전은
+C자 개구가 겹쳐 root Z가 63.5 mm 빠졌고 arbitrary six-way phase는 lateral
+44.4 mm/upright 0.964였다. tripod B에 45/60/67.5/72/75/90°를 시험해
+72°, lower speed 175, stance ratio 0.8을 채택했다. 6초 0.9788 m,
+0.1631 m/s, lower 평균 3.05회전, 최저 Z −13.0 mm, IK 실패 0이었다.
+
+루트 메뉴는 `시뮬레이션 (자동 데모)`와 `시뮬레이션 조종`으로 분리했다.
+자동 데모의 hardcoded는 feedback 없이 lower 6개를 고정 회전하고, improved는
+정체/높은 단에서만 adaptive tripod assist를 사용한다. 재검증에서 stairs-1/2는
+둘 다 3.278/3.408초, stairs-3는 hardcoded 실패와 improved 4.718초/assist 1회가
+나왔다. 전체 후보표와 구현 경계는 12번 문서에 있다.

@@ -59,7 +59,7 @@
 | `medium` | `[0.40, 0, 0.60]`; 전후진+yaw |
 | `full` | `[0.50, 0.25, 0.80]`; lateral 포함 전축 |
 | `OBSERVATION_COMMAND_SCALE` | `[0.50, 0.25, 0.80]`; 관측 normalization과 수동 명령 clip 공통 |
-| `REFERENCE_MOTION_CHOICES` | `non_rl`, `hardcoded`; 신규 학습 기본은 `non_rl`, 기존 PPO 재생·직접 환경 생성 호환 기본은 `hardcoded` |
+| `REFERENCE_MOTION_CHOICES` | `tripod-gait`, `scone-gait`, `hardcoded`; `non_rl`은 `tripod-gait` 호환 별칭. 신규 학습 기본은 `tripod-gait`, 기존 PPO 재생은 `hardcoded` |
 
 `NeutralResidualGate`:
 
@@ -85,7 +85,7 @@
 | `walk_config` | timestep, command, episode, reference 설정 |
 | `terrain`, `terrain_seed` | 환경 지형과 seed |
 | `reference_motion` | residual 아래의 기준 모션 선택 |
-| `_non_rl_reference` | `non_rl` 선택 시 공유 Non-RL gait/IK 인스턴스, 아니면 `None` |
+| `_reference_gait` | `tripod-gait` 또는 `scone-gait` 선택 시 공유 gait/IK 인스턴스, 아니면 `None` |
 | `model`, `data` | terrain까지 compile한 MuJoCo model/state |
 | `controller` | reset 때 새로 만드는 `MuJoCoController` |
 | `control_dt` | `physics_timestep×frame_skip`, 기본 `0.02 s` |
@@ -114,10 +114,10 @@
 | `_target_heading` | yaw command를 적분한 heading 목표 |
 | `_last_action` | action-rate penalty와 관측의 이전 residual |
 | `_reference_height` | settle 후 root z; height penalty/fall 기준 |
-| `_motion_profile` | 선택 자세와 가장 가까운 실물 profile; Non-RL 기준 생성에 사용하며 기존 PPO 호환을 위해 RL controller에는 속도·가속도 한계로 강제 적용하지 않음 |
-| `_reference_cycle_frequency` | 현재 기준 모션 cadence. 시뮬레이션/RL Non-RL은 `0.7 Hz` 고정 |
-| `_reference_stride_clip_fraction` | Non-RL 작업공간 제한에 걸린 다리 비율 |
-| `_reference_ik_backoff_scale` | Non-RL IK 재시도로 적용된 foot offset 배율 |
+| `_motion_profile` | 선택 자세와 가장 가까운 실물 profile; model-based gait 기준 생성에 사용하며 기존 PPO 호환을 위해 RL controller에는 속도·가속도 한계로 강제 적용하지 않음 |
+| `_reference_cycle_frequency` | 현재 기준 모션 cadence. `tripod-gait` 0.7 Hz, `scone-gait` 0.65 Hz |
+| `_reference_stride_clip_fraction` | model-based gait 작업공간 제한에 걸린 다리 비율 |
+| `_reference_ik_backoff_scale` | model-based gait IK 재시도로 적용된 foot offset 배율 |
 | `_viewer` | lazy passive viewer |
 | `_jacobian_position/_rotation` | contact point velocity 계산 buffer |
 | `_contact_force` | `mj_contactForce` 6축 buffer; index 0 normal force |
@@ -143,11 +143,11 @@
 | `side_sign` | 홀수 오른쪽 `+1`, 짝수 왼쪽 `-1`; yaw 합성 |
 | `command_scale` | `vx_scale + yaw_scale×side_sign`를 `[-1,1]` clip |
 | `lift_a/lift_b` | sine의 양/음 반주기에 해당 tripod middle lift |
-| `reference` | `non_rl` IK 결과 또는 기본 18자세에 분석적 stride/lift를 더한 degree |
+| `reference` | `tripod-gait`/`scone-gait` 결과 또는 기본 18자세에 분석적 stride/lift를 더한 degree |
 | `clipped` | 정책 action `[-1,1]` |
 | `targets` | reference + residual scale×action, 이후 기준 `±60°` 임시 clip |
 
-`hardcoded` reference에는 측면 `vy`가 없고 full curriculum의 residual policy가 학습한다. `non_rl` reference는 body-frame `vx`, `vy`, `yaw_rate`를 모두 발 궤적과 IK에 반영한다.
+`hardcoded` reference에는 측면 `vy`가 없고 full curriculum의 residual policy가 학습한다. `tripod-gait`와 `scone-gait` reference는 body-frame `vx`, `vy`, `yaw_rate`를 모두 발 궤적과 IK에 반영하며, `scone-gait`는 하단 sector sweep도 포함한다.
 
 ## 6. 접촉·전류·reward 중간값
 
@@ -295,7 +295,7 @@
 | `terrain/terrain_seed` | 학습 환경 지형 |
 | `seed` | PPO/env 재현성 |
 | `device` | auto/cpu/cuda 등 |
-| `reference_motion` | `non_rl/hardcoded`; 재개·watch·view까지 보존 |
+| `reference_motion` | `tripod-gait/scone-gait/hardcoded`; `non_rl` alias를 정규화하고 재개·watch·view까지 보존 |
 | `standing_pose_name/degrees` | 사람이 읽는 preset명과 실제 18개 값 |
 | `RemoteSettings.host/project_dir/port/connect_timeout` | SSH 연결 위치/제한 |
 | `RemoteJob.*` | 위 학습 설정에 PID와 `created_at`을 더한 영속 작업 기록 |

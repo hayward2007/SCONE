@@ -9,6 +9,9 @@ __all__ = [
     "LegKinematics",
     "NonRLWalk",
     "PhoenixTripodGait",
+    "SconeGait",
+    "SconeGaitConfig",
+    "TripodGait",
     "RobotCommand",
     "RobotKinematics",
     "RobotStatus",
@@ -25,6 +28,9 @@ def __getattr__(name: str):
         "GaitSample",
         "NonRLWalk",
         "PhoenixTripodGait",
+        "SconeGait",
+        "SconeGaitConfig",
+        "TripodGait",
         "VelocityCommand",
     }:
         from .locomotion import (
@@ -32,6 +38,9 @@ def __getattr__(name: str):
             GaitSample,
             NonRLWalk,
             PhoenixTripodGait,
+            SconeGait,
+            SconeGaitConfig,
+            TripodGait,
             VelocityCommand,
         )
 
@@ -40,6 +49,9 @@ def __getattr__(name: str):
             "GaitSample": GaitSample,
             "NonRLWalk": NonRLWalk,
             "PhoenixTripodGait": PhoenixTripodGait,
+            "SconeGait": SconeGait,
+            "SconeGaitConfig": SconeGaitConfig,
+            "TripodGait": TripodGait,
             "VelocityCommand": VelocityCommand,
         }[name]
     if name in {

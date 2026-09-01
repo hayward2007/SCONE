@@ -19,6 +19,12 @@
 - 등반 준비 자세와 좌·우 교대 등반 동작을 제공한다.
 - 연속 velocity command를 legacy discrete gait 또는 IK gait에 연결한다.
 - 명령 필터링, stride 제한, swing lift, tripod phase로 연속 보행을 생성한다.
+- MuJoCo `tripod-gait`에는 유한 speed 160/acceleration 50, 80 mm 보폭과
+  middle hold 2배를 opt-in해 PPO 동역학은 보존하면서 지지 처짐을 줄인다.
+- `scone-gait` 조종은 하단 C자 프레임을 여러 바퀴 연속 회전시키고 두 대각
+  tripod의 개구 phase를 72° 벌려 동시 지지 상실을 줄인다.
+- 계단에서는 연속 C-sector 회전을 우선하고 높은 단/정체 때만 대각 삼각보
+  후킹 assist를 사용하는 `scone-stair`를 제공한다. 현재는 시뮬레이션 전용이다.
 - 시뮬레이션 Legacy/RL 조종 중 `R`로 Walk→Drive→Climb→Walk 상태를 전환한다.
 
 ### 기구학
@@ -40,12 +46,16 @@
 - 평지, 불규칙 블록, 계단, 경사, 혼합 지형을 XML로 생성한다.
 - Drive에서만 1단 관절 댐핑을 2배로 높이고, 모드를 벗어나면 원래 값으로 복구한다. 이 보정은 MuJoCo controller에만 있다.
 - legacy 모드 전환 시 고정 sleep 뒤 바로 다음 명령을 보내지 않고, 시뮬레이션 관절이 허용 오차 안에 도달했는지 기다린다.
+- arc-wheel 반경·opening chord·sharp-edge pivot 토크·마찰 요구량·지지다각형
+  margin을 계산하는 계단 분석 API를 제공한다.
+- 키 입력 없이 fixed hardcoded rolling과 adaptive stair controller를 순서대로
+  보여 주는 자동 viewer와 `--demo` CLI를 제공한다.
 
 ### 강화학습
 
 - Stable-Baselines3 PPO와 Gymnasium 환경을 사용한다.
 - 70차원 관측과 18차원 residual action을 사용한다.
-- 연속 IK 기반 `non_rl`과 기존 사인파 `hardcoded` 중 residual reference를 선택한다. 새 CLI 실행은 `non_rl`을 권장 기본값으로 사용한다.
+- 연속 IK 기반 `tripod-gait`, SCONE 부채꼴 rolling/creep 기반 `scone-gait`, 기존 사인파 `hardcoded` 중 residual reference를 선택한다. 새 CLI 실행은 `tripod-gait`를 기본값으로 사용하고 `non_rl`은 호환 별칭으로만 받는다.
 - reference gait, 명령 curriculum, idle 구간, randomized gait frequency를 사용한다.
 - 실제 접촉점 Jacobian으로 tire slip을 측정한다.
 - motor voltage/back-EMF/resistance에서 normalized current penalty를 계산한다.
@@ -89,12 +99,13 @@
 
 | 파일 | 목적 |
 |---|---|
-| [`requirements.txt`](../requirements.txt) | 기본 terminal launcher용 `InquirerPy` |
 | [`requirements.txt`](../requirements.txt) | CLI, Dynamixel SDK, Gymnasium, MuJoCo, NumPy, Stable-Baselines3, TensorBoard를 한 파일에서 설치 |
 
 Python 패키지 import는 일부 영역에서 의도적으로 지연된다. 예를 들어 루트 facade와 하드웨어 controller는 MuJoCo나 Dynamixel SDK가 필요하지 않은 작업에서 선택 의존성 때문에 전체 import가 실패하지 않도록 lazy import를 사용한다.
 
-실제 하드웨어 controller가 요구하는 `dynamixel-sdk`는 현재 두 requirements 파일에 포함되어 있지 않다. 새 장치 환경에서는 별도 설치해야 하며, 재현 가능한 배포를 위해 manifest에 명시하는 것이 남은 작업이다.
+실제 하드웨어 controller가 요구하는 `dynamixel-sdk`도 현재 통합
+`requirements.txt`에 포함된다. Python/MuJoCo 조건부 버전을 포함한 정확한
+설치 결과는 새 환경에서 smoke test한다.
 
 ## 4. 설계상 중요한 기술 선택
 

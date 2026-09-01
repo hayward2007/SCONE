@@ -5,7 +5,7 @@ from __future__ import annotations
 import threading
 from typing import Protocol
 
-from .non_rl_walk import VelocityCommand
+from .tripod_gait import VelocityCommand
 
 
 class LegacyMotionRobot(Protocol):

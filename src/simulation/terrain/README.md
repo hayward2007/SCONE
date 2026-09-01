@@ -40,3 +40,15 @@ can generate a matching decline. The mixed course uses this return path.
 The uneven generator is deterministic for a given seed. This is useful for
 repeating evaluation on the same geometry while allowing randomized training
 by changing `terrain_seed`.
+
+For side-on stair ascent with SCONE's C-shaped end frames, use the
+simulation-only adaptive controller:
+
+```bash
+mjpython -m src.simulation --control scone-stair --terrain stairs-3
+```
+
+The controller rolls continuously on easy stairs and activates an alternating
+tripod hook assist for a known tall rise or a detected stall. Its geometric
+assumptions and measured comparisons are documented in
+[`docs/11-scone-stair-climbing.md`](../../../docs/11-scone-stair-climbing.md).

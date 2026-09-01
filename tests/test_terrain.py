@@ -14,8 +14,11 @@ from src.simulation.core.viewer import configure_simulation_viewer
 from src.simulation.core.simulator_cli import (
     select_rl_checkpoint,
     select_simulation_control,
+    select_stair_demo_strategy,
+    select_stair_terrain,
     select_terrain,
 )
+from src.simulation.core.stair_demo import StairDemoStrategy
 from src.simulation.terrain import (
     SLOPE_PRESETS,
     STAIR_PRESETS,
@@ -46,6 +49,20 @@ class TerrainTests(unittest.TestCase):
 
         with patch("InquirerPy.inquirer.select", return_value=prompt):
             self.assertIs(select_terrain(), TerrainType.MIXED)
+
+    def test_launcher_stair_demo_pickers_return_selected_values(self) -> None:
+        prompts = iter(
+            (
+                SimpleNamespace(execute=lambda: StairDemoStrategy.IMPROVED),
+                SimpleNamespace(execute=lambda: TerrainType.STAIRS_3),
+            )
+        )
+        with patch("InquirerPy.inquirer.select", side_effect=lambda **_: next(prompts)):
+            self.assertIs(
+                select_stair_demo_strategy(),
+                StairDemoStrategy.IMPROVED,
+            )
+            self.assertIs(select_stair_terrain(), TerrainType.STAIRS_3)
 
     def test_every_preset_compiles_with_all_actuators(self) -> None:
         for terrain in TerrainType:

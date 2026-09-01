@@ -23,7 +23,7 @@ DynamixelController  MuJoCoController
 2. 대표 액추에이터 ID를 ping한 포트를 선택한다.
 3. `DynamixelController`가 포트와 Protocol 1.0/2.0 packet handler를 준비한다.
 4. `SCONE.initialize()`가 torque-off, operating mode, acceleration, 초기 위치, 속도, torque-on 순서로 설정한다.
-5. `Walk`, `Drive`, `Climb` 또는 `NonRLWalkController`가 목표 위치/속도를 전송한다.
+5. `Walk`, `Drive`, `Climb` 또는 `TripodGait`가 목표 위치/속도를 전송한다.
 6. 종료 시 안전한 중간 자세로 이동하고 모든 torque를 해제한 뒤 포트를 닫는다.
 
 장치별 주소 차이는 `ActuatorModel`과 `ControlTable`이 캡슐화한다. 동기 쓰기는 같은 protocol/register/byte length인 motor를 묶기 때문에 MX와 XM 명령이 잘못된 레지스터로 섞이지 않는다.
@@ -40,7 +40,7 @@ DynamixelController  MuJoCoController
 
 시뮬레이션 loop는 MuJoCo timestep에 맞춰 pace한다. viewer/CLI thread가 있어도 메인 물리 loop가 lock을 독점하는 tight loop가 되지 않게 하는 것이 중요하다.
 
-## 4. Non-RL 보행 데이터 흐름
+## 4. `tripod-gait` / `scone-gait` 보행 데이터 흐름
 
 ```text
 (vx, vy, yaw_rate)
@@ -55,14 +55,47 @@ DynamixelController  MuJoCoController
    → 18개 목표를 batch 전송
 ```
 
-각 다리의 neutral support point는 tire contact mesh의 부채꼴 끝단 중 가장 낮은 0.1 mm 패치의 중심에서 추론한다. 한 모서리 vertex를 고르면 44 mm 폭의 한쪽으로 IK가 치우쳐 접지 모멘트와 slip이 생긴다. stance에서는 명령 반대 방향으로 발이 지면을 민다. swing에서는 quintic 보간과 lift를 사용해 다음 접촉점으로 이동한다. 실물 공용 cadence는 0.8 Hz를 유지하고, 시뮬레이션/RL은 actuator 속도 profile sweep에서 선택한 0.7 Hz와 전후 60 mm·측면 50 mm 작업공간, 최대 4회 IK backoff를 사용한다. 그래도 수렴하지 않으면 마지막 유효 관절각을 유지하고 frame을 실패로 보고한다.
+각 다리의 neutral support point는 tire contact mesh의 부채꼴 끝단 중 가장 낮은 0.1 mm 패치의 중심에서 추론한다. 한 모서리 vertex를 고르면 44 mm 폭의 한쪽으로 IK가 치우쳐 접지 모멘트와 slip이 생긴다. stance에서는 명령 반대 방향으로 발이 지면을 민다. swing에서는 quintic 보간과 lift를 사용해 다음 접촉점으로 이동한다. 비-RL MuJoCo 조종은 0.8 Hz와 전후 80 mm·측면 60 mm, speed 160/acceleration 50, middle hold 2배를 사용한다. RL reference는 checkpoint 의미를 보존해 0.7 Hz와 60/50 mm를 유지한다. 두 경로 모두 최대 4회 IK backoff 뒤에도 수렴하지 않으면 frame을 실패로 보고한다.
 
-## 5. RL 환경 데이터 흐름
+비-RL `scone-gait`는 작은 상·중단 tripod IK를 안정화 계층으로 유지하고 하단
+부채꼴 프레임 여섯 개를 velocity mode로 연속 회전한다. 각 다리의 rolling
+tangent는 MJCF `TIRE_n` mesh에서 수치적으로 측정하고, 명령 body twist에 가장
+잘 맞는 극성을 선택한다. tripod B lower 시작 phase는 +72°라 여섯 C자 개구가
+동시에 지면을 향하지 않는다. RL reference의 `SconeGait`는 같은 이름이지만
+18-position action 호환을 위해 bounded sweep을 유지한다.
+세부 수식과 최종 motor target 혼합 순서는
+[`10-tripod-gait-and-scone-gait.md`](10-tripod-gait-and-scone-gait.md)를
+따른다.
+
+## 5. `scone-stair` 계단 데이터 흐름
+
+```text
+A/D의 vy 명령
+   → 계단 진행축 +Y에 맞춘 side-on Drive 자세
+   → ROLLING: 여섯 C-sector 연속 회전
+   → 알려진 최대 rise / R ≥ 0.75 또는 0.8초 진행 < 25 mm?
+       ├─ 아니오: ROLLING 유지
+       └─ 예: 하단 회전 phase 동기화
+              → tripod A/B middle 자세와 회전속도 교대
+              → 6 phase 뒤 ROLLING 복귀
+```
+
+이 경로는 일반 보행 `scone-gait`나 PPO reference가 아니라 계단 전용
+MuJoCo state machine이다. 실물 계단 치수·마찰·전류가 아직 입력되지 않았기
+때문에 `MuJoCoController` 이외의 controller를 거부한다. 세부 조건과 비교
+실험은 [`11-scone-stair-climbing.md`](11-scone-stair-climbing.md)에 있다.
+
+자동 데모는 이 경로 앞에 terminal joystick을 두지 않는다. worker가
+`HardcodedStairRoller` 또는 `SconeStairClimber`에 일정 상승 명령을 주고,
+physics state의 root Y/Z로 상단을 판정한다. `compare`는 두 model/viewer를
+순차 실행한다.
+
+## 6. RL 환경 데이터 흐름
 
 ### 한 control step
 
 1. 외부 velocity command를 안전 범위로 자르고 필터링한다.
-2. 선택한 reference가 `non_rl`이면 Phoenix식 발 궤적과 IK로, `hardcoded`이면 사인파 tripod로 기준 관절 목표를 계산한다.
+2. 선택한 reference가 `tripod-gait`이면 고전 교대 삼각보+IK로, `scone-gait`이면 여기에 부채꼴 rolling/creep sweep을 더해 기준 관절 목표를 계산한다. `hardcoded`는 기존 사인파 tripod를 보존한다.
 3. reference가 관리하는 gait phase를 정책 관측과 맞춘다.
 4. 정책의 18차원 `[-1, 1]` action을 관절별 residual degree로 스케일한다.
 5. reference + residual을 임시 joint range로 자르고 controller에 전송한다.
@@ -86,7 +119,7 @@ DynamixelController  MuJoCoController
 
 합계는 `3+3+3+18+18+18+3+2+2 = 70`이다. 구형 68차원 정책은 마지막 heading 두 항이 없으며 호환 adapter가 재생 시에만 두 항을 제거한다.
 
-## 6. CLI와 스레드 경계
+## 7. CLI와 스레드 경계
 
 - 터미널 입력은 공통 CLI 계층만 소유한다. viewer 또는 controller가 별도로 키보드를 읽지 않는다.
 - `KeyboardJoystick`는 key press/release 상태를 속도 벡터로 변환하고 일정 timeout 뒤 neutral로 복귀한다.
@@ -96,13 +129,13 @@ DynamixelController  MuJoCoController
 - 원격 감시에서는 checkpoint poller가 다운로드·검증하고 viewer/control loop가 안전한 시점에 policy를 바꾼다.
 - 공유 controller 상태는 lock으로 보호하지만, 긴 I/O나 sleep을 lock 안에서 수행하지 않는 것이 원칙이다.
 
-## 7. 병렬 학습과 SSH 자원 추천
+## 8. 병렬 학습과 SSH 자원 추천
 
 `num_envs=1`은 현재 프로세스의 `DummyVecEnv`를 사용한다. 2개 이상이면 환경마다 별도 프로세스를 만드는 `SubprocVecEnv`를 사용하고, 환경 index만큼 terrain seed를 증가시킨다. PPO parent가 각 worker의 rollout을 모아 업데이트한다.
 
 원격 CLI는 학습 설정을 묻기 전에 SSH 머신의 물리/논리 코어, 가용 메모리, 1분 load를 조회한다. 추천값은 `min(물리 코어-1, (가용 메모리-2 GiB)/768 MiB)`의 정수 하한이며 최소 1이다. 이는 안전한 출발값이지 성능 보장은 아니므로, 다른 작업 부하와 실제 FPS를 보고 조정한다.
 
-## 8. 파일 의존 방향
+## 9. 파일 의존 방향
 
 ```text
 hardware.interface
@@ -111,7 +144,7 @@ hardware.controller / simulation.core.controller
     ↑
 locomotion.* ─────── kinematics.*
     ↑                    ↑
-main / cli       non_rl_walk / rl.walk_learn
+main / cli       tripod_gait / scone_gait / rl.walk_learn
                          ↑
                  rl.joystick_control
                  rl.remote_watch

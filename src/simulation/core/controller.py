@@ -89,6 +89,10 @@ class MuJoCoController:
         for motor_id in Actuator.Index.ALL:
             kp, kd = default_gains_for_motor_id(motor_id)
             self._pid[motor_id] = DCMotorPID(spec_for_motor_id(motor_id), kp, kd)
+        self._default_pid_gains = {
+            motor_id: (self._pid[motor_id].kp, self._pid[motor_id].kd)
+            for motor_id in Actuator.Index.ALL
+        }
         self._stage1_default_kd = {
             motor_id: self._pid[motor_id].kd
             for motor_id in Actuator.Index.MIDDLE
@@ -350,6 +354,37 @@ class MuJoCoController:
         self._log(
             "stage-1 Drive damping -> "
             f"{'boosted' if enabled else 'default'}"
+        )
+
+    def set_gait_position_stiffness(
+        self,
+        multiplier: float,
+        *,
+        motor_ids: Iterable[int] = Actuator.Index.MIDDLE,
+    ) -> None:
+        """Scale simulation position-loop stiffness without raising torque caps.
+
+        The physical DYNAMIXEL servos hold a three-leg support pose more
+        tightly than the conservative default MuJoCo PD gains. Model-based
+        simulation gaits opt into this adapter; PPO replay keeps the original
+        gains so old checkpoint dynamics do not change. Damping follows the
+        square root of the stiffness ratio to avoid turning a hold correction
+        into a new oscillation.
+        """
+
+        if not 0.5 <= multiplier <= 4.0:
+            raise ValueError("gait stiffness multiplier must be in [0.5, 4.0]")
+        selected = tuple(int(motor_id) for motor_id in motor_ids)
+        if any(motor_id not in Actuator.Index.ALL for motor_id in selected):
+            raise ValueError("gait stiffness motor IDs must be in 1..18")
+        with self.lock:
+            for motor_id in selected:
+                default_kp, default_kd = self._default_pid_gains[motor_id]
+                self._pid[motor_id].kp = default_kp * multiplier
+                self._pid[motor_id].kd = default_kd * math.sqrt(multiplier)
+        self._log(
+            f"gait position stiffness -> {multiplier:g}x "
+            f"(motors={selected})"
         )
 
     def set_all_speed(self, speed: int) -> None:
