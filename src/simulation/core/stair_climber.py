@@ -45,7 +45,7 @@ class SconeStairConfig:
     assist_phase_count: int = 6
     stall_window_seconds: float = 0.80
     minimum_progress_metres: float = 0.025
-    tall_rise_ratio: float = 0.75
+    direct_roll_clearance: float = 0.003
     first_riser_y: float = 0.35
     prehook_distance: float = 0.27
 
@@ -72,8 +72,8 @@ class SconeStairConfig:
             raise ValueError("at least two assist phases are required")
         if self.stall_window_seconds <= 0.0 or self.minimum_progress_metres <= 0.0:
             raise ValueError("stall detector values must be positive")
-        if not 0.0 < self.tall_rise_ratio <= 1.0:
-            raise ValueError("tall rise ratio must be in (0, 1]")
+        if self.direct_roll_clearance < 0.0:
+            raise ValueError("direct-roll clearance cannot be negative")
         if self.prehook_distance < 0.0:
             raise ValueError("prehook distance cannot be negative")
 
@@ -111,10 +111,14 @@ class SconeStairClimber:
 
         profile = STAIR_PRESETS.get(self.terrain)
         self.maximum_rise = 0.0 if profile is None else max(profile.rises)
-        self.tall_stair = (
-            self.maximum_rise / SCONE_V2_ARC_WHEEL.outer_radius
-            >= self.config.tall_rise_ratio
+        self.direct_roll_reachable = (
+            self.maximum_rise == 0.0
+            or SCONE_V2_ARC_WHEEL.can_reach_riser(
+                self.maximum_rise,
+                clearance=self.config.direct_roll_clearance,
+            )
         )
+        self.tall_stair = not self.direct_roll_reachable
         self.state = StairControlState.IDLE
         self._direction = 0
         self._activity = 0.0

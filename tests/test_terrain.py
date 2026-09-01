@@ -170,6 +170,22 @@ class TerrainTests(unittest.TestCase):
             STAIR_PRESETS[TerrainType.STAIRS_1].total_height,
         )
 
+    def test_stair_presets_use_requested_fixed_riser_heights(self) -> None:
+        expected = {
+            TerrainType.STAIRS_1: (0.10, 0.10, 0.10),
+            TerrainType.STAIRS_2: (0.15, 0.15, 0.15),
+            TerrainType.STAIRS_3: (0.20, 0.20, 0.20),
+        }
+
+        for terrain, rises in expected.items():
+            with self.subTest(terrain=terrain.value):
+                self.assertEqual(STAIR_PRESETS[terrain].rises, rises)
+
+        self.assertEqual(
+            STAIR_PRESETS[TerrainType.STAIRS_3].tread_depths,
+            (0.35, 0.35, 0.35),
+        )
+
     def test_slope_presets_use_three_distinct_angles(self) -> None:
         angles = {
             profile.angle_degrees for profile in SLOPE_PRESETS.values()

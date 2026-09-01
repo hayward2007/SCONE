@@ -19,10 +19,12 @@
 - 등반 준비 자세와 좌·우 교대 등반 동작을 제공한다.
 - 연속 velocity command를 legacy discrete gait 또는 IK gait에 연결한다.
 - 명령 필터링, stride 제한, swing lift, tripod phase로 연속 보행을 생성한다.
-- MuJoCo `tripod-gait`에는 유한 speed 160/acceleration 50, 80 mm 보폭과
-  middle hold 2배를 opt-in해 PPO 동역학은 보존하면서 지지 처짐을 줄인다.
-- `scone-gait` 조종은 하단 C자 프레임을 여러 바퀴 연속 회전시키고 두 대각
-  tripod의 개구 phase를 72° 벌려 동시 지지 상실을 줄인다.
+- MuJoCo `tripod-gait`에는 1.0 Hz, 전후/측면 90/70 mm, 25 mm lift와
+  profile 무제한, middle hold 2배를 opt-in한다. 모터 전압·토크·PID 한계는
+  유지하고, PPO와 실물 경로는 바꾸지 않는다.
+- `scone-gait` 조종은 몸통/상단과 1단 기본 보행 position을 보내고, 2단 기본
+  보행 목표의 시간 미분을 하단 C자 프레임 연속 회전 속도에 합성한다. 두
+  대각 tripod의 개구 phase는 60° 벌려 동시 지지 상실을 줄인다.
 - 계단에서는 연속 C-sector 회전을 우선하고 높은 단/정체 때만 대각 삼각보
   후킹 assist를 사용하는 `scone-stair`를 제공한다. 현재는 시뮬레이션 전용이다.
 - 시뮬레이션 Legacy/RL 조종 중 `R`로 Walk→Drive→Climb→Walk 상태를 전환한다.

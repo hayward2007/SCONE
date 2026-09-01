@@ -125,28 +125,42 @@ def _run_single_demo(
             else:
                 improved = SconeStairClimber(controller, terrain=terrain)
 
+            with controller.lock:
+                simulation_started_at = float(data.time)
             elapsed = 0.0
+            control_period = 0.02
+            next_control_time = simulation_started_at
+            last_control_time = simulation_started_at
             reached_at: float | None = None
             while elapsed < timeout_seconds and not finished.is_set():
-                frame_start = time.monotonic()
+                with controller.lock:
+                    simulation_time = float(data.time)
+                    root_y = float(data.xpos[root_id, 1])
+                    root_z = float(data.xpos[root_id, 2])
+                elapsed = simulation_time - simulation_started_at
+                if root_y >= top_y and root_z >= top_z:
+                    reached_at = elapsed
+                    break
+                if elapsed >= timeout_seconds:
+                    break
+                if simulation_time + 1e-9 < next_control_time:
+                    time.sleep(0.001)
+                    continue
+
                 if hardcoded is not None:
                     hardcoded.update()
                 else:
                     assert improved is not None
+                    control_dt = max(
+                        float(model.opt.timestep),
+                        simulation_time - last_control_time,
+                    )
                     improved.update(
                         VelocityCommand(vy=improved.config.max_vy),
-                        0.02,
+                        control_dt,
                     )
-                with controller.lock:
-                    root_y = float(data.xpos[root_id, 1])
-                    root_z = float(data.xpos[root_id, 2])
-                elapsed += 0.02
-                if root_y >= top_y and root_z >= top_z:
-                    reached_at = elapsed
-                    break
-                remaining = 0.02 - (time.monotonic() - frame_start)
-                if remaining > 0.0:
-                    time.sleep(remaining)
+                last_control_time = simulation_time
+                next_control_time = simulation_time + control_period
 
             if hardcoded is not None:
                 hardcoded.stop()
@@ -194,13 +208,23 @@ def _run_single_demo(
             viewer.opt.label = mujoco.mjtLabel.mjLABEL_JOINT
             thread.start()
             timestep = float(model.opt.timestep)
+            render_period = 1.0 / 60.0
+            previous_wall_time = time.perf_counter()
+            physics_time_debt = 0.0
             while viewer.is_running() and not finished.is_set():
                 frame_start = time.perf_counter()
-                with controller.lock:
-                    controller.update(timestep)
-                    mujoco.mj_step(model, data)
+                physics_time_debt += min(
+                    frame_start - previous_wall_time,
+                    0.10,
+                )
+                previous_wall_time = frame_start
+                while physics_time_debt >= timestep:
+                    with controller.lock:
+                        controller.update(timestep)
+                        mujoco.mj_step(model, data)
+                    physics_time_debt -= timestep
                 viewer.sync()
-                remaining = timestep - (time.perf_counter() - frame_start)
+                remaining = render_period - (time.perf_counter() - frame_start)
                 if remaining > 0.0:
                     time.sleep(remaining)
     except RuntimeError as error:

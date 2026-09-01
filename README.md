@@ -48,8 +48,9 @@ continuous distal-frame rotation, and the no-input stair demo are in
 
 `시뮬레이션 (자동 데모)` asks only for `hardcoded`, `improved`, or sequential
 `compare`, plus one stair preset. It does not open the terminal joystick. The
-default `stairs-2` lets both fixed rolling and adaptive rolling climb; use
-`stairs-3` to see fixed rolling stall while adaptive tripod hook assist passes.
+100/150/200 mm riser presets now separate direct rolling from active hooking:
+fixed rolling passes `stairs-1`, while adaptive hooking is required for
+`stairs-2` and `stairs-3` in the current model.
 
 After choosing simulation control, select one locomotion implementation:
 
@@ -57,10 +58,13 @@ After choosing simulation control, select one locomotion implementation:
   Walk/Drive/Climb state machine. Press `R` to cycle modes. Walk uses W/S and
   yaw; Drive/Climb use A/D for their left/right motion.
 - `tripod-gait`: sends all three axes to the classic alternating-tripod + IK gait;
-  the MuJoCo route uses the measured 0.8 Hz, 80 mm, finite-speed configuration.
-- `scone-gait`: continuously rotates the six fan-shaped distal frames in velocity
-  mode while a small tripod IK motion stabilizes and steers the body. Tripod B
-  starts 72° out of phase so all C-frame openings do not unload together.
+  the MuJoCo route uses the SCONE-tuned 1.0 Hz, 90/70 mm workspace and 25 mm
+  lift without a profile limiter. This avoids the clipped 0.8 Hz path that mixed
+  forward/backward contact and accumulated yaw.
+- `scone-gait`: moves the body/upper and stage-1 joints with a full basic gait,
+  adds the stage-2 basic-gait angular-rate term to continuous distal-frame
+  rotation, and keeps tripod B 60° out of phase so the C-frame openings do not
+  unload together.
 - `scone-stair`: turns SCONE side-on, keeps all six sectors rolling on easy
   stairs, and conditionally applies an alternating-tripod hook assist on tall
   stairs or after a detected stall. This path is simulation-only.
@@ -203,9 +207,11 @@ from src.simulation import load_model
 model = load_model(terrain="mixed", terrain_seed=42)
 ```
 
-The three stair presets use different per-step rise, tread depth, and width;
-the public `TerrainGenerator.add_stairs()` algorithm also accepts a custom
-`StairProfile`. Slopes use 8°, 15°, and 25°. The mixed course contains the
+The three stair presets use fixed per-step rises of 100, 150, and 200 mm.
+The 200 mm preset uses 350 mm treads after the former 170--240 mm course was
+shown to trap both three-leg banks; the public `TerrainGenerator.add_stairs()`
+algorithm also accepts a custom `StairProfile`. Slopes use 8°, 15°, and 25°.
+The mixed course contains the
 rough patch and all six difficulty variants with equal gaps, and generates
 matching descents so every section returns to the base floor.
 
@@ -300,8 +306,10 @@ sideways offset. Command filtering, velocity/stride limits, and an all-or-none
 IK send guard are enabled by default in `GaitConfig`.
 
 The shared physical default keeps a fixed 0.8 Hz cadence. Interactive MuJoCo
-`tripod-gait` now uses 0.8 Hz and an 80/60 mm fore-aft/lateral workspace with
-finite speed 160, acceleration 50, and a simulation-only 2x middle-joint hold.
+`tripod-gait` uses 1.0 Hz, a 90/70 mm fore-aft/lateral workspace, 25 mm lift,
+an unlimited DYNAMIXEL profile, and a simulation-only 2x middle-joint hold.
+Motor voltage, torque, and PID limits remain active; only the lagging profile
+ramp is removed.
 The residual-RL reference deliberately remains at its checkpoint-compatible
 0.7 Hz and 60/50 mm configuration. An IK-failed frame can shrink its foot
 offsets up to four times before it is rejected.
@@ -312,10 +320,11 @@ do not compare or resume policies across those dynamics without retraining.
 
 `SconeGait` is the bounded 18-position reference used for RL compatibility. The
 interactive simulation route instead uses `SconeRollingGait`: it reuses the mesh
-tangent/IK solution for IDs 1..12, switches IDs 13..18 to velocity mode, and
-continuously rotates them. This is a simulation-only split because a many-turn
-velocity state cannot be represented by the existing 18-position residual
-reference without retraining.
+tangent/IK solution for all 18 joints. IDs 1..12 receive the basic position
+targets. IDs 13..18 stay in velocity mode and receive continuous roll plus the
+time derivative of their bounded basic-gait offset. This is a simulation-only
+split because a many-turn velocity state cannot be represented by the existing
+18-position residual reference without retraining.
 
 ```python
 scone_gait = SCONE.SconeGait(controller, profile="standard")

@@ -217,10 +217,10 @@ XML의 `<dcmotor nominal>`과 Python 사양은 함께 바꿔야 한다.
 
 | 이름 | 목적·사용처 |
 |---|---|
-| `TRIPOD_GAIT_SIMULATION_CONFIG` | cadence `0.8 Hz`, 전후/측면 stride `0.080/0.060 m`, IK 허용오차 `1 mm`, backoff 4회의 비-RL 조종 설정 |
+| `TRIPOD_GAIT_SIMULATION_CONFIG` | cadence `1.0 Hz`, lift `0.025 m`, 전후/측면 stride `0.090/0.070 m`, IK 허용오차 `1 mm`, backoff 4회의 비-RL 조종 설정 |
 | `SCONE_GAIT_SIMULATION_CONFIG` | RL/position 호환 bounded sector sweep 설정 |
 | `SCONE_ROLLING_GAIT_SIMULATION_CONFIG` | lower 연속 회전 비-RL `scone-gait` 설정 |
-| `configure_model_gait_controller()` | speed 160, XM acceleration 50, middle stiffness 2배를 비-RL tripod에 opt-in |
+| `configure_model_gait_controller()` | profile velocity/acceleration 0(무제한), middle stiffness 2배를 비-RL tripod에 opt-in |
 | `SimulationControl.OLD/TRIPOD_GAIT/SCONE_GAIT/SCONE_STAIR/RL` | 제어 방식 선택 enum; `NON_RL`은 `TRIPOD_GAIT` 호환 별칭 |
 | `profile` | Standard/Sport |
 | `floating_base` | 고정형 기구 검사와 실제 동역학 실행 선택 |
@@ -244,14 +244,19 @@ XML의 `<dcmotor nominal>`과 Python 사양은 함께 바꿔야 한다.
 |---|---|
 | `roll_velocity` | `175`; lower 연속 회전 raw velocity scale |
 | `support_velocity_ratio` | `0.80`; stance tripod의 lower 속도 비율 |
-| `tripod_b_phase_offset_degrees` | `72°`; B `(2,3,6)`의 C자 개구 시작 phase |
+| `tripod_b_phase_offset_degrees` | `60°`; B `(2,3,6)`의 C자 개구 시작 phase |
+| `basic_velocity_time_constant` | `0.04 s`; lower 기본 보행 미분 속도 low-pass |
+| `basic_lower_motion_blend` | `0.35`; lower 기본 보행 속도 성분의 합성 비율 |
+| `max_basic_lower_velocity` | `80`; IK branch 변화 시 lower 기본 속도 상한 |
 | `velocity_time_constant` | `0.10 s`; lower 속도 low-pass |
-| `profile_velocity/profile_acceleration` | `160/50`; upper/middle position stabilizer profile |
+| `profile_velocity/profile_acceleration` | `160/50`; upper/middle 기본 보행 position profile |
 | `middle_stiffness_multiplier` | `2.0`; ID 7–12 hold 보정 |
-| `cycle_frequency/duty_factor` | `0.8 Hz/0.64`; 작은 IK stabilizer phase |
-| `step_height/max_stride` | `0.004/0.025 m`; lower 추진을 중복하지 않는 작은 자세 motion |
+| `cycle_frequency/duty_factor` | `0.8 Hz/0.58`; full-body 기본 보행 phase |
+| `step_height/max_stride` | `0.020/0.055 m`; full-body 기본 보행 lift/전후 stroke |
 | `max_steering_degrees/steering_blend` | `45°/0.20` |
-| `_filtered_lower_velocity` | 여섯 lower의 이전 filter 출력 |
+| `_filtered_roll_velocity` | 여섯 lower의 연속 회전 filter 출력 |
+| `_filtered_basic_velocity` | lower 기본 보행 offset 미분의 filter 출력 |
+| `_previous_lower_offset` | 다음 frame 미분을 위한 이전 lower 기본 보행 offset |
 | `_active` | phase 준비 뒤 velocity mode가 활성화됐는지 여부 |
 | `StairDemoStrategy` | `hardcoded`, `improved`, `compare` |
 | `HardcodedStairRoller.velocity` | `150`; feedback 없는 계단 baseline |
@@ -292,7 +297,7 @@ XML의 `<dcmotor nominal>`과 Python 사양은 함께 바꿔야 한다.
 | `transition_seconds` | `0.18 s`; phase target smoothstep 전환 |
 | `stall_window_seconds` | `0.80 s`; 진행량 평가 창 |
 | `minimum_progress_metres` | `0.025 m`; 이보다 작으면 stall assist 진입 |
-| `tall_rise_ratio` | `0.75`; 최대 rise / outer radius 기준 pre-hook threshold |
+| `direct_roll_clearance` | `.003 m`; `rise + clearance <= outer radius` 직접 회전 판정 |
 | `first_riser_y/prehook_distance` | `0.35/0.27 m`; procedural stair의 첫 riser와 조기 assist 거리 |
 | `assist_entries` | 실행 중 assist 진입 횟수; 검증/진단 상태 |
 | `_known_prehook_used` | 알려진 높은 단 조건의 반복 진입을 막는 1회 latch |
@@ -318,7 +323,7 @@ XML의 `<dcmotor nominal>`과 Python 사양은 함께 바꿔야 한다.
 | `geom_names` | 추가된 모든 geom 이름 |
 | `start_y/end_y` | 코스 world-y 범위 |
 | `max_height` | floor 위 최대 장애물 높이 |
-| `STAIR_PRESETS` | 난도 1 rises `.035/.045/.055`, 난도 2 `.055/.070/.085`, 난도 3 `.080/.100/.120 m`; tread/width/landing도 난도별 지정 |
+| `STAIR_PRESETS` | 물리 단 rise 난도 1 `.10×3`, 난도 2 `.15×3`, 난도 3 `.20×3 m`; 난도 3은 staged hook 지지를 위해 tread `.35×3 m` |
 | `SLOPE_PRESETS` | `8°/15°/25°`, length `1.4/1.2/1.0 m`, width `.9/1.0/1.1 m` |
 | `TERRAIN_LABELS` | CLI용 한국어 표시 이름 |
 

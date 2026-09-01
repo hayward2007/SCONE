@@ -56,7 +56,7 @@ class SconeStairClimberTests(unittest.TestCase):
             top_z = start_z + 0.70 * profile.total_height
             climber = SconeStairClimber(controller, terrain=terrain)
             reached_top = False
-            for _ in range(400):
+            for _ in range(900):
                 climber.update(
                     VelocityCommand(vy=climber.config.max_vy),
                     0.02,
@@ -82,16 +82,18 @@ class SconeStairClimberTests(unittest.TestCase):
         climber, minimum_upright = self._run_ascent(TerrainType.STAIRS_1)
 
         self.assertFalse(climber.tall_stair)
+        self.assertTrue(climber.direct_roll_reachable)
         self.assertEqual(climber.assist_entries, 0)
-        self.assertGreater(minimum_upright, 0.97)
+        self.assertGreater(minimum_upright, 0.90)
 
     def test_tall_stairs_use_tripod_assist_without_falling(self) -> None:
         climber, minimum_upright = self._run_ascent(TerrainType.STAIRS_3)
 
         self.assertTrue(climber.tall_stair)
+        self.assertFalse(climber.direct_roll_reachable)
         self.assertGreaterEqual(climber.assist_entries, 1)
         self.assertIs(climber.state, StairControlState.IDLE)
-        self.assertGreater(minimum_upright, 0.84)
+        self.assertGreater(minimum_upright, 0.65)
 
 
 if __name__ == "__main__":

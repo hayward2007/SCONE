@@ -28,6 +28,9 @@ class StairGeometryTests(unittest.TestCase):
     def test_riser_reach_reserves_nosing_and_clearance(self) -> None:
         geometry = SCONE_V2_ARC_WHEEL
 
+        self.assertTrue(geometry.can_reach_riser(0.10, clearance=0.003))
+        self.assertFalse(geometry.can_reach_riser(0.15, clearance=0.003))
+        self.assertFalse(geometry.can_reach_riser(0.20, clearance=0.003))
         self.assertTrue(geometry.can_reach_riser(0.120))
         self.assertFalse(
             geometry.can_reach_riser(
@@ -56,6 +59,7 @@ class StairGeometryTests(unittest.TestCase):
             quasi_static_horizontal_push(load, radius, rise),
             load * offset / (radius - rise),
         )
+        self.assertGreater(wheel_edge_offset(radius, 0.20), 0.0)
 
     def test_friction_slope_and_opening_ratio_are_dimensionless_checks(self) -> None:
         self.assertAlmostEqual(required_friction_coefficient(4.0, 10.0), 0.4)

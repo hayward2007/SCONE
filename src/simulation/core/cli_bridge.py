@@ -34,9 +34,10 @@ from ..terrain import TerrainType
 # Model gait tuning is deliberately opt-in after ``SCONE.initialize``.  PPO
 # replay retains the dynamics, gains, and unlimited profile used in training.
 TRIPOD_GAIT_SIMULATION_CONFIG = GaitConfig(
-    cycle_frequency=0.8,
-    max_stride=0.080,
-    max_lateral_stride=0.060,
+    cycle_frequency=1.0,
+    step_height=0.025,
+    max_stride=0.090,
+    max_lateral_stride=0.070,
     ik_tolerance=1e-3,
     ik_stride_backoff_attempts=4,
 )
@@ -52,9 +53,13 @@ NON_RL_SIMULATION_GAIT_CONFIG = TRIPOD_GAIT_SIMULATION_CONFIG
 def configure_model_gait_controller(controller: MuJoCoController) -> None:
     """Apply measured non-RL gait tuning without changing PPO or hardware."""
 
-    controller.set_all_speed(160)
+    # Zero means "not profile-limited" in the DYNAMIXEL API. The MuJoCo
+    # dcmotor PID, voltage, and torque limits still apply. The previous 160/50
+    # profile lagged the clipped Cartesian gait by up to 52 degrees, which
+    # made the sector contacts alternately push forward and backward.
+    controller.set_all_speed(0)
     controller.set_accelerations(
-        {motor_id: 50 for motor_id in Actuator.Index.XM}
+        {motor_id: 0 for motor_id in Actuator.Index.XM}
     )
     controller.set_gait_position_stiffness(2.0)
 

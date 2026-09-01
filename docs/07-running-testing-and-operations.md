@@ -90,9 +90,9 @@ mjpython -m src.simulation
 mjpython -m src.simulation --demo compare --terrain stairs-2
 ```
 
-기본 `stairs-2`에서는 두 방식 모두 통과한다. fixed rolling이 실패하고 adaptive
-assist가 필요한 차이를 보려면 `--terrain stairs-3`를 사용한다. 자동 데모는
-terminal joystick을 열지 않는다.
+현재 100 mm `stairs-1`은 두 방식이 같은 시각에 통과한다. 150 mm
+`stairs-2`와 200 mm `stairs-3`에서는 fixed rolling이 제한 시간 안에 실패하고
+adaptive assist가 통과한다. 자동 데모는 terminal joystick을 열지 않는다.
 
 argparse option은 다음 명령으로 확인한다.
 
@@ -218,7 +218,7 @@ SIGINT/SIGTERM을 보내면 현재 step을 마치고 final model/resume pointer�
 튜닝 순서는 [`10-tripod-gait-and-scone-gait.md`](10-tripod-gait-and-scone-gait.md)를
 참고한다.
 
-`tripod-gait` 기준 모션은 2026-08-31에 stride 작업공간과 IK backoff가 추가되었고, support point는 부채꼴 말단의 최저 0.1 mm 패치 중심으로 교정됐다. RL reference는 checkpoint 의미를 보존해 0.7 Hz, 60/50 mm를 유지한다. 2026-09-01부터 비-RL MuJoCo 조종만 0.8 Hz, 80/60 mm, speed 160, XM acceleration 50, middle hold 2배를 opt-in한다. 기존 PPO는 무제한 simulation profile에서 학습됐으므로 RL reset도 그 동역학을 보존한다. 새 profile/dynamics 학습은 기존 checkpoint를 resume하지 말고 환경 버전을 기록해 0 step부터 시작한다.
+`tripod-gait` 기준 모션은 2026-08-31에 stride 작업공간과 IK backoff가 추가되었고, support point는 부채꼴 말단의 최저 0.1 mm 패치 중심으로 교정됐다. RL reference는 checkpoint 의미를 보존해 0.7 Hz, 60/50 mm를 유지한다. 2026-09-01 후속 직진 진단 뒤 비-RL MuJoCo 조종만 1.0 Hz, lift 25 mm, 90/70 mm, profile 무제한, middle hold 2배를 opt-in한다. 기존 PPO도 무제한 simulation profile에서 학습됐으므로 RL reset 동역학은 변하지 않는다. 새 profile/dynamics 학습은 기존 checkpoint를 resume하지 말고 환경 버전을 기록해 0 step부터 시작한다.
 
 `--num-envs 1`은 단일 프로세스이고 2 이상은 `SubprocVecEnv`로 각 MuJoCo 환경을 별도 프로세스에서 실행한다. 환경 수를 늘리면 PPO rollout 크기도 `n_steps × num_envs`로 커지므로 CPU 사용률뿐 아니라 업데이트 지연과 메모리를 함께 확인한다.
 

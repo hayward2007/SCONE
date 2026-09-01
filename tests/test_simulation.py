@@ -21,13 +21,14 @@ from src.simulation.core.simulator_cli import build_parser
 
 
 class SimulationBackendTests(unittest.TestCase):
-    def test_tripod_gait_simulation_uses_faster_measured_stride(self) -> None:
-        self.assertEqual(TRIPOD_GAIT_SIMULATION_CONFIG.max_stride, 0.080)
+    def test_tripod_gait_simulation_uses_scone_workspace_tuning(self) -> None:
+        self.assertEqual(TRIPOD_GAIT_SIMULATION_CONFIG.max_stride, 0.090)
         self.assertEqual(
             TRIPOD_GAIT_SIMULATION_CONFIG.max_lateral_stride,
-            0.060,
+            0.070,
         )
-        self.assertEqual(TRIPOD_GAIT_SIMULATION_CONFIG.cycle_frequency, 0.8)
+        self.assertEqual(TRIPOD_GAIT_SIMULATION_CONFIG.cycle_frequency, 1.0)
+        self.assertEqual(TRIPOD_GAIT_SIMULATION_CONFIG.step_height, 0.025)
         self.assertEqual(
             TRIPOD_GAIT_SIMULATION_CONFIG.ik_stride_backoff_attempts,
             4,
@@ -97,7 +98,8 @@ class SimulationBackendTests(unittest.TestCase):
 
             self.assertAlmostEqual(controller._pid[7].kp, 2.0 * default_kp)
             self.assertAlmostEqual(controller._pid[7].kd, np.sqrt(2.0) * default_kd)
-            self.assertTrue(np.isfinite(controller._profile_velocity[7]))
+            self.assertTrue(np.isinf(controller._profile_velocity[7]))
+            self.assertTrue(np.isinf(controller._profile_acceleration[7]))
         finally:
             controller.close()
 
@@ -200,8 +202,11 @@ class SimulationBackendTests(unittest.TestCase):
             start_position = data.xpos[root_body_id].copy()
             start_rotation = data.xmat[root_body_id].reshape(3, 3).copy()
             minimum_z = float(start_position[2])
+            previous_forward = 0.0
+            backward_distance = 0.0
+            maximum_abs_yaw = 0.0
 
-            for _ in range(150):
+            for _ in range(400):
                 sample = gait.update(
                     VelocityCommand(vx=gait.config.max_vx),
                     dt=0.02,
@@ -210,11 +215,35 @@ class SimulationBackendTests(unittest.TestCase):
                 self.assertTrue(sample.converged, sample.failed_legs)
                 advance_simulation(0.02)
                 minimum_z = min(minimum_z, float(data.xpos[root_body_id, 2]))
+                current_displacement = start_rotation.T @ (
+                    data.xpos[root_body_id] - start_position
+                )
+                forward_delta = float(current_displacement[0]) - previous_forward
+                previous_forward = float(current_displacement[0])
+                backward_distance += max(0.0, -forward_delta)
+                relative_rotation = (
+                    start_rotation.T
+                    @ data.xmat[root_body_id].reshape(3, 3)
+                )
+                maximum_abs_yaw = max(
+                    maximum_abs_yaw,
+                    abs(
+                        float(
+                            np.arctan2(
+                                relative_rotation[1, 0],
+                                relative_rotation[0, 0],
+                            )
+                        )
+                    ),
+                )
 
             body_displacement = start_rotation.T @ (
                 data.xpos[root_body_id] - start_position
             )
-            self.assertGreater(float(body_displacement[0]), 0.25)
+            self.assertGreater(float(body_displacement[0]), 0.75)
+            self.assertLess(abs(float(body_displacement[1])), 0.025)
+            self.assertLess(backward_distance, 0.015)
+            self.assertLess(maximum_abs_yaw, np.radians(2.0))
             self.assertGreater(minimum_z - float(start_position[2]), -0.005)
             self.assertGreater(
                 float(data.xmat[root_body_id].reshape(3, 3)[2, 2]),
@@ -311,7 +340,7 @@ class SimulationBackendTests(unittest.TestCase):
         finally:
             controller.close()
 
-    def test_climb_mode_advances_onto_easy_stairs(self) -> None:
+    def test_legacy_climb_stays_upright_but_does_not_fake_10cm_ascent(self) -> None:
         model = load_model(
             DEFAULT_MODEL_PATH,
             floating_base=True,
@@ -349,8 +378,13 @@ class SimulationBackendTests(unittest.TestCase):
                     robot.right()
 
             displacement = data.xpos[root_body_id] - start_position
-            self.assertGreater(float(displacement[1]), 0.30)
-            self.assertGreater(float(displacement[2]), 0.025)
+            # This regression originally used the former 35 mm stairs-1 and
+            # required a 0.30 m ascent. At the requested 100 mm riser the
+            # legacy open-loop Climb does not clear the edge; scone-stair is
+            # the validated adaptive path. Keep legacy stable without
+            # misclassifying small motion as a successful climb.
+            self.assertLess(float(displacement[1]), 0.10)
+            self.assertLess(float(displacement[2]), 0.02)
             self.assertGreater(
                 float(data.xmat[root_body_id].reshape(3, 3)[2, 2]),
                 0.98,

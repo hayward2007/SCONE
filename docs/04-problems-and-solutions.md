@@ -197,6 +197,10 @@ body center velocity나 단순 foot body velocity는 실제 타이어-지면 접
 
 ## 13. 계단 연속 회전과 후킹 assist 선택 문제
 
+아래 120 mm까지의 비교는 최초 controller 선택 당시 기록이다. 현재
+100/150/200 mm 재검증과 shallow-tread 실패 sweep는 이 절 끝과
+11번 문서 12절을 기준으로 본다.
+
 ### 비교한 접근
 
 - 여섯 C-sector를 같은 속도로 계속 돌리는 pure rolling
@@ -221,11 +225,13 @@ body center velocity나 단순 foot body velocity는 실제 타이어-지면 접
   assist가 반복됐다. known pre-hook은 한 번만 사용하고 이후에는 정체
   detector만 재진입을 허용한다.
 
-최종 adaptive는 동일 조건 headless 실험에서 `stairs-1/2`에서는 pure
-rolling과 같은 `3.278/3.408 s`, `stairs-3`에서는 assist 1회로 `4.718 s`에
-정상부에 도달했다. 이 결과는 현재 MuJoCo preset 한 번씩의 결정론적 비교로,
-실물 성공률이나 일반 계단 보장이 아니다. 수식·전체 표·실패 로그·실물 진입
-조건은 [`11-scone-stair-climbing.md`](11-scone-stair-climbing.md)에 있다.
+현재 높이에서는 100 mm만 pure/adaptive가 모두 4.920초에 통과했다. pure는
+150/200 mm에서 실패했고 adaptive는 각각 12.682초/assist 2회,
+14.394초/assist 3회로 통과했다. 200 mm는 기존 170--240 mm tread에서
+실패해 350 mm support tread로 바꾼 조건이다. 이 결과는 현재 MuJoCo preset
+한 번씩의 결정론적 비교로, 실물 성공률이나 일반 계단 보장이 아니다.
+수식·전체 표·실패 로그·실물 진입 조건은
+[`11-scone-stair-climbing.md`](11-scone-stair-climbing.md)에 있다.
 
 ## 14. 비-RL 보행의 처짐·속도·가짜 rolling 문제
 
@@ -246,21 +252,34 @@ rolling과 같은 `3.278/3.408 s`, `stairs-3`에서는 assist 1회로 `4.718 s`�
   향해 root Z가 63.5 mm 빠졌다.
 - 여섯 다리 arbitrary phase는 0.1835 m/s로 빨랐지만 44.4 mm lateral drift와
   upright 0.964로 기각했다.
+- 후속 직진 진단에서 0.8 Hz/80 mm 경로는 최대 명령의 약 97% frame에서
+  stride가 잘렸고 lower 목표가 nominal 대비 최대 약 94°까지 다른 IK branch로
+  이동했다. 8초 동안 역방향 이동 24.5 mm, 측면 편향 51.8 mm, 최대 yaw
+  3.38°가 측정되어 “평균 전진”만으로는 문제를 발견할 수 없었다.
+- 최초 continuous-roll 구현은 18관절 `SconeGait` 결과 중 1–12번만 보내고
+  13–18번 기본 보행 position을 버렸다. 그래서 상·중단 진폭도 25/4 mm로
+  작고 화면에서는 사실상 말단 회전만 보였다.
 
 ### 해결
 
-- 비-RL tripod에만 speed 160, XM acceleration 50, 0.8 Hz, 80/60 mm stride,
-  middle position stiffness 2배를 적용했다. PPO replay와 실물은 그대로다.
+- 비-RL tripod를 1.0 Hz, 90/70 mm, lift 25 mm로 바꾸고 simulation profile
+  limiter를 해제했다. 모터 PID·전압·토크 한계와 middle stiffness 2배는
+  유지한다. PPO replay와 실물은 그대로다.
 - interactive `scone-gait`를 `SconeRollingGait`로 route해 lower를 velocity mode로
   연속 회전시켰다.
-- tripod B `(2,3,6)` lower 시작각을 +72° 벌려 개구부 support phase를
+- `scone-gait` 기본 보행을 stride/lift 55/20 mm로 키우고, lower bounded 목표의
+  시간 미분을 0.35배로 연속 회전 속도에 합성했다. 상단·1단·2단 기본 보행과
+  회전이 동시에 남는다.
+- tripod B `(2,3,6)` lower 시작각을 +60° 벌려 개구부 support phase를
   de-synchronize했다.
 - RL의 bounded `SconeGait` reference는 checkpoint action 의미 때문에 보존했다.
 - 자동 계단 데모를 조종 메뉴와 분리해 hardcoded/improved/compare를 입력 없이
   실행하게 했다.
 
-6초 결과는 tripod 0.1058 m/s, continuous roll 0.1631 m/s였고 연속 회전은
-lower 평균 3.05회, IK 실패 0이었다. 전체 sweep과 식은
+수정 후 tripod는 8초 0.9469 m(0.1184 m/s), 역방향 누적 3.7 mm, 측면
+0.7 mm, 최대 yaw 1.17°였고 20초에도 측면 5.0 mm/IK 실패 0이었다.
+full-body continuous roll은 6초 1.2556 m(0.2093 m/s), lower 평균 3.09회,
+최소 upright 0.9847, IK 실패 0이었다. 전체 sweep과 식은
 [`12-automatic-stair-demo-and-continuous-roll-rework.md`](12-automatic-stair-demo-and-continuous-roll-rework.md)에 있다.
 
 ## 15. 남아 있는 기술 부채와 권장 순서

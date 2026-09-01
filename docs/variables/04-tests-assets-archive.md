@@ -23,8 +23,8 @@
 | `test_kinematics.py` | center raw 2048, 180°, 0 rad, nominal/perturbed joint arrays | 단위 변환과 FK→IK round trip, actuator ordering |
 | `test_tripod_gait.py` | `GaitConfig`, phase 0/0.5, nominal feet, fake position batch | tripod alternation, idle, yaw 접선 속도, IK safety |
 | `test_scone_gait.py` | sector tangent/극성, lower frame sweep, 설정 범위 | SCONE rolling/creep 생성과 idle 안전성 |
-| `test_scone_rolling_gait.py` | 6초 floating simulation, lower 시작/끝 radian, min Z/upright | 72° phase, 2.5회 이상 연속 회전, 0.8 m 전진, drift/height/IK 경계 |
-| `test_stair_geometry.py` | 현재 sector 치수, 120 mm reach/clearance, torque·friction·support hull | 후킹 분석 수식과 입력 검증 |
+| `test_scone_rolling_gait.py` | 6초 floating simulation, lower 시작/끝 radian, min Z/upright, upper/middle/basic-lower 진폭 | 60° phase, 2.5회 이상 연속 회전, 기본 lower 속도 합성, 0.8 m 전진, drift/height/IK 경계 |
+| `test_stair_geometry.py` | 현재 sector 치수, 100/150/200 mm 직접 reach 분류, 120 mm 경계, torque·friction·support hull | 후킹 분석 수식과 입력 검증 |
 | `test_stair_climber.py` | 실제 floating MuJoCo `stairs-1/3`, top/upright/assist 횟수 | 쉬운 계단 roll-only와 높은 계단 adaptive assist 회귀 |
 | `test_stair_demo.py` | enum/parser, compiled stairs model, direct CLI mock | 자동 전략/terrain 경계, hardcoded velocity mode, stairs-2 기본 route |
 | `test_simulation.py` | compiled model/controller, control enum, patched launchers | 18-actuator protocol, mode cycle, wheel sign, target wait, Drive 댐핑과 control route |

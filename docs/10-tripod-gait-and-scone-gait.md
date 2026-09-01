@@ -5,7 +5,7 @@
 
 - `tripod-gait`: 고전 교대 삼각보(alternating tripod)와 3차원 발 위치
   inverse kinematics를 결합한 기준 보행
-- 비-RL MuJoCo `scone-gait`: 작은 tripod 안정화 자세와 SCONE의 부채꼴 TPU
+- 비-RL MuJoCo `scone-gait`: 몸통·1단·2단 기본 보행과 SCONE의 부채꼴 TPU
   말단 **연속 velocity 회전**을 결합한 실험 보행
 - RL `scone-gait` reference: 기존 checkpoint/action 형식과 호환되는 bounded
   18-position rolling/creep sweep
@@ -81,10 +81,11 @@ tripod-gait
   = 명령 필터 + 교대 삼각보 + 발 위치 IK + IK 안전장치
 
 scone-gait (MuJoCo 조종)
-  = 작은 upper/middle tripod IK stabilizer
+  = upper/middle tripod IK 기본 보행
+  + lower 기본 보행 offset의 시간 미분
   + 말단 mesh 기반 rolling 방향/조향 보정
   + lower 6개 continuous velocity
-  + tripod-B 72° opening phase offset
+  + tripod-B 60° opening phase offset
 
 scone-gait (RL reference)
   = tripod-gait position 결과
@@ -92,8 +93,9 @@ scone-gait (RL reference)
 ```
 
 `SconeGait` reference는 `TripodGait`를 상속한다. `SconeRollingGait`는 이를
-내부 stabilizer/steering planner로 사용하지만 lower position target은 보내지
-않고 velocity mode로 여러 바퀴 회전시킨다. 두 용도를 분리한 진단과 모든
+기본 보행/steering planner로 사용한다. lower는 velocity mode라 position
+target을 직접 보낼 수 없으므로 nominal 대비 offset의 미분값을 연속 회전에
+합성한다. 두 용도를 분리한 진단과 모든
 phase 후보는 [`12-automatic-stair-demo-and-continuous-roll-rework.md`](12-automatic-stair-demo-and-continuous-roll-rework.md)를 따른다.
 
 ## 3. 공통 입력, 좌표계, 관절 순서
@@ -543,21 +545,42 @@ drift를 키웠기 때문이다. 물리 TPU 마찰과 접촉 패치 데이터를
 아니다. SCONE 기구가 허용하는 방향으로 접촉점을 이동시키면서, 불가능한
 성분은 작게 미끄러지는 hybrid 전략이다.
 
-### 6.10 비-RL MuJoCo의 continuous lower 회전
+### 6.10 비-RL MuJoCo의 full-body + continuous lower 회전
 
 위 6.1–6.9는 RL residual에 더할 수 있는 18-position reference 설명이다.
 실제 `--control scone-gait`는 2026-09-01부터
 `SconeRollingGait`를 사용한다.
 
-- ID 1–12: 작은 `SconeGait` IK stabilizer position
-- ID 13–18: `VELOCITY` mode, mesh tangent polarity에 따른 연속 회전
+- ID 1–6: body/upper 기본 보행과 rolling 조향 position
+- ID 7–12: stage-1 기본 보행 position
+- ID 13–18: `VELOCITY` mode, 기본 보행 속도 성분 + mesh tangent 연속 회전
 - tripod A `(1,4,5)`: lower 시작 255°
-- tripod B `(2,3,6)`: lower 시작 327°, 즉 +72° phase
+- tripod B `(2,3,6)`: lower 시작 315°, 즉 +60° phase
 - lower 속도: 175, stance는 0.8배, swing은 1.0배
-- velocity filter: 0.10초
+- roll velocity filter: 0.10초
+- 기본 lower 속도 미분 filter: 0.04초, 최대 80 unit, 최종 blend 0.35
 
-동기 회전에서 −63.5 mm였던 root Z 하방 변화는 이 phase stagger에서
-−13.0 mm로 줄었다. 전체 식과 후보 열 개는 12번 문서에 있다.
+하단은 position과 velocity mode를 동시에 사용할 수 없다. 따라서 bounded
+기본 보행의 하단 목표를 nominal 기준 offset `Δq_basic(t)`로 분리하고 다음과
+같이 속도 형태로 합성한다.
+
+```text
+q_lower(t) = q_continuous_roll(t) + 0.35 Δq_basic(t)
+
+qdot_lower(t)
+  = qdot_roll(t)
+  + 0.35 lowpass(clip(d(Δq_basic)/dt, -80, +80))
+```
+
+XM430 속도 1 unit은 `0.229 rpm = 1.374 deg/s`로 변환한다. `Δq_basic`에는
+IK가 만든 stage-2 굽힘과 bounded sector sweep가 모두 들어간다. 결과적으로
+말단은 여러 바퀴 계속 회전하지만 gait 주기에 맞춰 속도가 가감되어 2단의
+기본 보행 성분도 사라지지 않는다.
+
+최초 회전 전용 구현의 동기 회전은 root Z가 −63.5 mm까지 내려갔다. 이후
+full-body 합성 기준으로 phase를 다시 sweep해 72°에서 60°로 바꿨고, 8초
+최저 Z는 −51.2 mm에서 −20.7 mm, 최대 yaw는 19.7°에서 8.0°로 줄었다.
+전체 식과 후보는 12번 문서에 있다.
 
 ## 7. 설정값
 
@@ -589,16 +612,18 @@ drift를 키웠기 때문이다. 물리 TPU 마찰과 접촉 패치 데이터를
 
 | 필드 | 값 |
 |---|---:|
-| `cycle_frequency` | 0.8 Hz |
-| `max_stride` | 0.080 m |
-| `max_lateral_stride` | 0.060 m |
+| `cycle_frequency` | 1.0 Hz |
+| `step_height` | 0.025 m |
+| `max_stride` | 0.090 m |
+| `max_lateral_stride` | 0.070 m |
 | `ik_tolerance` | 0.001 m |
 | `ik_stride_backoff_attempts` | 4 |
 
-이 route에는 초기화 뒤 finite profile velocity 160, XM acceleration 50,
-middle position stiffness 2배도 적용한다. 6초 측정에서 기존 0.0639 m/s가
-0.1058 m/s로 늘고 측정 시작 대비 최저 root Z는 −0.10 mm였다. 175 이상
-cadence 후보는 하방 drop과 slip이 커져 기각했다. 이 값은 비-RL 조종 전용이며
+이 route에는 초기화 뒤 profile velocity/acceleration 0(무제한)과 middle
+position stiffness 2배를 적용한다. 무제한은 토크를 없애는 뜻이 아니라 profile
+ramp만 제거하며 MuJoCo dcmotor PID·전압·토크 제한은 그대로다. 8초 측정에서
+0.9469 m(0.1184 m/s), 역방향 누적 3.7 mm, 측면 0.7 mm, 최대 yaw 1.17°였고,
+20초에는 2.4263 m/측면 5.0 mm/IK 실패 0이었다. 이 값은 비-RL 조종 전용이며
 아래 9장의 RL reference 0.7 Hz/60 mm를 바꾸지 않는다.
 
 ### 7.3 `SconeGaitConfig` 기본값
@@ -634,12 +659,15 @@ backoff 4회를 켠다.
 |---|---:|
 | `roll_velocity` | 175 |
 | `support_velocity_ratio` | 0.80 |
-| `tripod_b_phase_offset_degrees` | 72° |
+| `tripod_b_phase_offset_degrees` | 60° |
 | `velocity_time_constant` | 0.10 s |
+| `basic_velocity_time_constant` | 0.04 s |
+| `basic_lower_motion_blend` | 0.35 |
+| `max_basic_lower_velocity` | 80 |
 | `profile_velocity/profile_acceleration` | 160/50 |
 | `middle_stiffness_multiplier` | 2.0 |
-| stabilizer cadence/duty | 0.8 Hz/0.64 |
-| stabilizer stride/lift | 25 mm/4 mm |
+| basic gait cadence/duty | 0.8 Hz/0.58 |
+| basic gait stride/lift | 55 mm/20 mm |
 | steering blend/limit | 0.20/45° |
 
 ## 8. CLI와 시뮬레이션 연결
@@ -951,10 +979,13 @@ route의 6초 측정은 다음과 같다.
 
 | interactive route | body X | 평균 속도 | body Y | 최소 ΔZ | 최소 upright |
 |---|---:|---:|---:|---:|---:|
-| tuned `tripod-gait` | +0.6348 m | 0.1058 m/s | +0.0255 m | −0.0001 m | 0.9987 |
-| continuous-roll `scone-gait` | +0.9788 m | 0.1631 m/s | −0.0106 m | −0.0130 m | 0.9891 |
+| SCONE-tuned `tripod-gait` (8 s) | +0.9469 m | 0.1184 m/s | −0.0007 m | −0.00002 m | 0.99993 |
+| full-body continuous-roll `scone-gait` (6 s) | +1.2556 m | 0.2093 m/s | −0.0525 m | −0.0207 m | 0.9811 |
 
-continuous route는 lower 평균 3.05회전을 수행했고 IK 실패가 없었다.
+`tripod-gait`는 같은 8초 동안 역방향 누적 3.7 mm, 최대 yaw 1.17°였고
+20초에서도 측면 편향 5.0 mm였다. continuous route는 lower 평균 3.09회전을
+수행했고 기본 보행 명령 진폭은 upper 17.3°, middle 9.6°, planned lower
+14.7°, lower basic 속도 성분 24.3 unit이었다. 두 route 모두 IK 실패가 없었다.
 
 ### 11.3 구현 중 발견한 반대 방향 문제
 

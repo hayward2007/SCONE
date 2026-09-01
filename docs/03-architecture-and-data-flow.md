@@ -55,12 +55,13 @@ DynamixelController  MuJoCoController
    → 18개 목표를 batch 전송
 ```
 
-각 다리의 neutral support point는 tire contact mesh의 부채꼴 끝단 중 가장 낮은 0.1 mm 패치의 중심에서 추론한다. 한 모서리 vertex를 고르면 44 mm 폭의 한쪽으로 IK가 치우쳐 접지 모멘트와 slip이 생긴다. stance에서는 명령 반대 방향으로 발이 지면을 민다. swing에서는 quintic 보간과 lift를 사용해 다음 접촉점으로 이동한다. 비-RL MuJoCo 조종은 0.8 Hz와 전후 80 mm·측면 60 mm, speed 160/acceleration 50, middle hold 2배를 사용한다. RL reference는 checkpoint 의미를 보존해 0.7 Hz와 60/50 mm를 유지한다. 두 경로 모두 최대 4회 IK backoff 뒤에도 수렴하지 않으면 frame을 실패로 보고한다.
+각 다리의 neutral support point는 tire contact mesh의 부채꼴 끝단 중 가장 낮은 0.1 mm 패치의 중심에서 추론한다. 한 모서리 vertex를 고르면 44 mm 폭의 한쪽으로 IK가 치우쳐 접지 모멘트와 slip이 생긴다. stance에서는 명령 반대 방향으로 발이 지면을 민다. swing에서는 quintic 보간과 lift를 사용해 다음 접촉점으로 이동한다. 비-RL MuJoCo 조종은 1.0 Hz와 전후 90 mm·측면 70 mm, 25 mm lift, profile 무제한, middle hold 2배를 사용한다. 이 조합은 최대 전진에서 stroke clipping을 없애 lower IK의 큰 branch 변화를 줄인다. RL reference는 checkpoint 의미를 보존해 0.7 Hz와 60/50 mm를 유지한다. 두 경로 모두 최대 4회 IK backoff 뒤에도 수렴하지 않으면 frame을 실패로 보고한다.
 
-비-RL `scone-gait`는 작은 상·중단 tripod IK를 안정화 계층으로 유지하고 하단
-부채꼴 프레임 여섯 개를 velocity mode로 연속 회전한다. 각 다리의 rolling
+비-RL `scone-gait`는 상단·1단의 기본 tripod IK를 position으로 보내고, 하단
+2단 기본 보행 offset의 시간 미분을 부채꼴 프레임 연속 회전 속도에 더한다.
+따라서 하단은 한 위치를 왕복하지 않으면서도 기본 보행의 가감속을 포함한다. 각 다리의 rolling
 tangent는 MJCF `TIRE_n` mesh에서 수치적으로 측정하고, 명령 body twist에 가장
-잘 맞는 극성을 선택한다. tripod B lower 시작 phase는 +72°라 여섯 C자 개구가
+잘 맞는 극성을 선택한다. tripod B lower 시작 phase는 +60°라 여섯 C자 개구가
 동시에 지면을 향하지 않는다. RL reference의 `SconeGait`는 같은 이름이지만
 18-position action 호환을 위해 bounded sweep을 유지한다.
 세부 수식과 최종 motor target 혼합 순서는

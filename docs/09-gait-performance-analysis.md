@@ -23,14 +23,17 @@ FPS에는 영향을 주지만, 생성된 관절 목표를 같은 50 Hz로 전송
 ### 1.1 2026-09-01 비-RL 조종 경로 적용 결과
 
 이 문서 아래의 60 mm/0.7 Hz 분석은 RL reference와 2026-08-31 기준을 설명하는
-역사적 측정으로 그대로 보존한다. 이후 비-RL MuJoCo 조종 경로에는 별도 sweep을
-거쳐 80 mm/0.8 Hz, speed 160, acceleration 50, middle stiffness 2배를 적용했다.
+역사적 측정으로 그대로 보존한다. 최초 비-RL MuJoCo 조종 sweep의
+80 mm/0.8 Hz, speed 160, acceleration 50은 평균 속도만 보면 나아졌지만 후속
+방향 진단에서 다시 교체됐다. 현재는 90/70 mm, 1.0 Hz, 25 mm lift, profile
+무제한, middle stiffness 2배다.
 
-| 경로 | 6초 평균 속도 | root Z 하방 변화 | 비고 |
+| 경로 | 평균 속도 | root Z 하방 변화 | 비고 |
 |---|---:|---:|---|
 | 이전 interactive tripod | 0.0639 m/s | 0 mm, 위로 +19.91 mm 변동 | speed100/acc20, 60 mm |
-| 최종 interactive tripod | 0.1058 m/s | −0.10 mm | 유한 profile, 80 mm |
-| 최종 continuous-roll scone | 0.1631 m/s | −12.97 mm | lower 평균 3.05회전, B +72° |
+| 1차 tuned tripod | 0.1058 m/s | −0.10 mm | 유한 profile, 80 mm; 방향 흔들림으로 교체 |
+| 현재 SCONE-tuned tripod | 0.1184 m/s | −0.02 mm | 8초, 역방향 3.7 mm, 측면 0.7 mm, yaw 1.17° |
+| 현재 full-body continuous-roll scone | 0.2093 m/s | −20.68 mm | 6초, lower 3.09회전, B +60° |
 
 PPO/RL reference 값은 이 표로 자동 변경하지 않았다. 모든 후보·실패·phase
 가설은 [`12-automatic-stair-demo-and-continuous-roll-rework.md`](12-automatic-stair-demo-and-continuous-roll-rework.md)에 있다.

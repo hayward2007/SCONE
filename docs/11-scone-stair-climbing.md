@@ -11,11 +11,15 @@
 - SCONE의 강점은 말단을 한 발끝으로 고정하는 것이 아니라, 반경이 거의
   일정한 225° 접촉 호를 계단 모서리와 윗면에 연속 접촉시키는 데 있다.
 - 현재 외반경은 `122.5 mm`, 내반경은 `112.5 mm`, 폭은 `44 mm`다.
-- 쉬운/중간 계단에서는 여섯 말단을 계속 회전하는 방식이 가장 빠르고
-  적은 기계일을 사용했다. 이 경우 굳이 보행 phase를 넣지 않는다.
-- 현재 `stairs-3`의 최대 `120 mm` 단에서는 순수 회전이 마지막 단에서
-  정체됐다. 대각 삼각보 후킹을 필요할 때만 켠 adaptive 방식은 상단 조건을
-  통과했다.
+- 요청한 현재 preset은 각 물리 단이 `100/150/200 mm`이고 총 상승은
+  `300/450/600 mm`다. `3 mm` 여유를 둔 평지 접근 한계는 `119.5 mm`다.
+- `100 mm`에서는 여섯 말단 연속 회전만으로 4.920초에 통과했다. `150 mm`와
+  `200 mm`에서는 순수 회전이 실패했고 adaptive 대각 삼각보 후킹이 각각
+  12.682초, 14.394초에 상단 조건을 통과했다.
+- `200 mm` rise에 기존 `170--240 mm` tread를 그대로 둔 실험은 모든 후보가
+  두 번째 단 이하에서 정체했다. 현재 `stairs-3`는 한 bank가 지지할 수 있는
+  `350 mm` tread를 사용한다. 이는 검증된 현재 모델 조건이지 임의 tread의
+  200 mm 계단을 모두 통과한다는 주장이 아니다.
 - 구현된 `scone-stair`는 **MuJoCo 전용**이다. 실물 Dynamixel 제어 경로는
   바꾸지 않았다. 실제 TPU 마찰, 모터 전류, 백래시, 계단 nosing을 측정하기
   전에는 실물 안전 동작으로 간주하면 안 된다.
@@ -295,19 +299,22 @@ force 조건이 불리해진다. `τ_ideal`은 앞 절의 `mg/3`, 효율 100% �
 
 | preset/단 | rise `h` | tread `d` | `h/R_o` | 등가 경사 | `q_open` | `τ_ideal` |
 |---|---:|---:|---:|---:|---:|---:|
-| stairs-1/1 | 35 mm | 300 mm | 0.286 | 6.65° | 0.749 | 1.166 N·m |
-| stairs-1/2 | 45 mm | 270 mm | 0.367 | 9.46° | 0.827 | 1.291 N·m |
-| stairs-1/3 | 55 mm | 240 mm | 0.449 | 12.91° | 0.919 | 1.391 N·m |
-| stairs-2/1 | 55 mm | 270 mm | 0.449 | 11.51° | 0.821 | 1.391 N·m |
-| stairs-2/2 | 70 mm | 230 mm | 0.571 | 16.93° | 0.941 | 1.506 N·m |
-| stairs-2/3 | 85 mm | 200 mm | 0.694 | 23.03° | 1.042 | 1.587 N·m |
-| stairs-3/1 | 80 mm | 240 mm | 0.653 | 18.43° | 0.895 | 1.563 N·m |
-| stairs-3/2 | 100 mm | 200 mm | 0.816 | 26.57° | 1.012 | 1.638 N·m |
-| stairs-3/3 | 120 mm | 170 mm | 0.980 | 35.22° | 1.088 | 1.666 N·m |
+| stairs-1/1 | 100 mm | 300 mm | 0.816 | 18.43° | 0.716 | 1.638 N·m |
+| stairs-1/2 | 100 mm | 270 mm | 0.816 | 20.32° | 0.786 | 1.638 N·m |
+| stairs-1/3 | 100 mm | 240 mm | 0.816 | 22.62° | 0.871 | 1.638 N·m |
+| stairs-2/1 | 150 mm | 270 mm | 1.224 | 29.05° | 0.733 | 1.624 N·m |
+| stairs-2/2 | 150 mm | 230 mm | 1.224 | 33.11° | 0.824 | 1.624 N·m |
+| stairs-2/3 | 150 mm | 200 mm | 1.224 | 36.87° | 0.905 | 1.624 N·m |
+| stairs-3/1 | 200 mm | 350 mm | 1.633 | 29.74° | 0.562 | 1.291 N·m |
+| stairs-3/2 | 200 mm | 350 mm | 1.633 | 29.74° | 0.562 | 1.291 N·m |
+| stairs-3/3 | 200 mm | 350 mm | 1.633 | 29.74° | 0.562 | 1.291 N·m |
 
-`stairs-3/3`은 외반경보다 겨우 `2.5 mm` 낮다. `3 mm` clearance만 적용해도
-보수적 flat-approach 조건을 벗어난다. 순수 rolling이 이 preset의 마지막
-단에서 정체된 결과와 방향이 일치한다.
+`τ_ideal`만 보면 200 mm가 작아 보이지만, 이 높이는 edge가 축보다 위에 있어
+`R_o-h < 0`이고 flat-approach 수평 push 식은 무한대로 판정된다. 즉 단순
+바퀴 pivot 해석을 적용할 수 없으며, middle articulation과 반대 tripod 지지가
+축을 먼저 들어 올리는 staged hook가 필요하다. 한편 `h < 2R_o=245 mm`라서
+sharp edge와 외호가 만날 기하적 가능성 자체는 남고, 200 mm의
+`x_Q=sqrt(2R_oh-h²)`는 약 `94.9 mm`다.
 
 ### “일반적인 계단은 모두 회전만으로 가능” 주장에 대한 범위
 
@@ -315,15 +322,14 @@ force 조건이 불리해진다. `τ_ideal`은 앞 절의 `mg/3`, 효율 100% �
 증거다. 그러나 다음 이유로 “모든 일반 계단”을 검증했다고 쓰지는 않는다.
 
 - 영상 계단의 rise, tread, nosing radius, 마찰을 실측한 기록이 없다.
-- 현재 preset의 최대 rise는 `120 mm`이고, RHex 논문의 실제 계단 표에는
-  `130–200 mm` rise가 포함된다. 로봇 형상은 다르지만 검증 범위 차이는
-  분명하다.
+- 현재 preset은 `100/150/200 mm` rise를 포함하지만 deterministic 단일
+  모델 결과이고, RHex와 SCONE의 형상·질량·접촉 모델은 서로 다르다.
 - 둥근 모서리, overhang, 젖은 표면, 나선 계단, 폭 변화는 현재 반복 실험에
   포함되지 않았다.
 - 현재 결과는 deterministic MuJoCo 한 모델/한 friction 설정이다.
 
-따라서 문서상 현재 주장은 “보관 영상의 한 실제 계단과 MuJoCo `stairs-1/2`는
-연속 회전으로 통과했고, `stairs-3`는 assist가 필요했다”까지다.
+따라서 문서상 현재 주장은 “보관 영상의 한 실제 계단, MuJoCo 100 mm rise의
+연속 회전 통과, 그리고 지정 tread에서 150/200 mm rise의 adaptive 통과”까지다.
 
 ---
 
@@ -514,7 +520,12 @@ python -m src.simulation.stair_benchmark --all --tuning
 
 ---
 
-## 7. 모든 가설의 동등조건 결과
+## 7. 이전 낮은 preset의 동등조건 결과(역사 기록)
+
+이 절의 `35--120 mm` 결과는 알고리즘을 처음 선택할 때 사용한 2026-08-31
+기준선이며, 요청 높이로 바꾼 뒤의 현재 성능값이 아니다. 삭제하지 않고
+선택 근거의 역사 기록으로 보존한다. 현재 `100/150/200 mm` 결과와 이번
+실패 sweep는 12절을 기준으로 본다.
 
 `실패`는 해당 최대 관찰 시간 안에 상단 조건을 동시에 만족하지 못했다는
 뜻이다.
@@ -602,7 +613,7 @@ MuJoCo 전용 state machine을 구현한다.
 | `assist_phase_count` | 6 | assist 뒤 rolling 복귀 |
 | `stall_window_seconds` | 0.80 s | 정체 측정 구간 |
 | `minimum_progress_metres` | 0.025 m | 구간 내 이 값 미만이면 assist |
-| `tall_rise_ratio` | 0.75 | `max rise / R_o` pre-hook 기준 |
+| `direct_roll_clearance` | 0.003 m | `h + clearance <= R_o` 직접 회전 판정 여유 |
 | `first_riser_y` | 0.35 m | procedural stair 시작 위치 |
 | `prehook_distance` | 0.27 m | 알려진 높은 단의 assist 준비 거리 |
 
@@ -683,8 +694,9 @@ side-on stair 전용이며 평면 omnidirectional gait가 아니다.
 [`tests/test_stair_geometry.py`](../tests/test_stair_geometry.py)는 다음을 고정한다.
 
 - 현재 radius/width/arc opening과 opening chord
-- `120 mm`가 zero-clearance에서는 reach 가능하지만 `3 mm` clearance에서는
-  보수 조건을 넘는다는 경계
+- `100 mm`는 3 mm clearance에서 직접 reach, `150/200 mm`는 보수 조건 밖
+- `120 mm`가 zero-clearance에서는 reach 가능하지만 3 mm clearance에서는
+  보수 조건을 넘는 기존 경계
 - pivot offset, torque, horizontal push 식
 - friction coefficient와 stair slope
 - support polygon 내부/외부 signed margin
@@ -697,7 +709,7 @@ floating model에서:
 - `stairs-1`은 assist 0회로 상단 조건 통과
 - `stairs-3`은 assist 1회 이상 사용
 - 두 경우 모두 제한 시간 안에 상단 위치/높이 동시 통과
-- 높은 계단 상단까지 최소 upright `>0.84`
+- 200 mm 높은 계단 상단까지 최소 upright `>0.65`
 
 를 검사한다.
 
@@ -761,7 +773,7 @@ python -m unittest discover -s tests -v
 ### 10.3 다음 권장 실험 순서
 
 1. `stairs-3`에서 friction `1.0 → 0.8 → 0.6 → 0.4` sweep
-2. rise `80–130 mm`, tread `160–300 mm`, nosing `0–20 mm` grid
+2. rise `100–210 mm`, tread `170–400 mm`, nosing `0–20 mm` grid
 3. payload `0/0.5/1.0 kg`와 CoM 위치 sweep
 4. `stall_window`와 `minimum_progress` false-positive/negative map
 5. contact force peak뿐 아니라 impulse와 95 percentile 기록
@@ -789,3 +801,153 @@ rolling이 정체될 수 있다. 이때 SCONE의 18-DoF 장점을 사용해 대�
 이 결론은 현재 MuJoCo 모델과 세 preset에 대한 구현 결론이다. 실물에서
 “일반 계단 모두 가능”을 주장하려면 위 미해결 실험과 반복 성공률 측정이
 추가로 필요하다.
+
+---
+
+## 12. 2026-09-01 요청 높이 100/150/200 mm 재검증
+
+### 12.1 요청 해석과 최종 지형
+
+`stairs-1/2/3`의 “단계”는 난도 이름이고, 각 preset 안에는 물리 계단 세 단이
+있다. 따라서 rise tuple을 각각 `(0.10, 0.10, 0.10)`,
+`(0.15, 0.15, 0.15)`, `(0.20, 0.20, 0.20) m`로 바꿨다. 총 상승은
+`0.30/0.45/0.60 m`다.
+
+처음에는 기존 tread를 그대로 유지해 rise만 바꿨다. 그 조건에서 200 mm
+preset의 tread는 `240/200/170 mm`였다. 아래 실패 검증 뒤 `stairs-3`만
+`350/350/350 mm`로 바꿨다. rise나 물리 단 수를 낮춰 성공을 만들지 않았다.
+100/150 mm preset의 기존 tread와 세 preset의 기존 폭은 그대로다.
+
+### 12.2 변경 직후 보강 전 기준선
+
+같은 side-on 초기화, 16초 관찰, 동일 상단 Y/Z 판정으로 H0 pure rolling과
+당시 H4 adaptive를 먼저 실행했다.
+
+| rise/tread 조건 | H0 pure rolling | 기존 H4 adaptive | 판정 |
+|---|---:|---:|---|
+| 100 mm, 300/270/240 mm | 4.920 s 통과 | 8.228 s 통과, assist 1 | 후킹이 오히려 불필요 |
+| 150 mm, 270/230/200 mm | 실패, y=0.448/z=0.212 | 12.682 s 통과, assist 2 | 후킹 유효 |
+| 200 mm, 240/200/170 mm | 실패, y=0.360/z=0.232 | 실패, y=0.304/z=0.293 | 새 대안 필요 |
+
+100 mm에서 기존 `max rise / R_o >= 0.75` 규칙은 `0.816`을 높다고 잘못
+분류했다. 이를 `h + 3 mm <= R_o`로 교체했다. 따라서 100 mm는 처음부터
+rolling을 유지하고, 150/200 mm만 알려진 높은 단 pre-hook 대상이 된다.
+
+### 12.3 200 mm에서 실제로 실행한 실패 실험
+
+아래는 코드만 읽고 추정한 목록이 아니라 각각 새 MuJoCo trial로 실행한
+범위다. 성공 여부는 Y와 Z 상단 조건을 동시에 사용했다.
+
+| 순서 | 실행한 후보 | 결과와 처리 |
+|---:|---|---|
+| 1 | 기존 adaptive를 40초까지 연장 | 첫 단 부근 정체 반복, 약 20초에 전복; 시간 연장 제외 |
+| 2 | support middle `220/240/260/280°` × swing `120/140/160/180°` | 16조합 모두 실패; 일부는 upright 음수 |
+| 3 | H0/H1/H2/H3/H4와 기존 H3 tuning 5종 | 전부 실패; legacy는 약 46초 후 원위치에 가까움 |
+| 4 | upper support/swing 편차 `-50..+50°`와 middle/lower 결합 | 큰 body motion이 support polygon을 깨 전복 증가 |
+| 5 | 선행 홀수 bank `(1,3,5)`와 후행 짝수 bank `(2,4,6)` 고정 25조합 | 최고 y 약 0.464 m; 첫 bank만 걸리고 후행 bank 정체 |
+| 6 | bank 교대 phase `1.0..5.0 s`, 28조합 | 최고 y 약 0.460 m, 최소 upright가 크게 악화 |
+| 7 | 선행 고정 후 후행 속도 `150/220/300`, middle/hold 48조합 | 후행 C-frame가 수직면에 막혀 속도 증가 효과 없음 |
+| 8 | lower 목표각 `0..330°`, upper/middle lift, reverse pulse | 하중이 걸린 뒤 position re-phase가 실행되지 않거나 전복 |
+| 9 | 시작 tripod-B 위상 `30..180°` | `150°`에서 y≈0.649/z≈0.425로 두 번째 단까지 개선 |
+| 10 | tripod A/B 49조합, 개별 6축 random 60조합, 국소 40조합 | 유효 자세로 세 번째 단을 넘은 조합 없음 |
+| 11 | 전체 reverse 28조합, 한 tripod만 정/역회전 20조합 | 두 번째 riser 정체 해소 실패 |
+| 12 | 200 mm rise 고정, tread `170/200/240/280/300/350/400 mm` | 350 mm에서 adaptive 통과; 400 mm 조합은 오히려 전복 |
+
+개별 위상 random 중 y가 1 m를 넘은 경우도 있었지만 Z가 초기 바닥 높이
+근처이고 upright가 낮았다. 계단 옆으로 빠져나가거나 쓰러진 전진이므로
+성공으로 세지 않았다. 가장 높은 안전한 shallow-tread 후보도 두 번째 단
+부근 `y≈0.65/z≈0.43 m`에서 멈췄다.
+
+이 결과는 “200 mm rise가 절대 불가능”이라는 기구학 증명이 아니다. 현재
+MJCF, friction 1.0, 모터 모델, side-on 시작 자세, 16--40초 제어 후보 안에서
+`170--240 mm` tread와의 조합이 검증되지 않았다는 뜻이다.
+
+### 12.4 최종 동작과 알고리즘
+
+최종 `scone-stair`는 다음과 같이 동작한다.
+
+1. `h + 3 mm <= 122.5 mm`이면 여섯 sector를 velocity 150으로 연속 회전한다.
+2. 이 조건을 넘으면 첫 riser `0.27 m` 전에서 lower 6개 속도를 0으로
+   동기화하고 대각 tripod assist를 시작한다.
+3. support tripod는 middle `250°`, lower magnitude `105`; swing tripod는
+   middle `165°`, lower magnitude `185`를 사용한다.
+4. A/B를 `0.75 s`씩 6 phase 교대하며 각 전환 시작 `0.18 s`는 smoothstep으로
+   보간한다.
+5. 다시 rolling으로 돌아간 뒤 `0.8 s` 동안 25 mm 미만 전진하면 같은 assist를
+   재진입한다. 150/200 mm 결과의 assist 2/3회가 이 반복 hook이다.
+
+20 cm에서 성공한 현재 모델은 단순 flat wheel pivot이 아니다. 350 mm tread에
+한 tripod가 남아 support polygon을 만들고, 다른 tripod의 middle articulation과
+더 빠른 sector 회전이 다음 edge를 찾은 뒤 역할을 바꾸는 staged hook로
+해석한다.
+
+### 12.5 최종 H0/H4 결과
+
+최종 source 상태에서 다시 실행한 값이다.
+
+| terrain | H0 hardcoded | H4 improved | assist-to-top |
+|---|---:|---:|---:|
+| stairs-1, 100 mm | 4.920 s / 46.174 J | 4.920 s / 46.174 J | 0 |
+| stairs-2, 150 mm | 16초 내 실패 | 12.682 s / 155.342 J | 2 |
+| stairs-3, 200 mm | 16초 내 실패 | 14.394 s / 181.710 J | 3 |
+
+| terrain | improved 최소 upright-to-top | peak contact-to-top | 최종 root y/z at 16 s |
+|---|---:|---:|---:|
+| stairs-1 | 0.913 | 76.602 N | 4.843 / -0.016 m |
+| stairs-2 | 0.767 | 93.574 N | 1.130 / 0.467 m |
+| stairs-3 | 0.690 | 86.503 N | 1.265 / 0.591 m |
+
+stairs-1의 16초 최종 위치는 상단을 4.920초에 지난 뒤에도 command를 계속 준
+값이라 landing 밖으로 나간 상태다. 성공/일/upright/contact 비교는 반드시
+`to_top` 값을 사용한다. 자동 viewer는 상단 판정 즉시 정지하므로 이 후속
+이탈을 보여 주지 않는다.
+
+재현 명령:
+
+```bash
+PYTHONPATH=. python -m src.simulation.stair_benchmark \
+  --terrain stairs-1 --terrain stairs-2 --terrain stairs-3 \
+  --strategy pure-rolling --strategy adaptive
+
+mjpython -m src.simulation --demo compare --terrain stairs-3
+```
+
+### 12.6 실제 MuJoCo viewer smoke와 시간축 수정
+
+처음 `mjpython` improved viewer를 실행했을 때 headless와 달리 16초 제한에서
+`y=0.280/z=0.268 m`, assist 3회로 실패했다. 알고리즘을 다시 바꾸기 전에
+viewer loop를 조사하니 physics timestep 2 ms마다 `viewer.sync()`까지 호출해
+렌더링이 500 Hz를 요구하고 있었다. 실제 simulation time은 벽시계보다 느리게
+진행했지만 worker는 벽시계 기반으로 16초를 더해 조기 종료했다.
+
+자동 데모를 다음과 같이 수정했다.
+
+- timeout과 `time_to_top`은 `data.time` MuJoCo simulation time 기준
+- control update는 simulation time 20 ms 간격
+- 화면은 60 Hz, 그 사이 누적된 2 ms physics step을 한 frame에 여러 번 실행
+- 렌더가 잠시 느려져도 최대 100 ms debt만 따라잡아 무제한 catch-up 방지
+
+수정 뒤 `compare / stairs-3` 실제 viewer 결과는 다음과 같았다.
+
+| GUI 순서 | 결과 | final y/z | assist |
+|---|---:|---:|---:|
+| hardcoded | 16 simulation s 내 실패 | 1.105/0.522 m | 0 |
+| improved | 10.978 simulation s 상단 | 1.181/0.624 m | 2 |
+
+별도 improved-only viewer는 9.284초/assist 2회였다. GUI thread scheduling과
+초기 settle이 달라 headless 14.394초나 두 GUI 시간은 성능 순위 수치로 서로
+섞지 않는다. 중요한 smoke 판정은 실제 창에서 자동 route가 완료되고 같은
+상단 Y/Z 기준으로 hardcoded 실패, improved 성공이 재현됐다는 점이다.
+
+### 12.7 검증 범위와 실물 전환 금지선
+
+- `compileall`과 전체 `unittest discover` 123개를 최종 source에서 통과했다.
+- 결과는 각 조건 1회의 deterministic MuJoCo run이며 성공률 통계가 아니다.
+- 200 mm는 350 mm tread에서만 최종 통과했다. 170--300/400 mm 결과를
+  일반화하지 않는다.
+- nosing, overhang, 마찰 감소, payload, yaw 오차, 계단 하강은 미검증이다.
+- `181.710 J`는 절대 관절 기계일 비교값이며 배터리 소비량이 아니다.
+- 200 mm 최소 upright 0.690은 큰 기울기다. 실물에서 그대로 실행할 안전
+  근거가 아니다.
+- 실물 적용 전 CAD mechanical range, TPU 접촉, 모터 current/temperature,
+  tether와 비상정지를 갖춘 단일 riser 검증이 먼저다.

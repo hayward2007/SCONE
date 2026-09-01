@@ -11,6 +11,11 @@
 평지 `scone-gait`를 **말단 프레임 연속 회전** 방식으로 다시 만든 과정에
 집중한다.
 
+> 이 문서 1–16장은 최초 continuous-roll/계단 작업의 시간 순 기록이라 당시
+> 채택값 160/50·0.8 Hz·80 mm와 B +72°를 그대로 보존한다. 이후 사용자가
+> 지적한 tripod 방향 흔들림과 scone-gait 회전-only 문제를 재진단한 현재값은
+> **17장**이 우선한다.
+
 ## 1. 이번 작업에서 해결할 문제
 
 요청을 코드 기준으로 다음 네 문제로 분리했다.
@@ -383,7 +388,10 @@ mjpython -m src.simulation --demo improved --terrain stairs-3
 `stairs-2`로 바꾼다. `flat`, slope, uneven, mixed를 명시하면 stair 전용
 경계 검사에서 거부한다.
 
-## 11. 계단 재검증 결과
+## 11. 최초 낮은 preset 계단 재검증 결과(역사 기록)
+
+이 절은 35--120 mm preset에서 자동 데모를 처음 만든 당시 수치다. 현재
+100/150/200 mm 결과는 18절을 기준으로 본다.
 
 2026-09-01에 현재 코드로 H0 hardcoded와 H4 improved를 세 preset에서 다시
 실행했다.
@@ -501,7 +509,8 @@ python -m unittest discover -s tests -v
 
 ## 15. 남은 한계와 다음 실험
 
-- 72°는 현재 mesh/friction/Standard 자세의 단일 deterministic 최적점이다.
+- 72°는 17장 full-body 합성 이전, 회전 중심 작은 stabilizer 조건의 단일
+  deterministic 최적점이었다.
   표면·질량·TPU compliance가 바뀌면 다시 sweep해야 한다.
 - continuous-roll은 평지 최대 전진을 중심으로 골랐다. `vx+vy+yaw` 복합 명령,
   uneven, slope, 긴 run은 추가 GUI/접촉 로그가 필요하다.
@@ -534,3 +543,206 @@ python -m unittest discover -s tests -v
   장점을 가장 잘 보존했다.
 - 자동 데모를 별도 메뉴로 만들어 이 차이를 키보드 조종 없이 직접 볼 수
   있게 했다.
+
+## 17. 후속 직진 안정화와 full-body `scone-gait` 교정
+
+### 17.1 다시 접수한 증상
+
+최초 작업 뒤 실제 viewer에서 다음 두 문제가 남았다.
+
+1. `tripod-gait` 전진이 한 주기 안에서 앞·뒤 모션이 섞인 것처럼 휘청이고,
+   속도가 잘 나지 않으며 진행 방향이 계속 틀어졌다.
+2. `scone-gait`는 사용자가 요구한 “몸통/상단 + 1단 + 2단 기본 보행 + 말단
+   회전”이 아니라 사실상 말단 연속 회전만 눈에 띄었다.
+
+평균 전진거리만 검사하면 첫 문제를 놓치므로 매 20 ms마다 다음 항목을 새로
+기록했다.
+
+- 시작 body frame 기준 전진/측면 변위
+- 전진 변위가 감소한 frame 비율과 감소분의 누적거리
+- 시작 자세 대비 yaw의 최대 절댓값과 범위
+- upper/middle/lower의 nominal 대비 최대 명령각
+- root Z 최저값, upright, IK 실패 frame
+
+### 17.2 `tripod-gait`의 직접 원인
+
+최대 전진 `vx=0.18 m/s`, duty `D=0.5`일 때 한 stance가 요구하는 stroke는
+다음과 같다.
+
+```text
+stroke_request = vx × D / f
+
+기존: 0.18 × 0.5 / 0.8 = 0.1125 m > 0.080 m limit
+수정: 0.18 × 0.5 / 1.0 = 0.0900 m = 0.090 m limit
+```
+
+기존 설정은 command filter가 올라온 뒤 거의 모든 frame에서 타원형 workspace
+경계에 걸렸다. 8초 측정의 평균 clipping은 약 97%였고 lower 목표 진폭이
+nominal 대비 최대 93.94°까지 커졌다. 이 큰 IK branch와 160/50 profile 지연이
+겹치면서 C자 프레임의 active contact가 앞·뒤로 바뀌었다. 평균으로는
+전진하지만 8초 동안 24.50 mm를 실제로 뒤로 되돌아갔다.
+
+후보 비교는 매 행마다 새 floating-base flat simulation을 초기화해 수행했다.
+
+| 후보 | cadence/duty | profile | lower IK 비율 | 속도 | 역방향 누적 | 측면 최종 | 최대 yaw | lower peak |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| 기존 | 0.8/0.50 | 160/50 | 1.0 | 0.1078 m/s | 24.50 mm | +51.77 mm | 3.38° | 93.94° |
+| 기존 형상/profile만 해제 | 0.8/0.50 | 0/0 | 1.0 | 0.0932 | 7.17 mm | −17.40 mm | 1.87° | 93.94° |
+| duty 0.60/lift 25 mm | 0.8/0.60 | 160/50 | 1.0 | 0.0717 | 59.93 mm | −68.62 mm | 7.56° | 86.83° |
+| duty 0.60/profile 해제 | 0.8/0.60 | 0/0 | 1.0 | 0.0722 | 1.68 mm | +17.19 mm | 2.71° | 86.83° |
+| lower IK 0.75 | 0.8/0.60 | 0/0 | 0.75 | 0.0292 | 93.40 mm | −0.23 mm | 6.80° | 65.12° |
+| lower IK 0.50 | 0.8/0.60 | 0/0 | 0.50 | 0.0191 | 158.41 mm | +64.48 mm | 6.64° | 43.42° |
+| lower IK 0.25 | 0.8/0.60 | 0/0 | 0.25 | 0.0180 | 145.13 mm | +25.87 mm | 4.94° | 21.71° |
+| **1.0 Hz/90 mm/lift 25 mm** | **1.0/0.50** | **0/0** | **1.0** | **0.1184** | **3.67 mm** | **−0.66 mm** | **1.17°** | **27.86°** |
+
+lower를 nominal 쪽으로 강제로 섞는 가설은 방향을 안정화하지 못하고 추진만
+상쇄해 기각했다. duty를 늘려 double-support를 만드는 가설도 느리고 yaw가
+커졌다. 채택안은 clipping을 없애 IK가 작은 연속 해를 유지하게 하고 profile
+lag만 제거한다. profile `0`은 DYNAMIXEL 의미상 무제한이지만 MuJoCo의 PID,
+back-EMF, voltage와 torque saturation은 계속 적용된다.
+
+채택안의 반복 측정은 다음과 같다.
+
+| 시간 | 전진 | 평균 속도 | 측면 최종/최대 | 역방향 누적 | 최대 yaw | 최저 ΔZ | 최소 upright | IK 실패 |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 8 s | 0.9469 m | 0.1184 m/s | −0.7/8.1 mm | 3.7 mm | 1.17° | −0.02 mm | 0.99993 | 0 |
+| 20 s | 2.4263 m | 0.1213 m/s | −4.9/8.9 mm | 3.7 mm | 1.17° | −0.02 mm | 0.99993 | 0 |
+
+역방향 누적이 8초 이후 늘지 않아 시작 transient 뒤 전진·후진 상쇄가 반복되는
+현상도 사라졌다고 판단했다. 이 보정은 `configure_model_gait_controller()`를
+호출하는 비-RL MuJoCo `tripod-gait`에만 적용하며 RL reference와 실물 gait는
+바꾸지 않는다.
+
+### 17.3 왜 최초 `scone-gait`가 회전만 보였는가
+
+`SconeGait.step()`은 원래 18개 관절의 기본 보행 목표를 모두 계산했다. 그러나
+`SconeRollingGait.update()`는 다음처럼 사용했다.
+
+```text
+ID 1..12  <- planner motor_degrees 전송
+ID 13..18 <- planner motor_degrees 폐기
+ID 13..18 <- continuous velocity만 전송
+```
+
+하단을 velocity mode로 바꾼 선택 자체는 여러 바퀴 회전에 필요하지만, 2단의
+기본 보행 성분까지 폐기할 이유는 없었다. 게다가 planner stride/lift가
+25/4 mm라 middle 최대 명령 진폭이 2.31°에 불과했다. 따라서 화면에서는
+몸통/다리가 거의 고정되고 말단만 도는 것으로 보인 것이 코드와 일치한다.
+
+### 17.4 lower position과 연속 회전의 합성
+
+한 모터에 position mode와 velocity mode를 동시에 켤 수는 없다. 대신 planner의
+하단 목표에서 nominal을 빼 bounded 기본 보행 offset을 만들고, 이를 미분해
+연속 회전 속도에 더한다.
+
+```text
+Δq_basic,i(t) = q_planner,i(t) - q_nominal,i
+
+v_basic,i = clip(
+    (Δq_basic,i(t) - Δq_basic,i(t-dt)) / dt / 1.374,
+    -80,
+    +80
+)
+
+v_lower,i = lowpass(v_roll,i, tau=0.10 s)
+          + 0.35 × lowpass(v_basic,i, tau=0.04 s)
+```
+
+여기서 `1.374 deg/s`는 XM430 velocity 1 unit의 `0.229 rpm × 6` 변환값이다.
+`Δq_basic`에는 IK가 만든 2단 관절 움직임과 bounded sector sweep가 함께 있다.
+따라서 적분 관점에서는 다음과 같다.
+
+```text
+q_lower(t) = q_continuous_roll(t) + 0.35 Δq_basic(t)
+```
+
+planner도 duty 0.58, stride/lift 55/20 mm로 키웠다. 채택된 6초 run의 명령
+진폭은 upper 17.28°, middle 9.59°, planned lower 14.66°, 합성된 lower basic
+속도 24.26 unit이었다. 이제 1단뿐 아니라 2단 기본 보행이 수치상 0이 아니다.
+
+### 17.5 full-body 합성 후보와 phase 재튜닝
+
+먼저 B +72°를 고정하고 기본 보행 크기와 lower 합성비를 비교했다.
+
+| 후보 | stride/lift | lower blend | 8초 속도 | 최대 yaw | 최저 ΔZ | upper/middle peak |
+|---|---:|---:|---:|---:|---:|---:|
+| 회전 중심 기존값 | 25/4 mm | 0 | 0.1585 m/s | 12.14° | −46.17 mm | 12.80°/2.31° |
+| small basic | 40/12 mm | 0.35 | 0.1828 | 15.37° | −49.61 mm | 15.06°/6.22° |
+| medium basic | 55/20 mm | 0.35 | 0.2051 | 19.73° | −51.19 mm | 17.28°/9.59° |
+| medium basic | 55/20 mm | 0.50 | 0.2067 | 19.83° | −51.71 mm | 17.28°/9.59° |
+| medium basic | 55/20 mm | 0.75 | 0.2062 | 20.41° | −51.58 mm | 17.28°/9.59° |
+| large basic | 65/25 mm | 0.50 | 0.2223 | 21.71° | −43.84 mm | 18.75°/11.54° |
+
+큰 기본 보행과 blend를 계속 올리면 속도는 조금 늘지만 yaw가 악화됐다.
+55/20 mm와 0.35를 선택하고, 움직임 크기가 바뀌었으므로 opening phase를 다시
+sweep했다.
+
+| B phase / upper steering blend | 8초 속도 | 측면 최종 | 최대 yaw | 최저 ΔZ | 최소 upright | 판단 |
+|---|---:|---:|---:|---:|---:|---|
+| 55° / 0.20 | 0.2127 m/s | −79.5 mm | **5.21°** | −22.64 mm | 0.9781 | yaw 최소, 측면 큼 |
+| **60° / 0.20** | **0.2127** | **−39.6 mm** | **7.97°** | **−20.68 mm** | **0.9811** | **균형, 채택** |
+| 62.5° / 0.20 | 0.2115 | −16.8 mm | 9.34° | −19.41 mm | 0.9830 | yaw 증가 |
+| 67.5° / 0.20 | 0.2087 | +12.4 mm | 14.53° | −23.98 mm | 0.9847 | yaw 큼 |
+| 기존 72° / 0.20 | 0.2051 | +84.2 mm | 19.73° | −51.19 mm | 0.9693 | 재튜닝 뒤 기각 |
+
+60°는 55°보다 측면 편향이 작고, 62.5° 이상보다 yaw가 작았다. 이전 72°는
+회전-only 작은 stabilizer에는 유효했지만 full-body 합성 뒤에는 최적점이
+아니었다. 6초 채택 run은 1.2556 m(0.2093 m/s), 측면 −52.5 mm, 최대 yaw
+5.56°, 최저 Z −20.68 mm, minimum upright 0.9811, lower 평균 3.09회전,
+IK 실패 0이었다.
+
+측정 yaw를 이용해 좌우 roll 속도를 차등하는 open-loop heading 보정도
+gain `±2/±5`로 실행했다. 일부 후보는 역방향 누적을 줄였지만 최대 측면
+편향이 0.16–0.30 m로 늘거나 root Z가 35–59 mm 내려갔다. contact phase
+문제를 feedback gain으로 가리는 방식이라 모두 기각했다.
+
+### 17.6 회귀 기준과 남은 한계
+
+테스트는 다음 실패를 직접 잡도록 바꿨다.
+
+- `tripod-gait`: 8초 전진 >0.75 m, 측면 <25 mm, 역방향 누적 <15 mm,
+  최대 yaw <2°, 최저 Z >−5 mm, IK 실패 0
+- `scone-gait`: 6초 전진 >0.8 m, 측면 <60 mm, 최저 Z >−25 mm,
+  upright >0.98, lower >2.5회전
+- upper >10°, middle >5°, lower basic 속도 >5 unit
+- 매 frame `combined lower ≈ rolling + basic`(정수 반올림 오차 1 이내)
+
+최종 `python -m compileall -q SCONE.py src tests`와
+`python -m unittest discover -s tests -v`를 실행해 전체 122개 테스트가
+통과했다. 계단 demo, RL bounded reference, 기존 PPO profile 보존 테스트도
+같은 suite에 포함된다.
+
+이 수치는 결정론적 flat MuJoCo/Standard 자세의 회귀 경계다. 실물에서 같은
+속도·접촉·안전성을 보장하지 않는다. 특히 continuous roll은 8초 중간에 최대
+약 0.14 m 측면 excursion이 남으므로 GUI 장시간 관찰, 복합 명령, 표면별 TPU
+마찰/변형, 전류/온도 측정이 계속 필요하다. RL의 bounded `SconeGait`와 기존
+checkpoint 동역학은 이번 simulation-only hybrid 변경으로 바꾸지 않았다.
+
+## 18. 100/150/200 mm 자동 계단 데모 갱신
+
+계단 preset의 각 물리 rise를 100/150/200 mm로 올린 뒤 기존 자동 데모를
+그대로 재실행했다. 100 mm는 hardcoded와 improved 모두 4.920초였고 improved의
+상단까지 assist는 0회였다. 150 mm는 hardcoded가 실패하고 improved가
+12.682초/assist 2회, 200 mm는 hardcoded가 실패하고 improved가
+14.394초/assist 3회로 통과했다.
+
+200 mm에 기존 170--240 mm tread를 사용한 첫 환경에서는 improved도 실패했다.
+상·중·하단 관절, 선행/후행 bank, lower phase, reverse pulse를 포함한 후보를
+실행했지만 세 번째 단까지 연결되지 않았다. 350 mm tread에서 한 tripod가
+지지하는 staged hook가 통과해 최종 고단 preset으로 채택했다. 400 mm에서는
+같은 controller가 전복돼 tread가 길수록 무조건 쉽다는 결론도 내리지 않았다.
+
+10 cm에 불필요하게 걸리던 기존 0.75 radius-ratio pre-hook은 제거하고,
+`rise + 3 mm <= 122.5 mm`이면 direct rolling으로 분류한다. 따라서 자동
+`compare`는 `stairs-1`에서 동일 경로, `stairs-2/3`에서 hardcoded 정체와
+improved 후킹의 차이를 보여 준다. 상세한 수식, 전체 실패 범위, 최종 지표는
+[`11-scone-stair-climbing.md`](11-scone-stair-climbing.md) 12절에 있다.
+
+첫 200 mm GUI 실행은 headless와 달리 `y=0.280/z=0.268 m`에서 조기 종료됐다.
+원인은 physics 2 ms마다 화면도 sync해 simulation time이 벽시계보다 느린데
+worker timeout은 벽시계 16초였기 때문이다. 데모를 simulation-time timeout과
+60 Hz render/다중 physics step으로 바꿨다. 실제 `compare` viewer에서
+hardcoded는 16 simulation s 내 실패(final 1.105/0.522 m), improved는
+10.978초에 상단(final 1.181/0.624 m, assist 2회)에 도달했다. 이 GUI 시간은
+thread/settle 차이가 있으므로 headless 성능표와 합치지 않고 route smoke로만
+사용한다. 최종 `compileall`과 전체 `unittest discover` 123개도 통과했다.

@@ -30,6 +30,7 @@
 | 기존 PPO 재생 회귀 | 학습 후 추가한 물리 profile 한계 때문에 15.4M policy가 전진 명령에서 후진 | RL reset을 학습 당시 무제한 profile로 복구하고 legacy 재생 기본을 hardcoded로 고정 |
 | 현재 병목 분석 | Non-RL 기준은 빠른데 학습된 policy가 다시 느리게 만듦 | 작업공간 포화, 말단 목표속도 초과, residual 포화와 구형 checkpoint 재사용이 함께 존재 |
 | 비-RL 보행 재설계 | 3-leg support 처짐, 60 mm 포화, scone-gait가 tripod와 유사 | 160/50·80 mm·middle hold 2배, lower continuous roll, B +72° phase, 자동 계단 데모 구현 |
+| 직진/전신 합성 재진단 | tripod 전후 접촉 혼합·yaw, scone-gait가 회전만 함 | tripod 1.0 Hz·90/70 mm·profile 무제한, scone lower 기본속도+연속회전 합성, B phase 60° 재튜닝 |
 
 ## 초기 설계와 상세 시행착오
 
@@ -877,3 +878,36 @@ C자 개구가 겹쳐 root Z가 63.5 mm 빠졌고 arbitrary six-way phase는 lat
 정체/높은 단에서만 adaptive tripod assist를 사용한다. 재검증에서 stairs-1/2는
 둘 다 3.278/3.408초, stairs-3는 hardcoded 실패와 improved 4.718초/assist 1회가
 나왔다. 전체 후보표와 구현 경계는 12번 문서에 있다.
+
+## 2026-09-01: tripod 직진 안정화와 full-body scone 합성
+
+후속 viewer에서 tripod 전진/후진 접촉이 섞이고 방향이 틀어지는 증상을
+frame 단위로 다시 측정했다. 기존 0.8 Hz/80 mm는 `vx=0.18`에서 필요한
+112.5 mm stroke를 80 mm로 계속 잘라 8초 평균 clipping 약 97%, lower 목표
+진폭 93.94°, 역방향 누적 24.50 mm, 측면 51.77 mm, 최대 yaw 3.38°였다.
+1.0 Hz/90 mm에서는 이론 stroke가 정확히 90 mm가 되어 clipping과 큰 IK
+branch가 사라졌다. simulation profile limiter도 제거한 결과 8초 0.9469 m,
+역방향 3.67 mm, 측면 0.66 mm, yaw 1.17°, 20초 2.4263 m/IK 실패 0이었다.
+
+`SconeRollingGait`는 planner의 18관절 결과 중 lower position을 버리고 있었기
+때문에 회전-only처럼 보였다. upper/middle stride/lift를 55/20 mm로 키우고,
+lower 기본 offset의 미분을 0.35배로 continuous roll에 합성했다. full-body
+조건에서 phase 55–90°와 steering 0/0.1/0.15/0.2를 다시 sweep해 B +60°를
+선택했다. 6초 1.2556 m(0.2093 m/s), lower 3.09회전, upper/middle/lower-basic
+성분이 모두 0이 아니고 IK 실패도 없었다. 기존 PPO/RL bounded reference와
+실물 controller는 변경하지 않았다. 전체 후보와 기각한 heading 보정은
+12번 문서 17장에 기록했다.
+
+## 2026-09-01: 100/150/200 mm 계단 재검증
+
+`stairs-1/2/3`의 물리 rise를 각각 100/150/200 mm 세 단으로 변경했다.
+보강 전 H0/H4에서 100 mm는 4.920/8.228초, 150 mm는 H0 실패와 H4
+12.682초, 기존 170--240 mm tread의 200 mm는 둘 다 실패했다. 200 mm에서
+middle/upper/bank/phase/reverse/tread 후보를 실제 trial로 비교했고, shallow
+tread 최고 후보는 두 번째 단 `y≈0.65/z≈0.43 m`에서 정체했다.
+
+최종 `stairs-3`는 350 mm tread를 사용한다. 직접 회전 판정도 기존 0.75
+비율이 아니라 `rise + 3 mm <= 122.5 mm`로 바꿔 100 mm의 불필요 assist를
+제거했다. 최종 H4는 100 mm 4.920초/assist 0, 150 mm 12.682초/assist 2,
+200 mm 14.394초/assist 3으로 통과했고 H0는 150/200 mm에서 실패했다.
+전체 sweep와 한계는 11번 문서 12절에 기록했다.
