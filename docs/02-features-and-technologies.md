@@ -22,13 +22,16 @@
 - MuJoCo `tripod-gait`에는 1.0 Hz, 전후/측면 90/70 mm, 25 mm lift와
   profile 무제한, middle hold 2배를 opt-in한다. 모터 전압·토크·PID 한계는
   유지하고, PPO와 실물 경로는 바꾸지 않는다.
-- `scone-gait` 조종은 몸통/상단과 1단 기본 보행 position을 보내고, 2단 기본
+- `roll-gait` 조종은 몸통/상단과 1단 기본 보행 position을 보내고, 2단 기본
   보행 목표의 시간 미분을 하단 C자 프레임 연속 회전 속도에 합성한다. 두
   대각 tripod의 개구 phase는 60° 벌려 동시 지지 상실을 줄인다.
 - 계단에서는 lower 여섯 개를 한 기하 위상으로 정렬한 뒤 하나의 다회전
   position target을 함께 전진시키는 `scone-stair`를 제공한다. 앞쪽 1단 세
   관절은 높이별 partial brace로 지지하고, 접촉 하중으로 생긴 lower 위상
   지연은 각 position loop가 회수한다. 현재는 시뮬레이션 전용이다.
+- `scone-gait` 조종은 저속/제자리 yaw에서 PPO를 사용하고 빠른 translation에서
+  stance 앞 55% 점접지, late-stance sector roll, swing reset을 포함한 1.2 Hz
+  full-body reference로 전환한다.
 - 시뮬레이션 Legacy/RL 조종 중 `R`로 Walk→Drive→Climb→Walk 상태를 전환한다.
 
 ### 기구학
@@ -48,7 +51,7 @@
 - 실제 제어기와 같은 position/velocity/torque/mode API를 제공한다.
 - passive viewer, 로봇 추적 카메라, collision group 표시를 지원한다.
 - 평지, 불규칙 블록, 계단, 경사, 혼합 지형을 XML로 생성한다.
-- Drive에서만 1단 관절 댐핑을 2배로 높이고, 모드를 벗어나면 원래 값으로 복구한다. 이 보정은 MuJoCo controller에만 있다.
+- Drive에서만 1단 관절 댐핑을 2배로 높이고, 모드를 벗어나면 원래 값으로 복구한다. 이 보정은 MuJoCo controller에만 있다. 실물은 position mode/profile/goal/present를 register read-back하며 gain은 바꾸지 않는다.
 - legacy 모드 전환 시 고정 sleep 뒤 바로 다음 명령을 보내지 않고, 시뮬레이션 관절이 허용 오차 안에 도달했는지 기다린다.
 - arc-wheel 반경·opening chord·sharp-edge pivot 토크·마찰 요구량·지지다각형
   margin을 계산하는 계단 분석 API를 제공한다.

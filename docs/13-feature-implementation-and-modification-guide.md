@@ -1,5 +1,12 @@
 # SCONE 기능 구현 및 코드 수정 가이드
 
+> **현재 gait 이름/route:** 연속 lower velocity 회전은 `roll-gait`/
+> `RollGait`다. `scone-gait`는 checkpoint 필수 PPO/점접지 hybrid supervisor다.
+> 계단은 `Walk → Drive → Climb` 준비 뒤 custom phase를 시작하고, 물리 Drive는
+> stage-1 register를 read-back한다. 최신 수정점과 수식은
+> [`14-roll-gait-and-hybrid-scone-gait.md`](14-roll-gait-and-hybrid-scone-gait.md)가
+> 우선한다.
+
 이 문서는 2026-09-01 현재 SCONE의 주요 기능이 **어떤 경로로 실행되고,
 어느 코드에서 구현되며, 기능을 바꾸려면 무엇을 함께 수정하고 검증해야
 하는지**를 한곳에 정리한 개발자용 안내서다. 세부 수식과 시행착오는 기존
@@ -48,7 +55,7 @@ backend를 몰라도 동작한다.
 
 단, 다음 기능은 의도적으로 MuJoCo 전용이다.
 
-- 연속 lower velocity 회전을 사용하는 비-RL `scone-gait`
+- 연속 lower velocity 회전을 사용하는 비-RL `roll-gait`
 - 정체 감지와 대각 삼각 후킹을 사용하는 `scone-stair`
 - 자동 계단 `hardcoded/improved/compare` 데모
 - MuJoCo body state와 contact를 관측하는 PPO 환경
@@ -70,7 +77,8 @@ joint hard stop, TPU 마찰·변형, 전류·온도, 낙상 정지, 통신 지�
 | 절차형 지형 | [`src/simulation/terrain/`](../src/simulation/terrain) | `TerrainGenerator`, `STAIR_PRESETS`, `SLOPE_PRESETS` | [`test_terrain.py`](../tests/test_terrain.py) |
 | `tripod-gait` | [`tripod_gait.py`](../src/locomotion/tripod_gait.py) | `TripodGait`, `GaitConfig` | [`test_tripod_gait.py`](../tests/test_tripod_gait.py), [`test_simulation.py`](../tests/test_simulation.py) |
 | RL bounded `scone-gait` | [`scone_gait.py`](../src/locomotion/scone_gait.py) | `SconeGait`, `SconeGaitConfig` | [`test_scone_gait.py`](../tests/test_scone_gait.py), [`test_rl_reference_motion.py`](../tests/test_rl_reference_motion.py) |
-| 연속 회전 `scone-gait` | [`scone_rolling_gait.py`](../src/simulation/core/scone_rolling_gait.py) | `SconeRollingGait` | [`test_scone_rolling_gait.py`](../tests/test_scone_rolling_gait.py) |
+| 연속 회전 `roll-gait` | [`scone_rolling_gait.py`](../src/simulation/core/scone_rolling_gait.py) | `RollGait` | [`test_scone_rolling_gait.py`](../tests/test_scone_rolling_gait.py) |
+| PPO/점접지 hybrid `scone-gait` | [`joystick_control.py`](../src/rl/joystick_control.py) | `SconeHybridController` | [`test_rl_joystick.py`](../tests/test_rl_joystick.py) |
 | 계단 후킹·자동 데모 | [`stair_climber.py`](../src/simulation/core/stair_climber.py), [`stair_demo.py`](../src/simulation/core/stair_demo.py) | `SconeStairClimber`, `HardcodedStairRoller` | [`test_stair_geometry.py`](../tests/test_stair_geometry.py), [`test_stair_climber.py`](../tests/test_stair_climber.py), [`test_stair_demo.py`](../tests/test_stair_demo.py) |
 | RL 환경·reward·PPO | [`walk_learn.py`](../src/rl/walk_learn.py) | `SconeWalkEnv`, `RewardConfig`, `WalkConfig` | [`test_remote_watch.py`](../tests/test_remote_watch.py), [`test_rl_reference_motion.py`](../tests/test_rl_reference_motion.py) |
 | RL 조종·호환성 | [`joystick_control.py`](../src/rl/joystick_control.py), [`policy_compat.py`](../src/rl/policy_compat.py) | `NeutralResidualGate`, `_RLModeRouter`, 68→70 replay adapter | [`test_rl_joystick.py`](../tests/test_rl_joystick.py), [`test_remote_watch.py`](../tests/test_remote_watch.py) |
@@ -155,7 +163,8 @@ controller의 부호를 동시에 뒤집지 말고, 다음 순서로 원인을 �
 실행 route는
 [`src/simulation/core/cli_bridge.py`](../src/simulation/core/cli_bridge.py)가
 담당한다. `SimulationControl`은 현재 `old`, `tripod-gait`, `scone-gait`,
-`scone-stair`, `rl`을 제공한다.
+`roll-gait`, `scone-stair`, `rl`을 제공한다. `scone-gait`와 `rl`은 checkpoint가
+필수이고, `roll-gait`는 비-RL 연속 회전이다.
 
 `KeyboardJoystick`은 terminal에 key-up event가 없다는 점을 timeout으로
 처리한다. 키 입력은 0.35초 동안 axis를 유지하고 OS key repeat가 deadline을
@@ -524,20 +533,23 @@ branch를 잡지 않도록 검증된 profile pose를 유지한다.
 
 ---
 
-## 11. 두 종류의 `scone-gait`
+## 11. `roll-gait`, bounded reference, multi-turn hybrid `scone-gait`
 
-같은 이름이지만 구현 목적이 다르므로 수정 전에 반드시 구분한다.
+서로 내부 planner를 공유하지만 실행 목적이 다르므로 수정 전에 구분한다.
 
 | 경로 | 클래스 | lower 제어 | 용도 |
 |---|---|---|---|
-| RL reference/position controller | [`SconeGait`](../src/locomotion/scone_gait.py) | bounded position sweep | residual 기준 모션, checkpoint 호환 |
-| 비-RL MuJoCo 조종 | [`SconeRollingGait`](../src/simulation/core/scone_rolling_gait.py) | continuous velocity + basic motion rate | 실제로 여러 바퀴 회전하는 실험 gait |
+| bounded reference/position controller | [`SconeGait`](../src/locomotion/scone_gait.py) 기본값 | point hold + bounded position sweep | RL 학습 reference 호환 |
+| 비-RL MuJoCo `roll-gait` | [`RollGait`](../src/simulation/core/scone_rolling_gait.py) | continuous velocity + basic motion rate | 실제로 여러 바퀴 회전하는 실험 gait |
+| checkpoint 필수 `scone-gait` | [`SconeHybridController`](../src/rl/joystick_control.py) | phase-gated multi-turn position | 저속/yaw PPO와 고속 보행+회전 전환 |
 
 ### 11.1 RL bounded `SconeGait`
 
 `SconeGait`은 `TripodGait`의 upper/middle/lower position frame에 sector
-tangent와 steering solution을 더한다. 기본값은 0.65 Hz, 35/25 mm stride,
-25 mm lift, ±30° sector sweep이다. output이 항상 18개 bounded position이므로
+tangent와 steering solution을 더한다. stance 앞 55%에서는 추가 sector
+phase를 고정하고, late stance에서만 회전한 뒤 swing에서 되감는다. 기본값은
+0.65 Hz, 35/25 mm stride, 25 mm lift, ±30° sector sweep이다. output이 항상
+18개 bounded position이므로
 다음 residual 합성이 가능하다.
 
 ```text
@@ -549,9 +561,9 @@ target = reference_motor_degrees
 RL에서 unbounded roll을 학습하려면 action/observation/controller 설계를
 별도 버전으로 만들고 새 checkpoint를 학습해야 한다.
 
-### 11.2 비-RL 연속 회전 `SconeRollingGait`
+### 11.2 비-RL 연속 회전 `RollGait`
 
-`SconeRollingGait`은 내부 `SconeGait` planner로 몸통·middle 기본 보행을
+`RollGait`은 내부 `SconeGait` planner로 몸통·middle 기본 보행을
 계산하면서 lower를 velocity mode로 운용한다.
 
 1. ID 1–12에는 planner position 전송
@@ -570,7 +582,23 @@ planner 0.8 Hz/duty 0.58/55 mm stride/20 mm lift다. 시작할 때 `prepare()`�
 C자 개구부 phase를 나눠 position으로 정렬하고, `activate()`가 lower를
 velocity mode로 바꾼다.
 
-### 11.3 `scone-gait` 수정 방법
+### 11.3 PPO/hybrid `scone-gait`
+
+`SconeHybridController`는 평면 속도 `sqrt(vx²+vy²)`가 0.10 m/s 이하면 PPO만,
+0.18 m/s 이상이면 1.2 Hz/90 mm/25 mm의 `SconeGait` multi-turn reference만 쓴다.
+중간은 smoothstep으로 reference를 섞고 같은 비율만큼 PPO residual을 줄인다.
+따라서 제자리 yaw는 항상 PPO이고, full hybrid에서 학습하지 않은 residual이
+새 reference와 싸우지 않는다.
+
+고속 config는 `continuous_rotation=True`다. stance 앞 55%는 말단 추가 회전을
+멈춰 한 점으로 지지하고, late stance와 swing 앞 70%에서 같은 방향 회전을
+누적하며 착지 전 30%에서 감속한다. 각속도는
+`(180/π)||[vx-ωy,vy+ωx]||/0.1225`이고 360°/s로 제한한다. 최종 lower 목표는
+`q_IK + 누적 회전각`이라 2단 기본 보행을 버리지 않는다. checkpoint lower와
+multi-turn lower는 가장 가까운 360° branch에서 보간한다. 상세 식과 15.4M
+실측은 14번 문서를 따른다.
+
+### 11.4 gait 수정 방법
 
 화면에서 “회전만 한다”면 먼저 다음 telemetry를 확인한다.
 
@@ -579,11 +607,16 @@ velocity mode로 바꾼다.
 - planned lower offset과 basic velocity
 - lower 실제 회전수
 
-full-body 보행 크기를 바꾸려면 `SconeRollingGaitConfig`의
+full-body 연속 회전 크기를 바꾸려면 `RollGaitConfig`의
 `cycle_frequency`, `duty_factor`, `step_height`, `max_stride`를 조정한다.
 말단 추진을 바꾸려면 `roll_velocity`, `support_velocity_ratio`,
 `basic_lower_motion_blend`를 조정한다. 두 군을 동시에 크게 올리면 같은 추진을
 중복 요구해 yaw와 height drop이 커질 수 있다.
+
+checkpoint `scone-gait`의 누적회전은 `SconeHybridControlConfig`의
+`point_support_ratio`, `swing_roll_hold_ratio`, `effective_roll_radius`,
+`max_roll_rate_degrees`로 조정한다. bounded 학습 reference의
+`sector_sweep_degrees`와 혼동하지 않는다.
 
 phase를 바꿀 때는 한 번의 전진 거리뿐 아니라:
 
@@ -651,8 +684,9 @@ IDs `(7,9,11)`을 높이별로 `180/184/195°`에 둔다. 현재 측정 기반 l
 시작 위상, 뒤는 DYNAMIXEL velocity 수치 단위의 phase rate다.
 
 `prepare_scone_stair_pose()`는 Legacy Walk에서 네 번 회전해 course `+Y`에
-side-on으로 놓고 Drive 자세로 전환한다. 이 준비 sequence는 terrain 방향과
-결합돼 있으므로 course axis를 바꾸면 함께 수정해야 한다.
+side-on으로 놓고 Walk→Drive와 Drive→Climb 준비를 차례대로 완료한다. 그 뒤
+custom brace/phase가 Legacy Climb 제어를 대체한다. 이 준비 sequence는 terrain
+방향과 결합돼 있으므로 course axis를 바꾸면 함께 수정해야 한다.
 
 ### 12.3 자동 데모와 benchmark
 

@@ -1,8 +1,8 @@
 # Non-RL·Residual RL 보행 성능 분석과 개선 로드맵
 
 > 이름 변경 안내: 이 문서의 과거 `Non-RL` 수치는 현재
-> `tripod-gait`에 해당한다. `scone-gait`는 2026-09-01 추가된 SCONE
-> 부채꼴 rolling/creep 실험 모드이므로 아래 기존 비교 수치에 포함되지 않는다.
+> `tripod-gait`에 해당한다. 아래 continuous-roll 과거 수치는 현재
+> `roll-gait`이고, 새 `scone-gait`는 PPO/점접지 hybrid이므로 별도 비교한다.
 
 ## 1. 결론
 
@@ -33,7 +33,8 @@ FPS에는 영향을 주지만, 생성된 관절 목표를 같은 50 Hz로 전송
 | 이전 interactive tripod | 0.0639 m/s | 0 mm, 위로 +19.91 mm 변동 | speed100/acc20, 60 mm |
 | 1차 tuned tripod | 0.1058 m/s | −0.10 mm | 유한 profile, 80 mm; 방향 흔들림으로 교체 |
 | 현재 SCONE-tuned tripod | 0.1184 m/s | −0.02 mm | 8초, 역방향 3.7 mm, 측면 0.7 mm, yaw 1.17° |
-| 현재 full-body continuous-roll scone | 0.2093 m/s | −20.68 mm | 6초, lower 3.09회전, B +60° |
+| 현재 full-body `roll-gait` | 0.2093 m/s | −20.68 mm | 6초, lower 3.09회전, B +60° |
+| hybrid `scone-gait`, 15.4M 최대 입력 | 0.1140 m/s | 양의 높이, min upright≈1.000 | 4초 +0.456 m, Y −13 mm, yaw −2.2° |
 
 PPO/RL reference 값은 이 표로 자동 변경하지 않았다. 모든 후보·실패·phase
 가설은 [`12-automatic-stair-demo-and-continuous-roll-rework.md`](12-automatic-stair-demo-and-continuous-roll-rework.md)에 있다.

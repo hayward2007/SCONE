@@ -184,12 +184,16 @@ body center velocity나 단순 foot body velocity는 실제 타이어-지면 접
 
 ### 해결
 
-- 실물 controller API는 유지하고, MuJoCo controller가 제공할 때만 목표 도달 대기를 사용한다.
+- `SCONE.initialize()`가 ID 7–18 XM을 position mode로 명시하고, 실제 controller도
+  present-position 목표 도달을 기다리게 했다. Drive 진입 때 ID 7–12의
+  mode/torque/profile/goal/present register를 read-back해 설정 오류를 분리한다.
 - 시뮬레이션의 짝수 말단 ID 속도 부호를 뒤집어 좌우 바퀴의 지면 이동 방향을 맞춘다.
 - Drive에 들어간 동안만 ID 7–12의 `kd`를 2배로 적용하고 Walk/Climb에서 복구한다.
 - 시뮬레이션 Climb 준비각만 160°로 보정하고, 실물의 검증된 프로필 명령은 변경하지 않는다.
 
 측정 sweep에서 2배 댐핑은 기본값 대비 1단 RMS 속도를 약 18%, 최대 각도 오차를 약 13% 줄였다. 4배는 진동 영역으로 넘어갔으므로 채택하지 않았다. 이 수치는 해당 MuJoCo 설정의 비교값이며 실물 성능 주장으로 사용하지 않는다.
+실물 read-back이 통과해도 position gain/current/기계 유격은 아직 검사 대상이다.
+따라서 흔들림을 자동으로 정상 판정하지 않고 진폭이 감쇠되는지 별도로 본다.
 
 ## 12. 병렬 환경 수가 실제 병렬이 아니었던 문제
 
@@ -272,7 +276,8 @@ body center velocity나 단순 foot body velocity는 실제 타이어-지면 접
 - 비-RL tripod를 1.0 Hz, 90/70 mm, lift 25 mm로 바꾸고 simulation profile
   limiter를 해제했다. 모터 PID·전압·토크 한계와 middle stiffness 2배는
   유지한다. PPO replay와 실물은 그대로다.
-- interactive `scone-gait`를 `SconeRollingGait`로 route해 lower를 velocity mode로
+- 당시 interactive `scone-gait`를 연속 회전으로 만들었고, 현재는 의미를
+  바로잡아 `roll-gait`/`RollGait`로 route해 lower를 velocity mode로
   연속 회전시켰다.
 - `scone-gait` 기본 보행을 stride/lift 55/20 mm로 키우고, lower bounded 목표의
   시간 미분을 0.35배로 연속 회전 속도에 합성했다. 상단·1단·2단 기본 보행과
@@ -282,12 +287,20 @@ body center velocity나 단순 foot body velocity는 실제 타이어-지면 접
 - RL의 bounded `SconeGait` reference는 checkpoint action 의미 때문에 보존했다.
 - 자동 계단 데모를 조종 메뉴와 분리해 hardcoded/improved/compare를 입력 없이
   실행하게 했다.
+- 새 `scone-gait`는 checkpoint 필수 supervisor로 재정의했다. 저속/yaw는 PPO,
+  고속은 stance 55% point hold 뒤 late-stance와 무부하 swing에서 한 방향
+  multi-turn sector roll을 누적한다. 이전 bounded 왕복의 cycle 순 회전량 0
+  문제를 제거했다.
 
 수정 후 tripod는 8초 0.9469 m(0.1184 m/s), 역방향 누적 3.7 mm, 측면
 0.7 mm, 최대 yaw 1.17°였고 20초에도 측면 5.0 mm/IK 실패 0이었다.
 full-body continuous roll은 6초 1.2556 m(0.2093 m/s), lower 평균 3.09회,
 최소 upright 0.9847, IK 실패 0이었다. 전체 sweep과 식은
 [`12-automatic-stair-demo-and-continuous-roll-rework.md`](12-automatic-stair-demo-and-continuous-roll-rework.md)에 있다.
+최신 이름, 전환식과 15.4M 검증값은
+[`14-roll-gait-and-hybrid-scone-gait.md`](14-roll-gait-and-hybrid-scone-gait.md)에 있다.
+현재 multi-turn 검증은 4초 동안 lower 실제 342~466°, upper/middle
+peak-to-peak 14~24°와 body-X +0.298 m를 동시에 측정했으며 termination은 0이다.
 
 ## 15. 남아 있는 기술 부채와 권장 순서
 

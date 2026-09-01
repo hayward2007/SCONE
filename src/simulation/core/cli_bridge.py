@@ -23,8 +23,8 @@ from ...rl.stance import SPORT_STANDING_DEGREES
 from .controller import MuJoCoController
 from .model import DEFAULT_MODEL_PATH, load_model
 from .scone_rolling_gait import (
-    SconeRollingGaitConfig,
-    run_scone_rolling_gait_joystick_cli,
+    RollGaitConfig,
+    run_roll_gait_joystick_cli,
 )
 from .stair_climber import run_scone_stair_joystick_cli
 from .viewer import configure_simulation_viewer
@@ -45,7 +45,10 @@ SCONE_GAIT_SIMULATION_CONFIG = SconeGaitConfig(
     ik_tolerance=1e-3,
     ik_stride_backoff_attempts=4,
 )
-SCONE_ROLLING_GAIT_SIMULATION_CONFIG = SconeRollingGaitConfig()
+ROLL_GAIT_SIMULATION_CONFIG = RollGaitConfig()
+# Compatibility constant for code written before continuous rotation was
+# renamed from scone-gait to roll-gait.
+SCONE_ROLLING_GAIT_SIMULATION_CONFIG = ROLL_GAIT_SIMULATION_CONFIG
 # Compatibility constant for external code written before the gait rename.
 NON_RL_SIMULATION_GAIT_CONFIG = TRIPOD_GAIT_SIMULATION_CONFIG
 
@@ -68,6 +71,7 @@ class SimulationControl(str, Enum):
     OLD = "old"
     TRIPOD_GAIT = "tripod-gait"
     SCONE_GAIT = "scone-gait"
+    ROLL_GAIT = "roll-gait"
     SCONE_STAIR = "scone-stair"
     RL = "rl"
     NON_RL = "tripod-gait"
@@ -109,9 +113,12 @@ def run(
 
     selected_terrain = TerrainType.parse(terrain)
     selected_control = SimulationControl.parse(control)
-    if selected_control is SimulationControl.RL:
+    if selected_control in (SimulationControl.RL, SimulationControl.SCONE_GAIT):
         if checkpoint is None:
-            raise ValueError("RL simulation control requires a PPO checkpoint")
+            raise ValueError(
+                f"{selected_control.value} simulation control requires a PPO "
+                "checkpoint"
+            )
         from ...rl.joystick_control import run_rl_joystick
 
         run_rl_joystick(
@@ -122,6 +129,7 @@ def run(
             device=rl_device,
             standing_pose_degrees=rl_standing_pose_degrees,
             reference_motion=rl_reference_motion,
+            hybrid_scone=selected_control is SimulationControl.SCONE_GAIT,
         )
         return
 
@@ -154,11 +162,11 @@ def run(
                     # instead keeps the selected, known-solvable profile pose.
                     calibrate_from_controller=False,
                 )
-            elif selected_control is SimulationControl.SCONE_GAIT:
-                run_scone_rolling_gait_joystick_cli(
+            elif selected_control is SimulationControl.ROLL_GAIT:
+                run_roll_gait_joystick_cli(
                     robot,
                     stop_event=stop_event,
-                    config=SCONE_ROLLING_GAIT_SIMULATION_CONFIG,
+                    config=ROLL_GAIT_SIMULATION_CONFIG,
                 )
             elif selected_control is SimulationControl.SCONE_STAIR:
                 run_scone_stair_joystick_cli(
@@ -234,6 +242,7 @@ def run(
 
 __all__ = [
     "NON_RL_SIMULATION_GAIT_CONFIG",
+    "ROLL_GAIT_SIMULATION_CONFIG",
     "SCONE_GAIT_SIMULATION_CONFIG",
     "SCONE_ROLLING_GAIT_SIMULATION_CONFIG",
     "SimulationControl",

@@ -580,7 +580,7 @@ def main() -> int:
                 )
 
                 control = select_simulation_control()
-                if control.value == "rl":
+                if control.value in ("rl", "scone-gait"):
                     checkpoint = select_rl_checkpoint()
                     from .rl.inquiry import (
                         prompt_reference_motion,
@@ -596,14 +596,18 @@ def main() -> int:
                     )
                     stance_name, rl_standing_pose = prompt_standing_pose()
                     print(
-                        f"[RL] 시뮬레이션 기준: {rl_reference_motion} / "
+                        f"[RL] {control.value} 기준: {rl_reference_motion} / "
                         f"기본 자세: {stance_name}"
                     )
                 else:
                     checkpoint = None
                     rl_standing_pose = None
                     rl_reference_motion = None
-                profile = "sport" if control.value == "rl" else _select_profile()
+                profile = (
+                    "sport"
+                    if control.value in ("rl", "scone-gait")
+                    else _select_profile()
+                )
                 run_arguments = dict(
                     profile=profile,
                     terrain=select_terrain(),

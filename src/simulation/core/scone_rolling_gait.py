@@ -1,4 +1,4 @@
-"""Simulation-only SCONE gait driven by continuous distal-frame rotation.
+"""Simulation-only ``roll-gait`` driven by continuous distal-frame rotation.
 
 The analytical :class:`src.locomotion.SconeGait` remains a bounded 18-position
 reference for residual-RL checkpoint compatibility. This controller uses its
@@ -30,7 +30,7 @@ from .controller import MuJoCoController
 
 
 @dataclass(frozen=True)
-class SconeRollingGaitConfig:
+class RollGaitConfig:
     """Validated flat-ground parameters for continuous sector rolling.
 
     Values are simulation measurements, not physical-robot safety limits.
@@ -109,7 +109,7 @@ class SconeRollingGaitConfig:
 
 
 @dataclass(frozen=True)
-class SconeRollingSample:
+class RollGaitSample:
     """One hybrid frame split into roll and basic-gait velocity terms."""
 
     planner_sample: GaitSample
@@ -118,7 +118,7 @@ class SconeRollingSample:
     lower_velocities: tuple[int, ...]
 
 
-class SconeRollingGait:
+class RollGait:
     """Coordinate full tripod body/leg motion with continuous sector rolling."""
 
     # XM430 velocity unit: 0.229 rpm = 0.229 * 6 degrees/second.
@@ -129,12 +129,12 @@ class SconeRollingGait:
         controller: MuJoCoController,
         profile: str | MotionProfile,
         *,
-        config: SconeRollingGaitConfig | None = None,
+        config: RollGaitConfig | None = None,
     ) -> None:
         if not isinstance(controller, MuJoCoController):
-            raise TypeError("SconeRollingGait requires the MuJoCo controller")
+            raise TypeError("RollGait requires the MuJoCo controller")
         self.controller = controller
-        self.config = config or SconeRollingGaitConfig()
+        self.config = config or RollGaitConfig()
         self.planner = SconeGait(
             controller,
             profile,
@@ -190,7 +190,7 @@ class SconeRollingGait:
         """Switch all six sector joints to continuous velocity mode."""
 
         if not self._prepared:
-            raise RuntimeError("prepare SconeRollingGait before activating it")
+            raise RuntimeError("prepare RollGait before activating it")
         self._filtered_roll_velocity.fill(0.0)
         self._filtered_basic_velocity.fill(0.0)
         self._previous_lower_offset.fill(0.0)
@@ -204,7 +204,7 @@ class SconeRollingGait:
         self,
         command: VelocityCommand,
         dt: float | None = None,
-    ) -> SconeRollingSample:
+    ) -> RollGaitSample:
         """Send full basic gait motion plus six continuous-roll velocities."""
 
         if not self._active:
@@ -300,7 +300,7 @@ class SconeRollingGait:
                 for motor_id in Actuator.Index.LOWER
             }
         )
-        return SconeRollingSample(
+        return RollGaitSample(
             planner_sample=sample,
             rolling_velocities=rolling_velocities,
             basic_velocities=basic_velocities,
@@ -319,11 +319,11 @@ class SconeRollingGait:
         self._active = False
 
 
-def run_scone_rolling_gait_joystick_cli(
+def run_roll_gait_joystick_cli(
     robot: SCONE,
     *,
     stop_event: threading.Event | None = None,
-    config: SconeRollingGaitConfig | None = None,
+    config: RollGaitConfig | None = None,
 ) -> None:
     """Drive the simulation-only continuous-roll gait from the shared joystick."""
 
@@ -331,10 +331,10 @@ def run_scone_rolling_gait_joystick_cli(
 
     if robot.profile_name == "sport":
         print(
-            "[SCONE] continuous-roll scone-gait는 Standard에서 검증됐습니다. "
+            "[SCONE] continuous roll-gait는 Standard에서 검증됐습니다. "
             "Sport는 접지 여유와 phase 안정성이 검증되지 않았습니다."
         )
-    gait = SconeRollingGait(robot.controller, robot.profile, config=config)
+    gait = RollGait(robot.controller, robot.profile, config=config)
     targets = gait.prepare()
     if not gait.controller.wait_until_raw_positions(
         targets,
@@ -348,7 +348,7 @@ def run_scone_rolling_gait_joystick_cli(
             limits=gait.planner.config,
             apply_command=gait.update,
             profile_name=robot.profile_name,
-            control_name="scone-gait/full-body+continuous-roll",
+            control_name="roll-gait/full-body+continuous-roll",
             control_hint=(
                 "1..12번 기본 보행과 13..18번 기본 보행 속도 변화를 "
                 "말단 연속 회전에 합성합니다."
@@ -359,9 +359,21 @@ def run_scone_rolling_gait_joystick_cli(
         gait.stop()
 
 
+# Compatibility aliases for integrations written before the public control
+# name was corrected from scone-gait to roll-gait.
+SconeRollingGait = RollGait
+SconeRollingGaitConfig = RollGaitConfig
+SconeRollingSample = RollGaitSample
+run_scone_rolling_gait_joystick_cli = run_roll_gait_joystick_cli
+
+
 __all__ = [
+    "RollGait",
+    "RollGaitConfig",
+    "RollGaitSample",
     "SconeRollingGait",
     "SconeRollingGaitConfig",
     "SconeRollingSample",
+    "run_roll_gait_joystick_cli",
     "run_scone_rolling_gait_joystick_cli",
 ]

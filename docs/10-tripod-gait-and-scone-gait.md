@@ -3,12 +3,22 @@
 이 문서는 2026-09-01 기준 현재 코드에 구현된 두 model-based 보행
 제어기를 한곳에서 설명한다.
 
+> **2026-09-01 후속 이름/route 변경:** 이 문서의 최초 연속 회전 실험은 현재
+> `roll-gait`/`RollGait`로 분리됐다. 현재 `scone-gait` 조종은 checkpoint가
+> 필요하며 저속·제자리 yaw PPO와 고속 점접지/말단회전 reference를 합친다.
+> 전환식, live stage-1 read-back, 최신 실행법과 측정값은
+> [`14-roll-gait-and-hybrid-scone-gait.md`](14-roll-gait-and-hybrid-scone-gait.md)가
+> 우선한다. 아래에서 `SconeRollingGait`를 설명하는 연속 회전 절은
+> `roll-gait`의 설계 기록으로 읽는다.
+
 - `tripod-gait`: 고전 교대 삼각보(alternating tripod)와 3차원 발 위치
   inverse kinematics를 결합한 기준 보행
-- 비-RL MuJoCo `scone-gait`: 몸통·1단·2단 기본 보행과 SCONE의 부채꼴 TPU
+- 비-RL MuJoCo `roll-gait`: 몸통·1단·2단 기본 보행과 SCONE의 부채꼴 TPU
   말단 **연속 velocity 회전**을 결합한 실험 보행
-- RL `scone-gait` reference: 기존 checkpoint/action 형식과 호환되는 bounded
-  18-position rolling/creep sweep
+- `scone-gait`: 저속/제자리 yaw PPO와 고속 point-support/multi-turn sector-roll
+  reference를 부드럽게 전환하는 simulation supervisor
+- RL `scone-gait` reference: 학습 선택지로 남아 있는 bounded 18-position
+  point-support/rolling sweep
 
 구현의 최종 기준은 다음 소스다.
 
@@ -33,7 +43,8 @@
 | 용도 | 정식 이름 | Python 클래스 | 구현 파일 |
 |---|---|---|---|
 | 고전 교대 삼각보 + IK | `tripod-gait` | `TripodGait` | `tripod_gait.py` |
-| SCONE 부채꼴 연속 회전 조종 | `scone-gait` | `SconeRollingGait` | `simulation/core/scone_rolling_gait.py` |
+| SCONE 부채꼴 연속 회전 조종 | `roll-gait` | `RollGait` | `simulation/core/scone_rolling_gait.py` |
+| PPO/점접지 고속 supervisor | `scone-gait` | `SconeHybridController` | `rl/joystick_control.py` |
 | RL bounded 부채꼴 기준 모션 | `scone-gait` reference | `SconeGait` | `locomotion/scone_gait.py` |
 
 CLI 선택값은 하이픈을 사용하고 Python 클래스는 CamelCase를 사용한다.
@@ -80,16 +91,20 @@ TPU 마찰, 변형, 실물 관절 지연에 강하게 의존한다. 따라서 �
 tripod-gait
   = 명령 필터 + 교대 삼각보 + 발 위치 IK + IK 안전장치
 
-scone-gait (MuJoCo 조종)
+roll-gait (MuJoCo 연속 회전 조종)
   = upper/middle tripod IK 기본 보행
   + lower 기본 보행 offset의 시간 미분
   + 말단 mesh 기반 rolling 방향/조향 보정
   + lower 6개 continuous velocity
   + tripod-B 60° opening phase offset
 
-scone-gait (RL reference)
-  = tripod-gait position 결과
-  + bounded stance/swing sector sweep
+scone-gait (interactive PPO + multi-turn point-support reference)
+  = 저속/제자리 yaw PPO
+  + 고속 tripod-gait position 결과
+  + late-stance/swing phase-gated 누적 sector 회전
+
+RL reference-motion `scone-gait` (학습 호환 선택지)
+  = tripod-gait position 결과 + bounded stance/swing sector sweep
 ```
 
 `SconeGait` reference는 `TripodGait`를 상속한다. `SconeRollingGait`는 이를
@@ -548,8 +563,8 @@ drift를 키웠기 때문이다. 물리 TPU 마찰과 접촉 패치 데이터를
 ### 6.10 비-RL MuJoCo의 full-body + continuous lower 회전
 
 위 6.1–6.9는 RL residual에 더할 수 있는 18-position reference 설명이다.
-실제 `--control scone-gait`는 2026-09-01부터
-`SconeRollingGait`를 사용한다.
+연속 회전 경로는 현재 `--control roll-gait`와 `RollGait`를 사용한다.
+`--control scone-gait`는 PPO/hybrid supervisor다.
 
 - ID 1–6: body/upper 기본 보행과 rolling 조향 position
 - ID 7–12: stage-1 기본 보행 position
@@ -685,12 +700,12 @@ mjpython -m src.simulation \
 
 ```bash
 mjpython -m src.simulation \
-  --control scone-gait \
+  --control roll-gait \
   --profile standard \
   --terrain flat
 ```
 
-`scone-gait`는 현재 Standard 자세를 권장한다. Sport는 차체가 낮아 swing
+`roll-gait`는 현재 Standard 자세를 권장한다. Sport는 차체가 낮아 swing
 접지 여유와 sector rolling 패치가 부족해질 수 있다.
 
 ### 8.2 대화형 선택
@@ -721,7 +736,7 @@ worker thread
   terminal key
   → KeyboardJoystick
   → VelocityCommand
-  → TripodGait/SconeRollingGait.update()
+  → TripodGait/RollGait.update()
 ```
 
 controller의 공유 상태는 lock으로 보호한다. physics loop는 MuJoCo timestep에
@@ -980,7 +995,7 @@ route의 6초 측정은 다음과 같다.
 | interactive route | body X | 평균 속도 | body Y | 최소 ΔZ | 최소 upright |
 |---|---:|---:|---:|---:|---:|
 | SCONE-tuned `tripod-gait` (8 s) | +0.9469 m | 0.1184 m/s | −0.0007 m | −0.00002 m | 0.99993 |
-| full-body continuous-roll `scone-gait` (6 s) | +1.2556 m | 0.2093 m/s | −0.0525 m | −0.0207 m | 0.9811 |
+| full-body continuous-roll `roll-gait` (6 s) | +1.2556 m | 0.2093 m/s | −0.0525 m | −0.0207 m | 0.9811 |
 
 `tripod-gait`는 같은 8초 동안 역방향 누적 3.7 mm, 최대 yaw 1.17°였고
 20초에서도 측면 편향 5.0 mm였다. continuous route는 lower 평균 3.09회전을

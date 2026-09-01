@@ -219,6 +219,15 @@
 | 이름 | 목적·사용처 |
 |---|---|
 | `_VelocityMailbox._command` | CLI thread가 쓴 최신 `VelocityCommand` |
+| `SconeHybridControlConfig.hybrid_start_speed/full_speed` | `0.10/0.18 m/s`; PPO-only와 full hybrid 경계 |
+| `cycle_frequency/duty_factor` | `1.2 Hz/0.60`; 고속 hybrid cadence와 stance 비율 |
+| `point_support_ratio` | `0.55`; stance에서 추가 sector phase를 고정하는 비율 |
+| `swing_roll_hold_ratio` | `0.70`; 무부하 swing 회전 유지 뒤 착지 전 감속 |
+| `effective_roll_radius` | `0.1225 m`; 접점 속도를 말단 각속도로 변환 |
+| `max_roll_rate_degrees` | `360°/s`; interactive multi-turn 각속도 상한 |
+| `SconeHybridController.last_blend` | 현재 smoothstep hybrid 비율; HUD의 ppo/mix/hybrid 결정 |
+| `SconeHybridController.gait` | 현재 RL phase에 맞춰 시작하는 point-support/multi-turn `SconeGait` planner |
+| `_branch_anchor` | 저속 복귀 시 불필요한 다회전 되감기를 막는 lower 360° branch |
 | `_lock` | command read/update 원자성 |
 | `_RLModeRouter.robot/adapter` | 같은 MuJoCo controller를 공유하는 Legacy Walk/Drive/Climb 상태기계 |
 | `_transitioning` | 모드 전환 중 PPO target 쓰기를 차단하는 상태 |

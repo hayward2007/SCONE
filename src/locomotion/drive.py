@@ -17,6 +17,12 @@ class Drive(Mode):
         super().__init__(controller, profile)
         self._set_simulated_drive_stage1_damping(True)
         self.controller.set_all_mode(Actuator.OperatingMode.VELOCITY)
+        verifier = getattr(self.controller, "verify_drive_stage1_settings", None)
+        if verifier is not None:
+            verifier(
+                profile_velocity=self.profile.safety_speed,
+                profile_acceleration=20,
+            )
 
     def _run(self, velocity: int) -> None:
         self.controller.set_velocities(self._arc_wheel_velocities(velocity))

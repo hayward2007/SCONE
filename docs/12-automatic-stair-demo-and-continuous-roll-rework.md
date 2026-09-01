@@ -1,4 +1,4 @@
-# 자동 계단 데모와 연속 회전형 `scone-gait` 재설계 기록
+# 자동 계단 데모와 연속 회전형 `roll-gait` 재설계 기록
 
 이 문서는 2026-09-01에 수행한 시뮬레이션 보행 재설계의 요구사항, 재현
 조건, 실패한 가설, 채택 수치, 구현 경계, 테스트 결과를 시간 순서대로 남긴다.
@@ -10,6 +10,12 @@
 그 결과를 사람이 키를 누르지 않아도 볼 수 있는 자동 데모로 연결하고,
 평지 `scone-gait`를 **말단 프레임 연속 회전** 방식으로 다시 만든 과정에
 집중한다.
+
+> **현재 이름:** 이 문서에서 당시 `scone-gait`라고 부른 continuous-roll
+> controller는 현재 `roll-gait`/`RollGait`다. 새 `scone-gait`는 PPO 저속/yaw와
+> 점접지+말단회전 고속 보행의 supervisor로 다시 정의됐다. 최신 구현은
+> [`14-roll-gait-and-hybrid-scone-gait.md`](14-roll-gait-and-hybrid-scone-gait.md)를
+> 따른다. 이 문서의 이전 이름은 실험 이력을 보존하기 위해 본문에 남아 있다.
 
 > 이 문서 1–16장은 최초 continuous-roll/계단 작업의 시간 순 기록이라 당시
 > 채택값 160/50·0.8 Hz·80 mm와 B +72°를 그대로 보존한다. 이후 사용자가
@@ -75,7 +81,7 @@
 
 계단은 `stair_benchmark.py`의 기존 동등조건을 그대로 사용했다.
 
-- Walk 초기화 → 네 번 좌회전 → Drive 자세 → 0.5초 settle
+- Walk 초기화 → 네 번 좌회전 → Drive 준비 → Climb 준비 → custom phase 획득
 - world `+Y` 방향 side-on 상승
 - hardcoded는 여섯 lower를 fixed velocity 150으로 연속 회전
 - improved는 `SconeStairClimber`의 roll-first + stall/pre-hook + tripod assist

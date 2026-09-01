@@ -1,12 +1,15 @@
-"""SCONE-specific rolling-creep gait for its sector-shaped end frames.
+"""SCONE-specific point-support/sector-roll hybrid gait.
 
 ``TripodGait`` plans every grounded tire as one fixed point.  SCONE's TPU end
 frame is instead a circular sector whose active contact moves as the lower
 joint rotates.  ``SconeGait`` keeps the stable alternating-tripod scheduler and
-IK posture, then coordinates upper-joint steering with a bounded lower-joint
-sector sweep.  The sweep supplies rolling motion along the best reachable
-direction; any transverse component is deliberately left as limited creepage
-instead of demanding unsafe 90-degree steering from the middle legs.
+IK posture, then coordinates upper-joint steering with a lower-joint sector
+rotation.  The default residual-RL reference remains a bounded sweep.  The
+interactive high-speed hybrid can instead enable phase-gated, unwrapped
+rotation: each stance begins as one planted point, then the sector accumulates
+rotation through late stance and early swing instead of undoing the angle on
+every cycle.  This is deliberately different from the simulation-only
+``roll-gait`` whose distal frames free-run continuously in velocity mode.
 
 This is an experimental simulation-first controller.  It does not change the
 default hardware gait and must be validated against measured joint limits and
@@ -61,6 +64,19 @@ class SconeGaitConfig(GaitConfig):
     steering_blend: float = 0.0
     steering_probe_degrees: float = 5.0
     minimum_roll_alignment: float = 0.15
+    # Fraction of each stance that keeps the extra sector-roll coordinate
+    # fixed.  The underlying tripod IK still moves body/stage-1/stage-2 as
+    # needed to keep the Cartesian support point planted.
+    point_support_ratio: float = 0.55
+    # Keep rotating while the foot is unloaded, then use the remaining swing
+    # interval to decelerate to zero before touchdown.
+    swing_roll_hold_ratio: float = 0.70
+    # Interactive scone-gait only: accumulate the sector angle instead of
+    # returning it during swing.  The default stays False because ordinary
+    # RL reference targets and physical position mode are bounded to one turn.
+    continuous_rotation: bool = False
+    effective_roll_radius: float = 0.1225
+    max_roll_rate_degrees: float = 360.0
 
     def __post_init__(self) -> None:
         super().__post_init__()
@@ -76,6 +92,14 @@ class SconeGaitConfig(GaitConfig):
             raise ValueError("steering_blend must be between 0 and 1")
         if not 0.0 <= self.minimum_roll_alignment <= 1.0:
             raise ValueError("minimum_roll_alignment must be between 0 and 1")
+        if not 0.0 < self.point_support_ratio < 1.0:
+            raise ValueError("point_support_ratio must be between 0 and 1")
+        if not 0.0 <= self.swing_roll_hold_ratio < 1.0:
+            raise ValueError("swing_roll_hold_ratio must be in [0, 1)")
+        if self.effective_roll_radius <= 0.0:
+            raise ValueError("effective_roll_radius must be positive")
+        if self.max_roll_rate_degrees <= 0.0:
+            raise ValueError("max_roll_rate_degrees must be positive")
 
 
 class SconeGait(TripodGait):
@@ -101,6 +125,7 @@ class SconeGait(TripodGait):
         )
         self._nominal_roll_angles = np.zeros(6, dtype=np.float64)
         self._steering_gains = np.ones(6, dtype=np.float64)
+        self._continuous_roll_degrees = np.zeros(6, dtype=np.float64)
         self._calibrate_sector_directions()
 
     @staticmethod
@@ -196,6 +221,22 @@ class SconeGait(TripodGait):
         super().reset(phase=phase, motor_degrees=motor_degrees)
         if hasattr(self, "_nominal_roll_angles"):
             self._calibrate_sector_directions()
+        if hasattr(self, "_continuous_roll_degrees"):
+            self._continuous_roll_degrees.fill(0.0)
+
+    @property
+    def continuous_roll_degrees(self) -> NDArray[np.float64]:
+        """Return the signed, accumulated sector rotation for all six legs."""
+
+        return self._continuous_roll_degrees.copy()
+
+    def set_continuous_roll_degrees(self, values: ArrayLike) -> None:
+        """Seed the six multi-turn branches after a PPO/hybrid transition."""
+
+        parsed = np.asarray(values, dtype=np.float64)
+        if parsed.shape != (6,) or not np.all(np.isfinite(parsed)):
+            raise ValueError("continuous roll seed must contain six finite degrees")
+        self._continuous_roll_degrees = parsed.copy()
 
     def steering_solution(
         self,
@@ -243,22 +284,89 @@ class SconeGait(TripodGait):
         alignment, _, applied, polarity = max(candidates)
         return math.degrees(applied), polarity, alignment
 
-    def _roll_coordinate(self, leg: int) -> float:
+    def roll_coordinate(self, leg: int) -> float:
+        """Return the bounded hybrid roll coordinate for one leg.
+
+        ``-0.5`` is held through the first part of stance (point support).
+        The sector rotates smoothly to ``+0.5`` only in late stance, then the
+        unloaded swing returns it smoothly to ``-0.5``.  Therefore no joint
+        is asked to rotate continuously while it is the sole contact point.
+        """
+
         leg_phase = (self._phase + self.PHASE_OFFSETS[leg]) % 1.0
         if leg_phase < self.config.duty_factor:
             progress = leg_phase / self.config.duty_factor
-            return progress - 0.5
+            if progress <= self.config.point_support_ratio:
+                return -0.5
+            propulsion_progress = (
+                progress - self.config.point_support_ratio
+            ) / (1.0 - self.config.point_support_ratio)
+            return -0.5 + self._quintic(propulsion_progress)
         progress = (
             leg_phase - self.config.duty_factor
         ) / (1.0 - self.config.duty_factor)
         return 0.5 - self._quintic(progress)
+
+    def roll_gate(self, leg: int) -> float:
+        """Return the phase gate for simultaneous walking and rotation.
+
+        The first ``point_support_ratio`` of stance is exactly zero so the
+        sector behaves as one planted point.  It accelerates during late
+        stance, remains continuous through lift-off, and decelerates to zero
+        before the next touchdown.  Unlike :meth:`roll_coordinate`, this gate
+        never asks the accumulated angle to reverse.
+        """
+
+        leg_phase = (self._phase + self.PHASE_OFFSETS[leg]) % 1.0
+        if leg_phase < self.config.duty_factor:
+            progress = leg_phase / self.config.duty_factor
+            if progress <= self.config.point_support_ratio:
+                return 0.0
+            propulsion_progress = (
+                progress - self.config.point_support_ratio
+            ) / (1.0 - self.config.point_support_ratio)
+            return self._quintic(propulsion_progress)
+        swing_progress = (
+            leg_phase - self.config.duty_factor
+        ) / (1.0 - self.config.duty_factor)
+        if swing_progress <= self.config.swing_roll_hold_ratio:
+            return 1.0
+        braking_progress = (
+            swing_progress - self.config.swing_roll_hold_ratio
+        ) / (1.0 - self.config.swing_roll_hold_ratio)
+        return 1.0 - self._quintic(braking_progress)
+
+    def roll_rate_degrees(
+        self,
+        leg: int,
+        command: VelocityCommand | ArrayLike,
+    ) -> float:
+        """Ideal no-slip sector rate magnitude for one foot in degrees/s."""
+
+        parsed = (
+            command.as_array()
+            if isinstance(command, VelocityCommand)
+            else VelocityCommand.from_array(command).as_array()
+        )
+        vx, vy, yaw_rate = self._clamp_command(
+            VelocityCommand.from_array(parsed)
+        )
+        x, y = self._nominal_feet[leg - 1, :2]
+        contact_speed = float(
+            np.linalg.norm([vx - yaw_rate * y, vy + yaw_rate * x])
+        )
+        ideal_rate = math.degrees(
+            contact_speed / self.config.effective_roll_radius
+        )
+        return min(ideal_rate, self.config.max_roll_rate_degrees)
 
     def step(
         self,
         command: VelocityCommand | ArrayLike,
         dt: float | None = None,
     ) -> GaitSample:
-        base = super().step(command, dt)
+        step_dt = 1.0 / self.config.control_frequency if dt is None else dt
+        base = super().step(command, step_dt)
         motor_degrees = base.motor_degrees.copy()
         activity = self._activity(base.command.as_array())
         if activity <= self.config.idle_epsilon:
@@ -282,22 +390,43 @@ class SconeGait(TripodGait):
                 alignment,
                 self.config.minimum_roll_alignment,
             )
-            roll_target = self._nominal_motor_degrees[lower_index] + (
-                # The active patch moves opposite the ground-reaction travel:
-                # invert the measured contact tangent when commanding the
-                # joint sweep that propels the body.
-                -polarity
-                * self._roll_coordinate(leg)
-                * self.config.sector_sweep_degrees
-                * activity
-                * usable_alignment
-            )
+            if self.config.continuous_rotation:
+                # The active patch moves opposite the ground-reaction travel.
+                # Accumulate the angle in only one direction; do not reset it
+                # during swing as the former bounded coordinate did.
+                self._continuous_roll_degrees[leg - 1] += (
+                    -polarity
+                    * self.roll_rate_degrees(leg, base.command)
+                    * self.roll_gate(leg)
+                    * usable_alignment
+                    * step_dt
+                )
+                roll_target = (
+                    motor_degrees[lower_index]
+                    + self._continuous_roll_degrees[leg - 1]
+                )
+            else:
+                roll_target = self._nominal_motor_degrees[lower_index] + (
+                    # The active patch moves opposite the ground-reaction travel:
+                    # invert the measured contact tangent when commanding the
+                    # joint sweep that propels the body.
+                    -polarity
+                    * self.roll_coordinate(leg)
+                    * self.config.sector_sweep_degrees
+                    * activity
+                    * usable_alignment
+                )
             motor_degrees[lower_index] = (
                 (1.0 - self.config.rolling_blend) * motor_degrees[lower_index]
                 + self.config.rolling_blend * roll_target
             )
 
-        motor_degrees = np.clip(motor_degrees, 0.0, 360.0)
+        if self.config.continuous_rotation:
+            # The high-speed hybrid is simulation-only and intentionally uses
+            # multi-turn lower targets.  Upper/stage-1 joints stay bounded.
+            motor_degrees[:12] = np.clip(motor_degrees[:12], 0.0, 360.0)
+        else:
+            motor_degrees = np.clip(motor_degrees, 0.0, 360.0)
         return replace(base, motor_degrees=motor_degrees)
 
 

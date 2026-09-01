@@ -1,5 +1,13 @@
 # SCONE 부채꼴 후킹 조건과 `scone-stair` 계단 알고리즘
 
+> **현재 준비 순서:** 모든 자동/조종/benchmark 계단 경로는 네 번 side-on
+> 회전한 뒤 `Walk → Drive → Climb` 두 mode 전환을 모두 완료하고, 그 다음
+> 앞 1단 brace와 여섯 C-frame 공통 위상을 획득한다. 과거 본문의
+> “Drive에서 즉시 custom stair” 설명보다 이 순서가 우선한다. 상세한
+> stage-1 read-back은
+> [`14-roll-gait-and-hybrid-scone-gait.md`](14-roll-gait-and-hybrid-scone-gait.md)를
+> 따른다.
+
 이 문서는 SCONEv2가 C자형/부채꼴 말단 프레임으로 계단 모서리를 걸고
 올라가기 위한 조건을 현재 CAD 도면, MuJoCo 충돌 메시, 보관 영상, 코드,
 1차 연구 문헌에서 다시 계산한 기록이다. 또한 단순 연속 회전, 기존
@@ -464,7 +472,7 @@ pre-hook 전환을 준비한다. 그렇지 않거나 `mixed`처럼 위치별 pro
 | controller update | 매 physics step |
 | 계단 | `stairs-1`, `stairs-2`, `stairs-3` |
 | terrain/tire sliding friction | `1.0` |
-| 초기 배치 | Walk 초기화 → 좌회전 4회 → Drive 자세 → 0.5 s settle |
+| 초기 배치 | Walk 초기화 → 좌회전 4회 → Drive 준비 → Climb 준비 |
 | 진행 방향 | world `+Y`, side-on |
 | 최대 관찰 시간 | rolling/adaptive `16 s`; H2/H3 `11 s`; legacy 약 `46 s` |
 

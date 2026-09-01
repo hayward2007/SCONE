@@ -78,6 +78,10 @@ class SimulationBackendTests(unittest.TestCase):
             "scone-gait",
         )
         self.assertEqual(
+            parser.parse_args(["--control", "roll-gait"]).control,
+            "roll-gait",
+        )
+        self.assertEqual(
             parser.parse_args(["--control", "scone-stair"]).control,
             "scone-stair",
         )
@@ -85,6 +89,20 @@ class SimulationBackendTests(unittest.TestCase):
             parser.parse_args(["--demo", "compare"]).demo,
             "compare",
         )
+
+    def test_scone_gait_routes_checkpoint_to_hybrid_policy_runtime(self) -> None:
+        with patch("src.rl.joystick_control.run_rl_joystick") as runner:
+            run(
+                control=SimulationControl.SCONE_GAIT,
+                checkpoint="policy.zip",
+                terrain="flat",
+            )
+
+        self.assertTrue(runner.call_args.kwargs["hybrid_scone"])
+
+    def test_roll_gait_is_distinct_from_scone_gait(self) -> None:
+        self.assertIsNot(SimulationControl.ROLL_GAIT, SimulationControl.SCONE_GAIT)
+        self.assertEqual(SimulationControl.ROLL_GAIT.value, "roll-gait")
 
     def test_model_gait_stiffness_is_opt_in(self) -> None:
         model = load_model(DEFAULT_MODEL_PATH, floating_base=True)

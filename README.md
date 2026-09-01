@@ -49,6 +49,9 @@ The implementation and modification entry point for every major feature—from
 hardware and gait code to terrain, stair control, RL compatibility, and
 validation—is
 [`docs/13-feature-implementation-and-modification-guide.md`](docs/13-feature-implementation-and-modification-guide.md).
+The current `roll-gait` rename, PPO/hybrid `scone-gait`, Drive-to-Climb stair
+preparation, and physical stage-1 register checks are documented in
+[`docs/14-roll-gait-and-hybrid-scone-gait.md`](docs/14-roll-gait-and-hybrid-scone-gait.md).
 
 `시뮬레이션 (자동 데모)` asks only for `hardcoded`, `improved`, or sequential
 `compare`, plus one stair preset. It does not open the terminal joystick.
@@ -67,15 +70,19 @@ After choosing simulation control, select one locomotion implementation:
   the MuJoCo route uses the SCONE-tuned 1.0 Hz, 90/70 mm workspace and 25 mm
   lift without a profile limiter. This avoids the clipped 0.8 Hz path that mixed
   forward/backward contact and accumulated yaw.
-- `scone-gait`: moves the body/upper and stage-1 joints with a full basic gait,
-  adds the stage-2 basic-gait angular-rate term to continuous distal-frame
-  rotation, and keeps tripod B 60° out of phase so the C-frame openings do not
-  unload together.
+- `roll-gait`: preserves the former continuous-rotation controller. It moves
+  the upper/stage-1 joints with a full basic gait, adds the stage-2 basic-gait
+  angular-rate term to continuous distal-frame rotation, and offsets tripod B
+  by 60° so the C-frame openings do not unload together.
+- `scone-gait`: requires a PPO checkpoint. Slow translation and in-place yaw
+  remain under PPO control; fast translation smoothly changes to a full-body
+  point-support tripod whose C-frames accumulate real multi-turn rotation in
+  late stance and unloaded swing, then brake before touchdown.
 - `scone-stair`: turns SCONE side-on, synchronizes all six terminal frames, and
-  places leading stage-1 IDs 7/9/11 in a rise-dependent brace before advancing
-  one shared closed-loop phase. Odd/even MuJoCo axes receive mirrored joint
-  targets that represent the same physical C-frame angle. This path is
-  simulation-only.
+  completes both Walk→Drive and Drive→Climb preparation before placing leading
+  stage-1 IDs 7/9/11 in a rise-dependent brace and advancing one shared
+  closed-loop phase. Odd/even MuJoCo axes receive mirrored joint targets that
+  represent the same physical C-frame angle. This path is simulation-only.
 - `RL control`: asks for a local `runs/**/*.zip` PPO checkpoint, standing pose,
   and residual reference. It runs PPO Walk at 50 Hz and also accepts `R` to
   cycle through legacy Drive/Climb without replacing the shared controller.
@@ -130,7 +137,8 @@ by implementing `src.hardware.ControllerProtocol` and passing it to
 terminal key
   -> src.cli normalized x/y/yaw joystick
        -> LegacyVelocityAdapter -> src.main.SCONE old motions
-       -> TripodGait / SconeRollingGait -> MuJoCoController
+       -> TripodGait / RollGait -> MuJoCoController
+       -> PPO + point-support SconeGait supervisor -> SconeWalkEnv
        -> SconeStairClimber -> rolling / tripod-assist -> MuJoCoController
        -> PPO policy -> SconeWalkEnv residual action -> MuJoCoController
 
@@ -326,13 +334,17 @@ profile velocity/acceleration, so RL reset preserves that actuator behavior.
 Physical model-based gait benchmarks still apply the selected motion profile;
 do not compare or resume policies across those dynamics without retraining.
 
-`SconeGait` is the bounded 18-position reference used for RL compatibility. The
-interactive simulation route instead uses `SconeRollingGait`: it reuses the mesh
-tangent/IK solution for all 18 joints. IDs 1..12 receive the basic position
-targets. IDs 13..18 stay in velocity mode and receive continuous roll plus the
-time derivative of their bounded basic-gait offset. This is a simulation-only
-split because a many-turn velocity state cannot be represented by the existing
-18-position residual reference without retraining.
+`SconeGait` keeps a bounded 18-position mode for training-reference
+compatibility. Interactive `scone-gait` enables its multi-turn mode: the first
+55% of stance is a fixed point, late stance starts propulsion, unloaded swing
+continues the same rotation direction, and the last 30% of swing brakes before
+touchdown. The checkpoint owns slow translation and in-place yaw; this
+full-body walking plus accumulated C-frame rotation owns fast motion.
+
+`RollGait` is the separate simulation-only continuous-rotation controller.
+It reuses the mesh tangent/IK solution for all 18 joints: IDs 1..12 receive the
+basic position targets, while IDs 13..18 stay in velocity mode and receive
+continuous roll plus the time derivative of their bounded basic-gait offset.
 
 ```python
 scone_gait = SCONE.SconeGait(controller, profile="standard")
@@ -417,7 +429,7 @@ The original run name is then free for a clean training run.
 # Old and model-based gait joystick control
 mjpython -m src.simulation --control old --profile standard
 mjpython -m src.simulation --control tripod-gait --profile standard --terrain mixed
-mjpython -m src.simulation --control scone-gait --profile standard --terrain flat
+mjpython -m src.simulation --control roll-gait --profile standard --terrain flat
 mjpython -m src.simulation --control scone-stair --profile standard --terrain stairs-3
 
 # No-input stair viewers (compare opens hardcoded, then improved)
@@ -429,6 +441,13 @@ mjpython -m src.simulation --control rl \
   --checkpoint runs/remote_watch/scone_walk_700000_steps.zip \
   --rl-reference-motion tripod-gait \
   --terrain flat
+
+# Hybrid scone-gait (standing pose must match this checkpoint)
+mjpython -m src.simulation --control scone-gait \
+  --checkpoint runs/walk_full_standard/checkpoints/scone_walk_15410928_steps.zip \
+  --rl-reference-motion hardcoded \
+  --rl-standing-pose-degrees \
+    135 135 180 180 225 225 240 240 240 240 240 240 255 255 255 255 255 255
 
 # RL environment smoke check
 PYTHONPATH=. python -m src.rl.walk_learn --reference-motion scone-gait check \

@@ -118,6 +118,20 @@ mjpython -m src.simulation \
 마찰과 지지 조건을 [계단 알고리즘 문서](11-scone-stair-climbing.md)대로
 별도 계측한다.
 
+연속 회전 비교는 `roll-gait`, PPO/점접지 하이브리드는 `scone-gait`다.
+후자는 checkpoint와 그 checkpoint가 학습한 reference/stance가 필요하다.
+
+```bash
+mjpython -m src.simulation --control roll-gait --profile standard --terrain flat
+
+mjpython -m src.simulation \
+  --control scone-gait \
+  --checkpoint runs/walk_full_standard/checkpoints/scone_walk_15410928_steps.zip \
+  --rl-reference-motion hardcoded \
+  --rl-standing-pose-degrees \
+    135 135 180 180 225 225 240 240 240 240 240 240 255 255 255 255 255 255
+```
+
 문서의 H0–H4 전체 비교와 H3 튜닝 sweep은 headless로 다시 실행할 수 있다.
 출력은 한 실험당 JSON 한 줄이며 상단 성공, 시간, 절대 기계일, upright,
 contact force, phase 동기화 횟수, 상단까지의 실제 phase spread를 포함한다.
@@ -220,6 +234,9 @@ SIGINT/SIGTERM을 보내면 현재 step을 마치고 final model/resume pointer�
 두 gait의 정확한 기본값, reference+residual 합성, checkpoint 호환 표와
 튜닝 순서는 [`10-tripod-gait-and-scone-gait.md`](10-tripod-gait-and-scone-gait.md)를
 참고한다.
+현재 `roll-gait`/hybrid `scone-gait` route와 전환 속도는
+[`14-roll-gait-and-hybrid-scone-gait.md`](14-roll-gait-and-hybrid-scone-gait.md)를
+우선한다.
 
 `tripod-gait` 기준 모션은 2026-08-31에 stride 작업공간과 IK backoff가 추가되었고, support point는 부채꼴 말단의 최저 0.1 mm 패치 중심으로 교정됐다. RL reference는 checkpoint 의미를 보존해 0.7 Hz, 60/50 mm를 유지한다. 2026-09-01 후속 직진 진단 뒤 비-RL MuJoCo 조종만 1.0 Hz, lift 25 mm, 90/70 mm, profile 무제한, middle hold 2배를 opt-in한다. 기존 PPO도 무제한 simulation profile에서 학습됐으므로 RL reset 동역학은 변하지 않는다. 새 profile/dynamics 학습은 기존 checkpoint를 resume하지 말고 환경 버전을 기록해 0 step부터 시작한다.
 
@@ -237,7 +254,7 @@ mjpython -m src.rl.walk_learn --reference-motion tripod-gait enjoy \
   --episodes 3
 ```
 
-실시간 조이스틱은 통합 launcher의 RL control 또는 `src.rl.joystick_control` API를 사용한다. 기본으로 neutral residual gate가 켜진다. `R`을 누르면 policy target을 일시 중단하고 같은 controller에서 Drive/Climb으로 전환하며, Walk 복귀 시 heading·기준 높이·residual 상태를 재정렬한다. `--raw-policy` option은 neutral gate 없이 policy 자체 bias를 진단할 때만 사용한다.
+실시간 조이스틱은 통합 launcher의 RL control 또는 `src.rl.joystick_control` API를 사용한다. 기본으로 neutral residual gate가 켜진다. `R`을 누르면 policy target을 일시 중단하고 같은 controller에서 Drive/Climb으로 전환하며, Walk 복귀 시 heading·기준 높이·residual 상태를 재정렬한다. `scone-gait`에서는 HUD의 `ppo/mix/hybrid` suffix로 speed supervisor 상태를 확인한다.
 
 68차원 checkpoint는 마지막 heading 두 관측이 없으므로 현재 70차원 관측의 앞 68개를 전달해 재생한다. 이 adapter를 학습 재개에 사용하지 않는다.
 

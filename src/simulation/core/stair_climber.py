@@ -320,11 +320,13 @@ class SconeStairClimber:
 
 
 def prepare_scone_stair_pose(robot: SCONE) -> None:
-    """Turn side-on and enter the centred body posture used by stair motion.
+    """Turn side-on, acquire Drive, then acquire the legacy Climb pose.
 
-    ``Drive`` is used only as the existing, tested posture transition.  The
-    actual stair controller immediately replaces its lower velocity mode with
-    synchronized extended-position control.
+    The physical state machine deliberately uses two separate transitions:
+    Walk -> Drive centres the body and opposed distal frames, then
+    Drive -> Climb changes the distal frames back to position mode and settles
+    the alternating tripods.  The synchronized stair controller is allowed to
+    replace Climb only after both preparations have completed.
     """
 
     if robot.mode_name != "walk":
@@ -333,6 +335,8 @@ def prepare_scone_stair_pose(robot: SCONE) -> None:
         robot.left()
     if robot.change_mode() != "drive":
         raise RuntimeError("scone-stair preparation failed to enter centred posture")
+    if robot.change_mode() != "climb":
+        raise RuntimeError("scone-stair preparation failed to enter climb posture")
 
 
 def prepare_synchronized_stair_motion(climber: SconeStairClimber) -> None:

@@ -406,6 +406,9 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         self._reference_cycle_frequency = 0.0
         self._reference_stride_clip_fraction = 0.0
         self._reference_ik_backoff_scale = 1.0
+        self._reference_override_degrees: np.ndarray | None = None
+        self._reference_override_blend = 0.0
+        self._reference_override_unwrapped_lower = False
         self._viewer: Any | None = None
 
         self._jacobian_position = np.zeros((3, self.model.nv), dtype=np.float64)
@@ -437,6 +440,35 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         self.fixed_command = clipped.copy()
         self._command_target[:] = clipped
         return clipped.copy()
+
+    def set_reference_override(
+        self,
+        motor_degrees: Sequence[float] | None,
+        *,
+        blend: float = 1.0,
+        unwrapped_lower: bool = False,
+    ) -> None:
+        """Blend a replay-only model reference into the next action frame.
+
+        Training never calls this method.  The interactive hybrid
+        ``scone-gait`` uses it to retain the checkpoint's original reference
+        at low speed and transition to a point-support/sector-roll reference
+        at high translation speed without changing actuator operating mode.
+        """
+
+        if motor_degrees is None:
+            self._reference_override_degrees = None
+            self._reference_override_blend = 0.0
+            self._reference_override_unwrapped_lower = False
+            return
+        parsed = np.asarray(motor_degrees, dtype=np.float64)
+        if parsed.shape != (18,) or not np.all(np.isfinite(parsed)):
+            raise ValueError("reference override must contain 18 finite degrees")
+        if not 0.0 <= blend <= 1.0:
+            raise ValueError("reference override blend must be in [0, 1]")
+        self._reference_override_degrees = parsed.copy()
+        self._reference_override_blend = float(blend)
+        self._reference_override_unwrapped_lower = bool(unwrapped_lower)
 
     def _sample_command(self) -> np.ndarray:
         if self.fixed_command is not None:
@@ -558,15 +590,38 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
     def _apply_action(self, action: np.ndarray) -> None:
         clipped = np.clip(np.asarray(action, dtype=np.float64), -1.0, 1.0)
         reference = self._reference_motion_degrees()
+        if self._reference_override_degrees is not None:
+            blend = self._reference_override_blend
+            if self._reference_override_unwrapped_lower:
+                # A multi-turn lower target and the checkpoint reference may
+                # describe the same C-frame orientation on different 360°
+                # branches.  Move the checkpoint branch next to the override
+                # before blending so entering hybrid never commands an
+                # artificial one-or-more-turn rewind.
+                lower_reference = reference[12:]
+                lower_override = self._reference_override_degrees[12:]
+                reference[12:] = lower_reference + 360.0 * np.round(
+                    (lower_override - lower_reference) / 360.0
+                )
+            reference = (
+                (1.0 - blend) * reference
+                + blend * self._reference_override_degrees
+            )
         targets = reference + self.residual_scale_degrees * clipped
 
         # model.xml currently has no mechanical joint ranges.  This provisional
         # conservative clip must be replaced with measured SCONE hard stops.
-        targets = np.clip(
+        bounded_targets = np.clip(
             targets,
             self.default_degrees - 60.0,
             self.default_degrees + 60.0,
         )
+        if self._reference_override_unwrapped_lower:
+            # Only the interactive simulation hybrid may cross 0/360°.  PPO
+            # training, ordinary replay, and all upper/stage-1 joints retain
+            # the conservative one-turn clip.
+            bounded_targets[12:] = targets[12:]
+        targets = bounded_targets
         for motor_id, target in enumerate(targets, start=1):
             self.controller.set_position(motor_id, float(target))
 
@@ -579,6 +634,15 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
             [self.controller._joint_velocity(i) for i in Actuator.Index.ALL],
             dtype=np.float64,
         )
+        if self._reference_override_unwrapped_lower:
+            # The six C-frames are rotationally periodic.  Keep their actual
+            # MuJoCo qpos unwrapped so the mesh visibly completes revolutions,
+            # but fold policy observations and joint-limit diagnostics onto
+            # the equivalent one-turn angle expected by the checkpoint.
+            lower_delta = positions[12:] - self.default_radians[12:]
+            positions[12:] = self.default_radians[12:] + (
+                lower_delta + math.pi
+            ) % (2.0 * math.pi) - math.pi
         return positions, velocities
 
     def _base_state(self) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
@@ -772,6 +836,11 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         slip_penalty, stance_contacts = self._slip_penalty()
 
         joint_offset = np.abs(joint_position - self.default_radians)
+        if self._reference_override_unwrapped_lower:
+            # Full C-frame revolutions are intentional in the interactive
+            # hybrid and are not a mechanical hard-stop violation in the
+            # unlimited MuJoCo hinge.  Keep upper/stage-1 protection intact.
+            joint_offset[12:] = 0.0
         excess = np.maximum(0.0, joint_offset - reward.soft_joint_offset)
         joint_limit_penalty = float(
             np.mean(np.square(excess / math.radians(15.0)))
@@ -898,6 +967,7 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         self._reference_cycle_frequency = 0.0
         self._reference_stride_clip_fraction = 0.0
         self._reference_ik_backoff_scale = 1.0
+        self.set_reference_override(None)
         self._command.fill(0.0)
         self._command_target = self._sample_command()
         self._heading = self._heading_yaw()
@@ -977,6 +1047,7 @@ class SconeWalkEnv(gym.Env[np.ndarray, np.ndarray]):
         self._reference_cycle_frequency = 0.0
         self._reference_stride_clip_fraction = 0.0
         self._reference_ik_backoff_scale = 1.0
+        self.set_reference_override(None)
         self._heading = self._heading_yaw()
         self._target_heading = self._heading
         self._reference_height = float(

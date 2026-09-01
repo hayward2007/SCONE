@@ -57,7 +57,7 @@ DynamixelController  MuJoCoController
 
 각 다리의 neutral support point는 tire contact mesh의 부채꼴 끝단 중 가장 낮은 0.1 mm 패치의 중심에서 추론한다. 한 모서리 vertex를 고르면 44 mm 폭의 한쪽으로 IK가 치우쳐 접지 모멘트와 slip이 생긴다. stance에서는 명령 반대 방향으로 발이 지면을 민다. swing에서는 quintic 보간과 lift를 사용해 다음 접촉점으로 이동한다. 비-RL MuJoCo 조종은 1.0 Hz와 전후 90 mm·측면 70 mm, 25 mm lift, profile 무제한, middle hold 2배를 사용한다. 이 조합은 최대 전진에서 stroke clipping을 없애 lower IK의 큰 branch 변화를 줄인다. RL reference는 checkpoint 의미를 보존해 0.7 Hz와 60/50 mm를 유지한다. 두 경로 모두 최대 4회 IK backoff 뒤에도 수렴하지 않으면 frame을 실패로 보고한다.
 
-비-RL `scone-gait`는 상단·1단의 기본 tripod IK를 position으로 보내고, 하단
+비-RL `roll-gait`는 상단·1단의 기본 tripod IK를 position으로 보내고, 하단
 2단 기본 보행 offset의 시간 미분을 부채꼴 프레임 연속 회전 속도에 더한다.
 따라서 하단은 한 위치를 왕복하지 않으면서도 기본 보행의 가감속을 포함한다. 각 다리의 rolling
 tangent는 MJCF `TIRE_n` mesh에서 수치적으로 측정하고, 명령 body twist에 가장
@@ -73,6 +73,7 @@ tangent는 MJCF `TIRE_n` mesh에서 수치적으로 측정하고, 명령 body tw
 ```text
 A/D의 vy 명령
    → 계단 진행축 +Y에 맞춘 side-on Drive 자세
+   → DRIVE PREP → CLIMB PREP
    → FRONT BRACE: 앞쪽 1단 IDs 7/9/11 자세 획득
        ├─ 100 mm: 180°
        ├─ 150 mm: 184°
@@ -133,6 +134,7 @@ physics state의 root Y/Z로 상단을 판정한다. `compare`는 두 model/view
 - legacy velocity adapter는 background worker가 최신 명령만 소비한다.
 - 시뮬레이터에서는 물리 update가 주 thread, CLI가 worker thread다.
 - RL 조종에서 `R`을 누르면 PPO 목표 출력을 멈추고 같은 MuJoCo controller로 Legacy Drive/Climb 전환을 수행한다. Walk로 돌아오면 heading·높이·residual 상태를 재정렬한 뒤 정책을 재개한다.
+- `scone-gait` 조종은 평면 속도 smoothstep으로 원래 checkpoint reference/PPO residual과 point-support/multi-turn reference를 합친다. 제자리 yaw는 PPO-only, 빠른 translation은 model-reference-only다. lower 목표만 가장 가까운 360° branch에서 합성하고 실제 MuJoCo qpos는 누적한다.
 - 원격 감시에서는 checkpoint poller가 다운로드·검증하고 viewer/control loop가 안전한 시점에 policy를 바꾼다.
 - 공유 controller 상태는 lock으로 보호하지만, 긴 I/O나 sleep을 lock 안에서 수행하지 않는 것이 원칙이다.
 

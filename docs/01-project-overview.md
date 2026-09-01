@@ -32,7 +32,7 @@ SCONE은 18개의 Dynamixel 액추에이터를 사용하는 6족 로봇을 하�
 
 ### `tripod-gait`와 `scone-gait`
 
-`TripodGait`는 명령 `(vx, vy, yaw_rate)`을 받아 50 Hz로 고전 교대 삼각보 궤적을 만든다. stance와 swing을 부드러운 quintic 곡선으로 잇고, 각 발의 목표점을 3축 damped-least-squares IK로 18개 관절각으로 바꾼 뒤 한 번에 전송한다. MuJoCo 조종의 `SconeRollingGait`는 상·중단의 작은 IK 안정화 자세만 position으로 보내고 하단 여섯 C자 프레임은 velocity mode로 연속 회전한다. RL 호환용 `SconeGait`는 별도의 bounded position reference로 남아 있다.
+`TripodGait`는 명령 `(vx, vy, yaw_rate)`을 받아 50 Hz로 고전 교대 삼각보 궤적을 만든다. stance와 swing을 부드러운 quintic 곡선으로 잇고, 각 발의 목표점을 3축 damped-least-squares IK로 18개 관절각으로 바꾼 뒤 한 번에 전송한다. MuJoCo의 `RollGait`는 상·중단 IK 자세와 하단 여섯 C자 프레임의 velocity-mode 연속 회전을 합친다. 현재 `scone-gait`는 저속/제자리 yaw PPO와 고속 `SconeGait` point-support/multi-turn sector-roll reference를 한 position-mode loop에서 전환한다.
 
 두 알고리즘의 수식, 설정값, CLI/RL 연결, 호환성, 검증 결과는
 [`10-tripod-gait-and-scone-gait.md`](10-tripod-gait-and-scone-gait.md)에
@@ -77,7 +77,7 @@ RL 환경은 선택한 기준 모션 위에 18차원 정책 residual을 더한�
 - 실제 Dynamixel 모델별 Protocol 1.0/2.0 레지스터 처리
 - 실제 포트 탐색과 안전한 초기화·종료
 - 6족 FK/IK와 actuator-order 변환
-- legacy/tripod-gait/continuous-roll scone-gait/scone-stair/RL 제어 경로
+- legacy/tripod-gait/continuous `roll-gait`/hybrid `scone-gait`/scone-stair/RL 제어 경로
 - hardcoded/improved/compare 자동 계단 viewer
 - 평지, 계단, 경사, 혼합 지형 생성
 - MuJoCo motor + 자체 DC motor/PID 모델

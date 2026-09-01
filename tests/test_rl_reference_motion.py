@@ -222,6 +222,54 @@ class ResidualReferenceMotionTests(unittest.TestCase):
                 finally:
                     env.close()
 
+    def test_replay_override_preserves_multi_turn_lower_targets(self) -> None:
+        env = SconeWalkEnv(
+            fixed_command=[0.0, 0.0, 0.0],
+            standing_pose_degrees=STANDARD_STANDING_DEGREES,
+            reference_motion="hardcoded",
+        )
+        try:
+            env.reset(seed=7)
+            override = env.default_degrees.copy()
+            override[12:] += 720.0
+
+            env.set_reference_override(
+                override,
+                blend=1.0,
+                unwrapped_lower=True,
+            )
+            env._apply_action(np.zeros(18, dtype=np.float32))
+            full_override = (
+                np.degrees(env.controller._target[13:19]) + 180.0
+            )
+
+            env.set_reference_override(
+                override,
+                blend=0.0,
+                unwrapped_lower=True,
+            )
+            env._apply_action(np.zeros(18, dtype=np.float32))
+            ppo_same_branch = (
+                np.degrees(env.controller._target[13:19]) + 180.0
+            )
+
+            np.testing.assert_allclose(full_override, override[12:], atol=0.1)
+            np.testing.assert_allclose(ppo_same_branch, override[12:], atol=0.1)
+
+            before, _ = env._joint_state()
+            for motor_id in range(13, 19):
+                env.data.qpos[env.controller._qpos_addresses[motor_id]] += (
+                    4.0 * np.pi
+                )
+            after, _ = env._joint_state()
+            np.testing.assert_allclose(after[12:], before[12:], atol=1e-9)
+            _, _, _, diagnostics = env._reward(
+                np.zeros(18, dtype=np.float32)
+            )
+            self.assertFalse(diagnostics["hard_joint_limit"])
+        finally:
+            env.close()
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -11,28 +11,28 @@ from src.locomotion import VelocityCommand
 from src.main import SCONE
 from src.simulation import (
     MuJoCoController,
-    SconeRollingGait,
-    SconeRollingGaitConfig,
+    RollGait,
+    RollGaitConfig,
     load_model,
 )
 
 
-class SconeRollingGaitTests(unittest.TestCase):
+class RollGaitTests(unittest.TestCase):
     def test_config_rejects_unstable_or_unbounded_values(self) -> None:
         with self.assertRaises(ValueError):
-            SconeRollingGaitConfig(roll_velocity=0)
+            RollGaitConfig(roll_velocity=0)
         with self.assertRaises(ValueError):
-            SconeRollingGaitConfig(support_velocity_ratio=1.1)
+            RollGaitConfig(support_velocity_ratio=1.1)
         with self.assertRaises(ValueError):
-            SconeRollingGaitConfig(tripod_b_phase_offset_degrees=121.0)
+            RollGaitConfig(tripod_b_phase_offset_degrees=121.0)
         with self.assertRaises(ValueError):
-            SconeRollingGaitConfig(cycle_frequency=-1.0)
+            RollGaitConfig(cycle_frequency=-1.0)
         with self.assertRaises(ValueError):
-            SconeRollingGaitConfig(basic_lower_motion_blend=1.1)
+            RollGaitConfig(basic_lower_motion_blend=1.1)
         with self.assertRaises(ValueError):
-            SconeRollingGaitConfig(max_basic_lower_velocity=0.0)
+            RollGaitConfig(max_basic_lower_velocity=0.0)
         with self.assertRaises(ValueError):
-            SconeRollingGaitConfig(basic_velocity_time_constant=-0.1)
+            RollGaitConfig(basic_velocity_time_constant=-0.1)
 
     def test_continuous_sector_rotation_is_fast_and_stays_supported(self) -> None:
         model = load_model(floating_base=True, terrain="flat")
@@ -53,7 +53,7 @@ class SconeRollingGaitTests(unittest.TestCase):
         try:
             with patch("time.sleep", side_effect=advance):
                 robot.initialize()
-            gait = SconeRollingGait(controller, robot.profile)
+            gait = RollGait(controller, robot.profile)
             raw_targets = gait.prepare()
             offset_raw = controller.degrees_to_raw(13, 60.0)
             self.assertAlmostEqual(raw_targets[14] - raw_targets[13], offset_raw, delta=1)

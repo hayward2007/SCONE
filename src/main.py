@@ -71,7 +71,11 @@ class SCONE:
             self._ensure_open()
             self.status = RobotStatus.INITIALIZING
             self.controller.set_torques(Actuator.Index.ALL, Actuator.Torque.OFF)
-            for motor_id in Actuator.Index.LOWER:
+            # Stage-1 XM430-W350-T joints are position actuators in every
+            # SCONE locomotion mode.  Set them explicitly as well as the
+            # distal frames so a mode left behind by an external tool cannot
+            # make a load-bearing leg run as a velocity actuator.
+            for motor_id in Actuator.Index.XM:
                 self.controller.set_mode(motor_id, Actuator.OperatingMode.POSITION)
             self.controller.set_accelerations(
                 {motor_id: 20 for motor_id in Actuator.Index.XM}

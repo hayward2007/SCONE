@@ -61,7 +61,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--checkpoint",
         type=Path,
-        help="PPO checkpoint required by --control rl",
+        help="PPO checkpoint required by --control rl or scone-gait",
     )
     parser.add_argument("--rl-device", default="auto")
     parser.add_argument(
@@ -89,10 +89,18 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     if not args.model.expanduser().exists():
         raise SystemExit(f"model not found: {args.model}")
-    if args.control == SimulationControl.RL.value and args.checkpoint is None:
-        raise SystemExit("--checkpoint is required with --control rl")
-    if args.control == SimulationControl.RL.value and args.fixed_base:
-        raise SystemExit("--fixed-base is not supported with --control rl")
+    policy_controls = {
+        SimulationControl.RL.value,
+        SimulationControl.SCONE_GAIT.value,
+    }
+    if args.control in policy_controls and args.checkpoint is None:
+        raise SystemExit(
+            f"--checkpoint is required with --control {args.control}"
+        )
+    if args.control in policy_controls and args.fixed_base:
+        raise SystemExit(
+            f"--fixed-base is not supported with --control {args.control}"
+        )
     if args.demo is not None:
         if args.fixed_base:
             raise SystemExit("--fixed-base is not supported with --demo")
@@ -174,7 +182,14 @@ def select_simulation_control() -> SimulationControl:
             ),
             Choice(
                 value=SimulationControl.SCONE_GAIT,
-                name="scone-gait · SCONE 부채꼴 rolling/creep 보행 (실험)",
+                name=(
+                    "scone-gait · 저속/yaw PPO + 고속 점접지/말단회전 "
+                    "하이브리드"
+                ),
+            ),
+            Choice(
+                value=SimulationControl.ROLL_GAIT,
+                name="roll-gait · 여섯 부채꼴 말단 연속 회전 (실험)",
             ),
             Choice(
                 value=SimulationControl.SCONE_STAIR,

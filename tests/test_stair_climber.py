@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, call, patch
 
 import mujoco
 import numpy as np
@@ -21,6 +21,16 @@ from src.simulation.terrain import STAIR_PRESETS, TerrainType
 
 
 class SconeStairClimberTests(unittest.TestCase):
+    def test_stair_preparation_runs_drive_then_climb_transitions(self) -> None:
+        robot = Mock()
+        robot.mode_name = "walk"
+        robot.change_mode.side_effect = ("drive", "climb")
+
+        prepare_scone_stair_pose(robot)
+
+        self.assertEqual(robot.left.call_count, 4)
+        self.assertEqual(robot.change_mode.call_args_list, [call(), call()])
+
     @staticmethod
     def _run_ascent(
         terrain: TerrainType,

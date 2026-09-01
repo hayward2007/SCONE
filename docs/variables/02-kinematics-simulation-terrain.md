@@ -219,13 +219,14 @@ XML의 `<dcmotor nominal>`과 Python 사양은 함께 바꿔야 한다.
 |---|---|
 | `TRIPOD_GAIT_SIMULATION_CONFIG` | cadence `1.0 Hz`, lift `0.025 m`, 전후/측면 stride `0.090/0.070 m`, IK 허용오차 `1 mm`, backoff 4회의 비-RL 조종 설정 |
 | `SCONE_GAIT_SIMULATION_CONFIG` | RL/position 호환 bounded sector sweep 설정 |
-| `SCONE_ROLLING_GAIT_SIMULATION_CONFIG` | lower 연속 회전 비-RL `scone-gait` 설정 |
+| `ROLL_GAIT_SIMULATION_CONFIG` | lower 연속 회전 비-RL `roll-gait` 설정 |
+| `SCONE_ROLLING_GAIT_SIMULATION_CONFIG` | 위 설정의 구형 호환 별칭 |
 | `configure_model_gait_controller()` | profile velocity/acceleration 0(무제한), middle stiffness 2배를 비-RL tripod에 opt-in |
-| `SimulationControl.OLD/TRIPOD_GAIT/SCONE_GAIT/SCONE_STAIR/RL` | 제어 방식 선택 enum; `NON_RL`은 `TRIPOD_GAIT` 호환 별칭 |
+| `SimulationControl.OLD/TRIPOD_GAIT/SCONE_GAIT/ROLL_GAIT/SCONE_STAIR/RL` | 제어 방식 선택 enum; `NON_RL`은 `TRIPOD_GAIT` 호환 별칭 |
 | `profile` | Standard/Sport |
 | `floating_base` | 고정형 기구 검사와 실제 동역학 실행 선택 |
 | `terrain`, `terrain_seed` | 지형 preset과 난수 seed |
-| `control` | old/tripod-gait/scone-gait/rl route |
+| `control` | old/tripod-gait/roll-gait/scone-gait/scone-stair/rl route |
 | `checkpoint`, `rl_device` | RL route의 PPO ZIP과 CPU/CUDA 선택 |
 | `rl_reference_motion` | `tripod-gait/scone-gait/hardcoded`; RL residual 기준 모션 |
 | `rl_standing_pose_degrees` | RL 환경/controller startup의 18개 stance |
@@ -238,7 +239,7 @@ XML의 `<dcmotor nominal>`과 Python 사양은 함께 바꿔야 한다.
 | `azimuth/elevation` | `135°/-30°` 초기 시점 |
 | `demo` | `hardcoded/improved/compare`; terminal joystick 없는 stair viewer route |
 
-### `SconeRollingGaitConfig`와 자동 데모
+### `RollGaitConfig`와 자동 데모
 
 | 이름 | 기본값/목적 |
 |---|---|

@@ -5,10 +5,19 @@ from __future__ import annotations
 import threading
 import time
 from collections.abc import Sequence
+from dataclasses import dataclass
 from pathlib import Path
 
+import numpy as np
+
 from src.cli import JoystickLimits, run_velocity_joystick_cli
-from src.locomotion import LegacyVelocityAdapter, VelocityCommand, Walk
+from src.locomotion import (
+    LegacyVelocityAdapter,
+    SconeGait,
+    SconeGaitConfig,
+    VelocityCommand,
+    Walk,
+)
 from src.main import SCONE
 from src.simulation.terrain import TerrainType
 
@@ -37,6 +46,187 @@ class _VelocityMailbox:
     def read(self) -> VelocityCommand:
         with self._lock:
             return self._command
+
+
+@dataclass(frozen=True)
+class SconeHybridControlConfig:
+    """Replay-time transition between PPO and SCONE's hybrid fast gait."""
+
+    hybrid_start_speed: float = 0.10
+    hybrid_full_speed: float = 0.18
+    cycle_frequency: float = 1.2
+    duty_factor: float = 0.60
+    step_height: float = 0.025
+    max_stride: float = 0.090
+    max_lateral_stride: float = 0.070
+    sector_sweep_degrees: float = 30.0
+    point_support_ratio: float = 0.55
+    swing_roll_hold_ratio: float = 0.70
+    effective_roll_radius: float = 0.1225
+    max_roll_rate_degrees: float = 360.0
+
+    def __post_init__(self) -> None:
+        if self.hybrid_start_speed < 0.0:
+            raise ValueError("hybrid_start_speed cannot be negative")
+        if self.hybrid_full_speed <= self.hybrid_start_speed:
+            raise ValueError(
+                "hybrid_full_speed must be greater than hybrid_start_speed"
+            )
+        if self.effective_roll_radius <= 0.0:
+            raise ValueError("effective_roll_radius must be positive")
+        if self.max_roll_rate_degrees <= 0.0:
+            raise ValueError("max_roll_rate_degrees must be positive")
+
+    def hybrid_blend(self, command: VelocityCommand) -> float:
+        """Return 0 for PPO-only and 1 for the full fast hybrid reference.
+
+        Only translation selects the hybrid.  A command with zero planar
+        speed and non-zero yaw therefore remains entirely under PPO control.
+        Smoothstep avoids a target jump at either transition boundary.
+        """
+
+        planar_speed = float(np.hypot(command.vx, command.vy))
+        ratio = np.clip(
+            (planar_speed - self.hybrid_start_speed)
+            / (self.hybrid_full_speed - self.hybrid_start_speed),
+            0.0,
+            1.0,
+        )
+        return float(ratio * ratio * (3.0 - 2.0 * ratio))
+
+    def gait_config(self, control_dt: float) -> SconeGaitConfig:
+        return SconeGaitConfig(
+            control_frequency=1.0 / control_dt,
+            cycle_frequency=self.cycle_frequency,
+            duty_factor=self.duty_factor,
+            step_height=self.step_height,
+            max_stride=self.max_stride,
+            max_lateral_stride=self.max_lateral_stride,
+            max_vx=float(OBSERVATION_COMMAND_SCALE[0]),
+            max_vy=float(OBSERVATION_COMMAND_SCALE[1]),
+            max_yaw_rate=float(OBSERVATION_COMMAND_SCALE[2]),
+            command_time_constant=0.0,
+            sector_sweep_degrees=self.sector_sweep_degrees,
+            point_support_ratio=self.point_support_ratio,
+            swing_roll_hold_ratio=self.swing_roll_hold_ratio,
+            continuous_rotation=True,
+            rolling_blend=1.0,
+            effective_roll_radius=self.effective_roll_radius,
+            max_roll_rate_degrees=self.max_roll_rate_degrees,
+            ik_tolerance=1e-3,
+            ik_stride_backoff_attempts=4,
+        )
+
+
+class SconeHybridController:
+    """Blend a legacy-compatible PPO replay into the fast SCONE gait."""
+
+    def __init__(
+        self,
+        env: SconeWalkEnv,
+        *,
+        config: SconeHybridControlConfig | None = None,
+    ) -> None:
+        self.env = env
+        self.config = config or SconeHybridControlConfig()
+        self.gait = SconeGait(
+            profile=env._motion_profile,
+            model_path=env.model_path,
+            config=self.config.gait_config(env.control_dt),
+        )
+        self.last_blend = 0.0
+        self._branch_anchor = np.asarray(
+            env.default_degrees,
+            dtype=np.float64,
+        ).copy()
+        self.reset()
+
+    def reset(self) -> None:
+        self.gait.reset(
+            phase=self.env._phase,
+            motor_degrees=self.env.default_degrees,
+        )
+        self._branch_anchor = np.asarray(
+            self.env.default_degrees,
+            dtype=np.float64,
+        ).copy()
+        self.last_blend = 0.0
+        self.env.set_reference_override(
+            self._branch_anchor,
+            blend=0.0,
+            unwrapped_lower=True,
+        )
+
+    def apply(
+        self,
+        command: VelocityCommand,
+        policy_action: Sequence[float],
+    ) -> np.ndarray:
+        """Install the hybrid reference and attenuate the PPO residual."""
+
+        action = np.asarray(policy_action, dtype=np.float32)
+        if action.size != 18:
+            raise ValueError("policy_action must contain 18 residual values")
+        action = action.reshape(18)
+        blend = self.config.hybrid_blend(command)
+        if blend <= 1e-9:
+            self.last_blend = 0.0
+            # Keep the PPO lower reference on the nearest equivalent 360°
+            # branch.  This prevents a completed sector revolution from being
+            # undone merely because the command returned to low speed.
+            self.env.set_reference_override(
+                self._branch_anchor,
+                blend=0.0,
+                unwrapped_lower=True,
+            )
+            return action
+        if self.last_blend <= 1e-9:
+            # Align the dormant gait with the checkpoint reference exactly at
+            # the first mixed frame.  Reset is intentionally not repeated on
+            # every PPO-only frame because it recalibrates sector geometry.
+            self.gait.reset(
+                phase=self.env._phase,
+                motor_degrees=self.env.default_degrees,
+            )
+            self.gait.set_continuous_roll_degrees(
+                360.0
+                * np.round(
+                    (
+                        self._branch_anchor[12:]
+                        - np.asarray(self.env.default_degrees)[12:]
+                    )
+                    / 360.0
+                )
+            )
+        sample = self.gait.step(command, self.env.control_dt)
+        if not sample.converged:
+            raise RuntimeError(
+                "scone-gait hybrid reference IK failed for legs "
+                f"{sample.failed_legs}"
+            )
+        self.last_blend = blend
+        self._branch_anchor = sample.motor_degrees.copy()
+        self.env.set_reference_override(
+            sample.motor_degrees,
+            blend=blend,
+            unwrapped_lower=True,
+        )
+        # PPO owns slow walking and in-place yaw.  At high speed the model
+        # reference owns the motion; the transition band mixes both smoothly.
+        return action * np.float32(1.0 - blend)
+
+    def control_name(self) -> str:
+        if self.last_blend <= 1e-6:
+            return "scone-gait/ppo"
+        turns = float(
+            np.max(np.abs(self.gait.continuous_roll_degrees)) / 360.0
+        )
+        if self.last_blend >= 1.0 - 1e-6:
+            return f"scone-gait/hybrid/roll-{turns:.1f}turn"
+        return (
+            f"scone-gait/mix-{self.last_blend:.2f}/"
+            f"roll-{turns:.1f}turn"
+        )
 
 
 class _RLModeRouter:
@@ -129,6 +319,8 @@ def run_rl_joystick(
     seed: int = 7,
     standing_pose_degrees: Sequence[float] = SPORT_STANDING_DEGREES,
     reference_motion: str = "hardcoded",
+    hybrid_scone: bool = False,
+    hybrid_config: SconeHybridControlConfig | None = None,
 ) -> None:
     """Run a PPO policy whose command is supplied by the common CLI joystick.
 
@@ -165,6 +357,11 @@ def run_rl_joystick(
         mailbox,
     )
     neutral_gate = NeutralResidualGate()
+    hybrid = (
+        SconeHybridController(env, config=hybrid_config)
+        if hybrid_scone
+        else None
+    )
     stop_event = threading.Event()
     cli_errors: list[BaseException] = []
     limits = JoystickLimits(
@@ -174,14 +371,24 @@ def run_rl_joystick(
     )
 
     def input_worker() -> None:
+        def displayed_control_name() -> str:
+            if not mode_router.policy_active():
+                return mode_router.control_name()
+            return hybrid.control_name() if hybrid is not None else "rl/walk"
+
         try:
             run_velocity_joystick_cli(
                 limits=limits,
                 apply_command=mode_router.apply_command,
                 profile_name=mode_router.profile.name,
-                control_name=mode_router.control_name,
+                control_name=displayed_control_name,
                 control_hint=(
-                    f"R: RL Walk→Drive→Climb; ref={reference_motion}; "
+                    (
+                        "slow/in-place yaw=PPO, fast=point-support+sector-roll; "
+                        if hybrid is not None
+                        else "R: RL Walk→Drive→Climb; "
+                    )
+                    + f"ref={reference_motion}; "
                     f"checkpoint={checkpoint_path.name}"
                 ),
                 stop_event=stop_event,
@@ -202,6 +409,8 @@ def run_rl_joystick(
         while not stop_event.is_set():
             frame_started = time.perf_counter()
             if not mode_router.policy_active():
+                if hybrid is not None:
+                    env.set_reference_override(None)
                 env.advance_external_control()
                 if env._viewer is not None and not env._viewer.is_running():
                     stop_event.set()
@@ -213,6 +422,8 @@ def run_rl_joystick(
             if mode_router.consume_resume_pending():
                 observation = env.resume_after_external_control()
                 neutral_gate.reset()
+                if hybrid is not None:
+                    hybrid.reset()
             command = mailbox.read()
             env.set_velocity_command(command.as_array())
             policy_observation = _observation_for_policy(policy, observation)
@@ -222,11 +433,15 @@ def run_rl_joystick(
             action = neutral_gate.apply(
                 command.as_array(), policy_action, env.control_dt
             )
+            if hybrid is not None:
+                action = hybrid.apply(command, action)
             observation, _, terminated, truncated, _ = env.step(action)
             if terminated or truncated:
                 observation, _ = env.reset()
                 mode_router.rebind_policy_controller(env.controller)
                 neutral_gate.reset()
+                if hybrid is not None:
+                    hybrid.reset()
 
             if env._viewer is not None and not env._viewer.is_running():
                 stop_event.set()
@@ -244,4 +459,9 @@ def run_rl_joystick(
         raise cli_errors[0]
 
 
-__all__ = ["NeutralResidualGate", "run_rl_joystick"]
+__all__ = [
+    "NeutralResidualGate",
+    "SconeHybridControlConfig",
+    "SconeHybridController",
+    "run_rl_joystick",
+]

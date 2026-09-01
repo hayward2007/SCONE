@@ -8,6 +8,9 @@ from .stair_climber import (
     StairControlState,
 )
 from .scone_rolling_gait import (
+    RollGait,
+    RollGaitConfig,
+    RollGaitSample,
     SconeRollingGait,
     SconeRollingGaitConfig,
     SconeRollingSample,
@@ -24,6 +27,9 @@ __all__ = [
     "DEFAULT_MODEL_PATH",
     "HardcodedStairRoller",
     "MuJoCoController",
+    "RollGait",
+    "RollGaitConfig",
+    "RollGaitSample",
     "SconeStairClimber",
     "SconeStairConfig",
     "SconeRollingGait",

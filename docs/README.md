@@ -16,8 +16,11 @@
 10. [보행 성능 분석과 개선 로드맵](09-gait-performance-analysis.md) — 하드코드/Non-RL/RL 수치 비교와 우선순위
 11. [`tripod-gait`와 `scone-gait` 상세 가이드](10-tripod-gait-and-scone-gait.md) — 이름·수식·IK·부채꼴 rolling/creep·CLI/RL·검증·튜닝 전체 설명
 12. [SCONE 부채꼴 후킹과 계단 알고리즘](11-scone-stair-climbing.md) — 후킹 기하·토크·마찰·안정 조건, 여섯 프레임 공통 위상, 옛 앞 1단 270° 재현과 partial-brace sweep·최종 수치
-13. [자동 계단 데모와 연속 회전형 `scone-gait` 재설계](12-automatic-stair-demo-and-continuous-roll-rework.md) — 입력 없는 synchronized open/closed-loop 비교, 세 다리 지지 처짐, motor profile·보폭 sweep, C자 말단 연속 회전 phase 가설
+13. [자동 계단 데모와 연속 회전형 `roll-gait`의 역사](12-automatic-stair-demo-and-continuous-roll-rework.md) — 입력 없는 synchronized open/closed-loop 비교, 세 다리 지지 처짐, motor profile·보폭 sweep, C자 말단 연속 회전 phase 가설
 14. [기능 구현 및 코드 수정 가이드](13-feature-implementation-and-modification-guide.md) — launcher·하드웨어·Legacy·FK/IK·MuJoCo·terrain·두 gait·계단·RL·원격 학습의 구현 흐름, 수정 절차, 호환 경계와 검증 기준
+15. [`roll-gait` 분리와 PPO/점접지 하이브리드 `scone-gait`](14-roll-gait-and-hybrid-scone-gait.md) — 현재 이름, 저속/yaw PPO와 고속 multi-turn 전환식, point-support/누적회전 공식, 계단 Drive→Climb 준비, stage-1 live read-back, 15.4M checkpoint 검증
+16. [보행·계단·PPO 통합 활동 기록](15-complete-development-activity-log.md) — 전체 요청·가설·실행·채택/기각·수치·코드 위치·검증·남은 한계를 한 문서에서 추적
+17. [ICRA 시뮬레이션 벤치마크 구현과 실행 기록](16-icra-simulation-benchmark-implementation-and-results.md) — 평지·계단 A/B/C, 강건성·모드 전환 벤치마크, 실제 실행 수치, 통계·검증·논문 사용 조건
 
 ## 문서 범위와 표기
 
@@ -36,5 +39,6 @@
 - Residual RL 기준 모션은 새 실행에서 `tripod-gait`가 기본값이며 `scone-gait`는 실험 선택지다. 기존 작업 기록에는 `hardcoded` 또는 `non_rl`이 저장돼 있을 수 있으므로 재개 전에 설정을 확인한다.
 - 두 gait를 수정하거나 새 checkpoint를 학습하기 전에는 [`10-tripod-gait-and-scone-gait.md`](10-tripod-gait-and-scone-gait.md)의 reference 호환성, 동역학 검증값, 실물 진입 조건을 먼저 확인한다.
 - `scone-stair`는 현재 MuJoCo 전용이다. 실물 계단 적용 전에는 [`11-scone-stair-climbing.md`](11-scone-stair-climbing.md)의 마찰·모터 전류·nosing·지지다각형 실측 항목을 먼저 검증한다.
-- 시뮬레이션 조종의 `scone-gait`는 이제 lower velocity-mode 연속 회전이고, RL의 `scone-gait`는 checkpoint 호환을 위한 bounded position reference다. 두 의미와 측정 근거는 [`12-automatic-stair-demo-and-continuous-roll-rework.md`](12-automatic-stair-demo-and-continuous-roll-rework.md)를 따른다.
-- 시뮬레이션 전용 모드 전환 보정, Drive 1단 댐핑, 지형 카메라는 실물 Dynamixel controller의 명령 변환을 변경하지 않는다.
+- lower velocity-mode 자유 회전은 `roll-gait`다. 현재 `scone-gait`는 저속/제자리 yaw PPO와 고속 점접지 tripod+위상 동기 multi-turn 말단 회전을 합치는 checkpoint 필수 supervisor다. [`14-roll-gait-and-hybrid-scone-gait.md`](14-roll-gait-and-hybrid-scone-gait.md)를 우선한다.
+- 계단 준비는 실제 상태기와 같은 Walk→Drive→Climb 순서를 완료한 뒤 공통 위상 제어로 넘어간다. 물리 Drive 진입 시 stage-1 mode/profile/goal/present register를 read-back한다. MuJoCo의 Drive 1단 댐핑 2배는 여전히 시뮬레이션 전용이다.
+- `benchmark/` 결과는 현재 MuJoCo와 controller 구현의 개발 증거다. dirty worktree의 단일 명목 실행을 논문 최종 성능으로 사용하지 말고, [벤치마크 실행 기록](16-icra-simulation-benchmark-implementation-and-results.md)의 보정·반복·실물 교차 검증 조건을 따른다.

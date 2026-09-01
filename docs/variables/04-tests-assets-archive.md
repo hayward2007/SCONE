@@ -19,10 +19,10 @@
 | 파일 | 주요 변수·fixture | 무엇을 고정하는가 |
 |---|---|---|
 | `test_actuators.py` | ID 1/6/7/12/13/18, `Register`, model objects | ID 경계에서 모델/protocol/control table이 바뀌는 규칙 |
-| `test_api.py` | `FakeController`, command call log, fake Inquirer answers, `KeyboardJoystick(now=...)` | 초기화·종료 순서, CLI route, 키 timeout/독립 축/neutral 전송 |
+| `test_api.py` | `FakeController`, command call log, fake Inquirer answers, stage-1 register mock, `KeyboardJoystick(now=...)` | 초기화 ID 7–18 position mode, physical Drive read-back, CLI route, 키 timeout/독립 축/neutral 전송 |
 | `test_kinematics.py` | center raw 2048, 180°, 0 rad, nominal/perturbed joint arrays | 단위 변환과 FK→IK round trip, actuator ordering |
 | `test_tripod_gait.py` | `GaitConfig`, phase 0/0.5, nominal feet, fake position batch | tripod alternation, idle, yaw 접선 속도, IK safety |
-| `test_scone_gait.py` | sector tangent/극성, lower frame sweep, 설정 범위 | SCONE rolling/creep 생성과 idle 안전성 |
+| `test_scone_gait.py` | sector tangent/극성, bounded sweep, point-support gate, multi-turn 누적, 설정 범위 | stance 고정, late/swing 단방향 회전, idle 안전성 |
 | `test_scone_rolling_gait.py` | 6초 floating simulation, lower 시작/끝 radian, min Z/upright, upper/middle/basic-lower 진폭 | 60° phase, 2.5회 이상 연속 회전, 기본 lower 속도 합성, 0.8 m 전진, drift/height/IK 경계 |
 | `test_stair_geometry.py` | 현재 sector 치수, 100/150/200 mm 직접 reach 분류, 120 mm 경계, torque·friction·support hull | 후킹 분석 수식과 입력 검증 |
 | `test_stair_climber.py` | 실제 floating MuJoCo `stairs-1/2/3`, 앞 1단 brace, top/upright/phase spread | 높이별 180/184/195°와 odd/even 공통 위상 회귀 |
@@ -31,8 +31,8 @@
 | `test_terrain.py` | 모든 `TerrainType`, 동일/다른 seed XML, fake camera | preset compile, visibility group 0, reproducibility, fixed base, camera cap |
 | `test_remote_watch.py` | temporary ZIP, local source, reward mock state, 68/70 fake policy | one-sided height, idle action, 합계 중복 방지, atomic checkpoint, replay compatibility |
 | `test_rl_inquiry.py` | `TrainingConfig`, `RemoteJob`, mocked subprocess/prompt/capacity | shell quoting, 이름/port 검증, venv, SIGTERM pause, reset backup, stance/reference/병렬 추천 |
-| `test_rl_joystick.py` | active/neutral command, residual action, fake mode robot | neutral gate와 RL→Drive→Climb→RL routing |
-| `test_rl_reference_motion.py` | hardcoded/tripod-gait/scone-gait reference, vx/yaw/vy command | 전진/후진/yaw 부호와 reference별 lateral 처리 |
+| `test_rl_joystick.py` | active/neutral command, residual action, fake mode robot/gait/env | neutral gate, RL→Drive→Climb→RL routing, yaw/slow PPO와 fast hybrid smooth 전환 |
+| `test_rl_reference_motion.py` | hardcoded/tripod-gait/scone-gait reference, vx/yaw/vy command, multi-turn override | 전진/후진/yaw 부호, reference별 lateral 처리, 360° branch 합성 |
 
 테스트 tolerance는 기구학/부동소수점 비교의 허용 오차다. 안전 범위나 실제 로봇 허용 오차로 재사용하면 안 된다.
 

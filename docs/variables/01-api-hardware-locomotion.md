@@ -144,8 +144,14 @@ HUD의 `grid`, `point_column`, `point_row`, `yaw_column`, `yaw_bar`, `motion`은
 | `payload` | little-endian sync-write bytes |
 | `mx`, `xm` | `set_speeds()`에서 moving-speed와 profile-velocity 쓰기를 분리한 mapping |
 | `supported` | acceleration register가 있는 motor만 남긴 mapping |
+| `wait_until_raw_positions()` | present-position을 20 ms 간격으로 읽어 모든 목표가 tolerance 안에 들 때까지 대기; timeout이면 `False` |
+| `verify_drive_stage1_settings()` | ID 7–12의 mode/torque/profile velocity/profile acceleration/goal/present를 read-only 검증 |
+| `readings` | stage-1 ID별 live register dictionary |
+| `failures` | 기대값과 다른 register/position 메시지; 하나라도 있으면 `ControllerError` |
 
 `set_mode()`는 torque off→register write→torque on 순서다. `degrees_to_raw()`는 `degree/360×4096`으로 변환하며 기계적 범위 제한은 이 계층이 하지 않는다.
+초기화는 ID 7–18 모든 XM을 position mode로 명시한다. Drive stage-1 기대값은
+position mode 3, torque 1, velocity 50, acceleration 20, goal/present 2048이다.
 
 ## 7. `src/hardware/discovery.py`
 
@@ -192,6 +198,7 @@ HUD의 `grid`, `point_column`, `point_row`, `yaw_column`, `yaw_bar`, `motion`은
 | `first_is_left`, `hold_*`, `release_*` | 선택된 tripod 순서에 맞춰 bound method를 구성 |
 | `sign` | 홀짝 다리의 거울상 회전 offset 부호 |
 | `Drive._run(velocity)` | 모든 lower motor에 1초간 적용할 raw velocity; `left` 음수, `right` 양수 |
+| Drive stage-1 verifier | physical backend가 제공할 때 ID 7–12 live register를 확인; MuJoCo에는 적용하지 않음 |
 | `Climb.middle_ids/lower_ids` | 준비하거나 측면 자세로 만들 tripod의 관절 그룹 |
 | `Climb.velocity` | 2.5초 wheel drive 속도; 방향과 profile에 의해 결정 |
 
@@ -264,10 +271,11 @@ HUD의 `grid`, `point_column`, `point_row`, `yaw_column`, `yaw_bar`, `motion`은
 | `world_from_body/world_from_geom/world_from_tire` | support patch를 world↔body↔tire local 좌표로 바꾸는 회전행렬 |
 | `point_velocity` | body translation에 yaw 접선 `[-ωy, ωx]`를 더한 각 발의 목표 지면 속도 |
 
-`SconeGaitConfig`는 `sector_sweep_degrees`, `rolling_blend`,
-`steering_blend`, `max_steering_degrees`, `minimum_roll_alignment`를 추가한다.
-`SconeGait`는 각 말단 mesh의 `_nominal_roll_angles`와
-`_steering_gains`를 자세마다 보정해 bounded stance/swing sector sweep에 사용한다.
+`SconeGaitConfig`는 bounded 학습 reference 설정과 함께
+`continuous_rotation`, `point_support_ratio`, `swing_roll_hold_ratio`,
+`effective_roll_radius`, `max_roll_rate_degrees`를 추가한다. `SconeGait`는 각 말단
+mesh의 접선/극성을 자세마다 보정하고, interactive 고속 route에서는
+`_continuous_roll_degrees`를 누적해 IK 2단 움직임과 실제 다회전을 합성한다.
 비-RL simulation의 continuous `SconeRollingGait` 변수는
 [`02-kinematics-simulation-terrain.md`](02-kinematics-simulation-terrain.md)에
 분리해 기록한다.

@@ -30,8 +30,11 @@
 | [`09-gait-performance-analysis.md`](09-gait-performance-analysis.md) | 하드코드·Non-RL·policy 수치 비교와 개선 우선순위 |
 | [`10-tripod-gait-and-scone-gait.md`](10-tripod-gait-and-scone-gait.md) | 정식 gait 이름, 궤적 수식, IK, sector rolling/creep, CLI/RL 연결, 검증과 튜닝 절차 |
 | [`11-scone-stair-climbing.md`](11-scone-stair-climbing.md) | 부채꼴 후킹 조건·공식, 계단 가설 비교, 실패와 `scone-stair` 구현·검증 |
-| [`12-automatic-stair-demo-and-continuous-roll-rework.md`](12-automatic-stair-demo-and-continuous-roll-rework.md) | 자동 계단 viewer, 지지 처짐/속도 sweep, 연속 회전 phase 가설과 채택·기각 기록 |
+| [`12-automatic-stair-demo-and-continuous-roll-rework.md`](12-automatic-stair-demo-and-continuous-roll-rework.md) | 자동 계단 viewer, 지지 처짐/속도 sweep, 현재 `roll-gait`가 된 연속 회전 phase 가설과 채택·기각 기록 |
 | [`13-feature-implementation-and-modification-guide.md`](13-feature-implementation-and-modification-guide.md) | 주요 기능별 구현 흐름, 기준 코드, 안전한 수정 순서, checkpoint 호환성과 검증 명령 |
+| [`14-roll-gait-and-hybrid-scone-gait.md`](14-roll-gait-and-hybrid-scone-gait.md) | 현재 gait 이름, PPO/hybrid 전환, 점접지 수식, 계단 준비, stage-1 live 검증, 15.4M 결과 |
+| [`15-complete-development-activity-log.md`](15-complete-development-activity-log.md) | 보행·계단·PPO 작업 전체의 요청, 가설, 실행, 채택·기각, 수치, 검증과 남은 한계 통합 기록 |
+| [`16-icra-simulation-benchmark-implementation-and-results.md`](16-icra-simulation-benchmark-implementation-and-results.md) | ICRA용 평지·계단 A/B/C, 강건성·모드 전환 benchmark 구현, 실행 결과·검증·한계 |
 | [`variables/README.md`](variables/README.md) | 변수 사전 색인과 포함 규칙 |
 | [`variables/01-api-hardware-locomotion.md`](variables/01-api-hardware-locomotion.md) | API/CLI/hardware/locomotion 변수 |
 | [`variables/02-kinematics-simulation-terrain.md`](variables/02-kinematics-simulation-terrain.md) | kinematics/simulation/terrain 변수 |
@@ -44,7 +47,7 @@
 |---|---|
 | [`src/__init__.py`](../src/__init__.py) | 패키지 public symbol과 지연 import 제공 |
 | [`src/main.py`](../src/main.py) | `SCONE` facade, 초기화/프로필/모드 전환/종료, `RobotCommand`, `RobotStatus` |
-| [`src/cli.py`](../src/cli.py) | 장치·시뮬레이션·RL 통합 메뉴, raw terminal 키보드 조이스틱, legacy/tripod-gait/scone-gait adapter |
+| [`src/cli.py`](../src/cli.py) | 장치·시뮬레이션·RL 통합 메뉴, raw terminal 키보드 조이스틱, legacy/tripod-gait/roll-gait/scone-gait adapter |
 
 ## 3. `src/hardware/`
 
@@ -107,8 +110,8 @@
 | [`model.py`](../src/simulation/core/model.py) | MJCF 수정, freejoint/floor/terrain 삽입, STL asset compile |
 | [`pid.py`](../src/simulation/core/pid.py) | 액추에이터 물리 사양, PID, 전압-토크 변환과 포화 |
 | [`controller.py`](../src/simulation/core/controller.py) | 이름 기반 18 motor 매핑, profile setpoint, mode/torque/position/velocity API |
-| [`cli_bridge.py`](../src/simulation/core/cli_bridge.py) | old/tripod-gait/scone-gait/scone-stair/RL control을 viewer와 물리 loop에 연결 |
-| [`scone_rolling_gait.py`](../src/simulation/core/scone_rolling_gait.py) | 상·중단 IK stabilizer와 하단 여섯 연속 회전/phase stagger를 결합한 MuJoCo gait |
+| [`cli_bridge.py`](../src/simulation/core/cli_bridge.py) | old/tripod-gait/roll-gait/scone-gait/scone-stair/RL control을 viewer와 물리 loop에 연결 |
+| [`scone_rolling_gait.py`](../src/simulation/core/scone_rolling_gait.py) | `RollGait`; 상·중단 IK stabilizer와 하단 여섯 연속 회전/phase stagger를 결합한 MuJoCo gait |
 | [`stair_climber.py`](../src/simulation/core/stair_climber.py) | 높이별 앞 1단 brace와 여섯 부채꼴 공통 기하 위상을 결합한 MuJoCo 계단 controller |
 | [`stair_demo.py`](../src/simulation/core/stair_demo.py) | 옛 270° hardcoded baseline, partial-brace closed-loop improved worker, compare viewer |
 | [`simulator_cli.py`](../src/simulation/core/simulator_cli.py) | argparse와 대화형 시뮬레이션 선택 UI |
@@ -168,10 +171,26 @@
 | [`test_terrain.py`](../tests/test_terrain.py) | 모든 지형 compile, seed 재현성, camera/fixed base/group 설정 |
 | [`test_remote_watch.py`](../tests/test_remote_watch.py) | reward 회귀, idle/height, checkpoint 원자성, legacy policy, graceful stop |
 | [`test_rl_inquiry.py`](../tests/test_rl_inquiry.py) | 원격 shell command, 입력 안전성, venv, reset backup, standing/reference prompt, SSH 자원 추천 |
-| [`test_rl_joystick.py`](../tests/test_rl_joystick.py) | neutral residual gate와 RL Walk→Drive→Climb mode router |
+| [`test_rl_joystick.py`](../tests/test_rl_joystick.py) | neutral residual gate, RL Walk→Drive→Climb router, PPO/point-support hybrid 전환 |
 | [`test_rl_reference_motion.py`](../tests/test_rl_reference_motion.py) | hardcoded, tripod-gait, scone-gait 기준 모션과 lateral 처리 |
+| [`test_benchmark.py`](../tests/test_benchmark.py) | benchmark perturbation, 짧은 MuJoCo trial, custom stair 복구, 통계와 JSONL/CSV 출력 |
 
-## 10. `runs/` 생성 파일
+## 10. `benchmark/`
+
+| 경로 | 역할 |
+|---|---|
+| [`__main__.py`](../benchmark/__main__.py) | flat/stairs/robustness/transitions/report 통합 CLI |
+| [`common.py`](../benchmark/common.py) | 공통 trial, perturbation, 상태·접촉·에너지 지표, 결과 writer |
+| [`controllers.py`](../benchmark/controllers.py) | articulated/distal-only/full-roll 비교 adapter |
+| [`flat.py`](../benchmark/flat.py) | 평지 명령 추종과 A/B/C 실행 |
+| [`stairs.py`](../benchmark/stairs.py) | 계단 전략 A/B/C와 riser/tread sweep |
+| [`robustness.py`](../benchmark/robustness.py) | model/initial-condition Monte Carlo |
+| [`transitions.py`](../benchmark/transitions.py) | Walk↔Roll 전환 시간과 안정성 측정 |
+| [`report.py`](../benchmark/report.py) | Wilson 성공률 구간과 연속 지표 요약 CSV |
+| [`README.md`](../benchmark/README.md) | benchmark 실행법과 해석·보존 규칙 |
+| `results/` | JSONL/CSV 생성 결과. 기본 Git 비추적 |
+
+## 11. `runs/` 생성 파일
 
 | 경로/패턴 | 역할 |
 |---|---|
@@ -190,7 +209,7 @@
 
 각 PPO ZIP에는 policy/optimizer PyTorch state, Stable-Baselines3 metadata, Python 변수, version/system 정보가 포함된다. 대용량 바이너리이므로 문서·소스와 함께 Git에 넣지 않는다.
 
-## 11. `archive/`
+## 12. `archive/`
 
 ### 설계·발표 자산
 
@@ -238,7 +257,7 @@
 | `figures/README.md` | 향후 figure 파일 규칙 |
 | `build/root.{pdf,aux,bbl,blg,log}` | LaTeX 생성 결과와 빌드 로그. 원본이 아닌 재생성 가능 파일 |
 
-## 12. 생성·캐시·도구 폴더
+## 13. 생성·캐시·도구 폴더
 
 | 경로/패턴 | 의미와 처리 |
 |---|---|
