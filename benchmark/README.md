@@ -137,6 +137,21 @@ python -m benchmark report \
   --output benchmark/results/flat-grid-summary.csv
 ```
 
+### Compact simulation media
+
+Capture the paper-facing flat A/B/C, 200 mm stair A/B/C, Walk/Roll
+transitions, and one reproducible uneven-terrain sensitivity example. Use
+`mjpython` on macOS so MuJoCo owns the graphics context on the main thread.
+
+```bash
+mjpython -m benchmark capture --suite all
+```
+
+The default output is `archive/simulation_media/`: 640x360, 15 fps H.264 MP4
+at CRF 34 plus one progressive JPEG per scene. Frames are streamed directly to
+FFmpeg, so no uncompressed source video is written. `manifest.json` records the
+scene parameters, outcomes, frame counts, durations, and file sizes.
+
 ## Recorded flat/transition metrics
 
 - body-frame displacement, average `vx/vy`, yaw change and tracking RMSE;

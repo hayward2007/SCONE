@@ -1,39 +1,191 @@
-\section{MULTIMODAL LOCOMOTION AND CONTROL}
+\section{\gaitname{}: SIMULTANEOUS WALKING AND ARC ROTATION}
 
-\subsection{Walking}
+The design goal is a single controller in which the tripod walking motion and
+the continuous rotation of the distal arcs run \emph{at the same time} on the
+same six joints, rather than a mode switch between a walking machine and a
+driving machine. Section~\ref{sub:tripod} defines the bounded reference shared by
+every condition, Sec.~\ref{sub:superpose} defines the controller that produced
+the results in Sec.~\ref{sec:results}, and Sec.~\ref{sub:gate} states a
+phase-gated variant of the same idea together with the properties it guarantees.
 
-Walking uses alternating tripods. One tripod supports the body while the other is
-lifted and advanced; the roles are then exchanged. The final paper must report
-joint trajectories in radians rather than raw Dynamixel counts, together with
-the policy or state machine that sets phase, stride, and body height.
+\subsection{Alternating-Tripod Reference}\label{sub:tripod}
 
-\subsection{Quasi-Rolling}
+Tripods $\mathcal{T}_A=\{1,4,5\}$ and $\mathcal{T}_B=\{2,3,6\}$ have offsets
+$\delta_i\in\{0,1/2\}$. With cycle frequency $f$ and duty factor $D$, the leg
+phase is
+\begin{equation}
+ \phi_i(t)=(ft+\delta_i)\bmod 1.                               \label{eq:phase}
+\end{equation}
+At nominal foot position $\vect{p}_{i0}=[x_i,y_i,z_i]^\top$, the planar velocity
+induced by the commanded body twist and the resulting stance stroke are
+\begin{equation}
+ \vect{u}_i=\begin{bmatrix}v_x-\omega_zy_i\\v_y+\omega_zx_i\end{bmatrix},
+ \quad \vect{s}_i=D\vect{u}_i/f.                              \label{eq:stroke}
+\end{equation}
+The elliptical workspace projection $\vect{s}_i\leftarrow\vect{s}_i/
+\max(1,\|[s_{ix}/s_x^{\max},s_{iy}/s_y^{\max}]\|_2)$ prevents unreachable
+strides. Let $S(a)=10a^3-15a^4+6a^5$ and $H(a)=16a^2(1-a)^2$. The desired contact
+trajectory is
+\begin{equation}
+ \vect{p}_i^\star=\vect{p}_{i0}+\begin{cases}
+ (\tfrac12-\phi_i/D)[\vect{s}_i^\top,0]^\top,&\phi_i<D,\\
+ (S(a)-\tfrac12)[\vect{s}_i^\top,0]^\top+h_fH(a)\vect{e}_z,&\phi_i\ge D,
+ \end{cases}                                                   \label{eq:foot}
+\end{equation}
+where $a=(\phi_i-D)/(1-D)$. Damped numerical inverse kinematics maps the six
+targets to the bounded 18-joint reference $\vect{q}^{\rm ref}$. Two parameter
+sets of (\ref{eq:phase})--(\ref{eq:foot}) are used and are reported here because
+they are not identical: the walking condition uses
+$(f,D,h_f,s_x^{\max},s_y^{\max})=(1.0\,\mathrm{Hz},0.50,25,90,70\,\mathrm{mm})$
+and the rolling conditions use $(0.8\,\mathrm{Hz},0.58,20,55,45\,\mathrm{mm})$,
+the smaller stroke reflecting that rotation, not stride, is expected to carry
+most of the displacement.
 
-For flat-ground transport, the six arc-shaped distal links are aligned into two
-longitudinal groups and commanded in velocity mode. Their staggered contact
-phases approximate continuous rolling support even though each distal link is an
-open arc rather than a complete wheel. Direction changes are produced by
-differential left-right velocity commands.
+\subsection{Superposed Rotation on Velocity-Mode Distal Joints}\label{sub:superpose}
 
-\subsection{Stair Climbing}
+Joints $1$--$12$ track $\vect{q}^{\rm ref}$ in position mode. The six distal
+joints are switched to velocity mode, which removes the one-turn bound, and are
+commanded as the sum of a continuous rolling term and the differentiated
+walking reference,
+\begin{equation}
+ \dot q_{d,i}=\underbrace{\dot\theta_i^{\rm roll}}_{\text{transport}}
+ +\lambda\underbrace{\Delta q^{\rm ref}_{d,i}/\Delta t}_{\text{walking}},
+ \qquad \lambda=0.35,                                          \label{eq:superpose}
+\end{equation}
+which is the concrete form of ``walk and rotate at once'': neither term is gated
+off by the other. Let the normalized command activity be
+\begin{equation}
+ \alpha(\vect{c})=\operatorname{clip}\!\left(\max_j
+ \frac{|c_j|}{c_j^{\max}},0,1\right),\quad
+ \vect{c}^{\max}=[0.18,0.12,0.9],                              \label{eq:activity}
+\end{equation}
+and let the stance/swing rate ratio be the two-level function
+\begin{equation}
+ \kappa_i(\phi_i)=\begin{cases}
+ \kappa_{\rm st}=0.80,& i\in\text{stance},\\
+ 1,& i\in\text{swing}.\end{cases}                              \label{eq:kappa}
+\end{equation}
+With polarity $\sigma_i\in\{-1,1\}$ and alignment $A_i\in[0,1]$ obtained from a
+finite-difference contact tangent $\vect{t}_i=\partial\vect{p}_{c,i}/\partial
+q_{d,i}$ measured on the mesh,
+\begin{equation}
+ A_i=\max\!\left(0,\;\hat{\vect{t}}_i^\top
+ \frac{-\vect{u}_i}{\|\vect{u}_i\|}\right),                    \label{eq:align}
+\end{equation}
+the unfiltered rolling rate and its first-order realization are
+\begin{align}
+ \omega_i^{\rm cmd}&=-\sigma_i\,\omega_0\,\alpha(\vect{c})\,A_i\,\kappa_i,
+ \quad \omega_0=4.20\,\mathrm{rad/s},                          \label{eq:rollcmd}\\
+ \dot\theta_i^{\rm roll}&\leftarrow\dot\theta_i^{\rm roll}
+ +\bigl(1-e^{-\Delta t/\tau_r}\bigr)
+ \bigl(\omega_i^{\rm cmd}-\dot\theta_i^{\rm roll}\bigr),       \label{eq:rolllpf}
+\end{align}
+with $\tau_r=0.10\,$s. The walking term of (\ref{eq:superpose}) is clipped to
+$\pm110^\circ/$s and low-pass filtered with $\tau_b=0.04\,$s so that an inverse
+kinematics branch change cannot appear as a rate spike. At start-up the three
+tripod-B arcs are staggered by $60^\circ$; without this offset all six openings
+can face the ground simultaneously and the body drops.
 
-During stair ascent, the arcs engage successive stair edges while proximal joints
-adjust the front and rear body height. The controller permits a phase offset
-between front and rear legs so the robot can accommodate tread spacing that does
-not exactly match the nominal leg spacing.
+The consequence that matters for Sec.~\ref{sec:results} is that
+(\ref{eq:rollcmd}) is an \emph{activity-scaled} rate, not a no-slip rate. The
+commanded contact speed during stance is
+\begin{equation}
+ v_c=r_o\,\omega_0\,\alpha\,\kappa_{\rm st}
+   =0.411\ \mathrm{m\,s^{-1}}\quad\text{at }\alpha=1,          \label{eq:contactspeed}
+\end{equation}
+so whenever the body advances more slowly than $v_c$ the difference must appear
+as measured contact slip,
+\begin{equation}
+ D_{\rm slip}\approx\int_0^T\bigl|v_c-\|\vect{v}_{xy}(t)\|\bigr|\,dt.
+                                                               \label{eq:slippredict}
+\end{equation}
+Section~\ref{sec:results} uses (\ref{eq:slippredict}) as a check rather than as a
+claim.
 
-\subsection{Mode Transitions}
+\subsection{Phase-Gated Multi-Turn Variant}\label{sub:gate}
 
-\begin{figure}[t]
-  \centering
-  \fbox{\parbox[c][27mm][c]{0.92\columnwidth}{\centering
-    Final Fig.~3: state diagram for walk $\leftrightarrow$ roll
-    $\leftrightarrow$ climb, including transition guards and times.}}
-  \caption{Mode-transition controller. Each transition is executed without
-  mechanical reconfiguration or external handling.}
-  \label{fig:mode-transition}
-\end{figure}
+Replacing the two-level ratio $\kappa_i$ of (\ref{eq:kappa}) by a smooth gate
+lets the arc be held still while it first accepts load. For stance progress
+$p=\phi_i/D$, swing progress $a$, point-support ratio $\rho=0.55$ and swing hold
+ratio $\nu=0.70$, define
+\begin{equation}
+ g_i=\begin{cases}
+ 0,&p\le\rho,\\ S\!\left(\frac{p-\rho}{1-\rho}\right),&\rho<p\le1,\\
+ 1,&a\le\nu,\\1-S\!\left(\frac{a-\nu}{1-\nu}\right),&a>\nu,
+ \end{cases}                                                   \label{eq:rollgate}
+\end{equation}
+and drive the arc at the no-slip rate rather than a fixed rate,
+\begin{align}
+ \dot\Theta_i^{\rm ideal}&=\min\!\left(\frac{\|\vect{u}_i\|_2}{r_o},
+ \dot\Theta_{\max}\right),                                     \label{eq:rollrate}\\
+ \Theta_{i,k+1}&=\Theta_{i,k}-\sigma_iA_i g_i
+ \dot\Theta_i^{\rm ideal}\Delta t,\quad
+ q_{d,i}^\star=q_{{\rm IK},d,i}^\star+\Theta_i.                \label{eq:accumulate}
+\end{align}
+Because $S(0)=S'(0)=S''(0)=0$ and $S(1)=1$, $S'(1)=S''(1)=0$, the four branches
+of (\ref{eq:rollgate}) join with matching value, slope and curvature, so
+$g_i\in C^2$ and the commanded arc acceleration is continuous at every gate
+boundary. Two further properties follow directly from the parameters. First,
+each arc is stationary for the first $55\%$ of its stance, so the patch that
+accepts load does not move while it does so. Second, with the deployment duty factor $D=0.60$ and offsets
+$\{0,\tfrac12\}$ the propulsive windows of the two tripods are
+$(\rho D,D)=(0.33,0.60)$ and $(0.83,1.10)\bmod 1$, which are disjoint: the two
+tripods never rotate under load simultaneously. Averaging (\ref{eq:rollgate})
+over one cycle gives the closed form
+\begin{equation}
+ \bar g=\frac{D(1-\rho)}{2}+\frac{(1-D)(1+\nu)}{2}
+ \;\overset{D=0.60}{=}\;0.475,                                 \label{eq:meangate}
+\end{equation}
+so a gated arc delivers only the fraction $\bar g$ of the commanded displacement
+and the remainder must come from articulation. This variant is implemented and
+exercised by unit tests, but the benchmark of Sec.~\ref{sec:results} uses
+(\ref{eq:superpose})--(\ref{eq:rolllpf}); (\ref{eq:rollgate})--(\ref{eq:meangate})
+are stated here as the analysed design and are not evidence for any reported
+number.
 
-\draftnote{Document the actual control frequency, interpolation, velocity limits,
-current/torque limits, and emergency stop. If reinforcement learning is not used
-in the reported experiments, do not add it merely as a future-looking method.}
+\begin{figure*}[t]
+\centering\includegraphics[width=0.96\textwidth]{control_architecture.pdf}
+\caption{Control paths. Joints 1--12 track the bounded tripod reference in
+position mode while joints 13--18 run in velocity mode and add continuous arc
+rotation to the differentiated reference, so walking and rotation are commanded
+at the same instant. The residual policy and its speed blend belong to the
+deployment stack and are inactive in the reported benchmark.}
+\label{fig:control}
+\end{figure*}
+
+\subsection{Residual Policy and Speed Blend (Deployment Stack)}\label{sub:residual}
+
+For completeness we state the low-speed supervisor used by the interactive
+deployment stack. Residual learning augments a structured reference rather than
+relearning the contact schedule \cite{johannink2019residual,silver2018residual}.
+The 70-D observation contains body linear/angular velocity, projected gravity,
+18 joint positions, 18 joint velocities, the previous 18-D action, the command,
+and phase and heading-error sine/cosine pairs; PPO optimizes the clipped
+surrogate \cite{schulman2017ppo}
+\begin{equation}
+ L^{\rm clip}=\mathbb{E}_t\!\left[\min(r_t\hat A_t,
+ \operatorname{clip}(r_t,1-\epsilon,1+\epsilon)\hat A_t)\right]. \label{eq:ppo}
+\end{equation}
+At replay a smoothstep in translation speed $v=\|\vect{v}_{xy}\|$ hands authority
+from the policy to the analytical reference,
+\begin{align}
+ u&=\operatorname{clip}\!\left(\frac{v-v_0}{v_1-v_0},0,1\right),\quad
+ \beta(v)=3u^2-2u^3,                                           \label{eq:blend}\\
+ \vect{q}^\star&=(1-\beta)\vect{q}_{\rm ref}+\beta\vect{q}_{\rm arc}\nonumber\\
+ &\quad+(1-\beta)\,\vect{s}_a\odot\vect{a}_{\rm PPO},           \label{eq:finaltarget}
+\end{align}
+with $(v_0,v_1)=(0.10,0.18)\,$m/s. We state explicitly that $\beta(v_1)=1$:
+at the $0.18\,\mathrm{m\,s^{-1}}$ command used throughout Sec.~\ref{sec:results}
+the residual term vanishes, and the benchmark controllers do not instantiate the
+policy at all. The residual is therefore not offered as evidence in this paper;
+it is reported because it defines the low-speed regime that the analytical
+controller does not cover.
+
+\subsection{Stair State Sequence}
+
+The stair controller executes Walk$\rightarrow$Drive$\rightarrow$Climb,
+verifies each settled pose, braces the front middle joints, and then synchronizes
+the six distal phases. A geometry-conditioned brace uses $180^\circ$, $184^\circ$,
+or $195^\circ$ over increasing riser bands. This is a deterministic supervisor
+that is given the stair dimensions; it performs no terrain perception and no
+foothold search.

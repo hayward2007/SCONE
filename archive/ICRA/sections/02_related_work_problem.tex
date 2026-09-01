@@ -1,60 +1,99 @@
 \section{RELATED WORK AND PROBLEM FORMULATION}
 
-\subsection{Rotating-Leg and Hybrid Hexapods}
+\subsection{Rotating Legs and Wheeled Legs}
 
-RHex demonstrates that six continuously rotating compliant legs can yield robust
-mobility with a mechanically simple, open-loop gait
-\cite{saranli2001rhex}. Q-Whex extends the quasi-wheeled rotating-leg design space
-\cite{zhang2023qwhex}. At the other end of the spectrum, Cassino Hexapod III uses
-articulated legs with omni-wheels at their distal ends to combine legged and
-wheeled motion \cite{tedeschi2017cassino}. These systems establish that rotating
-legs, articulated legs, and distal wheels each provide useful mobility, but they
-make different choices about contact geometry, actuation, and control authority.
+RHex showed that one continuously rotating compliant leg per hip can combine
+mechanical simplicity with rugged mobility under a clock-driven tripod gait
+\cite{saranli2001rhex,altendorfer2001rhex}, and the X-RHex family carried that
+morphology into a research platform \cite{galloway2010xrhex}. Whegs abstracted
+compliant, multi-spoke appendages and coupled propulsion to reduce actuator
+count \cite{quinn2002whegs}; Q-Whex later used quasi-wheels and reported stair
+climbing with geometry-dependent phase patterns \cite{zhang2023qwhex}. The
+half-circle RHex leg is the closest prior morphology to ours and the distinction
+must be stated precisely: an RHex leg is a compliant C driven by a single hip
+rotation, so its contact point and the body pose are determined by the same
+input. Our C is the third joint of a 3-DoF leg, so the leg can hold the arc
+still, place it, or spin it while the body is posed independently, and it is
+this separation---not the C shape---that the ablation of Sec.~\ref{sec:results}
+tests.
 
-\draftnote{Add Whegs/ASGUARD, transformable wheel-leg robots, recent stair-climbing
-hexapods, and the closest paper using an actuated arc at a multi-DoF leg tip. Use
-primary papers only.}
+A second family transforms the mechanism itself. Wheel Transformer deploys
+passive spokes when a wheel meets an obstacle \cite{kim2014wheeltransformer},
+while Quattroped and TurboQuad change a leg into a wheel with a dedicated
+transformation degree of freedom \cite{chen2014quattroped,chen2017turboquad}.
+These recover both regimes at the cost of a transformation mechanism and its
+actuation. A third family keeps a wheel drive alongside a full leg: Cassino
+Hexapod III places omni-wheels at anthropomorphic leg tips
+\cite{tedeschi2017cassino}, ANYmal on Wheels integrates wheel constraints into
+whole-body optimization \cite{bjelonic2019keep,bjelonic2021wholebody,hutter2016anymal},
+and two-wheeled jumpers exploit the same separation in a smaller footprint
+\cite{klemm2019ascento}. They demonstrate the value of simultaneous wheel and leg
+control, but retain a wheel drive in addition to the leg chain. Our design does
+not claim that hybrid locomotion is new. The distinction tested here is
+\emph{actuator and contact reuse}: the distal leg joint itself produces the foot
+trajectory, the rolling motion, and the edge engagement of one incomplete arc,
+with no transformation state and no additional drive.
 
-\subsection{Problem Definition}
+Learned controllers have become the standard way to obtain robust legged
+locomotion \cite{hwangbo2019learning,lee2020learning,miki2022learning,rudin2022minutes},
+and residual formulations keep a structured reference while learning only a
+correction \cite{johannink2019residual,silver2018residual}. We use a residual
+policy only in the low-speed regime of the deployment stack and, as
+Sec.~\ref{sub:residual} makes explicit, it is inactive at the operating point of
+every experiment reported here.
 
-Let the commanded locomotion mode be
-$m \in \{\mathrm{walk},\mathrm{roll},\mathrm{climb}\}$. The design objective is
-to realize all three modes with one distal mechanism and no hardware
-reconfiguration. Let $v$ denote forward speed, $p_s$ traversal success rate,
-$E_d$ electrical energy per traveled distance, and $h_s$ stair riser height. The
-experimental question is not whether each mode can be demonstrated in isolation,
-but whether the shared mechanism produces a useful operating envelope:
+\subsection{Operating-Envelope Problem}
+
+Let the body command be
 \begin{equation}
-  \mathcal{O} = \{v_{\mathrm{walk}}, v_{\mathrm{roll}}, p_s(h_s), E_d,
-  t_{\mathrm{transition}}\}.
-  \label{eq:operating-envelope}
+  \vect{c}=[v_x,\;v_y,\;\omega_z]^\top\in\mathcal{C},
+  \qquad m\in\{W,R,C\},                                      \label{eq:command}
 \end{equation}
+for walking, rolling, and climbing. Let $\vect{q}\in\R^{18}$ be the actuated
+joint vector and $\Gamma_i$ the active contact subset of distal arc $i$. The
+design seeks one morphology $\mathcal{M}$ and mode-dependent control laws
+$\pi_m$ rather than a transformed mechanism $\mathcal{M}_m$:
+\begin{equation}
+ \vect{q}^{\star}_{k}=\pi_m(\vect{x}_k,\vect{c}_k;\mathcal{M}),
+ \quad \mathcal{M}_W=\mathcal{M}_R=\mathcal{M}_C.             \label{eq:reuse}
+\end{equation}
+The relevant outcome is an operating envelope, not a single maximum speed,
+\begin{equation}
+ \mathcal{O}=\{\bar v_x, e_v, C_{\rm mt},D_{\rm slip},
+ P_{\rm top}(h,d),t_{\rm top},t_{\rm switch}\},              \label{eq:envelope}
+\end{equation}
+where $h,d$ are riser and tread dimensions. We test three hypotheses.
+H1: coordinated rolling reaches a higher mean forward speed than either walking
+or distal-only rotation on the same model. H1 is deliberately stated as speed and
+not as command tracking, because a controller that overshoots a fixed command
+scores worse on $e_v$ while travelling faster; both quantities are reported
+separately in Sec.~\ref{sec:results}. H2: coordinated articulation expands the
+climbable stair set beyond the geometric limit of arc rotation alone.
+H3: mode switching does not violate a $60^\circ$ tilt bound.
 
-The proposed design is considered successful only if (i) rolling is measurably
-faster or more energy-efficient than walking on a common surface, (ii) the robot
-ascends the target staircase repeatedly under onboard power, and (iii) its full
-articulation provides a measurable stair-climbing advantage over a restricted
-distal-only condition.
+We also define the qualitative column of Table~\ref{tab:related}. Let $J_i$ map
+leg $i$'s joint rates to the pair (tangential advance of the contact patch along
+the distal surface, position of that contact relative to the body). Authority is
+\emph{coupled} when $\operatorname{rank}J_i=1$, so that one input fixes both;
+\emph{separated} when a dedicated drive makes the two independent at the cost of
+an extra actuator; and \emph{partly separated} when, as here, three leg joints
+can choose the pair over a bounded set but the distal joint is shared between
+them.
 
 \begin{table}[t]
-  \caption{Required related-work comparison dimensions}
-  \label{tab:related-work}
-  \centering
-  \small
-  \resizebox{\columnwidth}{!}{%
-  \begin{tabular}{lcccc}
-    \toprule
-    Platform & Leg DoF & Distal form & Flat mode & Stairs \\
-    \midrule
-    RHex & 1 & compliant arc & rotating leg & reported \\
-    Q-Whex & 1 & quasi-wheel & quasi-rolling & reported \\
-    Cassino III & multi & omni-wheel & wheeled & steps \\
-    Proposed & 3 & actuated arc & quasi-rolling & tested \\
-    \bottomrule
-  \end{tabular}
-  }
+\caption{Morphological position of the proposed platform}
+\label{tab:related}
+\centering\small
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lcccc}
+\toprule
+Platform & leg actuation & rolling element & extra wheel drive & body/contact authority\\
+\midrule
+RHex \cite{saranli2001rhex} & 1/leg & compliant arc & no & coupled\\
+Whegs I \cite{quinn2002whegs} & coupled & 3-spoke wheg & shared & coupled\\
+Q-Whex \cite{zhang2023qwhex} & 1/leg & quasi-wheel & no & coupled\\
+Cassino III \cite{tedeschi2017cassino} & articulated & omni-wheel & yes & separated\\
+Proposed & 3/leg & open distal arc & no & partly separated\\
+\bottomrule
+\end{tabular}}
 \end{table}
-
-\draftnote{Replace qualitative entries with source-backed specifications and add
-columns for actuator count, body-pose authority, transformation hardware, and
-normalized obstacle height.}

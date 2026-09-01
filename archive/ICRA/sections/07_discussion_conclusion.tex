@@ -1,27 +1,55 @@
 \section{DISCUSSION}
 
-The discussion should distinguish demonstrated capability from causal evidence.
-The historical v1--v2 comparison documents an engineering evolution, whereas the
-same-hardware restrictions isolate the effect of the shared arc-leg morphology.
-Interpret results relative to RHex-like rotating legs, articulated hexapods, and
-distal-wheel hexapods without claiming that hybrid locomotion itself is new.
+The experiments answer a more precise question than ``can a hybrid robot walk
+and drive.'' Using the closed-wheel bound (\ref{eq:riserlimit}) as a reference
+line, the three stair outcomes decompose the climbing capability of one distal
+link into three contributions: a rim pivot below $122.5\,$mm that any wheel of
+the same radius would also provide; an edge hook that carried a $150\,$mm riser
+with no articulation at all, which is attributable to the $135^\circ$ opening;
+and body elevation by the other two leg joints, without which the $200\,$mm
+riser was not climbed by any restriction. On flat ground the picture is the
+mirror image: rotation alone was slower and more expensive than walking, and the
+speed gain appeared only when rotation and posture were commanded together. Taken
+together these support contact reuse as the contribution---a foot, a quasi-wheel
+and an edge hook are three control regimes of one link rather than three
+installed mechanisms---and they locate where each regime stops being sufficient.
 
-Expected limitations include open-loop dependence on stair geometry, limited
-ground clearance in quasi-rolling mode, actuator thermal limits, and sensitivity
-to tread friction. Claims about ``most stairs,'' outdoor robustness, payload, or
-energy efficiency must be bounded by the actual tested range.
+The costs are equally explicit. Rolling produced $6.23\times$ the slip and
+$3.18\times$ the mechanical work of walking, and (\ref{eq:contactspeed}) shows
+why: the executed controller commands an activity-scaled surface speed rather
+than the no-slip speed, so roughly half of the commanded surface motion is
+dissipated at the contact. The present model therefore supports a speed
+trade-off, not an energy-efficiency claim. The phase-gated variant of
+Sec.~\ref{sub:gate} targets exactly this term, and its duty-averaged transport
+fraction (\ref{eq:meangate}) predicts that it trades some of the speed back for
+the slip it removes; testing that prediction is the immediate next experiment.
+
+Four limitations bound how far these results generalize. First, the evidence is
+a deterministic simulation: TPU compliance and friction, polymer infill mass,
+gearbox efficiency, backlash, thermal limits and battery sag are approximated,
+and the modeled mass remains a parameter until the assembled robot is weighed.
+Second, the nominal conditions are single trials, so the reported differences
+order the three regimes on one model but carry no confidence intervals. Third,
+the restrictions are not tuned against each other: the walking and rolling
+conditions use different cycle frequencies and stroke limits
+(Sec.~\ref{sub:tripod}), so the comparison is between regimes rather than
+between best-tuned controllers. Fourth, the hook interpretation of the
+$150\,$mm result is inferred from geometry and from the absence of articulation
+in that condition; a same-radius closed-wheel control, which the present model
+does not include, would settle it directly. The stair supervisor is also given
+its geometry and performs no perception or foothold search.
 
 \section{CONCLUSION}
 
-This paper studies a hexapod morphology in which one actuated arc-shaped distal
-link serves as a walking foot, quasi-wheel, and stair-edge engagement mechanism.
-The final conclusion will state only the verified operating envelope and the
-measured trade-offs among the three modes.
-
-\draftnote{Replace the second sentence with three numerical findings and one
-clear limitation. Keep future reinforcement-learning work to one sentence at
-most unless it is part of the evaluated contribution.}
-
-% IEEE RAS double-anonymous rules require people/funding acknowledgments to be
-% omitted during review. Add acknowledgments and any required AI-use disclosure
-% only in the submission form/version required by the conference policy.
+We presented an 18-actuator hexapod whose six open arc-shaped distal links are
+reused for planted support, rolling contact and stair-edge engagement, together
+with a controller that commands tripod walking and continuous arc rotation on
+the same joints at the same instant. In deterministic MuJoCo trials the
+coordinated controller reached $0.200\,\mathrm{m\,s^{-1}}$ where articulated
+walking reached $0.117\,\mathrm{m\,s^{-1}}$; its analytical contact-speed model
+predicted the measured slip to within $4.2\%$; and the three stair outcomes
+separated rim pivoting, edge hooking and articulated elevation against a
+closed-wheel bound of $122.5\,$mm. Guarded mode switches stayed upright and
+completed in under $0.7\,$s. These results establish a simulation operating
+envelope and a falsifiable physical test plan. They do not yet validate physical
+speed, endurance, energy efficiency or stair reliability.

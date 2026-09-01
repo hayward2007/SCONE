@@ -12,7 +12,14 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="SCONE paper benchmarks")
     parser.add_argument(
         "suite",
-        choices=("flat", "stairs", "robustness", "transitions", "report"),
+        choices=(
+            "flat",
+            "stairs",
+            "robustness",
+            "transitions",
+            "report",
+            "capture",
+        ),
     )
     if not arguments or arguments[0] in ("-h", "--help"):
         parser.parse_args(arguments)
@@ -27,6 +34,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         from .robustness import main as run
     elif args.suite == "transitions":
         from .transitions import main as run
+    elif args.suite == "capture":
+        from .capture import main as run
     else:
         from .report import main as run
     return run(remaining)

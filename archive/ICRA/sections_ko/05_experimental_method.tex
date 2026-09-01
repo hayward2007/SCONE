@@ -1,0 +1,61 @@
+\section{실험 방법}
+
+\subsection{재현 가능한 시뮬레이션 프로토콜}
+
+실험은 MuJoCo \cite{todorov2012mujoco}에서 $2\,$ms 적분과 $20\,$ms 제어로
+수행한다. 모든 trial은 새로운 floating-base 모델과 제어기를 생성한다. 평지 공칭
+시험은 $1\,$s 안정화 후 $\vect{c}=[0.18,0,0]$에서 $6\,$s를 측정한다. 동일 모델
+세 제한 조건은 다음과 같다.
+\begin{itemize}\itemsep2pt
+ \item[A] 관절 삼각보 보행. 말단은 위치 모드이며
+ (\ref{eq:superpose-ko})의 연속 구름 항을 제거한다.
+ \item[B] 말단 단독 회전. 말단은 속도 모드에서 (\ref{eq:rollcmd-ko})으로 구동되고
+ 몸체와 근위 목표는 엇갈린 stance 자세로 고정한다.
+ \item[C] \ref{sub:superpose-ko}절의 전체 제어기. (\ref{eq:superpose-ko})의 두 항이
+ 동시에 활성이다.
+\end{itemize}
+따라서 세 제한은 변경되지 않은 하나의 모델에서 제어 권한만 분리한다.
+\ref{sub:tripod-ko}절에서 따라오는 두 가지 단서는 결과보다 앞에 밝힌다. A와 C는
+보행 파라미터 집합을 공유하지 않으며($1.0\,$Hz, $D=0.50$, $90\,$mm 스트로크 대
+$0.8\,$Hz, $D=0.58$, $55\,$mm 스트로크), (\ref{eq:rollcmd-ko})의 회전 속도는 조건별
+튜닝이 아니라 정규화 명령 활성도로만 조절된다. 어느 조건도 최대 속도를 위해
+개별 최적화하지 않았으므로, 이 비교는 하나의 모델에서 세 체계의 정성적 순서를
+확립할 뿐 각 체계가 도달 가능한 최고 속도를 말하지 않는다.
+
+계단은 $(h,d)=(0.10,0.24)$, $(0.15,0.20)$, $(0.20,0.35)\,$m인 3단 계단 세 종류다.
+$d$는 최소 디딤폭이다. 전략은 모든 비호 관절을 고정한 채 여섯 호를 하나의 일정
+속도로 회전시켜 관절 운동을 전혀 쓰지 않는 말단 단독 회전, 고정 전방 brace를 갖는
+동기화 open-loop, 그리고 기하 조건부 전체 제어기다. 상단 landing 도달을 성공으로
+정의한다. 전환 시험은 첫 모드 변경 명령부터 모든 guard 조건이 충족될 때까지의
+시간을 측정하고 이후 $2\,$s 회복 구간을 둔다. 불규칙 지형 smoke test는 3개 seed와
+$2\,$s 구간으로 실행 여부만 확인하며 출판 수준의 강건성을 확인하지 않는다.
+
+\subsection{평가 지표}
+
+몸체 좌표계 속도 추종 오차와 접촉 미끄럼 누적은
+\begin{align}
+ e_v&=\sqrt{\frac1T\int_0^T\|\vect{v}_{xy}(t)-\vect{c}_{xy}\|_2^2dt}, \label{eq:rmse-ko}\\
+ D_{\rm slip}&=\int_0^T\frac1{|\mathcal{K}(t)|}
+ \sum_{k\in\mathcal{K}(t)}\|\vect{v}_{c,k}^{\parallel}(t)\|_2dt        \label{eq:slip-ko}
+\end{align}
+이다. $\mathcal{K}$는 $1\,$N 이상, 즉 모델 자중의 약 $2.5\%$ 이상을 지지하는
+호--지면 접촉이다. $e_v$는 일정 명령에 대해 측정하므로 명령을 초과하는 제어기는
+불리하게 평가된다. 따라서 $\bar v_x$와 $e_v$는 함께 읽어야 한다. 절대 기계일과
+mechanical cost of transport는
+\begin{equation}
+ W_{\rm abs}=\int_0^T\sum_{j=1}^{18}|\tau_j\dot q_j|dt,
+ \qquad C_{\rm mt}=\frac{W_{\rm abs}}{mgd_{xy}}                \label{eq:cot-ko}
+\end{equation}
+이며 $d_{xy}$는 순 평면 변위다. 전기 에너지 추정치는
+$I_j=(V_j-K_j\dot q_j)/R_j$와 $E_e=\int\sum_j|V_jI_j|dt$를 사용한다. 전원 변환
+손실과 서보 전자 회로가 없으므로 $E_e$는 실물 배터리 에너지가 아니라 진단값이다.
+직립도는 $u_z=\vect{e}_z^\top R_{WB}\vect{e}_z$이며 $\cos60^\circ$ 아래 또는 비유한
+상태에서 종료한다.
+
+\subsection{증거의 범위}
+
+모든 trial은 소스 revision, seed, 모델 스케일 인자를 담은 기록을 남기므로 보고된
+각 수치는 그것을 만든 설정으로 추적된다. 평지, 계단, 전환의 공칭 조건은 결정론적
+단일 시행이고 불규칙 지형은 3개 seed를 사용한다. 이는 재현과 절제 순서를
+뒷받침하며 신뢰구간을 뒷받침하지 않는다. 본 논문의 어떤 표, 그림, 결론에도 실물
+측정값은 들어가지 않는다.

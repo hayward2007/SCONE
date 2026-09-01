@@ -322,6 +322,21 @@ Roll→Walk 평균 속도가 낮은 것은 18관절 pose 재획득 시간이 전
 이 파일들은 개발 중 pipeline 확인용이며 `benchmark/results/` 아래에서 Git에
 추적하지 않는다.
 
+### 7.6 저용량 시뮬레이션 영상과 사진
+
+평지 A/B/C 3개, 200 mm 계단 A/B/C 3개, Walk↔Roll 전환 2개, 고정
+perturbation 불규칙 지형 A/B/C 3개를 동일한 캡처 설정으로 저장한다.
+
+```bash
+mjpython -m benchmark capture --suite all
+```
+
+기본값은 640×360, 15 fps, H.264 CRF 34와 JPEG quality 72다. frame은 FFmpeg
+stdin으로 직접 전달하므로 무압축 중간 영상은 남지 않는다. 파일과 장면별 결과는
+[`archive/simulation_media/README.md`](../archive/simulation_media/README.md)와
+[`manifest.json`](../archive/simulation_media/manifest.json)에 기록한다. 영상은
+화면상 동작 확인 자료이며 정량 성능값은 원본 JSONL을 우선한다.
+
 ## 8. 통계 처리
 
 `benchmark report`는 기본적으로 `benchmark`, `controller`, `command_name`으로
@@ -342,7 +357,7 @@ Roll→Walk 평균 속도가 낮은 것은 18관절 pose 재획득 시간이 전
 |---|---|
 | `compileall` | 통과 |
 | 벤치마크 단위 테스트 | 5/5 통과 |
-| 전체 프로젝트 회귀 테스트 | 142/142 통과, 약 21.5초 |
+| 전체 프로젝트 회귀 테스트 | 143/143 통과, 약 20.7초 |
 | `git diff --check` | 통과 |
 | JSONL→CSV report | 평지 3그룹, 계단 9그룹, 강건성 3그룹, 전환 2그룹 생성 |
 | Ruff 정적 검사 | 현재 Python 환경에 Ruff가 설치되지 않아 실행하지 못함 |

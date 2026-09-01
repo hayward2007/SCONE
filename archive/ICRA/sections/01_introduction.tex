@@ -1,48 +1,62 @@
 \section{INTRODUCTION}
 
-Fast flat-ground transport and obstacle negotiation impose different mechanical
-requirements. Wheels provide continuous contact and efficient rolling, but their
-obstacle capability is limited by geometry. Articulated legs can place contacts
-and reposition the body, but generally require more actuators, gait coordination,
-and time per unit distance. Hybrid platforms therefore face a design question:
-how can one robot retain fast transport while crossing stairs without adding a
-dedicated wheel drive or a separate transformation mechanism?
+Level-ground speed and discontinuous-terrain mobility reward different contact
+mechanics. A wheel preserves a rolling constraint and avoids repeated foot
+placement; an articulated leg can place a contact and move the body relative to
+that contact. Hybrid robots often carry both a leg and a driven wheel
+\cite{tedeschi2017cassino,bjelonic2019keep}. This increases capability, but the
+wheel remains a dedicated subsystem. At the opposite extreme, rotating-leg
+robots obtain impressive intrinsic mobility from few actuators
+\cite{saranli2001rhex,quinn2002whegs,zhang2023qwhex}, but their contact path and
+body motion are strongly coupled.
 
-This paper investigates that question through \robotname{}, shown schematically
-in Fig.~\ref{fig:teaser}. Each of its six three-actuator legs terminates in an
-actuated arc-shaped distal link. Adjacent arcs can provide approximately
-continuous rolling support on flat ground, while the open arc and articulated
-leg joints remain available for walking and stair-edge engagement.
+We ask a narrower mechanical question: \emph{can the last actuated link of a
+fully articulated hexapod be shaped so that the same joint and contact surface
+support foot placement, rolling transport, and stair-edge engagement?} The
+resulting platform has 18 actuators---three per leg---and an open, C-shaped TPU
+arc as each distal link (Fig.~\ref{fig:teaser}). No wheel is deployed and no
+hardware transforms between modes. Instead, the contact interpretation changes:
+the lowest arc patch is held stationary during walking, the patch advances
+around the arc during rolling, and an arc boundary or tread patch reacts against
+a stair nosing during ascent.
 
 \begin{figure*}[t]
   \centering
-  \fbox{\parbox[c][31mm][c]{0.94\textwidth}{\centering
-    Final Fig.~1: one clean side view of the robot, followed by three frames of
-    battery-powered walking, quasi-rolling, and continuous stair ascent. Include
-    scale and anonymize faces, affiliations, logos, and external links.}}
-  \caption{The proposed morphology uses the same actuated arc-shaped distal
-  links for three locomotion modes. This figure must communicate the complete
-  paper claim before the reader reaches the method section.}
+  \begin{minipage}{0.32\textwidth}\centering
+    \includegraphics[width=\linewidth]{flat_articulated-walk.jpg}\\[-1mm]
+    \small (a) articulated walking
+  \end{minipage}\hfill
+  \begin{minipage}{0.32\textwidth}\centering
+    \includegraphics[width=\linewidth]{flat_full-roll.jpg}\\[-1mm]
+    \small (b) full-body rolling
+  \end{minipage}\hfill
+  \begin{minipage}{0.32\textwidth}\centering
+    \includegraphics[width=\linewidth]{stairs_200mm_full-scone.jpg}\\[-1mm]
+    \small (c) $200$-mm stair simulation
+  \end{minipage}
+  \caption{One actuated C-shaped distal link is reused in three contact regimes.
+  Images are reproducible MuJoCo captures from the benchmark conditions reported
+  in Sec.~\ref{sec:results}; no physical-performance claim is inferred from the
+  renderings.}
   \label{fig:teaser}
 \end{figure*}
 
-The central hypothesis is that the shared distal mechanism can reduce the
-mobility trade-off between a simple rotating-leg robot and a fully articulated
-hexapod. The paper evaluates three claims: (i) the platform can transition among
-walking, quasi-rolling, and stair-climbing configurations without mechanical
-reassembly; (ii) quasi-rolling improves flat-ground transport relative to
-articulated walking on the same hardware; and (iii) coordinated articulation and
-arc engagement improve stair traversal relative to a distal-only configuration.
+This paper contributes: 1) a multifunctional arc--leg morphology with an explicit
+geometric model of its rolling and stair-edge contacts, including a closed-form
+riser bound that no amount of rotation can overcome; 2) \gaitname{}, a controller
+that runs the tripod walking reference and continuous arc rotation
+\emph{simultaneously} on the same six distal joints by superposing a velocity-mode
+rolling rate on the differentiated walking reference, together with a phase-gated
+variant whose smoothness and duty-averaged transport fraction we characterize in
+closed form; and 3) a same-model benchmark with controlled restrictions
+---articulation only, distal rotation only, and the combined controller---in which
+the analytical contact-speed model predicts the measured slip of the rolling
+condition to within $5\%$.
 
-The intended contributions are:
-\begin{itemize}
-  \item an eighteen-actuator hexapod morphology with six multifunctional,
-  actuated arc-shaped distal links;
-  \item a mode-transition and locomotion controller that reuses the same hardware
-  for walking, quasi-rolling, and stair climbing; and
-  \item a controlled experimental comparison using the same platform, including
-  speed, success rate, traversal time, body attitude, and electrical demand.
-\end{itemize}
-
-\draftnote{After all experiments are frozen, rewrite the final paragraph so that
-each contribution ends with one concrete, verified result.}
+The scope of the evidence is stated once, here. All numbers in this paper come
+from a deterministic MuJoCo model; the nominal flat, stair, and transition
+conditions are single trials and the uneven-terrain condition uses three seeds.
+They are sufficient to separate the three control regimes on one model and to
+test the geometric bounds, and they are not sufficient for confidence intervals
+or for any physical performance claim. Physical demonstrations of the platform
+exist but are deliberately excluded from every numerical statement below.

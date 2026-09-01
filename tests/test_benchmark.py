@@ -12,12 +12,20 @@ from benchmark.common import (
     temporary_stair_profile,
     write_records,
 )
+from benchmark.capture import CaptureConfig
 from benchmark.flat import run_flat_trial
 from benchmark.report import summarize_records
 from src.simulation.terrain import STAIR_PRESETS, StairProfile, TerrainType
 
 
 class BenchmarkTests(unittest.TestCase):
+    def test_capture_config_requires_even_h264_dimensions(self) -> None:
+        self.assertEqual(CaptureConfig().width, 640)
+        with self.assertRaises(ValueError):
+            CaptureConfig(width=641)
+        with self.assertRaises(ValueError):
+            CaptureConfig(crf=52)
+
     def test_perturbation_rejects_nonphysical_scales_and_phase(self) -> None:
         with self.assertRaises(ValueError):
             Perturbation(mass_scale=0.0)

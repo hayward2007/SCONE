@@ -187,6 +187,7 @@
 | [`robustness.py`](../benchmark/robustness.py) | model/initial-condition Monte Carlo |
 | [`transitions.py`](../benchmark/transitions.py) | Walk↔Roll 전환 시간과 안정성 측정 |
 | [`report.py`](../benchmark/report.py) | Wilson 성공률 구간과 연속 지표 요약 CSV |
+| [`capture.py`](../benchmark/capture.py) | paper-facing 장면을 저용량 MP4와 JPEG로 offscreen 캡처 |
 | [`README.md`](../benchmark/README.md) | benchmark 실행법과 해석·보존 규칙 |
 | `results/` | JSONL/CSV 생성 결과. 기본 Git 비추적 |
 
@@ -218,6 +219,15 @@
 | `assets/Eco-friendly deliver SCONE Poster.jpg` | 초기 프로젝트 포스터(12000×10000) |
 | `assets/Eco-friendly deliver SCONE Quad Chart.png` | 초기 프로젝트 quad chart(3960×3060) |
 | `assets/SCONEv2 Arc-Shaped Wheel.pdf` | 호형 바퀴 치수 도면. 직경·폭·반경·호각 참고 |
+
+### 시뮬레이션 캡처
+
+| 경로 | 역할 |
+|---|---|
+| [`simulation_media/README.md`](../archive/simulation_media/README.md) | 저용량 benchmark 영상·사진의 생성법과 해석 제한 |
+| `simulation_media/videos/*.mp4` | 평지·계단·전환·불규칙 지형 H.264 영상 |
+| `simulation_media/images/*.jpg` | 각 영상의 최종 대표 frame |
+| `simulation_media/manifest.json` | 장면 조건, 결과, duration, frame 수와 파일 크기 |
 
 ### 논문과 영상
 

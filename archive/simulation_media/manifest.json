@@ -1,0 +1,373 @@
+{
+  "capture_config": {
+    "crf": 34,
+    "fps": 15,
+    "height": 360,
+    "width": 640
+  },
+  "scene_count": 11,
+  "scenes": [
+    {
+      "command": [
+        0.18,
+        0.0,
+        0.0
+      ],
+      "controller": "articulated-walk",
+      "crf": 34,
+      "displacement_body_m": [
+        0.45399037459571345,
+        0.00041934574105667924,
+        0.004394699552125727
+      ],
+      "displacement_world_m": [
+        0.0009272714493222534,
+        0.453989706204018,
+        0.004385919402854516
+      ],
+      "encoded_duration_s": 4.133333333333334,
+      "fps": 15,
+      "frames": 62,
+      "height": 360,
+      "image": "images/flat_articulated-walk.jpg",
+      "image_bytes": 10497,
+      "mean_body_vx_mps": 0.11349759364892836,
+      "perturbation": {
+        "actuator_strength_scale": 1.0,
+        "friction_scale": 1.0,
+        "gait_phase": 0.0,
+        "initial_x_m": 0.0,
+        "initial_y_m": 0.0,
+        "initial_yaw_degrees": 0.0,
+        "mass_scale": 1.0
+      },
+      "scene": "flat_articulated-walk",
+      "simulation_duration_s": 4.0,
+      "suite": "flat",
+      "terrain": "flat",
+      "terrain_seed": 7,
+      "video": "videos/flat_articulated-walk.mp4",
+      "video_bytes": 27920,
+      "width": 640
+    },
+    {
+      "command": [
+        0.18,
+        0.0,
+        0.0
+      ],
+      "controller": "distal-only-roll",
+      "crf": 34,
+      "displacement_body_m": [
+        0.35773249042115085,
+        0.07365838598960416,
+        0.018598327762897396
+      ],
+      "displacement_world_m": [
+        -0.0730153482245316,
+        0.35783285819817634,
+        0.01919361462733704
+      ],
+      "encoded_duration_s": 4.133333333333334,
+      "fps": 15,
+      "frames": 62,
+      "height": 360,
+      "image": "images/flat_distal-only-roll.jpg",
+      "image_bytes": 10276,
+      "mean_body_vx_mps": 0.08943312260528771,
+      "perturbation": {
+        "actuator_strength_scale": 1.0,
+        "friction_scale": 1.0,
+        "gait_phase": 0.0,
+        "initial_x_m": 0.0,
+        "initial_y_m": 0.0,
+        "initial_yaw_degrees": 0.0,
+        "mass_scale": 1.0
+      },
+      "scene": "flat_distal-only-roll",
+      "simulation_duration_s": 4.0,
+      "suite": "flat",
+      "terrain": "flat",
+      "terrain_seed": 7,
+      "video": "videos/flat_distal-only-roll.mp4",
+      "video_bytes": 32353,
+      "width": 640
+    },
+    {
+      "command": [
+        0.18,
+        0.0,
+        0.0
+      ],
+      "controller": "full-roll",
+      "crf": 34,
+      "displacement_body_m": [
+        0.7607817735190896,
+        -0.00552208017968502,
+        0.012415345306297582
+      ],
+      "displacement_world_m": [
+        0.006663030077690722,
+        0.7607735173989583,
+        0.012361243547381107
+      ],
+      "encoded_duration_s": 4.133333333333334,
+      "fps": 15,
+      "frames": 62,
+      "height": 360,
+      "image": "images/flat_full-roll.jpg",
+      "image_bytes": 10024,
+      "mean_body_vx_mps": 0.1901954433797724,
+      "perturbation": {
+        "actuator_strength_scale": 1.0,
+        "friction_scale": 1.0,
+        "gait_phase": 0.0,
+        "initial_x_m": 0.0,
+        "initial_y_m": 0.0,
+        "initial_yaw_degrees": 0.0,
+        "mass_scale": 1.0
+      },
+      "scene": "flat_full-roll",
+      "simulation_duration_s": 4.0,
+      "suite": "flat",
+      "terrain": "flat",
+      "terrain_seed": 7,
+      "video": "videos/flat_full-roll.mp4",
+      "video_bytes": 36198,
+      "width": 640
+    },
+    {
+      "command": [
+        0.18,
+        0.0,
+        0.0
+      ],
+      "controller": "articulated-walk",
+      "crf": 34,
+      "displacement_body_m": [
+        0.16760732509260695,
+        0.004959577541384706,
+        0.0027563971879266467
+      ],
+      "displacement_world_m": [
+        -0.016261687586466306,
+        0.16689030805652277,
+        0.0027555676701126464
+      ],
+      "encoded_duration_s": 4.133333333333334,
+      "fps": 15,
+      "frames": 62,
+      "height": 360,
+      "image": "images/robustness_articulated-walk.jpg",
+      "image_bytes": 14994,
+      "mean_body_vx_mps": 0.04190183127315174,
+      "perturbation": {
+        "actuator_strength_scale": 0.9,
+        "friction_scale": 0.65,
+        "gait_phase": 0.37,
+        "initial_x_m": 0.02,
+        "initial_y_m": -0.015,
+        "initial_yaw_degrees": 4.0,
+        "mass_scale": 1.08
+      },
+      "scene": "robustness_articulated-walk",
+      "simulation_duration_s": 4.0,
+      "suite": "robustness",
+      "terrain": "uneven",
+      "terrain_seed": 2027,
+      "video": "videos/robustness_articulated-walk.mp4",
+      "video_bytes": 36856,
+      "width": 640
+    },
+    {
+      "command": [
+        0.18,
+        0.0,
+        0.0
+      ],
+      "controller": "distal-only-roll",
+      "crf": 34,
+      "displacement_body_m": [
+        0.25938839383907103,
+        -0.017140983631673455,
+        -0.0015967746162176674
+      ],
+      "displacement_world_m": [
+        -0.00015345383891084835,
+        0.2599532025019946,
+        -0.0017351738603288702
+      ],
+      "encoded_duration_s": 4.133333333333334,
+      "fps": 15,
+      "frames": 62,
+      "height": 360,
+      "image": "images/robustness_distal-only-roll.jpg",
+      "image_bytes": 15566,
+      "mean_body_vx_mps": 0.06484709845976776,
+      "perturbation": {
+        "actuator_strength_scale": 0.9,
+        "friction_scale": 0.65,
+        "gait_phase": 0.37,
+        "initial_x_m": 0.02,
+        "initial_y_m": -0.015,
+        "initial_yaw_degrees": 4.0,
+        "mass_scale": 1.08
+      },
+      "scene": "robustness_distal-only-roll",
+      "simulation_duration_s": 4.0,
+      "suite": "robustness",
+      "terrain": "uneven",
+      "terrain_seed": 2027,
+      "video": "videos/robustness_distal-only-roll.mp4",
+      "video_bytes": 43141,
+      "width": 640
+    },
+    {
+      "command": [
+        0.18,
+        0.0,
+        0.0
+      ],
+      "controller": "full-roll",
+      "crf": 34,
+      "displacement_body_m": [
+        0.6116127392747374,
+        -0.14619552970574076,
+        0.025841795024331347
+      ],
+      "displacement_world_m": [
+        0.10541584914102803,
+        0.6199919701830009,
+        0.02466839633308568
+      ],
+      "encoded_duration_s": 4.133333333333334,
+      "fps": 15,
+      "frames": 62,
+      "height": 360,
+      "image": "images/robustness_full-roll.jpg",
+      "image_bytes": 14759,
+      "mean_body_vx_mps": 0.15290318481868434,
+      "perturbation": {
+        "actuator_strength_scale": 0.9,
+        "friction_scale": 0.65,
+        "gait_phase": 0.37,
+        "initial_x_m": 0.02,
+        "initial_y_m": -0.015,
+        "initial_yaw_degrees": 4.0,
+        "mass_scale": 1.08
+      },
+      "scene": "robustness_full-roll",
+      "simulation_duration_s": 4.0,
+      "suite": "robustness",
+      "terrain": "uneven",
+      "terrain_seed": 2027,
+      "video": "videos/robustness_full-roll.mp4",
+      "video_bytes": 49765,
+      "width": 640
+    },
+    {
+      "controller": "distal-only",
+      "crf": 34,
+      "encoded_duration_s": 16.133333333333333,
+      "fps": 15,
+      "frames": 242,
+      "height": 360,
+      "image": "images/stairs_200mm_distal-only.jpg",
+      "image_bytes": 8667,
+      "maximum_riser_m": 0.2,
+      "minimum_tread_m": 0.35,
+      "scene": "stairs_200mm_distal-only",
+      "simulation_duration_s": 16.000000000003478,
+      "source_strategy": "pure-rolling",
+      "suite": "stairs",
+      "terrain": "stairs-3",
+      "time_to_top_s": null,
+      "top_reached": false,
+      "video": "videos/stairs_200mm_distal-only.mp4",
+      "video_bytes": 85150,
+      "width": 640
+    },
+    {
+      "controller": "full-scone",
+      "crf": 34,
+      "encoded_duration_s": 6.066666666666666,
+      "fps": 15,
+      "frames": 91,
+      "height": 360,
+      "image": "images/stairs_200mm_full-scone.jpg",
+      "image_bytes": 8331,
+      "maximum_riser_m": 0.2,
+      "minimum_tread_m": 0.35,
+      "scene": "stairs_200mm_full-scone",
+      "simulation_duration_s": 5.979999999996686,
+      "source_strategy": "adaptive",
+      "suite": "stairs",
+      "terrain": "stairs-3",
+      "time_to_top_s": 5.963999999996695,
+      "top_reached": true,
+      "video": "videos/stairs_200mm_full-scone.mp4",
+      "video_bytes": 42854,
+      "width": 640
+    },
+    {
+      "controller": "synchronized-open-loop",
+      "crf": 34,
+      "encoded_duration_s": 16.133333333333333,
+      "fps": 15,
+      "frames": 242,
+      "height": 360,
+      "image": "images/stairs_200mm_synchronized-open-loop.jpg",
+      "image_bytes": 9915,
+      "maximum_riser_m": 0.2,
+      "minimum_tread_m": 0.35,
+      "scene": "stairs_200mm_synchronized-open-loop",
+      "simulation_duration_s": 16.000000000008807,
+      "source_strategy": "synchronized-open-loop",
+      "suite": "stairs",
+      "terrain": "stairs-3",
+      "time_to_top_s": null,
+      "top_reached": false,
+      "video": "videos/stairs_200mm_synchronized-open-loop.mp4",
+      "video_bytes": 105100,
+      "width": 640
+    },
+    {
+      "completed": true,
+      "controller": "roll-to-walk",
+      "crf": 34,
+      "encoded_duration_s": 4.266666666666667,
+      "fps": 15,
+      "frames": 64,
+      "height": 360,
+      "image": "images/transition_roll-to-walk.jpg",
+      "image_bytes": 10094,
+      "minimum_upright": 0.9908629779723112,
+      "mode_switch_duration_s": 0.63999999999993,
+      "scene": "transition_roll-to-walk",
+      "simulation_duration_s": 2.839999999999909,
+      "suite": "transition",
+      "video": "videos/transition_roll-to-walk.mp4",
+      "video_bytes": 32638,
+      "width": 640
+    },
+    {
+      "completed": true,
+      "controller": "walk-to-roll",
+      "crf": 34,
+      "encoded_duration_s": 3.6666666666666665,
+      "fps": 15,
+      "frames": 55,
+      "height": 360,
+      "image": "images/transition_walk-to-roll.jpg",
+      "image_bytes": 10082,
+      "minimum_upright": 0.9961805748683336,
+      "mode_switch_duration_s": 0.36199999999996013,
+      "scene": "transition_walk-to-roll",
+      "simulation_duration_s": 2.5619999999999394,
+      "suite": "transition",
+      "video": "videos/transition_walk-to-roll.mp4",
+      "video_bytes": 28978,
+      "width": 640
+    }
+  ]
+}

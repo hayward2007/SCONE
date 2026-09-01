@@ -616,7 +616,7 @@ stage-1 read-back과 관련 문서 변경은 이 통합 기록 작성 시점의 
 
 후속 작업으로 논문용 `benchmark/` 패키지와 평지·계단 A/B/C, 강건성,
 Walk↔Roll 전환, JSONL/CSV 통계 경로를 추가하고 실제 명목·스모크 실험을
-실행했다. 이 후속 작업의 조건, 수치, 142개 전체 회귀 테스트와 논문 사용 제한은
+실행했다. 이 후속 작업의 조건, 수치, 143개 전체 회귀 테스트와 논문 사용 제한은
 [`16-icra-simulation-benchmark-implementation-and-results.md`](16-icra-simulation-benchmark-implementation-and-results.md)에 분리해 기록한다.
 
 세부 문서의 역할은 다음과 같다.
