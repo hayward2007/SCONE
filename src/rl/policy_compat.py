@@ -17,6 +17,10 @@ from stable_baselines3 import PPO
 
 LEGACY_OBSERVATION_SHAPE = (68,)
 CURRENT_OBSERVATION_SHAPE = (70,)
+# src.rl.walk_v2 adds six foot-contact flags and six normalised normal forces.
+# Its policies cannot be replayed against a walk_learn environment, so the
+# viewer picks the environment from the checkpoint rather than rejecting it.
+V2_OBSERVATION_SHAPE = (82,)
 
 
 def load_compatible_policy(
@@ -43,6 +47,19 @@ def load_compatible_policy(
             f"{policy.action_space.shape} != {env.action_space.shape}"
         )
     return policy
+
+
+def checkpoint_observation_shape(
+    path: Path | str,
+    device: str = "cpu",
+) -> tuple[int, ...]:
+    """Read a checkpoint's observation shape without binding it to an env."""
+
+    return tuple(PPO.load(path, device=device).observation_space.shape)
+
+
+def is_v2_checkpoint(shape: tuple[int, ...]) -> bool:
+    return tuple(shape) == V2_OBSERVATION_SHAPE
 
 
 def observation_for_policy(policy: PPO, observation: np.ndarray) -> np.ndarray:

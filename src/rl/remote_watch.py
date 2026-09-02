@@ -33,6 +33,9 @@ from stable_baselines3 import PPO
 
 from .policy_compat import (
     LEGACY_OBSERVATION_SHAPE,
+    V2_OBSERVATION_SHAPE,
+    checkpoint_observation_shape as _checkpoint_shape,
+    is_v2_checkpoint as _is_v2,
     load_compatible_policy as _load_policy,
     observation_for_policy as _observation_for_policy,
 )
@@ -44,6 +47,7 @@ from .walk_learn import (
     REFERENCE_MOTION_CHOICES,
     SconeWalkEnv,
 )
+from .walk_v2 import SconeWalkEnvV2
 from src.simulation.terrain import TERRAIN_CHOICES, TerrainType
 
 
@@ -295,8 +299,41 @@ def run_download_once(
     return 0
 
 
+def _resolve_environment(
+    args: argparse.Namespace, source: CheckpointSource
+) -> tuple[type, bool]:
+    """Pick the environment family the newest checkpoint was trained in.
+
+    walk_v2 observations are 82 values against walk_learn's 70, so a v2 policy
+    cannot be replayed in a walk_learn environment at all; before this the
+    viewer reported "unsupported checkpoint observation shape: (82,)" and showed
+    the baseline gait forever.
+    """
+
+    if args.task == "walk":
+        return SconeWalkEnv, False
+    if args.task == "walk-v2":
+        return SconeWalkEnvV2, True
+    try:
+        candidate = source.latest(args.prefix)
+        if candidate is None:
+            return SconeWalkEnv, False
+        path = mirror_checkpoint(source, candidate, args.cache_dir)
+        shape = _checkpoint_shape(path, args.device)
+    except Exception as exc:  # noqa: BLE001 - fall back to the legacy viewer
+        print(f"[remote-watch] could not inspect the newest checkpoint: {exc}",
+              flush=True)
+        return SconeWalkEnv, False
+    if _is_v2(shape):
+        print(f"[remote-watch] checkpoint observation {shape}: using walk_v2",
+              flush=True)
+        return SconeWalkEnvV2, True
+    return SconeWalkEnv, False
+
+
 def run_viewer(args: argparse.Namespace, source: CheckpointSource) -> int:
-    env = SconeWalkEnv(
+    environment_class, is_v2 = _resolve_environment(args, source)
+    env = environment_class(
         args.model,
         curriculum=args.curriculum,
         fixed_command=args.command,
@@ -308,6 +345,8 @@ def run_viewer(args: argparse.Namespace, source: CheckpointSource) -> int:
     )
     observation, _ = env.reset(seed=args.seed)
     zero_action = np.zeros(env.action_space.shape, dtype=np.float32)
+    # walk_v2 handles the idle command inside its own reward and reference, so
+    # the legacy neutral-residual gate only applies to walk_learn policies.
     neutral_gate = NeutralResidualGate()
     policy: PPO | None = None
     active_step = -1
@@ -357,7 +396,7 @@ def run_viewer(args: argparse.Namespace, source: CheckpointSource) -> int:
                 )
                 action = (
                     policy_action
-                    if args.raw_policy
+                    if args.raw_policy or is_v2
                     else neutral_gate.apply(
                         args.command, policy_action, env.control_dt
                     )
@@ -404,6 +443,15 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--identity-file", type=Path)
     parser.add_argument("--connect-timeout", type=int, default=8)
     parser.add_argument("--prefix", default="scone_walk")
+    parser.add_argument(
+        "--task",
+        choices=("auto", "walk", "walk-v2"),
+        default="auto",
+        help=(
+            "which trainer produced the checkpoint; 'auto' reads the newest "
+            "checkpoint's observation shape and picks the matching environment"
+        ),
+    )
     parser.add_argument("--poll-interval", type=float, default=5.0)
     parser.add_argument("--cache-dir", type=Path, default=Path("runs/remote_watch"))
     parser.add_argument("--model", type=Path, default=DEFAULT_MODEL_PATH)
