@@ -1858,32 +1858,84 @@ def _reset_remote_flow() -> None:
     print(f"     같은 실행명 `{job.run_name}`으로 완전 새 학습을 시작할 수 있습니다.\n")
 
 
+
+def _menu_header() -> str:
+    """One screenful of context so the menu is not a blind list of verbs."""
+
+    width = 66
+    lines = ["\u2500" * width, " SCONE 강화학습", "\u2500" * width]
+    jobs = _load_remote_jobs()
+    if not jobs:
+        lines.append(" 등록된 원격 학습이 없습니다. '새 학습 시작'으로 만드세요.")
+    else:
+        lines.append(f" 등록된 원격 학습 {len(jobs)}개")
+        for job in jobs[-6:]:
+            task = TRAINING_TASKS.get(job.task)
+            label = task.key if task is not None else job.task
+            created = (job.created_at or "")[:16].replace("T", " ")
+            lines.append(
+                f"   · {job.run_name:<28s} {label:<8s} {job.host:<18s} {created}"
+            )
+        if len(jobs) > 6:
+            lines.append(f"   ... 외 {len(jobs) - 6}개")
+    local = sorted(
+        (path for path in RUNS_DIR.glob("*") if path.is_dir()),
+        key=lambda path: path.stat().st_mtime,
+        reverse=True,
+    ) if RUNS_DIR.exists() else []
+    if local:
+        names = ", ".join(path.name for path in local[:4])
+        more = f" 외 {len(local) - 4}개" if len(local) > 4 else ""
+        lines.append(f" 로컬 runs/: {names}{more}")
+    lines.append("\u2500" * width)
+    return "\n".join(lines)
+
+
+def _main_menu_choices(Choice: Any, Separator: Any, has_remote: bool) -> list[Any]:
+    """Group the actions and hide the ones that cannot run yet."""
+
+    choices: list[Any] = [
+        Separator("── 준비 ──"),
+        Choice(value="check", name="학습 환경/보상 스모크 테스트"),
+        Separator("── 학습 ──"),
+        Choice(value="start", name="새 학습 시작"),
+    ]
+    if has_remote:
+        choices += [
+            Separator("── 원격 관리 ──"),
+            Choice(value="status", name="원격 학습 상태와 로그 보기"),
+            Choice(value="pause", name="원격 학습 일시정지"),
+            Choice(value="resume", name="원격 학습 이어하기"),
+            Choice(value="download", name="원격 최신 체크포인트 내려받기"),
+            Choice(value="watch", name="원격 학습을 내려받으며 실시간 보기"),
+            Separator("── 정리 ──"),
+            Choice(value="reset", name="원격 실행/체크포인트 완전 초기화"),
+        ]
+    choices += [
+        Separator("── 보기 ──"),
+        Choice(value="view", name="로컬에 저장된 모델 보기"),
+        Separator(),
+        Choice(value="quit", name="돌아가기"),
+    ]
+    return choices
+
+
 def main() -> int:
     try:
         inquirer, Choice = _inquirer()
-    except RuntimeError as exc:
+        from InquirerPy.separator import Separator
+    except (RuntimeError, ImportError) as exc:
         print(f"[RL] {exc}", file=sys.stderr)
         return 2
 
     while True:
         try:
+            has_remote = bool(_load_remote_jobs())
+            print(f"\n{_menu_header()}")
             action = inquirer.select(
-                message="SCONE 강화학습",
-                choices=[
-                    Choice(value="check", name="학습 환경/보상 스모크 테스트"),
-                    Choice(value="start", name="새 학습 시작"),
-                    Choice(value="status", name="원격 학습 상태와 로그 보기"),
-                    Choice(value="pause", name="원격 학습 일시정지"),
-                    Choice(value="resume", name="원격 학습 이어하기"),
-                    Choice(value="download", name="원격 최신 체크포인트 내려받기"),
-                    Choice(value="watch", name="원격 학습을 내려받으며 실시간 보기"),
-                    Choice(value="view", name="로컬에 저장된 모델 보기"),
-                    Choice(
-                        value="reset",
-                        name="원격 실행/체크포인트 완전 초기화 (새 학습)",
-                    ),
-                    Choice(value="quit", name="돌아가기"),
-                ],
+                message="무엇을 할까요?",
+                choices=_main_menu_choices(Choice, Separator, has_remote),
+                pointer="\u276f",
             ).execute()
             if action == "quit":
                 return 0

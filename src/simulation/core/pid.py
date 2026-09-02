@@ -88,10 +88,15 @@ XM430_W210 = DCMotorSpec(
 # large transient error -- see SCONE_RL.md for the full derivation. ki
 # defaults to 0 (start with a PD loop; add integral action only if a
 # persistent steady-state error shows up).
+# 2026-09-02: model.xml gained per-joint ``armature`` (reflected rotor inertia),
+# which raised the effective inertia these gains damp by 21, 105 and 250 percent.
+# The old kd values then left 0, 4.6 and 13.6 percent step overshoot instead of
+# the critical damping this table is meant to provide, so kd was recomputed as
+# 2*sqrt(kp*(J_link + armature)) with J_link recovered from the previous kd.
 _DEFAULT_GAINS: dict[str, tuple[float, float]] = {
-    "mx28at": (5.73, 0.752),
-    "xm430_w350": (9.40, 0.792),
-    "xm430_w210": (6.88, 0.264),
+    "mx28at": (5.73, 0.828),
+    "xm430_w350": (9.40, 1.134),
+    "xm430_w210": (6.88, 0.494),
 }
 
 

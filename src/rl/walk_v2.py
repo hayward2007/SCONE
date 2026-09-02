@@ -83,6 +83,13 @@ JOINT_MIRROR = np.array(
 FOOT_MIRROR = np.array([LEG_MIRROR[i + 1] - 1 for i in range(6)], dtype=np.int64)
 
 REFERENCE_CHOICES = ("tripod-gait", "scone-gait", "hardcoded", "none")
+# Leg identity as it appears in model.xml: warm colours on the right, cool on
+# the left, front to rear. Used to label diagnostics so a printout matches what
+# the viewer shows.
+LEG_LABELS = {
+    1: ("R front", "빨강"), 3: ("R mid", "주황"), 5: ("R rear", "노랑"),
+    2: ("L front", "초록"), 4: ("L mid", "파랑"), 6: ("L rear", "남색"),
+}
 # The interactive launcher and older run records use these spellings.
 REFERENCE_ALIASES = {"non_rl": "tripod-gait"}
 
@@ -655,6 +662,7 @@ class SconeWalkEnvV2(gym.Env[np.ndarray, np.ndarray]):
             "height": height, "stance_contacts": int(contact.sum()),
             "command_activity": activity, "mirrored": self._mirrored,
             "foot_contact": contact.astype(np.float64).tolist(),
+            "foot_normal": normal.tolist(),
         }
         return total, terms, terminated, diagnostics
 
@@ -901,6 +909,8 @@ def _make_callbacks(run_dir: Path, args: Any, stop_requested):
 
 
 def _env_factory(args: Any, index: int, curriculum: str):
+    fixed = getattr(args, "command", None)
+
     def build() -> SconeWalkEnvV2:
         return SconeWalkEnvV2(
             args.model,
@@ -909,17 +919,43 @@ def _env_factory(args: Any, index: int, curriculum: str):
             terrain=args.terrain,
             terrain_seed=args.terrain_seed + index,
             standing_pose_degrees=args.standing_pose_degrees,
+            fixed_command=fixed,
         )
 
     return build
 
 
+def _bar(value: float, scale: float, width: int = 18) -> str:
+    """A small signed bar so reward terms can be compared at a glance."""
+    if scale <= 0.0:
+        return " " * width
+    filled = int(round(min(1.0, abs(value) / scale) * (width // 2)))
+    half = width // 2
+    if value >= 0:
+        return " " * half + "\u2588" * filled + " " * (half - filled)
+    return " " * (half - filled) + "\u2588" * filled + " " * half
+
+
 def run_check(args: Any) -> int:
+    if args.mirror != "auto":
+        probability = 1.0 if args.mirror == "on" else 0.0
+        walk = WalkConfig(mirror_probability=probability)
+    else:
+        walk = None
     env = _env_factory(args, 0, args.curriculum)()
+    if walk is not None:
+        env.walk_config = walk
     observation, _ = env.reset(seed=args.seed)
-    print(f"observation {observation.shape}  action {env.action_space.shape}", flush=True)
+
+    contact_steps = np.zeros(6)
+    normal_sum = np.zeros(6)
+    term_totals: dict[str, float] = {}
+    speeds: list[tuple[float, float, float]] = []
     total = 0.0
+    steps = 0
     info: dict[str, Any] = {}
+    command = np.zeros(3)
+
     for _ in range(args.steps):
         action = (
             env.action_space.sample()
@@ -928,18 +964,66 @@ def run_check(args: Any) -> int:
         )
         observation, reward, terminated, truncated, info = env.step(action)
         total += reward
+        steps += 1
+        contact_steps += np.asarray(info["foot_contact"], dtype=np.float64)
+        normal_sum += np.asarray(info["foot_normal"], dtype=np.float64)
+        speeds.append((info["vx"], info["vy"], info["yaw_rate"]))
+        command = info["command"]
+        for key, value in info["reward_terms"].items():
+            term_totals[key] = term_totals.get(key, 0.0) + float(value)
         if terminated or truncated:
             break
-    print(
-        f"return {total:.3f}  vx {info.get('vx', 0.0):+.4f}  "
-        f"stance {info.get('stance_contacts', 0)}",
-        flush=True,
+
+    ended = "terminated" if info.get("stance_contacts") is not None and terminated else (
+        "truncated" if truncated else "step limit"
     )
-    print(
-        "reward terms:",
-        {k: round(v, 5) for k, v in info.get("reward_terms", {}).items()},
-        flush=True,
-    )
+    mean = np.mean(speeds, axis=0) if speeds else np.zeros(3)
+    width = 62
+
+    print()
+    print("\u2500" * width)
+    print(f" reference {args.reference_motion}   curriculum {args.curriculum}"
+          f"   {'mirrored' if info.get('mirrored') else 'upright'} frame")
+    print("\u2500" * width)
+    print(f" steps {steps:4d} ({steps * env.control_dt:.1f} s, {ended})"
+          f"    return {total:8.3f}")
+    print()
+    print("           commanded      achieved     tracking")
+    for index, (name, unit) in enumerate(
+        ((" vx", "m/s"), (" vy", "m/s"), ("yaw", "rad/s"))
+    ):
+        target = float(command[index])
+        got = float(mean[index])
+        ratio = f"{100 * got / target:6.0f}%" if abs(target) > 1e-3 else "     -"
+        print(f"   {name}    {target:+8.3f}      {got:+8.3f} {unit:<6s} {ratio}")
+
+    print()
+    print(" leg contribution over the rollout")
+    print("   leg  side       colour   contact duty   load share")
+    total_load = normal_sum.sum() or 1.0
+    for leg in range(1, 7):
+        side, colour = LEG_LABELS[leg]
+        duty = 100.0 * contact_steps[leg - 1] / max(1, steps)
+        share = 100.0 * normal_sum[leg - 1] / total_load
+        flag = "  <- idle" if duty < 5.0 else ""
+        print(f"   {leg:2d}   {side:<9s} {colour:<7s} {duty:9.1f}%  "
+              f"{share:10.1f}%{flag}")
+    spread = normal_sum / total_load
+    print(f"   load imbalance (rms deviation from 1/6): "
+          f"{float(np.sqrt(np.mean((spread - 1 / 6) ** 2))) * 6:.3f}")
+
+    print()
+    print(" reward terms, summed over the rollout")
+    ranked = sorted(term_totals.items(), key=lambda kv: -abs(kv[1]))
+    scale = max((abs(v) for _, v in ranked), default=1.0)
+    for key, value in ranked:
+        if abs(value) < 1e-9:
+            continue
+        print(f"   {key:<18s} {value:+9.4f}  |{_bar(value, scale)}|")
+    zeroed = [k for k, v in ranked if abs(v) < 1e-9]
+    if zeroed:
+        print(f"   (zero: {', '.join(zeroed)})")
+    print("\u2500" * width)
     env.close()
     return 0
 
@@ -1093,6 +1177,14 @@ def build_parser():
     check.add_argument("--seed", type=int, default=0)
     check.add_argument("--steps", type=int, default=300)
     check.add_argument("--random-actions", action="store_true")
+    check.add_argument(
+        "--command", type=float, nargs=3, metavar=("VX", "VY", "YAW"), default=None,
+        help="hold one command instead of sampling, e.g. --command 0.3 0 0",
+    )
+    check.add_argument(
+        "--mirror", choices=("auto", "off", "on"), default="auto",
+        help="force the sagittal mirror on or off to compare the two sides",
+    )
     check.set_defaults(func=run_check)
 
     train = sub.add_parser("train", help="headless training, SSH friendly")
