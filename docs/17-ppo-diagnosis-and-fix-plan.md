@@ -1,5 +1,10 @@
 # PPO 진단과 개선 계획 (2026-09-01)
 
+> 이 문서는 V2 도입 전 `walk_learn` 70차원 정책의 역사적 진단이다. 현재
+> `walk_v2` 82차원 정책과 실행 중인 학습의 실제 분석은
+> [`21-walk-v2-ppo-training-analysis.md`](21-walk-v2-ppo-training-analysis.md)를
+> 우선한다.
+
 대상: `src/rl/walk_learn.py`, `src/assets/model.xml`
 증상: (1) 전진 시 뒤쪽 두 다리가 기여하지 않음 (2) 좌우 비대칭 (3) 왼쪽으로 편향
 (4) 최대 속도가 낮음

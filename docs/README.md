@@ -1,6 +1,6 @@
 # SCONE 프로젝트 문서
 
-이 문서는 2026-09-01 기준 SCONE 저장소 전체를 설명한다. 현재 RL·시뮬레이션 코드, `runs/`의 학습 산출물 구조, `archive/`의 논문·도면·구형 코드도 함께 조사했다. 코드와 과거 문서의 설명이 다를 때는 현재 코드와 테스트를 우선한다.
+이 문서는 2026-09-02 기준 SCONE 저장소 전체를 설명한다. 현재 RL·시뮬레이션 코드, `runs/`의 학습 산출물 구조, `archive/`의 논문·도면·구형 코드도 함께 조사했다. 코드와 과거 문서의 설명이 다를 때는 현재 코드와 테스트를 우선한다.
 
 ## 문서 읽는 순서
 
@@ -21,6 +21,11 @@
 15. [`roll-gait` 분리와 PPO/점접지 하이브리드 `scone-gait`](14-roll-gait-and-hybrid-scone-gait.md) — 현재 이름, 저속/yaw PPO와 고속 multi-turn 전환식, point-support/누적회전 공식, 계단 Drive→Climb 준비, stage-1 live read-back, 15.4M checkpoint 검증
 16. [보행·계단·PPO 통합 활동 기록](15-complete-development-activity-log.md) — 전체 요청·가설·실행·채택/기각·수치·코드 위치·검증·남은 한계를 한 문서에서 추적
 17. [ICRA 시뮬레이션 벤치마크 구현과 실행 기록](16-icra-simulation-benchmark-implementation-and-results.md) — 평지·계단 A/B/C, 강건성·모드 전환 벤치마크, 실제 실행 수치, 통계·검증·논문 사용 조건
+18. [구형 PPO 진단과 개선 계획](17-ppo-diagnosis-and-fix-plan.md) — `walk_learn` 70차원 정책의 역사적 진단과 V2 이전 개선 근거
+19. [액추에이터 모델·좌표계·PPO V2 설계](18-actuator-model-and-frame-convention.md) — DC motor/armature 검증, 정규 좌표계, `walk_v2` 초기 설계와 CLI
+20. [공개된 다이나믹셀 MuJoCo 모델과 설정 대조](19-actuator-settings-vs-published-models.md) — OP3·Open Duck 모델과 SCONE dcmotor/armature를 같은 벤치에서 비교한 결과
+21. [백래시 적용과 다이나믹셀 패키지 분리](20-backlash-and-dynamixel-package.md) — 직렬 유격 모델, 단위 버그, 민감도 측정과 독립 패키지 구조
+22. [`walk_v2` PPO 실제 학습 분석](21-walk-v2-ppo-training-analysis.md) — 35.4M checkpoint, TensorBoard, 고정 명령 평가, 행동 포화·누적 motor randomization 원인과 재학습 gate
 
 ## 문서 범위와 표기
 
@@ -32,7 +37,7 @@
 
 ## 현재 상태에서 특히 주의할 점
 
-- `src/rl/walk_learn.py`의 구현이 보상함수와 관측 벡터의 최종 기준이다. 개발 기록에는 이전 가중치와 이전 68차원 관측 설명이 일부 남아 있다.
+- 구형 70차원 정책의 기준은 `src/rl/walk_learn.py`, 새 82차원 정책의 기준은 `src/rl/walk_v2.py`다. 두 환경의 checkpoint는 서로 호환되지 않는다. V2의 현재 보상·관측·학습 상태는 [`21-walk-v2-ppo-training-analysis.md`](21-walk-v2-ppo-training-analysis.md)를 우선한다.
 - 현재 시뮬레이터는 액추에이터 이름(`A01_` … `A18_`)을 통해 관절을 찾는다. 과거의 고정 mirror-pair 재배열 방식은 현재 구현이 아니다.
 - 실물 장치 코드는 보존되어 있으며 시뮬레이션의 좌우 축 보정은 MJCF 모델에서 처리한다.
 - RL 정책은 시뮬레이션에서 학습·재생한다. 실제 로봇에 바로 배포하는 상태 추정·안전 계층은 아직 완성된 기능이 아니다.

@@ -1,5 +1,10 @@
 # 액추에이터 모델, 좌표계 규약, 보행 PPO 재설계 (2026-09-01)
 
+> 이 문서의 §5~§7은 `walk_v2`의 최초 설계·스모크 테스트 기록이다. 이후 변경된
+> 현재 가중치, 실제 35.4M-step 학습, 행동 포화와 actuator randomization 진단은
+> [`21-walk-v2-ppo-training-analysis.md`](21-walk-v2-ppo-training-analysis.md)를
+> 우선한다.
+
 이 문서는 네 가지 작업의 근거와 결과를 담는다.
 
 1. MuJoCo 모터 설정과 다이나믹셀 실사양의 차이 검토·보정
@@ -433,8 +438,10 @@ hardcoded,   무잔차, vx=0.35 명령 -> 실측 vx = +0.096 m/s
 yaw=0.9 명령 -> tripod +0.334 rad/s, hardcoded +0.435 rad/s
 ```
 
-학습은 아직 돌리지 않았다. 위 수치는 정책 없이 기준 모션만으로 나온 값이며,
-residual이 붙으면 여기서 출발한다.
+위 표는 당시 정책 없이 기준 모션만 측정한 최초 스모크 결과다. 이후 실제 V2 학습을
+35.4M step 이상 실행했으며, 최신 정책은 nominal 고정 명령 평가에서 zero residual을
+이기지 못했다. 현재 결과와 원인은
+[`21-walk-v2-ppo-training-analysis.md`](21-walk-v2-ppo-training-analysis.md)에 기록했다.
 
 ---
 
@@ -543,14 +550,15 @@ kill -TERM "$(cat runs/v2_easy/train.pid)"
 
 `--num-envs`는 원격 코어 수에 맞춘다. 런처의 용량 조회가 권장치를 알려준다.
 
-### 7.4 아직 남은 것
+### 7.4 후속 완료 및 현재 남은 것
 
-- `src/rl/remote_watch.py`는 `walk_learn.SconeWalkEnv`를 직접 import하므로 **v2
-  체크포인트를 로컬에서 실시간 재생하지 못한다.** 관측 차원이 70 → 82로 바뀌었기
-  때문에 환경 클래스를 태스크에 따라 선택하도록 손봐야 한다. 학습 자체에는 영향이
-  없다.
-- 학습 루프는 이 환경에 torch를 설치하지 못해 **실제로 돌려보지 못했다.** 원격에
-  올리기 전에 로컬에서 `--num-envs 2 --timesteps 20000`으로 한 번 확인할 것.
+- `src/rl/remote_watch.py`와 로컬 replay 경로는 checkpoint 관측 shape를 판별해
+  70차원 구형 환경과 82차원 V2 환경을 선택한다. V2 `step()`/외부 제어 경로의
+  viewer sync도 복구했고 실제 `mjpython` 창을 확인했다(commit `4e449e2`).
+- 원격 V2 학습은 실제로 35.4M step 이상 실행했다. 현재 남은 핵심은 실행 가능성이나
+  viewer가 아니라, bounded action distribution, 누적되지 않는 actuator
+  randomization, 안정적인 PPO update와 best-model 평가다. 상세 근거는
+  [`21-walk-v2-ppo-training-analysis.md`](21-walk-v2-ppo-training-analysis.md)를 따른다.
 
 ---
 

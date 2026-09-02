@@ -1,8 +1,13 @@
 # 보상함수 수정 가이드
 
+> 범위: 이 문서의 본문은 기존 70차원 `walk_learn` 정책을 설명한다. 새 82차원
+> `walk_v2`의 현재 보상식, 실제 35.4M-step 항별 기여와 문제점은
+> [`21-walk-v2-ppo-training-analysis.md`](21-walk-v2-ppo-training-analysis.md)를
+> 기준으로 한다. 두 환경의 숫자와 checkpoint를 섞어 쓰면 안 된다.
+
 ## 1. 기준 파일과 변경 지점
 
-현재 보상함수의 최종 기준은 [`src/rl/walk_learn.py`](../src/rl/walk_learn.py)의 다음 세 부분이다.
+기존 정책 보상함수의 최종 기준은 [`src/rl/walk_learn.py`](../src/rl/walk_learn.py)의 다음 세 부분이다.
 
 1. `RewardConfig`: sigma, weight, soft/hard limit
 2. `SconeWalkEnv._reward()`: raw 측정값, 정규화, aggregate, 종료 조건
