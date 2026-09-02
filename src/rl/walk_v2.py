@@ -28,6 +28,7 @@ design is based on.
 
 from __future__ import annotations
 
+import json
 import math
 import time
 from dataclasses import dataclass, field
@@ -101,6 +102,154 @@ REFERENCE_ALIASES = {"non_rl": "tripod-gait"}
 
 def normalize_reference_motion(value: str) -> str:
     return REFERENCE_ALIASES.get(value, value)
+
+
+def _validate_training_batch_size(n_steps: int, num_envs: int, batch_size: int) -> None:
+    """Reject PPO minibatches that truncate the rollout buffer."""
+
+    if n_steps < 1 or num_envs < 1 or batch_size < 1:
+        raise ValueError("n_steps, num_envs, and batch_size must all be positive")
+    rollout_size = n_steps * num_envs
+    if batch_size > rollout_size or rollout_size % batch_size:
+        divisors = [
+            candidate
+            for candidate in range(1, min(batch_size, rollout_size) + 1)
+            if rollout_size % candidate == 0
+        ]
+        suggestions = ", ".join(str(value) for value in divisors[-4:])
+        raise ValueError(
+            f"batch size {batch_size} must divide n_steps * num_envs "
+            f"({n_steps} * {num_envs} = {rollout_size}); "
+            f"nearby valid values: {suggestions}"
+        )
+
+
+def _ppo_training_kwargs(args: Any) -> dict[str, Any]:
+    """Build the bounded, conservative PPO configuration for a new V2 run."""
+
+    _validate_training_batch_size(args.n_steps, args.num_envs, args.batch_size)
+    if args.learning_rate <= 0.0:
+        raise ValueError("learning rate must be positive")
+    if args.target_kl <= 0.0:
+        raise ValueError("target KL must be positive")
+    if args.n_epochs < 1:
+        raise ValueError("n_epochs must be at least 1")
+    if args.max_grad_norm <= 0.0:
+        raise ValueError("max_grad_norm must be positive")
+    if args.sde_sample_freq == 0 or args.sde_sample_freq < -1:
+        raise ValueError("sde_sample_freq must be -1 or a positive integer")
+    if not math.isfinite(args.log_std_init):
+        raise ValueError("log_std_init must be finite")
+
+    return {
+        "learning_rate": args.learning_rate,
+        "n_steps": args.n_steps,
+        "batch_size": args.batch_size,
+        "n_epochs": args.n_epochs,
+        "gamma": 0.995,
+        "gae_lambda": 0.95,
+        "clip_range": 0.2,
+        "ent_coef": args.entropy_coefficient,
+        "max_grad_norm": args.max_grad_norm,
+        "target_kl": args.target_kl,
+        # gSDE is the SB3-supported path that permits a tanh-squashed action
+        # distribution. PPO's log probability is then computed for the same
+        # bounded action that reaches the environment instead of for an
+        # unbounded Gaussian sample that is clipped only at env.step().
+        "use_sde": True,
+        "sde_sample_freq": args.sde_sample_freq,
+        "policy_kwargs": {
+            "net_arch": {"pi": [512, 256, 128], "vf": [512, 256, 128]},
+            "squash_output": True,
+            "log_std_init": args.log_std_init,
+            "use_expln": True,
+        },
+    }
+
+
+def _validate_evaluation_arguments(args: Any) -> None:
+    if args.eval_every is not None and args.eval_every < 1:
+        raise ValueError("eval_every must be positive when specified")
+    if args.eval_episodes < 1:
+        raise ValueError("eval_episodes must be at least 1")
+    if not math.isfinite(args.eval_seconds) or args.eval_seconds <= 0.0:
+        raise ValueError("eval_seconds must be a positive finite number")
+
+
+def _require_bounded_resume_policy(model: Any) -> None:
+    """Prevent an old clipped-Gaussian policy from contaminating a new run."""
+
+    if not bool(getattr(model, "use_sde", False)) or not bool(
+        getattr(getattr(model, "policy", None), "squash_output", False)
+    ):
+        raise ValueError(
+            "this checkpoint uses the old unbounded/clipped action policy; "
+            "start a new walk_v2 run instead of resuming it"
+        )
+
+
+FIXED_EVALUATION_COMMANDS: tuple[tuple[str, tuple[float, float, float]], ...] = (
+    ("idle", (0.0, 0.0, 0.0)),
+    ("forward_010", (0.10, 0.0, 0.0)),
+    ("forward_025", (0.25, 0.0, 0.0)),
+    ("forward_050", (0.50, 0.0, 0.0)),
+    ("lateral_010", (0.0, 0.10, 0.0)),
+    ("yaw_040", (0.0, 0.0, 0.40)),
+)
+
+
+def _fixed_evaluation_score(records: Sequence[dict[str, Any]]) -> dict[str, float | int]:
+    """Return a command-tracking score that is not dominated by dense reward."""
+
+    if not records:
+        raise ValueError("fixed evaluation requires at least one record")
+    tracking_errors: list[float] = []
+    heading_errors: list[float] = []
+    saturations: list[float] = []
+    survived: list[float] = []
+    direction_failures = 0
+    scales = OBSERVATION_COMMAND_SCALE
+    for record in records:
+        command = np.asarray(record["command"], dtype=np.float64)
+        achieved = np.asarray(
+            [record["vx"], record["vy"], record["yaw_rate"]],
+            dtype=np.float64,
+        )
+        tracking_errors.append(float(np.mean(np.abs(achieved - command) / scales)))
+        heading_errors.append(abs(float(record["heading_error"])))
+        saturations.append(float(record["saturation_fraction"]))
+        survived.append(float(bool(record["survived"])))
+        active = np.flatnonzero(np.abs(command) > 1e-6)
+        if active.size and np.any(achieved[active] * command[active] <= 0.0):
+            direction_failures += 1
+
+    survival_rate = float(np.mean(survived))
+    tracking_error = float(np.mean(tracking_errors))
+    heading_error = float(np.mean(heading_errors))
+    saturation = float(np.mean(saturations))
+    score = (
+        survival_rate
+        - tracking_error
+        - 0.10 * heading_error / math.pi
+        - 0.05 * saturation
+    )
+    return {
+        "score": score,
+        "survival_rate": survival_rate,
+        "tracking_error": tracking_error,
+        "heading_error": heading_error,
+        "saturation_fraction": saturation,
+        "direction_failures": direction_failures,
+    }
+
+
+def _write_json_atomic(path: Path, payload: Any) -> None:
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    temporary.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    temporary.replace(path)
 
 
 @dataclass(frozen=True)
@@ -301,6 +450,9 @@ class SconeWalkEnvV2(gym.Env[np.ndarray, np.ndarray]):
 
         self._nominal_geom_friction = self.model.geom_friction.copy()
         self._nominal_body_mass = self.model.body_mass.copy()
+        self._nominal_body_inertia = self.model.body_inertia.copy()
+        self._nominal_actuator_gainprm = self.model.actuator_gainprm.copy()
+        self._nominal_actuator_forcerange = self.model.actuator_forcerange.copy()
 
         self.root_joint_id = mujoco.mj_name2id(
             self.model, mujoco.mjtObj.mjOBJ_JOINT, "root_freejoint"
@@ -852,11 +1004,20 @@ class SconeWalkEnvV2(gym.Env[np.ndarray, np.ndarray]):
         mass = self.np_random.uniform(*cfg.mass_scale_range)
         friction = self.np_random.uniform(*cfg.friction_scale_range)
         self.model.body_mass[:] = self._nominal_body_mass * mass
+        self.model.body_inertia[:] = self._nominal_body_inertia * mass
         self.model.geom_friction[:] = self._nominal_geom_friction
         self.model.geom_friction[:, 0] *= friction
         self._strength_scale = float(self.np_random.uniform(*cfg.strength_scale_range))
-        for actuator in range(self.model.nu):
-            self.model.actuator_gainprm[actuator, 0] *= self._strength_scale
+        self.model.actuator_gainprm[:] = self._nominal_actuator_gainprm
+        self.model.actuator_forcerange[:] = self._nominal_actuator_forcerange
+        # dcmotor gainprm[0] is terminal resistance R and gainprm[1] is K.
+        # R/scale makes the entire torque-speed line `scale` times stronger
+        # while preserving its no-load speed; the saturation torque must move
+        # by the same factor. Starting from nominal on every reset prevents the
+        # multiplicative drift that corrupted the first long V2 run.
+        self.model.actuator_gainprm[:, 0] /= self._strength_scale
+        self.model.actuator_forcerange[:] *= self._strength_scale
+        mujoco.mj_setConst(self.model, self.data)
 
     def reset(
         self, *, seed: int | None = None, options: dict[str, Any] | None = None
@@ -1083,22 +1244,234 @@ def _make_callbacks(run_dir: Path, args: Any, stop_requested):
             return result
 
     class RewardTermsCallback(BaseCallback):
-        """Average every reward term into TensorBoard so tuning is visible."""
+        """Average reward/action diagnostics over the complete PPO rollout."""
+
+        def __init__(self) -> None:
+            super().__init__()
+            self._term_totals: dict[str, float] = {}
+            self._term_count = 0
+            self._action_totals: dict[str, float] = {}
+            self._action_count = 0
 
         def _on_step(self) -> bool:
-            totals: dict[str, float] = {}
-            count = 0
             for info in self.locals.get("infos", []):
                 terms = info.get("reward_terms")
                 if not terms:
                     continue
-                count += 1
+                self._term_count += 1
                 for key, value in terms.items():
-                    totals[key] = totals.get(key, 0.0) + float(value)
-            if count:
-                for key, value in totals.items():
-                    self.logger.record(f"reward/{key}", value / count)
+                    self._term_totals[key] = (
+                        self._term_totals.get(key, 0.0) + float(value)
+                    )
+
+            actions = np.asarray(
+                self.locals.get("clipped_actions", self.locals.get("actions", [])),
+                dtype=np.float64,
+            )
+            if actions.size:
+                self._action_count += 1
+                self._action_totals["abs_mean"] = (
+                    self._action_totals.get("abs_mean", 0.0)
+                    + float(np.mean(np.abs(actions)))
+                )
+                self._action_totals["abs_max"] = (
+                    self._action_totals.get("abs_max", 0.0)
+                    + float(np.max(np.abs(actions)))
+                )
+                self._action_totals["saturation_fraction"] = (
+                    self._action_totals.get("saturation_fraction", 0.0)
+                    + float(np.mean(np.abs(actions) >= 0.98))
+                )
+                distribution = getattr(self.model.policy.action_dist, "distribution", None)
+                latent_mean = getattr(distribution, "mean", None)
+                if latent_mean is not None:
+                    latent = latent_mean.detach().cpu().numpy()
+                    self._action_totals["latent_abs_mean"] = (
+                        self._action_totals.get("latent_abs_mean", 0.0)
+                        + float(np.mean(np.abs(latent)))
+                    )
+                    self._action_totals["latent_abs_max"] = (
+                        self._action_totals.get("latent_abs_max", 0.0)
+                        + float(np.max(np.abs(latent)))
+                    )
             return True
+
+        def _on_rollout_end(self) -> None:
+            if self._term_count:
+                for key, value in self._term_totals.items():
+                    self.logger.record(f"reward/{key}", value / self._term_count)
+            if self._action_count:
+                for key, value in self._action_totals.items():
+                    self.logger.record(f"action/{key}", value / self._action_count)
+            self._term_totals.clear()
+            self._term_count = 0
+            self._action_totals.clear()
+            self._action_count = 0
+
+    class FixedCommandEvalCallback(BaseCallback):
+        """Evaluate a deterministic nominal suite and retain real best models."""
+
+        def __init__(self, eval_freq: int) -> None:
+            super().__init__()
+            self.eval_freq = max(1, eval_freq)
+            self.eval_env: SconeWalkEnvV2 | None = None
+            self.baseline: dict[str, Any] | None = None
+            self.best_candidate_score = -math.inf
+            existing = run_dir / "best_candidate_metrics.json"
+            if existing.is_file():
+                try:
+                    self.best_candidate_score = float(
+                        json.loads(existing.read_text(encoding="utf-8"))["summary"]["score"]
+                    )
+                except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError):
+                    self.best_candidate_score = -math.inf
+
+        def _on_training_start(self) -> None:
+            evaluation_walk = WalkConfig(
+                episode_seconds=args.eval_seconds,
+                settle_seconds=0.25,
+                mirror_probability=0.0,
+                initial_joint_noise_degrees=0.0,
+                initial_yaw_randomization=False,
+                push_velocity=0.0,
+                observation_noise=0.0,
+                action_delay_probability=0.0,
+                mass_scale_range=(1.0, 1.0),
+                friction_scale_range=(1.0, 1.0),
+                strength_scale_range=(1.0, 1.0),
+                stance_preset="standard",
+                backlash=False,
+            )
+            self.eval_env = SconeWalkEnvV2(
+                args.model,
+                curriculum="full",
+                reference_motion=args.reference_motion,
+                fixed_command=(0.0, 0.0, 0.0),
+                walk_config=evaluation_walk,
+                terrain="flat",
+                terrain_seed=args.terrain_seed,
+                standing_pose_degrees=args.standing_pose_degrees,
+            )
+            baseline_path = run_dir / "evaluation_baseline.json"
+            if baseline_path.is_file():
+                try:
+                    self.baseline = json.loads(baseline_path.read_text(encoding="utf-8"))
+                except (OSError, json.JSONDecodeError):
+                    self.baseline = None
+            if self.baseline is None:
+                self.baseline = self._evaluate(zero_residual=True)
+                _write_json_atomic(baseline_path, self.baseline)
+
+        def _evaluate(self, *, zero_residual: bool) -> dict[str, Any]:
+            if self.eval_env is None:
+                raise RuntimeError("fixed evaluation environment is not initialized")
+            records: list[dict[str, Any]] = []
+            for name, command in FIXED_EVALUATION_COMMANDS:
+                self.eval_env.set_velocity_command(command)
+                for episode in range(args.eval_episodes):
+                    observation, _ = self.eval_env.reset(seed=args.seed + episode)
+                    total_return = 0.0
+                    samples: list[np.ndarray] = []
+                    heading: list[float] = []
+                    saturation: list[float] = []
+                    terminated = truncated = False
+                    while not (terminated or truncated):
+                        if zero_residual:
+                            action = np.zeros(18, dtype=np.float32)
+                        else:
+                            action, _ = self.model.predict(
+                                observation, deterministic=True
+                            )
+                        observation, reward, terminated, truncated, info = (
+                            self.eval_env.step(action)
+                        )
+                        total_return += float(reward)
+                        samples.append(np.array([
+                            info["vx"], info["vy"], info["yaw_rate"]
+                        ]))
+                        heading.append(abs(float(info["heading_error"])))
+                        saturation.append(float(np.mean(np.abs(action) >= 0.98)))
+                    achieved = np.mean(samples, axis=0) if samples else np.zeros(3)
+                    records.append({
+                        "name": name,
+                        "episode": episode,
+                        "command": list(command),
+                        "return": total_return,
+                        "vx": float(achieved[0]),
+                        "vy": float(achieved[1]),
+                        "yaw_rate": float(achieved[2]),
+                        "heading_error": float(np.mean(heading)) if heading else math.inf,
+                        "saturation_fraction": (
+                            float(np.mean(saturation)) if saturation else 1.0
+                        ),
+                        "survived": bool(truncated and not terminated),
+                    })
+            return {
+                "num_timesteps": int(self.num_timesteps),
+                "zero_residual": zero_residual,
+                "summary": _fixed_evaluation_score(records),
+                "records": records,
+            }
+
+        def _on_step(self) -> bool:
+            if self.n_calls % self.eval_freq:
+                return True
+            result = self._evaluate(zero_residual=False)
+            summary = result["summary"]
+            baseline_summary = self.baseline["summary"] if self.baseline else {}
+            score = float(summary["score"])
+            baseline_score = float(baseline_summary.get("score", -math.inf))
+            promoted = (
+                score > baseline_score
+                and int(summary["direction_failures"]) == 0
+            )
+            result["baseline_score"] = baseline_score
+            result["beats_zero_residual"] = promoted
+
+            with (run_dir / "evaluation_history.jsonl").open(
+                "a", encoding="utf-8"
+            ) as history:
+                history.write(json.dumps(result, ensure_ascii=False) + "\n")
+            for key in (
+                "score", "survival_rate", "tracking_error", "heading_error",
+                "saturation_fraction", "direction_failures",
+            ):
+                self.logger.record(f"eval/fixed_{key}", float(summary[key]))
+            self.logger.record("eval/zero_residual_score", baseline_score)
+            self.logger.record("eval/beats_zero_residual", float(promoted))
+
+            if score > self.best_candidate_score:
+                self.best_candidate_score = score
+                self.model.save(run_dir / "best_candidate_model.zip")
+                _write_json_atomic(run_dir / "best_candidate_metrics.json", result)
+            if promoted:
+                current_best = run_dir / "best_model_metrics.json"
+                previous_score = -math.inf
+                if current_best.is_file():
+                    try:
+                        previous_score = float(
+                            json.loads(current_best.read_text(encoding="utf-8"))[
+                                "summary"
+                            ]["score"]
+                        )
+                    except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError):
+                        previous_score = -math.inf
+                if score > previous_score:
+                    self.model.save(run_dir / "best_model.zip")
+                    _write_json_atomic(current_best, result)
+            print(
+                f"[RL eval] step={self.num_timesteps} score={score:.4f} "
+                f"zero={baseline_score:.4f} saturation="
+                f"{100.0 * float(summary['saturation_fraction']):.1f}% "
+                f"promoted={'yes' if promoted else 'no'}",
+                flush=True,
+            )
+            return True
+
+        def _on_training_end(self) -> None:
+            if self.eval_env is not None:
+                self.eval_env.close()
+                self.eval_env = None
 
     class GracefulStopCallback(BaseCallback):
         def _on_step(self) -> bool:
@@ -1112,6 +1485,13 @@ def _make_callbacks(run_dir: Path, args: Any, stop_requested):
             keep_last=args.keep_checkpoints,
         ),
         RewardTermsCallback(),
+        FixedCommandEvalCallback(
+            eval_freq=max(
+                1,
+                (args.eval_every or args.checkpoint_every)
+                // max(1, args.num_envs),
+            )
+        ),
         GracefulStopCallback(),
     ]
 
@@ -1244,6 +1624,9 @@ def run_train(args: Any) -> int:
         DummyVecEnv, SubprocVecEnv, VecMonitor,
     )
 
+    _validate_evaluation_arguments(args)
+    new_model_kwargs = None if args.resume is not None else _ppo_training_kwargs(args)
+
     run_dir = Path(args.output).expanduser().resolve()
     (run_dir / "checkpoints").mkdir(parents=True, exist_ok=True)
 
@@ -1278,16 +1661,7 @@ def run_train(args: Any) -> int:
     if args.resume is None:
         model = PPO(
             "MlpPolicy", env,
-            learning_rate=3e-4,
-            n_steps=args.n_steps,
-            batch_size=args.batch_size,
-            n_epochs=5,
-            gamma=0.995,
-            gae_lambda=0.95,
-            clip_range=0.2,
-            ent_coef=0.003,
-            max_grad_norm=1.0,
-            policy_kwargs={"net_arch": {"pi": [512, 256, 128], "vf": [512, 256, 128]}},
+            **new_model_kwargs,
             tensorboard_log=tensorboard_log,
             verbose=1,
             seed=args.seed,
@@ -1301,6 +1675,7 @@ def run_train(args: Any) -> int:
             device=args.device,
             tensorboard_log=tensorboard_log,
         )
+        _require_bounded_resume_policy(model)
         reset_timesteps = False
 
     previous = {
@@ -1402,10 +1777,22 @@ def build_parser():
     train.add_argument("--checkpoint-every", type=int, default=500_000)
     train.add_argument("--keep-checkpoints", type=int, default=10)
     train.add_argument("--n-steps", type=int, default=512)
-    # 512 x 16 envs = 8192 samples split into 8 minibatches. One
-    # minibatch per epoch, which the previous default produced, gives
-    # PPO a single very large gradient step per epoch.
-    train.add_argument("--batch-size", type=int, default=1024)
+    # 512 divides `512 * num_envs` for every positive num_envs, so remote host
+    # capacity changes cannot silently create a truncated final minibatch.
+    train.add_argument("--batch-size", type=int, default=512)
+    train.add_argument("--learning-rate", type=float, default=1e-4)
+    train.add_argument("--n-epochs", type=int, default=3)
+    train.add_argument("--target-kl", type=float, default=0.02)
+    train.add_argument("--entropy-coefficient", type=float, default=0.0)
+    train.add_argument("--max-grad-norm", type=float, default=0.5)
+    train.add_argument("--sde-sample-freq", type=int, default=4)
+    train.add_argument("--log-std-init", type=float, default=-1.5)
+    train.add_argument(
+        "--eval-every", type=int, default=None,
+        help="nominal fixed-command evaluation interval; defaults to checkpoint interval",
+    )
+    train.add_argument("--eval-episodes", type=int, default=3)
+    train.add_argument("--eval-seconds", type=float, default=10.0)
     train.add_argument("--seed", type=int, default=0)
     train.add_argument("--device", default="auto")
     train.add_argument("--output", type=Path, default=Path("runs/walk_v2"))
