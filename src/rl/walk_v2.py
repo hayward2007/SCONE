@@ -166,10 +166,13 @@ class WalkConfig:
     contact_force_threshold: float = 1.0
     stance_preset: str = "standard"            # 240/255: the measured fast posture
     # Gear play from the e-Manual (20 arcmin on the MX-28AT, 15 on the XM430),
-    # modelled as a limited free joint in series with each actuated joint. At
-    # the arc radius that is 0.53 mm of contact position, which the policy has
-    # to be robust to because the hardware cannot remove it.
-    backlash: bool = True
+    # modelled as a limited free joint in series with each actuated joint.
+    # Off by default: measured, it moves flat-ground speed by -2 percent, which
+    # is only about 2.5x the gait-phase spread, and it left the stair outcome
+    # and the required settle time unchanged, while doubling the joint count.
+    # Turn it on for sim-to-real transfer work or to run it as a sensitivity
+    # axis; do not pay for it in every training run without evidence.
+    backlash: bool = False
 
     # symmetry and robustness
     mirror_probability: float = 0.5

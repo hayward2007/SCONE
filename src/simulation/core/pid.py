@@ -93,6 +93,17 @@ XM430_W210 = DCMotorSpec(
 # The old kd values then left 0, 4.6 and 13.6 percent step overshoot instead of
 # the critical damping this table is meant to provide, so kd was recomputed as
 # 2*sqrt(kp*(J_link + armature)) with J_link recovered from the previous kd.
+# The pre-armature table, kept rather than discarded so the change is legible
+# and reversible. These were critical for the link inertia alone; with the
+# reflected rotor inertia present they leave 0, 4.6 and 13.6 percent step
+# overshoot, and cost 37 percent more cost of transport on a flat walking trial
+# (0.655 -> 0.900 against 0.695 for the recomputed values, five gait phases).
+_LINK_ONLY_GAINS: dict[str, tuple[float, float]] = {
+    "mx28at": (5.73, 0.752),
+    "xm430_w350": (9.40, 0.792),
+    "xm430_w210": (6.88, 0.264),
+}
+
 _DEFAULT_GAINS: dict[str, tuple[float, float]] = {
     "mx28at": (5.73, 0.828),
     "xm430_w350": (9.40, 1.134),
