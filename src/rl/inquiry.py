@@ -20,6 +20,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Sequence
 
+from ..cli_i18n import Language, localize
+from ..cli_ui import clear_terminal, display_width, render_panel, show_picker_screen
 from .stance import (
     SPORT_STANDING_DEGREES,
     STANDARD_STANDING_DEGREES,
@@ -105,6 +107,53 @@ TRAINING_TASKS = {
         reference_motions=("tripod-gait", "scone-gait", "hardcoded", "none"),
     ),
 }
+
+_ENGLISH_TERRAIN_OPTIONS = (
+    ("flat", "Flat ground"),
+    ("uneven", "Uneven terrain"),
+    ("stairs-1", "Stairs level 1 · 10 cm"),
+    ("stairs-2", "Stairs level 2 · 15 cm"),
+    ("stairs-3", "Stairs level 3 · 20 cm"),
+    ("slope-1", "Slope level 1 · 8°"),
+    ("slope-2", "Slope level 2 · 15°"),
+    ("slope-3", "Slope level 3 · 25°"),
+    ("mixed", "Mixed course"),
+)
+
+_ENGLISH_REFERENCE_MOTION_OPTIONS = {
+    "tripod-gait": "tripod-gait · alternating tripod + IK",
+    "scone-gait": "scone-gait · sector rolling/creep reference (experimental)",
+    "none": "none · end-to-end without a reference (walk-v2 only)",
+    "hardcoded": "hardcoded · original PPO training reference (replay default)",
+}
+
+
+def _terrain_options(language: Language | str) -> tuple[tuple[str, str], ...]:
+    return (
+        TERRAIN_OPTIONS
+        if Language.parse(language) is Language.KOREA
+        else _ENGLISH_TERRAIN_OPTIONS
+    )
+
+
+def _reference_motion_options(
+    language: Language | str,
+) -> tuple[tuple[str, str], ...]:
+    if Language.parse(language) is Language.KOREA:
+        return REFERENCE_MOTION_OPTIONS
+    return tuple(
+        (value, _ENGLISH_REFERENCE_MOTION_OPTIONS[value])
+        for value, _label in REFERENCE_MOTION_OPTIONS
+    )
+
+
+def _task_label(task: "TrainingTask", language: Language | str) -> str:
+    if Language.parse(language) is Language.KOREA:
+        return task.label
+    return {
+        "walk": "Walking policy · PPO residual walk",
+        "walk-v2": "Walking policy v2 · canonical coordinates and contact reward",
+    }.get(task.key, task.key)
 
 
 class RemoteDependencyError(RuntimeError):
@@ -520,24 +569,39 @@ def inspect_remote_capacity(settings: RemoteSettings) -> RemoteCapacity:
         ) from error
 
 
-def format_remote_capacity(capacity: RemoteCapacity) -> str:
-    """Return one compact Korean explanation for the CLI."""
+def format_remote_capacity(
+    capacity: RemoteCapacity,
+    *,
+    language: Language | str = Language.KOREA,
+) -> str:
+    """Return one compact localized explanation for the CLI."""
 
     bottleneck = (
         "CPU"
         if capacity.cpu_limit <= capacity.memory_limit
-        else "메모리"
+        else localize(language, "memory", "메모리")
     )
-    message = (
+    message = localize(
+        language,
+        f"physical {capacity.physical_cores} / logical {capacity.logical_cores} cores, "
+        f"{capacity.available_memory_gib:.1f} GiB available, "
+        f"1-minute load {capacity.load_average_1m:.1f} → "
+        f"recommend {capacity.recommended_num_envs} envs "
+        f"(CPU limit {capacity.cpu_limit}, memory limit {capacity.memory_limit}; "
+        f"{bottleneck} bound)",
         f"물리 {capacity.physical_cores}코어 / 논리 {capacity.logical_cores}코어, "
         f"사용 가능 메모리 {capacity.available_memory_gib:.1f} GiB, "
         f"1분 load {capacity.load_average_1m:.1f} → "
         f"추천 {capacity.recommended_num_envs}개 "
         f"(CPU 한도 {capacity.cpu_limit}, 메모리 한도 {capacity.memory_limit}; "
-        f"{bottleneck} 기준)"
+        f"{bottleneck} 기준)",
     )
     if capacity.is_busy:
-        message += " · 현재 다른 작업 부하가 높으므로 실제 학습 속도를 확인하세요."
+        message += localize(
+            language,
+            " · Host load is high; verify actual rollout speed.",
+            " · 현재 다른 작업 부하가 높으므로 실제 학습 속도를 확인하세요.",
+        )
     return message
 
 
@@ -1361,24 +1425,53 @@ def _inquirer() -> tuple[Any, Any]:
     return inquirer, Choice
 
 
-def prompt_standing_pose() -> tuple[str, tuple[float, ...]]:
+def prompt_standing_pose(
+    *,
+    language: Language | str = Language.ENGLISH,
+) -> tuple[str, tuple[float, ...]]:
     """Interactively choose the nominal RL body posture."""
 
     inquirer, Choice = _inquirer()
+    message = localize(
+        language,
+        "Select the RL standing posture",
+        "RL 기본 자세(몸체 높이)를 선택하세요",
+    )
+    show_picker_screen(
+        localize(language, "SCONE / RL POSTURE", "SCONE / RL 기본 자세"),
+        message,
+        localize(
+            language,
+            "Use Up/Down, then press Enter; Ctrl-C returns",
+            "위/아래로 이동한 뒤 Enter로 선택, Ctrl-C로 돌아가기",
+        ),
+    )
     selection = inquirer.select(
-        message="RL 기본 자세(몸체 높이)를 선택하세요.",
+        message=message,
         choices=[
             Choice(
                 value="standard",
-                name="높은 자세 · Standard (중간 240°, 아래 255°) · 추천",
+                name=localize(
+                    language,
+                    "- High / Standard (middle 240°, lower 255°) / recommended",
+                    "- 높은 자세 / Standard (중간 240°, 아래 255°) / 추천",
+                ),
             ),
             Choice(
                 value="sport",
-                name="낮은 자세 · Sport (중간 170°, 아래 195°) · 기존 RL",
+                name=localize(
+                    language,
+                    "- Low / Sport (middle 170°, lower 195°) / legacy RL",
+                    "- 낮은 자세 / Sport (중간 170°, 아래 195°) / 기존 RL",
+                ),
             ),
             Choice(
                 value="custom",
-                name="사용자 정의 · 중간/아래 관절 각도 직접 입력",
+                name=localize(
+                    language,
+                    "- Custom / enter middle/lower joint angles",
+                    "- 사용자 정의 / 중간/아래 관절 각도 직접 입력",
+                ),
             ),
         ],
         default="standard",
@@ -1390,7 +1483,7 @@ def prompt_standing_pose() -> tuple[str, tuple[float, ...]]:
 
     middle = float(
         inquirer.number(
-            message="중간 관절(ID 7~12) 기준 각도",
+            message=localize(language, "Middle joint angle · IDs 7–12", "중간 관절(ID 7~12) 기준 각도"),
             default=240.0,
             min_allowed=0.0,
             max_allowed=360.0,
@@ -1399,7 +1492,7 @@ def prompt_standing_pose() -> tuple[str, tuple[float, ...]]:
     )
     lower = float(
         inquirer.number(
-            message="아래 관절(ID 13~18) 기준 각도",
+            message=localize(language, "Lower joint angle · IDs 13–18", "아래 관절(ID 13~18) 기준 각도"),
             default=255.0,
             min_allowed=0.0,
             max_allowed=360.0,
@@ -1414,13 +1507,14 @@ def prompt_reference_motion(
     *,
     default: str = "tripod-gait",
     allowed: tuple[str, ...] | None = None,
+    language: Language | str = Language.ENGLISH,
 ) -> str:
     """Choose the baseline that the residual policy will correct."""
 
     default = normalize_reference_motion(default)
     options = [
         (value, label)
-        for value, label in REFERENCE_MOTION_OPTIONS
+        for value, label in _reference_motion_options(language)
         if allowed is None or value in allowed
     ]
     if not options:
@@ -1428,9 +1522,27 @@ def prompt_reference_motion(
     if default not in {value for value, _ in options}:
         default = options[0][0]
     inquirer, Choice = _inquirer()
+    message = localize(
+        language,
+        "Select the residual RL reference motion",
+        "Residual RL의 기준 모션을 선택하세요",
+    )
+    show_picker_screen(
+        localize(
+            language,
+            "SCONE / RL REFERENCE MOTION",
+            "SCONE / RL 기준 모션",
+        ),
+        message,
+        localize(
+            language,
+            "Use Up/Down, then press Enter; Ctrl-C returns",
+            "위/아래로 이동한 뒤 Enter로 선택, Ctrl-C로 돌아가기",
+        ),
+    )
     return inquirer.select(
-        message="Residual RL의 기준 모션을 선택하세요.",
-        choices=[Choice(value=value, name=label) for value, label in options],
+        message=message,
+        choices=[Choice(value=value, name=f"- {label}") for value, label in options],
         default=default,
     ).execute()
 
@@ -1439,43 +1551,52 @@ def _prompt_training_config(
     *,
     recommended_num_envs: int = 4,
     num_envs_hint: str | None = None,
+    language: Language | str = Language.ENGLISH,
 ) -> TrainingConfig:
     if recommended_num_envs < 1:
         raise ValueError("recommended_num_envs must be at least 1")
     inquirer, Choice = _inquirer()
     task = inquirer.select(
-        message="무엇을 학습할까요?",
-        choices=[Choice(value=item.key, name=item.label) for item in TRAINING_TASKS.values()],
+        message=localize(language, "Select a training task", "무엇을 학습할까요"),
+        choices=[
+            Choice(value=item.key, name=_task_label(item, language))
+            for item in TRAINING_TASKS.values()
+        ],
     ).execute()
     reference_motion = prompt_reference_motion(
         default="tripod-gait",
         allowed=TRAINING_TASKS[task].reference_motions,
+        language=language,
     )
     curriculum = inquirer.select(
-        message="학습 범위(커리큘럼)를 선택하세요.",
+        message=localize(language, "Select a training curriculum", "학습 범위(커리큘럼)를 선택하세요"),
         choices=[
-            Choice(value="easy", name="easy · 전진부터 학습"),
-            Choice(value="medium", name="medium · 전진 + 회전"),
-            Choice(value="full", name="full · 전후/좌우 + 회전"),
+            Choice(value="easy", name=localize(language, "easy · forward first", "easy · 전진부터 학습")),
+            Choice(value="medium", name=localize(language, "medium · forward + turning", "medium · 전진 + 회전")),
+            Choice(value="full", name=localize(language, "full · planar motion + turning", "full · 전후/좌우 + 회전")),
         ],
         default="easy",
     ).execute()
     terrain = inquirer.select(
-        message="어떤 지형에서 학습할까요?",
-        choices=[Choice(value=value, name=label) for value, label in TERRAIN_OPTIONS],
+        message=localize(language, "Select training terrain", "어떤 지형에서 학습할까요"),
+        choices=[Choice(value=value, name=label) for value, label in _terrain_options(language)],
         default="flat",
     ).execute()
-    standing_pose_name, standing_pose_degrees = prompt_standing_pose()
+    standing_pose_name, standing_pose_degrees = prompt_standing_pose(language=language)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     run_name = inquirer.text(
-        message="실행 이름을 입력하세요.",
+        message=localize(language, "Enter a run name", "실행 이름을 입력하세요"),
         default=f"{task}_{curriculum}_{timestamp}",
         validate=lambda value: SAFE_NAME.fullmatch(value) is not None,
-        invalid_message="영문/숫자로 시작하고 영문, 숫자, ., _, - 만 사용하세요.",
+        invalid_message=localize(
+            language,
+            "Start with a letter or digit; use only letters, digits, ., _, and -.",
+            "영문/숫자로 시작하고 영문, 숫자, ., _, - 만 사용하세요.",
+        ),
     ).execute()
     timesteps = int(
         inquirer.number(
-            message="총 몇 timestep을 학습할까요?",
+            message=localize(language, "Total training timesteps", "총 몇 timestep을 학습할까요"),
             default=1_000_000,
             min_allowed=1,
         ).execute()
@@ -1483,9 +1604,13 @@ def _prompt_training_config(
     num_envs = int(
         inquirer.number(
             message=(
-                "병렬 환경 개수는 몇 개로 할까요?"
+                localize(language, "Number of parallel environments", "병렬 환경 개수는 몇 개로 할까요")
                 if num_envs_hint is None
-                else f"병렬 환경 개수는 몇 개로 할까요? ({num_envs_hint})"
+                else localize(
+                    language,
+                    f"Number of parallel environments ({num_envs_hint})",
+                    f"병렬 환경 개수는 몇 개로 할까요? ({num_envs_hint})",
+                )
             ),
             default=recommended_num_envs,
             min_allowed=1,
@@ -1493,20 +1618,20 @@ def _prompt_training_config(
     )
     checkpoint_every = int(
         inquirer.number(
-            message="몇 timestep마다 체크포인트를 저장할까요?",
+            message=localize(language, "Checkpoint interval in timesteps", "몇 timestep마다 체크포인트를 저장할까요"),
             default=min(100_000, timesteps),
             min_allowed=1,
         ).execute()
     )
     keep_checkpoints = int(
         inquirer.number(
-            message="최근 체크포인트를 몇 개 보관할까요?",
+            message=localize(language, "Number of recent checkpoints to keep", "최근 체크포인트를 몇 개 보관할까요"),
             default=10,
             min_allowed=1,
         ).execute()
     )
     device = inquirer.select(
-        message="학습 장치를 선택하세요.",
+        message=localize(language, "Select a training device", "학습 장치를 선택하세요"),
         choices=["auto", "cpu", "cuda", "mps"],
         default="auto",
     ).execute()
@@ -1526,44 +1651,68 @@ def _prompt_training_config(
     )
 
 
-def _prompt_remote_settings() -> RemoteSettings:
+def _prompt_remote_settings(
+    *,
+    language: Language | str = Language.ENGLISH,
+) -> RemoteSettings:
     inquirer, _ = _inquirer()
     host = inquirer.text(
-        message="SSH 호스트를 입력하세요.",
+        message=localize(language, "SSH host", "SSH 호스트를 입력하세요"),
         default=DEFAULT_REMOTE_HOST,
         validate=lambda value: SAFE_SSH_HOST.fullmatch(value) is not None,
-        invalid_message="유효한 SSH 별칭 또는 user@hostname을 입력하세요.",
+        invalid_message=localize(
+            language,
+            "Enter a valid SSH alias or user@hostname.",
+            "유효한 SSH 별칭 또는 user@hostname을 입력하세요.",
+        ),
     ).execute()
     project_dir = inquirer.text(
-        message="원격 SCONE 프로젝트 경로를 입력하세요.",
+        message=localize(language, "Remote SCONE project path", "원격 SCONE 프로젝트 경로를 입력하세요"),
         default=DEFAULT_REMOTE_PROJECT,
     ).execute()
     return RemoteSettings(host=host, project_dir=project_dir)
 
 
-def _manual_remote_job() -> RemoteJob:
+def _manual_remote_job(
+    *,
+    language: Language | str = Language.ENGLISH,
+) -> RemoteJob:
     inquirer, Choice = _inquirer()
-    settings = _prompt_remote_settings()
+    settings = _prompt_remote_settings(language=language)
+    task = inquirer.select(
+        message=localize(language, "Training task used by this run", "이 실행에서 사용한 학습 작업을 선택하세요"),
+        choices=[
+            Choice(value=item.key, name=_task_label(item, language))
+            for item in TRAINING_TASKS.values()
+        ],
+        default="walk",
+    ).execute()
     run_name = inquirer.text(
-        message="원격 실행 이름을 입력하세요.",
+        message=localize(language, "Remote run name", "원격 실행 이름을 입력하세요"),
         validate=lambda value: SAFE_NAME.fullmatch(value) is not None,
-        invalid_message="영문/숫자로 시작하고 영문, 숫자, ., _, - 만 사용하세요.",
+        invalid_message=localize(
+            language,
+            "Start with a letter or digit; use only letters, digits, ., _, and -.",
+            "영문/숫자로 시작하고 영문, 숫자, ., _, - 만 사용하세요.",
+        ),
     ).execute()
     terrain = inquirer.select(
-        message="이 학습에 사용한 지형을 선택하세요.",
-        choices=[Choice(value=value, name=label) for value, label in TERRAIN_OPTIONS],
+        message=localize(language, "Terrain used by this run", "이 학습에 사용한 지형을 선택하세요"),
+        choices=[Choice(value=value, name=label) for value, label in _terrain_options(language)],
         default="flat",
     ).execute()
     reference_motion = prompt_reference_motion(
         default="tripod-gait",
         allowed=TRAINING_TASKS[task].reference_motions,
+        language=language,
     )
-    standing_pose_name, standing_pose_degrees = prompt_standing_pose()
+    standing_pose_name, standing_pose_degrees = prompt_standing_pose(language=language)
     return RemoteJob(
         host=settings.host,
         project_dir=settings.project_dir,
         port=settings.port,
         run_name=run_name,
+        task=task,
         terrain=terrain,
         reference_motion=reference_motion,
         standing_pose_name=standing_pose_name,
@@ -1571,7 +1720,11 @@ def _manual_remote_job() -> RemoteJob:
     )
 
 
-def _prompt_remote_job(message: str) -> RemoteJob:
+def _prompt_remote_job(
+    message: str,
+    *,
+    language: Language | str = Language.ENGLISH,
+) -> RemoteJob:
     inquirer, Choice = _inquirer()
     jobs = _load_remote_jobs()
     choices = [
@@ -1579,27 +1732,44 @@ def _prompt_remote_job(message: str) -> RemoteJob:
             # InquirerPy normalizes dataclass choice values with ``asdict``.
             # Keep the UI value scalar and recover the RemoteJob ourselves.
             value=index,
-            name=f"{job.run_name} · {job.host} · {job.created_at or '시간 미상'}",
+            name=(
+                f"{job.run_name} · {job.host} · "
+                f"{job.created_at or localize(language, 'time unknown', '시간 미상')}"
+            ),
         )
         for index, job in enumerate(jobs)
     ]
-    choices.append(Choice(value=-1, name="기록에 없는 실행 직접 입력"))
+    choices.append(Choice(
+        value=-1,
+        name=localize(language, "Enter a run not listed here", "기록에 없는 실행 직접 입력"),
+    ))
     selected = inquirer.select(message=message, choices=choices).execute()
     if selected == -1:
-        return _manual_remote_job()
+        return _manual_remote_job(language=language)
     if not isinstance(selected, int) or not 0 <= selected < len(jobs):
-        raise ValueError(f"유효하지 않은 원격 학습 선택값입니다: {selected!r}")
+        raise ValueError(localize(
+            language,
+            f"Invalid remote run selection: {selected!r}",
+            f"유효하지 않은 원격 학습 선택값입니다: {selected!r}",
+        ))
     return jobs[selected]
 
 
-def _prompt_local_model() -> Path | None:
+def _prompt_local_model(
+    *,
+    language: Language | str = Language.ENGLISH,
+) -> Path | None:
     inquirer, Choice = _inquirer()
     models = local_model_files()
     if not models:
-        print("[RL] 로컬 runs 폴더에 .zip 모델이 없습니다.")
+        print(localize(
+            language,
+            "[RL] No .zip model was found in the local runs directory.",
+            "[RL] 로컬 runs 폴더에 .zip 모델이 없습니다.",
+        ))
         return None
     return inquirer.select(
-        message="어떤 모델을 볼까요?",
+        message=localize(language, "Select a local model", "어떤 모델을 볼까요"),
         choices=[
             Choice(value=path, name=str(path.relative_to(PROJECT_ROOT)))
             for path in models
@@ -1607,13 +1777,23 @@ def _prompt_local_model() -> Path | None:
     ).execute()
 
 
-def _start_training_flow() -> None:
+def _start_training_flow(
+    *,
+    language: Language | str = Language.ENGLISH,
+) -> None:
     inquirer, Choice = _inquirer()
     location = inquirer.select(
-        message="어디에서 학습할까요?",
+        message=localize(language, "Select where to train", "어디에서 학습할까요"),
         choices=[
-            Choice(value="remote", name=f"SSH 원격 백그라운드 ({DEFAULT_REMOTE_HOST})"),
-            Choice(value="local", name="이 컴퓨터에서 실행"),
+            Choice(
+                value="remote",
+                name=localize(
+                    language,
+                    f"SSH background job · {DEFAULT_REMOTE_HOST}",
+                    f"SSH 원격 백그라운드 · {DEFAULT_REMOTE_HOST}",
+                ),
+            ),
+            Choice(value="local", name=localize(language, "This computer", "이 컴퓨터에서 실행")),
         ],
         default="remote",
     ).execute()
@@ -1621,35 +1801,57 @@ def _start_training_flow() -> None:
     recommended_num_envs = 4
     num_envs_hint: str | None = None
     if location == "remote":
-        settings = _prompt_remote_settings()
-        print(f"\n[RL] {settings.host}의 병렬 학습 자원을 확인합니다...")
+        settings = _prompt_remote_settings(language=language)
+        print(localize(
+            language,
+            f"\n[RL] Inspecting parallel-training capacity on {settings.host}...",
+            f"\n[RL] {settings.host}의 병렬 학습 자원을 확인합니다...",
+        ))
         try:
             capacity = inspect_remote_capacity(settings)
         except (OSError, RuntimeError, subprocess.SubprocessError) as error:
-            print(
+            print(localize(
+                language,
+                f"[RL] Automatic recommendation failed: {error}\n"
+                "     Starting from 4 environments; you can edit this after SSH connects.",
                 f"[RL] 자동 추천을 계산하지 못했습니다: {error}\n"
-                "     기본값 4개를 제안하며, SSH 연결 후 직접 바꿀 수 있습니다."
-            )
+                "     기본값 4개를 제안하며, SSH 연결 후 직접 바꿀 수 있습니다.",
+            ))
         else:
             recommended_num_envs = capacity.recommended_num_envs
-            num_envs_hint = f"SSH 추천 {recommended_num_envs}개"
-            print(f"[RL] {format_remote_capacity(capacity)}")
-            print(
-                "     OS/PPO용 물리 코어 1개와 메모리 2 GiB를 남긴 "
-                "출발값이며 직접 수정할 수 있습니다.\n"
+            num_envs_hint = localize(
+                language,
+                f"SSH recommends {recommended_num_envs}",
+                f"SSH 추천 {recommended_num_envs}개",
             )
+            print(f"[RL] {format_remote_capacity(capacity, language=language)}")
+            print(localize(
+                language,
+                "     Reserves one physical core and 2 GiB for the OS/PPO; editable.\n",
+                "     OS/PPO용 물리 코어 1개와 메모리 2 GiB를 남긴 "
+                "출발값이며 직접 수정할 수 있습니다.\n",
+            ))
 
     config = _prompt_training_config(
         recommended_num_envs=recommended_num_envs,
         num_envs_hint=num_envs_hint,
+        language=language,
     )
-    print(
+    print(localize(
+        language,
+        f"\n[RL] {_task_label(config.task_spec, language)} / {config.curriculum} / "
+        f"reference {config.reference_motion} / terrain {config.terrain} / "
+        f"stance {config.standing_pose_name} / "
+        f"{config.timesteps:,} timesteps / run {config.run_name}",
         f"\n[RL] {config.task_spec.label} / {config.curriculum} / "
         f"기준 {config.reference_motion} / 지형 {config.terrain} / "
         f"자세 {config.standing_pose_name} / "
-        f"{config.timesteps:,} timestep / 실행명 {config.run_name}"
-    )
-    if not inquirer.confirm(message="이 설정으로 시작할까요?", default=True).execute():
+        f"{config.timesteps:,} timestep / 실행명 {config.run_name}",
+    ))
+    if not inquirer.confirm(
+        message=localize(language, "Start with these settings?", "이 설정으로 시작할까요"),
+        default=True,
+    ).execute():
         return
 
     if location == "local":
@@ -1657,14 +1859,22 @@ def _start_training_flow() -> None:
         return
 
     if settings is None:
-        raise RuntimeError("원격 학습 SSH 설정이 없습니다")
+        raise RuntimeError(localize(language, "Remote SSH settings are missing", "원격 학습 SSH 설정이 없습니다"))
     sync_code = inquirer.confirm(
-        message="실행 전에 현재 로컬 코드를 원격 프로젝트로 동기화할까요?",
+        message=localize(
+            language,
+            "Sync the current local code to the remote project before launch?",
+            "실행 전에 현재 로컬 코드를 원격 프로젝트로 동기화할까요",
+        ),
         default=True,
     ).execute()
     install_dependencies = inquirer.confirm(
         message=(
-            "원격 Python 3.12 .venv 또는 RL 의존성이 없으면 자동으로 준비할까요?"
+            localize(
+                language,
+                "Prepare Python 3.12, .venv, and missing RL dependencies remotely?",
+                "원격 Python 3.12 .venv 또는 RL 의존성이 없으면 자동으로 준비할까요",
+            )
         ),
         default=True,
     ).execute()
@@ -1674,41 +1884,62 @@ def _start_training_flow() -> None:
         sync_code=sync_code,
         install_missing_dependencies=install_dependencies,
     )
-    print(f"\n[RL] 원격 학습을 시작했습니다 (PID {job.pid}).")
-    print(f"     로그: {job.host}:{job.project_dir}/{job.relative_run_dir}/train.log")
-    print(
-        f"     체크포인트: {job.host}:{job.project_dir}/"
-        f"{job.relative_run_dir}/checkpoints"
-    )
+    print(localize(
+        language,
+        f"\n[RL] Remote training started (PID {job.pid}).",
+        f"\n[RL] 원격 학습을 시작했습니다 (PID {job.pid}).",
+    ))
+    print(localize(
+        language,
+        f"     Log: {job.host}:{job.project_dir}/{job.relative_run_dir}/train.log",
+        f"     로그: {job.host}:{job.project_dir}/{job.relative_run_dir}/train.log",
+    ))
+    print(localize(
+        language,
+        f"     Checkpoints: {job.host}:{job.project_dir}/{job.relative_run_dir}/checkpoints",
+        f"     체크포인트: {job.host}:{job.project_dir}/{job.relative_run_dir}/checkpoints",
+    ))
 
 
-def _environment_check_flow() -> None:
+def _environment_check_flow(
+    *,
+    language: Language | str = Language.ENGLISH,
+) -> None:
     inquirer, Choice = _inquirer()
+    # ``run_environment_check`` currently exercises the original walk
+    # environment. Do not present walk-v2 as an option until it has its own
+    # check runner.
+    task = "walk"
     reference_motion = prompt_reference_motion(
         default="tripod-gait",
         allowed=TRAINING_TASKS[task].reference_motions,
+        language=language,
     )
     curriculum = inquirer.select(
-        message="테스트할 커리큘럼을 선택하세요.",
+        message=localize(language, "Select a test curriculum", "테스트할 커리큘럼을 선택하세요"),
         choices=["easy", "medium", "full"],
         default="easy",
     ).execute()
     terrain = inquirer.select(
-        message="테스트할 지형을 선택하세요.",
-        choices=[Choice(value=value, name=label) for value, label in TERRAIN_OPTIONS],
+        message=localize(language, "Select test terrain", "테스트할 지형을 선택하세요"),
+        choices=[Choice(value=value, name=label) for value, label in _terrain_options(language)],
         default="flat",
     ).execute()
-    standing_pose_name, standing_pose_degrees = prompt_standing_pose()
-    print(f"[RL] 환경 테스트 기본 자세: {standing_pose_name}")
+    standing_pose_name, standing_pose_degrees = prompt_standing_pose(language=language)
+    print(localize(
+        language,
+        f"[RL] Environment-check stance: {standing_pose_name}",
+        f"[RL] 환경 테스트 기본 자세: {standing_pose_name}",
+    ))
     steps = int(
         inquirer.number(
-            message="몇 policy step을 검사할까요?",
+            message=localize(language, "Number of policy steps to test", "몇 policy step을 검사할까요"),
             default=500,
             min_allowed=1,
         ).execute()
     )
     random_actions = inquirer.confirm(
-        message="무작위 residual action도 검사할까요?",
+        message=localize(language, "Also test random residual actions?", "무작위 residual action도 검사할까요"),
         default=False,
     ).execute()
     result = run_environment_check(
@@ -1720,26 +1951,37 @@ def _environment_check_flow() -> None:
         standing_pose_degrees=standing_pose_degrees,
     )
     if result != 0:
-        raise RuntimeError(f"학습 환경 테스트가 exit code {result}로 실패했습니다")
+        raise RuntimeError(localize(
+            language,
+            f"Environment check failed with exit code {result}",
+            f"학습 환경 테스트가 exit code {result}로 실패했습니다",
+        ))
 
 
-def _view_model_flow() -> None:
+def _view_model_flow(
+    *,
+    language: Language | str = Language.ENGLISH,
+) -> None:
     inquirer, Choice = _inquirer()
-    checkpoint = _prompt_local_model()
+    checkpoint = _prompt_local_model(language=language)
     if checkpoint is None:
         return
-    reference_motion = prompt_reference_motion(default="hardcoded")
-    vx = float(inquirer.number(message="전진 속도 vx (m/s)", default=0.25, float_allowed=True).execute())
-    vy = float(inquirer.number(message="측면 속도 vy (m/s)", default=0.0, float_allowed=True).execute())
-    yaw = float(inquirer.number(message="회전 속도 (rad/s)", default=0.0, float_allowed=True).execute())
-    episodes = int(inquirer.number(message="몇 episode를 볼까요?", default=3, min_allowed=1).execute())
+    reference_motion = prompt_reference_motion(default="hardcoded", language=language)
+    vx = float(inquirer.number(message=localize(language, "Forward speed vx (m/s)", "전진 속도 vx (m/s)"), default=0.25, float_allowed=True).execute())
+    vy = float(inquirer.number(message=localize(language, "Lateral speed vy (m/s)", "측면 속도 vy (m/s)"), default=0.0, float_allowed=True).execute())
+    yaw = float(inquirer.number(message=localize(language, "Yaw rate (rad/s)", "회전 속도 (rad/s)"), default=0.0, float_allowed=True).execute())
+    episodes = int(inquirer.number(message=localize(language, "Number of episodes", "몇 episode를 볼까요"), default=3, min_allowed=1).execute())
     terrain = inquirer.select(
-        message="모델을 어떤 지형에서 볼까요?",
-        choices=[Choice(value=value, name=label) for value, label in TERRAIN_OPTIONS],
+        message=localize(language, "Select replay terrain", "모델을 어떤 지형에서 볼까요"),
+        choices=[Choice(value=value, name=label) for value, label in _terrain_options(language)],
         default="flat",
     ).execute()
-    standing_pose_name, standing_pose_degrees = prompt_standing_pose()
-    print(f"[RL] 재생 기본 자세: {standing_pose_name}")
+    standing_pose_name, standing_pose_degrees = prompt_standing_pose(language=language)
+    print(localize(
+        language,
+        f"[RL] Replay stance: {standing_pose_name}",
+        f"[RL] 재생 기본 자세: {standing_pose_name}",
+    ))
     view_local_model(
         checkpoint,
         command=(vx, vy, yaw),
@@ -1750,61 +1992,89 @@ def _view_model_flow() -> None:
     )
 
 
-def _pause_remote_flow() -> None:
+def _pause_remote_flow(
+    *,
+    language: Language | str = Language.ENGLISH,
+) -> None:
     inquirer, _ = _inquirer()
-    job = _prompt_remote_job("어떤 원격 학습을 일시정지할까요?")
+    job = _prompt_remote_job(
+        localize(language, "Select a remote run to pause", "어떤 원격 학습을 일시정지할까요"),
+        language=language,
+    )
     if not remote_job_is_running(job):
-        print(f"\n[RL] {job.run_name} 학습은 이미 중지되어 있습니다.\n")
+        print(localize(
+            language,
+            f"\n[RL] {job.run_name} is already stopped.\n",
+            f"\n[RL] {job.run_name} 학습은 이미 중지되어 있습니다.\n",
+        ))
         return
     if not inquirer.confirm(
         message=(
-            f"{job.run_name} 학습을 안전하게 중지하고 이어하기 "
-            "체크포인트를 남길까요?"
+            localize(
+                language,
+                f"Pause {job.run_name} safely and save a resume checkpoint?",
+                f"{job.run_name} 학습을 안전하게 중지하고 이어하기 "
+                "체크포인트를 남길까요?",
+            )
         ),
         default=True,
     ).execute():
         return
 
     checkpoint = pause_remote_training(job)
-    print("\n[RL] 원격 학습을 일시정지했습니다.")
-    print(f"     이어하기 체크포인트: {job.host}:{checkpoint}")
-    print("     `원격 학습 이어하기`에서 같은 실행을 계속할 수 있습니다.\n")
+    print(localize(language, "\n[RL] Remote training paused.", "\n[RL] 원격 학습을 일시정지했습니다."))
+    print(localize(language, f"     Resume checkpoint: {job.host}:{checkpoint}", f"     이어하기 체크포인트: {job.host}:{checkpoint}"))
+    print(localize(language, "     Use Resume remote training to continue this run.\n", "     `원격 학습 이어하기`에서 같은 실행을 계속할 수 있습니다.\n"))
 
 
-def _resume_remote_flow() -> None:
+def _resume_remote_flow(
+    *,
+    language: Language | str = Language.ENGLISH,
+) -> None:
     inquirer, _ = _inquirer()
-    job = _prompt_remote_job("어떤 원격 학습을 이어서 진행할까요?")
+    job = _prompt_remote_job(
+        localize(language, "Select a remote run to resume", "어떤 원격 학습을 이어서 진행할까요"),
+        language=language,
+    )
     if remote_job_is_running(job):
-        print(f"\n[RL] {job.run_name} 학습은 이미 실행 중입니다.\n")
+        print(localize(language, f"\n[RL] {job.run_name} is already running.\n", f"\n[RL] {job.run_name} 학습은 이미 실행 중입니다.\n"))
         return
 
-    print(
+    print(localize(
+        language,
+        f"\n[RL] Saved settings: {job.curriculum} / reference {job.reference_motion} / "
+        f"terrain {job.terrain} / stance {job.standing_pose_name} / "
+        f"{job.num_envs} envs / checkpoint every {job.checkpoint_every:,} steps",
         f"\n[RL] 저장된 설정: {job.curriculum} / 기준 {job.reference_motion} / "
-        f"지형 {job.terrain} / "
-        f"자세 {job.standing_pose_name} / 병렬 환경 {job.num_envs}개 / "
-        f"체크포인트 {job.checkpoint_every:,} step마다"
-    )
+        f"지형 {job.terrain} / 자세 {job.standing_pose_name} / "
+        f"병렬 환경 {job.num_envs}개 / 체크포인트 {job.checkpoint_every:,} step마다",
+    ))
     if not inquirer.confirm(
         message=(
-            "기존 체크포인트와 보상함수·관측 구조가 호환되나요? "
-            "바꿨다면 이어하기 대신 원격 초기화 후 새 학습을 사용하세요."
+            localize(
+                language,
+                "Is the checkpoint compatible with the current reward and observation? "
+                "If not, reset and start a new run instead of resuming.",
+                "기존 체크포인트와 보상함수·관측 구조가 호환되나요? "
+                "바꿨다면 이어하기 대신 원격 초기화 후 새 학습을 사용하세요.",
+            )
         ),
         default=True,
     ).execute():
         return
     additional_timesteps = int(
         inquirer.number(
-            message="추가로 몇 timestep을 학습할까요?",
+            message=localize(language, "Additional training timesteps", "추가로 몇 timestep을 학습할까요"),
             default=1_000_000,
             min_allowed=1,
         ).execute()
     )
     sync_code = inquirer.confirm(
-        message="이어가기 전에 현재 로컬 코드를 원격 프로젝트로 동기화할까요?",
+        message=localize(language, "Sync local code before resuming?", "이어가기 전에 현재 로컬 코드를 원격 프로젝트로 동기화할까요"),
         default=True,
     ).execute()
     install_dependencies = inquirer.confirm(
-        message="원격 Python 3.12/RL 의존성을 확인하고 필요하면 준비할까요?",
+        message=localize(language, "Check and prepare remote Python 3.12/RL dependencies?", "원격 Python 3.12/RL 의존성을 확인하고 필요하면 준비할까요"),
         default=True,
     ).execute()
     resumed_job, checkpoint = resume_remote_training(
@@ -1813,32 +2083,44 @@ def _resume_remote_flow() -> None:
         sync_code=sync_code,
         install_missing_dependencies=install_dependencies,
     )
-    print(f"\n[RL] 원격 학습을 이어서 시작했습니다 (PID {resumed_job.pid}).")
-    print(f"     시작 체크포인트: {resumed_job.host}:{checkpoint}")
-    print(f"     추가 학습량: {additional_timesteps:,} timestep")
-    print(
-        f"     로그: {resumed_job.host}:{resumed_job.project_dir}/"
-        f"{resumed_job.relative_run_dir}/train.log\n"
-    )
+    print(localize(language, f"\n[RL] Remote training resumed (PID {resumed_job.pid}).", f"\n[RL] 원격 학습을 이어서 시작했습니다 (PID {resumed_job.pid})."))
+    print(localize(language, f"     Starting checkpoint: {resumed_job.host}:{checkpoint}", f"     시작 체크포인트: {resumed_job.host}:{checkpoint}"))
+    print(localize(language, f"     Additional timesteps: {additional_timesteps:,}", f"     추가 학습량: {additional_timesteps:,} timestep"))
+    print(localize(language, f"     Log: {resumed_job.host}:{resumed_job.project_dir}/{resumed_job.relative_run_dir}/train.log\n", f"     로그: {resumed_job.host}:{resumed_job.project_dir}/{resumed_job.relative_run_dir}/train.log\n"))
 
 
-def _reset_remote_flow() -> None:
+def _reset_remote_flow(
+    *,
+    language: Language | str = Language.ENGLISH,
+) -> None:
     inquirer, _ = _inquirer()
-    job = _prompt_remote_job("어떤 원격 실행과 체크포인트를 초기화할까요?")
+    job = _prompt_remote_job(
+        localize(language, "Select a remote run to archive and reset", "어떤 원격 실행과 체크포인트를 초기화할까요"),
+        language=language,
+    )
     running = remote_job_is_running(job)
     if running:
         confirmed = inquirer.confirm(
             message=(
-                f"{job.run_name} 학습이 실행 중입니다. 학습을 종료하고 "
-                "실행 전체를 백업한 뒤 초기화할까요?"
+                localize(
+                    language,
+                    f"{job.run_name} is running. Stop it, archive the entire run, and reset?",
+                    f"{job.run_name} 학습이 실행 중입니다. 학습을 종료하고 "
+                    "실행 전체를 백업한 뒤 초기화할까요?",
+                )
             ),
             default=False,
         ).execute()
     else:
         confirmed = inquirer.confirm(
             message=(
-                f"{job.host}:{job.project_dir}/{job.relative_run_dir} 를 "
-                "원격 .reset_backup으로 이동할까요?"
+                localize(
+                    language,
+                    f"Move {job.host}:{job.project_dir}/{job.relative_run_dir} "
+                    "to remote .reset_backup?",
+                    f"{job.host}:{job.project_dir}/{job.relative_run_dir} 를 "
+                    "원격 .reset_backup으로 이동할까요?",
+                )
             ),
             default=False,
         ).execute()
@@ -1846,81 +2128,139 @@ def _reset_remote_flow() -> None:
         return
 
     typed_name = inquirer.text(
-        message=f"확인을 위해 실행 이름 `{job.run_name}`을 입력하세요."
+        message=localize(
+            language,
+            f"Type the run name `{job.run_name}` to confirm",
+            f"확인을 위해 실행 이름 `{job.run_name}`을 입력하세요",
+        )
     ).execute()
     if typed_name != job.run_name:
-        print("[RL] 실행 이름이 일치하지 않아 초기화를 취소했습니다.")
+        print(localize(language, "[RL] Run name did not match; reset cancelled.", "[RL] 실행 이름이 일치하지 않아 초기화를 취소했습니다."))
         return
 
     backup = reset_remote_run(job, stop_running=running)
-    print("\n[RL] 원격 실행을 초기화했습니다.")
-    print(f"     기존 데이터 백업: {job.host}:{job.project_dir}/{backup}")
-    print(f"     같은 실행명 `{job.run_name}`으로 완전 새 학습을 시작할 수 있습니다.\n")
+    print(localize(language, "\n[RL] Remote run archived and reset.", "\n[RL] 원격 실행을 초기화했습니다."))
+    print(localize(language, f"     Archive: {job.host}:{job.project_dir}/{backup}", f"     기존 데이터 백업: {job.host}:{job.project_dir}/{backup}"))
+    print(localize(language, f"     A fresh run may now reuse `{job.run_name}`.\n", f"     같은 실행명 `{job.run_name}`으로 완전 새 학습을 시작할 수 있습니다.\n"))
 
 
 
-def _menu_header() -> str:
+def _menu_header(
+    language: Language | str = Language.ENGLISH,
+) -> str:
     """One screenful of context so the menu is not a blind list of verbs."""
 
-    width = 66
-    lines = ["\u2500" * width, " SCONE 강화학습", "\u2500" * width]
+    remote_lines = ["[ REMOTE RUNS ]"]
     jobs = _load_remote_jobs()
     if not jobs:
-        lines.append(" 등록된 원격 학습이 없습니다. '새 학습 시작'으로 만드세요.")
+        remote_lines.append(localize(
+            language,
+            "- No remote runs registered; use Start new training to create one",
+            "- 등록된 원격 학습 없음; 새 학습 시작에서 생성할 수 있음",
+        ))
     else:
-        lines.append(f" 등록된 원격 학습 {len(jobs)}개")
+        remote_lines.append(localize(
+            language,
+            f"- Registered remote runs: {len(jobs)}",
+            f"- 등록된 원격 학습: {len(jobs)}개",
+        ))
         for job in jobs[-6:]:
             task = TRAINING_TASKS.get(job.task)
-            label = task.key if task is not None else job.task
+            label = _task_label(task, language) if task is not None else job.task
             created = (job.created_at or "")[:16].replace("T", " ")
-            lines.append(
-                f"   · {job.run_name:<28s} {label:<8s} {job.host:<18s} {created}"
+            remote_lines.append(
+                f"- {job.run_name} / {label} / {job.host} / {created or '-'}"
             )
         if len(jobs) > 6:
-            lines.append(f"   ... 외 {len(jobs) - 6}개")
+            remote_lines.append(
+                localize(
+                    language,
+                    f"- ... and {len(jobs) - 6} more",
+                    f"- ... 외 {len(jobs) - 6}개",
+                )
+            )
     local = sorted(
         (path for path in RUNS_DIR.glob("*") if path.is_dir()),
         key=lambda path: path.stat().st_mtime,
         reverse=True,
     ) if RUNS_DIR.exists() else []
+    local_lines = ["[ LOCAL RUNS ]"]
     if local:
         names = ", ".join(path.name for path in local[:4])
-        more = f" 외 {len(local) - 4}개" if len(local) > 4 else ""
-        lines.append(f" 로컬 runs/: {names}{more}")
-    lines.append("\u2500" * width)
-    return "\n".join(lines)
+        more = (
+            localize(language, f" and {len(local) - 4} more", f" 외 {len(local) - 4}개")
+            if len(local) > 4
+            else ""
+        )
+        local_lines.append(
+            localize(
+                language,
+                f"- runs/: {names}{more}",
+                f"- runs/: {names}{more}",
+            )
+        )
+    else:
+        local_lines.append(localize(language, "- No local runs", "- 로컬 실행 없음"))
+    return render_panel(
+        localize(
+            language,
+            "SCONE / REINFORCEMENT LEARNING",
+            "SCONE / 강화학습",
+        ),
+        (tuple(remote_lines), tuple(local_lines)),
+    )
 
 
-def _main_menu_choices(Choice: Any, Separator: Any, has_remote: bool) -> list[Any]:
+def _menu_separator(
+    Separator: Any,
+    english: str,
+    korean: str,
+    language: Language | str,
+) -> Any:
+    label = localize(language, english, korean)
+    prefix = f"-- {label} "
+    return Separator(f"{prefix}{'-' * max(0, 58 - display_width(prefix))}")
+
+
+def _main_menu_choices(
+    Choice: Any,
+    Separator: Any,
+    has_remote: bool,
+    *,
+    language: Language | str = Language.ENGLISH,
+) -> list[Any]:
     """Group the actions and hide the ones that cannot run yet."""
 
     choices: list[Any] = [
-        Separator("── 준비 ──"),
-        Choice(value="check", name="학습 환경/보상 스모크 테스트"),
-        Separator("── 학습 ──"),
-        Choice(value="start", name="새 학습 시작"),
+        _menu_separator(Separator, "VALIDATE", "준비", language),
+        Choice(value="check", name=localize(language, "- Environment/reward smoke test", "- 학습 환경/보상 스모크 테스트")),
+        _menu_separator(Separator, "TRAIN", "학습", language),
+        Choice(value="start", name=localize(language, "- Start new training", "- 새 학습 시작")),
     ]
     if has_remote:
         choices += [
-            Separator("── 원격 관리 ──"),
-            Choice(value="status", name="원격 학습 상태와 로그 보기"),
-            Choice(value="pause", name="원격 학습 일시정지"),
-            Choice(value="resume", name="원격 학습 이어하기"),
-            Choice(value="download", name="원격 최신 체크포인트 내려받기"),
-            Choice(value="watch", name="원격 학습을 내려받으며 실시간 보기"),
-            Separator("── 정리 ──"),
-            Choice(value="reset", name="원격 실행/체크포인트 완전 초기화"),
+            _menu_separator(Separator, "REMOTE", "원격 관리", language),
+            Choice(value="status", name=localize(language, "- View remote status and logs", "- 원격 학습 상태와 로그 보기")),
+            Choice(value="pause", name=localize(language, "- Pause remote training safely", "- 원격 학습 일시정지")),
+            Choice(value="resume", name=localize(language, "- Resume remote training", "- 원격 학습 이어하기")),
+            Choice(value="download", name=localize(language, "- Download latest remote checkpoint", "- 원격 최신 체크포인트 내려받기")),
+            Choice(value="watch", name=localize(language, "- Mirror and watch remote training", "- 원격 학습을 내려받으며 실시간 보기")),
+            _menu_separator(Separator, "RESET", "정리", language),
+            Choice(value="reset", name=localize(language, "- Archive and reset a remote run", "- 원격 실행/체크포인트 완전 초기화")),
         ]
     choices += [
-        Separator("── 보기 ──"),
-        Choice(value="view", name="로컬에 저장된 모델 보기"),
-        Separator(),
-        Choice(value="quit", name="돌아가기"),
+        _menu_separator(Separator, "REPLAY", "보기", language),
+        Choice(value="view", name=localize(language, "- Replay a local model", "- 로컬에 저장된 모델 보기")),
+        _menu_separator(Separator, "EXIT", "종료", language),
+        Choice(value="quit", name=localize(language, "- Back", "- 돌아가기")),
     ]
     return choices
 
 
-def main() -> int:
+def main(
+    *,
+    language: Language | str = Language.ENGLISH,
+) -> int:
     try:
         inquirer, Choice = _inquirer()
         from InquirerPy.separator import Separator
@@ -1931,39 +2271,67 @@ def main() -> int:
     while True:
         try:
             has_remote = bool(_load_remote_jobs())
-            print(f"\n{_menu_header()}")
+            clear_terminal()
+            print(_menu_header(language))
             action = inquirer.select(
-                message="무엇을 할까요?",
-                choices=_main_menu_choices(Choice, Separator, has_remote),
+                message=localize(language, "Choose an RL activity", "무엇을 할까요"),
+                choices=_main_menu_choices(
+                    Choice,
+                    Separator,
+                    has_remote,
+                    language=language,
+                ),
                 pointer="\u276f",
+                instruction=localize(
+                    language,
+                    "(Up/Down move, Enter select, Ctrl-C returns)",
+                    "(위/아래 이동, Enter 선택, Ctrl-C 돌아가기)",
+                ),
             ).execute()
             if action == "quit":
                 return 0
             if action == "check":
-                _environment_check_flow()
+                _environment_check_flow(language=language)
             elif action == "start":
-                _start_training_flow()
+                _start_training_flow(language=language)
             elif action == "status":
-                job = _prompt_remote_job("어떤 원격 학습을 확인할까요?")
+                job = _prompt_remote_job(
+                    localize(language, "Select a remote run to inspect", "어떤 원격 학습을 확인할까요"),
+                    language=language,
+                )
                 print(f"\n{remote_job_status(job)}\n")
             elif action == "pause":
-                _pause_remote_flow()
+                _pause_remote_flow(language=language)
             elif action == "resume":
-                _resume_remote_flow()
+                _resume_remote_flow(language=language)
             elif action == "download":
-                job = _prompt_remote_job("어떤 원격 학습을 내려받을까요?")
+                job = _prompt_remote_job(
+                    localize(language, "Select a remote run to download", "어떤 원격 학습을 내려받을까요"),
+                    language=language,
+                )
                 paths = download_remote_artifacts(job)
-                print("\n[RL] 내려받기 완료:")
+                print(localize(language, "\n[RL] Download complete:", "\n[RL] 내려받기 완료:"))
                 for path in paths:
                     print(f"  {path}")
             elif action == "watch":
-                watch_remote_job(_prompt_remote_job("어떤 원격 학습을 볼까요?"))
+                watch_remote_job(_prompt_remote_job(
+                    localize(language, "Select a remote run to watch", "어떤 원격 학습을 볼까요"),
+                    language=language,
+                ))
             elif action == "view":
-                _view_model_flow()
+                _view_model_flow(language=language)
             elif action == "reset":
-                _reset_remote_flow()
+                _reset_remote_flow(language=language)
+            inquirer.text(
+                message=localize(
+                    language,
+                    "Press Enter to return to the RL menu",
+                    "Enter를 눌러 강화학습 메뉴로 돌아가기",
+                ),
+                default="",
+            ).execute()
         except (EOFError, KeyboardInterrupt):
-            print("\n[RL] 취소했습니다.")
+            print(localize(language, "\n[RL] Cancelled.", "\n[RL] 취소했습니다."))
             return 0
         except (
             OSError,
@@ -1972,7 +2340,22 @@ def main() -> int:
             FileNotFoundError,
             subprocess.SubprocessError,
         ) as exc:
-            print(f"\n[RL] 작업을 완료하지 못했습니다: {exc}\n")
+            print(localize(
+                language,
+                f"\n[RL] Operation failed: {exc}\n",
+                f"\n[RL] 작업을 완료하지 못했습니다: {exc}\n",
+            ))
+            try:
+                inquirer.text(
+                    message=localize(
+                        language,
+                        "Press Enter to return to the RL menu",
+                        "Enter를 눌러 강화학습 메뉴로 돌아가기",
+                    ),
+                    default="",
+                ).execute()
+            except (EOFError, KeyboardInterrupt):
+                return 0
 
 
 if __name__ == "__main__":

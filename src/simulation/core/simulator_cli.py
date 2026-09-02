@@ -6,6 +6,13 @@ import argparse
 from pathlib import Path
 from typing import Any
 
+from ...cli_i18n import (
+    Language,
+    localize,
+    parse_language_argument,
+    terrain_label,
+)
+from ...cli_ui import show_picker_screen
 from .cli_bridge import SimulationControl, run
 from .model import DEFAULT_MODEL_PATH
 from .stair_demo import (
@@ -22,6 +29,22 @@ RL_REFERENCE_MOTION_CHOICES = (
     "hardcoded",
     "non_rl",
 )
+
+
+def _show_simulation_picker(
+    title: str,
+    prompt: str,
+    language: Language | str,
+) -> None:
+    show_picker_screen(
+        title,
+        prompt,
+        localize(
+            language,
+            "Use Up/Down, then press Enter; Ctrl-C returns",
+            "위/아래로 이동한 뒤 Enter로 선택, Ctrl-C로 돌아가기",
+        ),
+    )
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -82,6 +105,13 @@ def build_parser() -> argparse.ArgumentParser:
         default=SPORT_STANDING_DEGREES,
     )
     parser.add_argument("--verbose", action="store_true")
+    parser.add_argument(
+        "--language",
+        type=parse_language_argument,
+        default=Language.ENGLISH,
+        metavar="{english,korea}",
+        help="terminal UI language (default: english)",
+    )
     return parser
 
 
@@ -113,6 +143,7 @@ def main(argv: list[str] | None = None) -> int:
             args.demo,
             terrain=demo_terrain,
             model_path=args.model,
+            language=args.language,
         )
         return 0
     run(
@@ -127,11 +158,15 @@ def main(argv: list[str] | None = None) -> int:
         rl_reference_motion=args.rl_reference_motion,
         rl_standing_pose_degrees=args.rl_standing_pose_degrees,
         verbose=args.verbose,
+        language=args.language,
     )
     return 0
 
 
-def select_terrain() -> TerrainType:
+def select_terrain(
+    *,
+    language: Language | str = Language.ENGLISH,
+) -> TerrainType:
     """Interactive terrain picker used by the root SCONE launcher."""
 
     try:
@@ -139,25 +174,42 @@ def select_terrain() -> TerrainType:
         from InquirerPy.base.control import Choice
     except ImportError as error:
         raise RuntimeError(
-            "InquirerPy가 필요합니다. `python -m pip install -r requirements.txt` "
-            "후 다시 실행하세요."
+            localize(
+                language,
+                "InquirerPy is required. Install requirements and try again.",
+                "InquirerPy가 필요합니다. `python -m pip install -r requirements.txt` "
+                "후 다시 실행하세요.",
+            )
         ) from error
 
+    message = localize(language, "Select simulation terrain", "시뮬레이션 지형을 선택하세요")
+    _show_simulation_picker(
+        localize(language, "SCONE / TERRAIN", "SCONE / 시뮬레이션 지형"),
+        message,
+        language,
+    )
     prompt: Any = inquirer.select(
-        message="시뮬레이션 지형을 선택하세요.",
+        message=message,
         choices=[
             Choice(
                 value=terrain,
-                name=f"{TERRAIN_LABELS[terrain]} · {terrain.value}",
+                name=(
+                    f"- {terrain_label(terrain, language, korean_label=TERRAIN_LABELS[terrain])}"
+                    f" · {terrain.value}"
+                ),
             )
             for terrain in TerrainType
         ],
         default=TerrainType.FLAT,
+        pointer="❯",
     )
     return prompt.execute()
 
 
-def select_simulation_control() -> SimulationControl:
+def select_simulation_control(
+    *,
+    language: Language | str = Language.ENGLISH,
+) -> SimulationControl:
     """Choose which locomotion implementation consumes x/y/yaw input."""
 
     try:
@@ -165,50 +217,86 @@ def select_simulation_control() -> SimulationControl:
         from InquirerPy.base.control import Choice
     except ImportError as error:
         raise RuntimeError(
-            "InquirerPy가 필요합니다. `python -m pip install -r requirements.txt` "
-            "후 다시 실행하세요."
+            localize(
+                language,
+                "InquirerPy is required. Install requirements and try again.",
+                "InquirerPy가 필요합니다. `python -m pip install -r requirements.txt` "
+                "후 다시 실행하세요.",
+            )
         ) from error
 
+    message = localize(
+        language,
+        "Select a locomotion controller",
+        "시뮬레이션 로코모션 제어기를 선택하세요",
+    )
+    _show_simulation_picker(
+        localize(language, "SCONE / LOCOMOTION", "SCONE / 이동 제어기"),
+        message,
+        language,
+    )
     prompt: Any = inquirer.select(
-        message="시뮬레이션 로코모션 제어기를 선택하세요.",
+        message=message,
         choices=[
             Choice(
                 value=SimulationControl.OLD,
-                name="Legacy mode control · Walk/Drive/Climb (R로 전환)",
+                name=localize(
+                    language,
+                    "- Legacy / Walk, Drive, Climb (R changes mode)",
+                    "- Legacy / Walk, Drive, Climb (R로 전환)",
+                ),
             ),
             Choice(
                 value=SimulationControl.TRIPOD_GAIT,
-                name="tripod-gait · 고전 교대 삼각보 + IK",
+                name=localize(
+                    language,
+                    "- tripod-gait / alternating tripod + IK",
+                    "- tripod-gait / 고전 교대 삼각보 + IK",
+                ),
             ),
             Choice(
                 value=SimulationControl.SCONE_GAIT,
-                name=(
-                    "scone-gait · 저속/yaw PPO + 고속 점접지/말단회전 "
-                    "하이브리드"
+                name=localize(
+                    language,
+                    "- scone-gait / low-speed/yaw PPO + fast hybrid rolling",
+                    "- scone-gait / 저속/yaw PPO + 고속 점접지/말단회전 하이브리드",
                 ),
             ),
             Choice(
                 value=SimulationControl.ROLL_GAIT,
-                name="roll-gait · 여섯 부채꼴 말단 연속 회전 (실험)",
+                name=localize(
+                    language,
+                    "- roll-gait / continuous six-frame rolling (experimental)",
+                    "- roll-gait / 여섯 부채꼴 말단 연속 회전 (실험)",
+                ),
             ),
             Choice(
                 value=SimulationControl.SCONE_STAIR,
-                name=(
-                    "scone-stair · 여섯 부채꼴 공통 위상 폐루프 "
-                    "계단 모션 (시뮬레이션)"
+                name=localize(
+                    language,
+                    "- scone-stair / synchronized closed-loop stair motion",
+                    "- scone-stair / 여섯 부채꼴 공통 위상 폐루프 계단 모션",
                 ),
             ),
             Choice(
                 value=SimulationControl.RL,
-                name="RL control · PPO Walk + R로 Drive/Climb 전환",
+                name=localize(
+                    language,
+                    "- RL control / PPO Walk, R changes to Drive/Climb",
+                    "- RL control / PPO Walk + R로 Drive/Climb 전환",
+                ),
             ),
         ],
         default=SimulationControl.TRIPOD_GAIT,
+        pointer="❯",
     )
     return prompt.execute()
 
 
-def select_stair_demo_strategy() -> StairDemoStrategy:
+def select_stair_demo_strategy(
+    *,
+    language: Language | str = Language.ENGLISH,
+) -> StairDemoStrategy:
     """Choose a no-input stair demonstration."""
 
     try:
@@ -216,31 +304,61 @@ def select_stair_demo_strategy() -> StairDemoStrategy:
         from InquirerPy.base.control import Choice
     except ImportError as error:
         raise RuntimeError(
-            "InquirerPy가 필요합니다. `python -m pip install -r requirements.txt` "
-            "후 다시 실행하세요."
+            localize(
+                language,
+                "InquirerPy is required. Install requirements and try again.",
+                "InquirerPy가 필요합니다. `python -m pip install -r requirements.txt` "
+                "후 다시 실행하세요.",
+            )
         ) from error
+    message = localize(
+        language,
+        "Select an automatic stair strategy",
+        "자동 계단 시뮬레이션 방식을 선택하세요",
+    )
+    _show_simulation_picker(
+        localize(language, "SCONE / STAIR DEMO", "SCONE / 자동 계단 데모"),
+        message,
+        language,
+    )
     prompt: Any = inquirer.select(
-        message="자동 계단 시뮬레이션 방식을 선택하세요.",
+        message=message,
         choices=[
             Choice(
                 value=StairDemoStrategy.COMPARE,
-                name="비교 · 공통 위상 개방루프 후 폐루프 개선형",
+                name=localize(
+                    language,
+                    "- Compare / open-loop baseline, then closed-loop improved",
+                    "- 비교 / 공통 위상 개방루프 후 폐루프 개선형",
+                ),
             ),
             Choice(
                 value=StairDemoStrategy.HARDCODED,
-                name="하드코딩 · 앞 1단 270° 수직 + 고정 속도 개방루프",
+                name=localize(
+                    language,
+                    "- Hardcoded / front stage-1 at 270° + fixed-speed open loop",
+                    "- 하드코딩 / 앞 1단 270° 수직 + 고정 속도 개방루프",
+                ),
             ),
             Choice(
                 value=StairDemoStrategy.IMPROVED,
-                name="개선형 · 높이별 앞 1단 지지 + 공통 위상 폐루프",
+                name=localize(
+                    language,
+                    "- Improved / height-aware front brace + closed common phase",
+                    "- 개선형 / 높이별 앞 1단 지지 + 공통 위상 폐루프",
+                ),
             ),
         ],
         default=StairDemoStrategy.COMPARE,
+        pointer="❯",
     )
     return prompt.execute()
 
 
-def select_stair_terrain() -> TerrainType:
+def select_stair_terrain(
+    *,
+    language: Language | str = Language.ENGLISH,
+) -> TerrainType:
     """Choose one of the three deterministic stair courses."""
 
     try:
@@ -248,29 +366,46 @@ def select_stair_terrain() -> TerrainType:
         from InquirerPy.base.control import Choice
     except ImportError as error:
         raise RuntimeError(
-            "InquirerPy가 필요합니다. `python -m pip install -r requirements.txt` "
-            "후 다시 실행하세요."
+            localize(
+                language,
+                "InquirerPy is required. Install requirements and try again.",
+                "InquirerPy가 필요합니다. `python -m pip install -r requirements.txt` "
+                "후 다시 실행하세요.",
+            )
         ) from error
     stairs = (
         TerrainType.STAIRS_1,
         TerrainType.STAIRS_2,
         TerrainType.STAIRS_3,
     )
+    message = localize(language, "Select a stair course", "자동 계단 지형을 선택하세요")
+    _show_simulation_picker(
+        localize(language, "SCONE / STAIR HEIGHT", "SCONE / 계단 높이"),
+        message,
+        language,
+    )
     prompt: Any = inquirer.select(
-        message="자동 계단 지형을 선택하세요.",
+        message=message,
         choices=[
             Choice(
                 value=terrain,
-                name=f"{TERRAIN_LABELS[terrain]} · {terrain.value}",
+                name=(
+                    f"- {terrain_label(terrain, language, korean_label=TERRAIN_LABELS[terrain])}"
+                    f" · {terrain.value}"
+                ),
             )
             for terrain in stairs
         ],
         default=TerrainType.STAIRS_2,
+        pointer="❯",
     )
     return prompt.execute()
 
 
-def select_rl_checkpoint() -> Path:
+def select_rl_checkpoint(
+    *,
+    language: Language | str = Language.ENGLISH,
+) -> Path:
     """Choose a downloaded local PPO checkpoint for interactive RL control."""
 
     try:
@@ -278,26 +413,43 @@ def select_rl_checkpoint() -> Path:
         from InquirerPy.base.control import Choice
     except ImportError as error:
         raise RuntimeError(
-            "InquirerPy가 필요합니다. `python -m pip install -r requirements.txt` "
-            "후 다시 실행하세요."
+            localize(
+                language,
+                "InquirerPy is required. Install requirements and try again.",
+                "InquirerPy가 필요합니다. `python -m pip install -r requirements.txt` "
+                "후 다시 실행하세요.",
+            )
         ) from error
     from ...rl.inquiry import PROJECT_ROOT, local_model_files
 
     checkpoints = local_model_files()
     if not checkpoints:
-        raise FileNotFoundError(
-            "runs/ 아래에 RL 체크포인트가 없습니다. 먼저 모델을 내려받거나 학습하세요."
-        )
+        raise FileNotFoundError(localize(
+            language,
+            "No RL checkpoint was found under runs/. Train or download a model first.",
+            "runs/ 아래에 RL 체크포인트가 없습니다. 먼저 모델을 내려받거나 학습하세요.",
+        ))
+    message = localize(
+        language,
+        "Select a PPO checkpoint",
+        "조이스틱으로 실행할 RL 체크포인트를 선택하세요",
+    )
+    _show_simulation_picker(
+        localize(language, "SCONE / PPO CHECKPOINT", "SCONE / PPO 체크포인트"),
+        message,
+        language,
+    )
     prompt: Any = inquirer.select(
-        message="조이스틱으로 실행할 RL 체크포인트를 선택하세요.",
+        message=message,
         choices=[
             Choice(
                 value=checkpoint,
-                name=str(checkpoint.relative_to(PROJECT_ROOT)),
+                name=f"- {checkpoint.relative_to(PROJECT_ROOT)}",
             )
             for checkpoint in checkpoints
         ],
         default=checkpoints[0],
+        pointer="❯",
     )
     return prompt.execute()
 

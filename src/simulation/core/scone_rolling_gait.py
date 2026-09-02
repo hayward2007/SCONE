@@ -17,6 +17,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
+from ...cli_i18n import Language, localize
 from ...hardware import Actuator
 from ...locomotion import (
     GaitSample,
@@ -324,16 +325,19 @@ def run_roll_gait_joystick_cli(
     *,
     stop_event: threading.Event | None = None,
     config: RollGaitConfig | None = None,
+    language: Language | str = Language.ENGLISH,
 ) -> None:
     """Drive the simulation-only continuous-roll gait from the shared joystick."""
 
     from ...cli import run_velocity_joystick_cli
-
     if robot.profile_name == "sport":
-        print(
+        print(localize(
+            language,
+            "[SCONE] Continuous roll-gait is validated in Standard. "
+            "Sport clearance and phase stability are unverified.",
             "[SCONE] continuous roll-gait는 Standard에서 검증됐습니다. "
-            "Sport는 접지 여유와 phase 안정성이 검증되지 않았습니다."
-        )
+            "Sport는 접지 여유와 phase 안정성이 검증되지 않았습니다.",
+        ))
     gait = RollGait(robot.controller, robot.profile, config=config)
     targets = gait.prepare()
     if not gait.controller.wait_until_raw_positions(
@@ -349,11 +353,15 @@ def run_roll_gait_joystick_cli(
             apply_command=gait.update,
             profile_name=robot.profile_name,
             control_name="roll-gait/full-body+continuous-roll",
-            control_hint=(
+            control_hint=localize(
+                language,
+                "Joints 1–12 walk while the joint 13–18 gait component is "
+                "blended into continuous distal rotation.",
                 "1..12번 기본 보행과 13..18번 기본 보행 속도 변화를 "
-                "말단 연속 회전에 합성합니다."
+                "말단 연속 회전에 합성합니다.",
             ),
             stop_event=stop_event,
+            language=language,
         )
     finally:
         gait.stop()

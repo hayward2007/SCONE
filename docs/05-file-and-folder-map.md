@@ -48,6 +48,8 @@
 | [`src/__init__.py`](../src/__init__.py) | 패키지 public symbol과 지연 import 제공 |
 | [`src/main.py`](../src/main.py) | `SCONE` facade, 초기화/프로필/모드 전환/종료, `RobotCommand`, `RobotStatus` |
 | [`src/cli.py`](../src/cli.py) | 장치·시뮬레이션·RL 통합 메뉴, raw terminal 키보드 조이스틱, legacy/tripod-gait/roll-gait/scone-gait adapter |
+| [`src/cli_i18n.py`](../src/cli_i18n.py) | `--language english/korea`, 공용 영어/한국어 문자열 선택, 지형 label 번역 |
+| [`src/cli_ui.py`](../src/cli_ui.py) | 74열 고정폭 ASCII panel, 한글 display-width 계산, TTY 화면 삭제, picker 공통 header |
 
 ## 3. `src/hardware/`
 

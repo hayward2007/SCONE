@@ -167,8 +167,6 @@ def arc_geometry() -> None:
         mutation_scale=8, linewidth=0.9, color="#E45756",
     ))
     ax.text(cx - 0.060, cy + 0.010, r"$F_h$", fontsize=7.5, color="#E45756")
-    ax.text(-0.295, 0.275, "force-only singularity is not\nan actuated-wheel height limit",
-            fontsize=6.2, color="#555555", va="top")
     ax.set_xlim(-0.31, 0.12)
     ax.set_ylim(-0.02, 0.29)
     ax.set_aspect("equal"); ax.axis("off")
@@ -205,8 +203,6 @@ def control_architecture() -> None:
     ]
     for start, end in arrows:
         ax.add_patch(FancyArrowPatch(start, end, arrowstyle="-|>", mutation_scale=10, linewidth=0.9, color="#333333"))
-    ax.text(6.90, 0.12, "sum: distal rolling + bounded-gait rate", ha="center",
-            fontsize=6.8, color="#555555")
     ax.text(4.95, 2.20, "50 Hz targets", ha="center", fontsize=7, color="#555555")
     ax.text(8.92, 0.43, "500 Hz physics", ha="center", fontsize=7, color="#555555")
     fig.savefig(OUT / "control_architecture.pdf", bbox_inches="tight", pad_inches=0.02)

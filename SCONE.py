@@ -65,6 +65,8 @@ def __getattr__(name: str):
 
 
 if __name__ == "__main__":
+    import sys
+
     from src.cli import main
 
-    raise SystemExit(main())
+    raise SystemExit(main(sys.argv[1:]))

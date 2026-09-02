@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import math
 from dataclasses import asdict
 from pathlib import Path
 from typing import Sequence
@@ -22,6 +23,7 @@ from .common import (
     temporary_stair_profile,
     write_records,
 )
+from .model_variants import CONTACT_GEOMETRIES, transform_for_contact_geometry
 
 
 PAPER_STRATEGIES = {
@@ -40,6 +42,9 @@ def run_stair_trial(
     seed: int = 0,
     perturbation: Perturbation | None = None,
     profile: StairProfile | None = None,
+    terrain_seed: int = 7,
+    contact_geometry: str = "open-arc",
+    record_extra: dict[str, object] | None = None,
 ) -> dict[str, object]:
     """Run one existing stair hypothesis with optional model sensitivity."""
 
@@ -49,8 +54,14 @@ def run_stair_trial(
     if selected_terrain not in STAIR_PRESETS:
         raise ValueError("stair benchmark requires a stair terrain")
     selected_perturbation = perturbation or Perturbation()
+    if contact_geometry not in CONTACT_GEOMETRIES:
+        raise ValueError(
+            f"unknown contact geometry {contact_geometry!r}; "
+            f"choose from {CONTACT_GEOMETRIES}"
+        )
 
     def perturbed_loader(*args, **kwargs):
+        kwargs["xml_transform"] = transform_for_contact_geometry(contact_geometry)
         model = load_base_model(*args, **kwargs)
         apply_model_perturbation(model, selected_perturbation)
         return model
@@ -68,9 +79,20 @@ def run_stair_trial(
         result = stair_benchmark.run_hypothesis(
             selected_terrain,
             PAPER_STRATEGIES[strategy],
+            terrain_seed=terrain_seed,
+            initial_x_m=selected_perturbation.initial_x_m,
+            initial_y_m=selected_perturbation.initial_y_m,
+            initial_yaw_degrees=selected_perturbation.initial_yaw_degrees,
         )
 
     active_profile = profile or STAIR_PRESETS[selected_terrain]
+    failure_reason = None
+    if not result.top_reached:
+        failure_reason = (
+            "tilt-limit"
+            if result.minimum_upright < math.cos(math.radians(60.0))
+            else "measurement-timeout-no-top"
+        )
     return {
         "schema_version": 1,
         "benchmark": "stairs",
@@ -83,14 +105,19 @@ def run_stair_trial(
         "trial_index": trial_index,
         "seed": seed,
         "terrain": selected_terrain.value,
+        "terrain_seed": terrain_seed,
+        "contact_geometry": contact_geometry,
         "rises_m": list(active_profile.rises),
         "tread_depths_m": list(active_profile.tread_depths),
         "maximum_riser_m": max(active_profile.rises),
         "minimum_tread_m": min(active_profile.tread_depths),
         "completed": result.top_reached,
+        "failure_reason": failure_reason,
+        "timing_scope": "ascent-after-pose-and-phase-preparation",
         **asdict(selected_perturbation),
         **asdict(result),
         **source_revision(),
+        **(record_extra or {}),
     }
 
 
@@ -121,6 +148,12 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--tread-mm", action="append", type=float)
     parser.add_argument("--trials", type=int, default=1)
     parser.add_argument("--seed", type=int, default=2027)
+    parser.add_argument("--terrain-seed", type=int, default=7000)
+    parser.add_argument(
+        "--contact-geometry",
+        choices=CONTACT_GEOMETRIES,
+        default="open-arc",
+    )
     parser.add_argument(
         "--randomize",
         action=argparse.BooleanOptionalAction,
@@ -184,6 +217,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                     seed=args.seed,
                     perturbation=perturbation,
                     profile=profile,
+                    terrain_seed=args.terrain_seed + trial_index,
+                    contact_geometry=args.contact_geometry,
                 )
                 records.append(record)
                 print(

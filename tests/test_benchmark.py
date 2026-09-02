@@ -4,7 +4,11 @@ import json
 import math
 import tempfile
 import unittest
+import xml.etree.ElementTree as ET
 from pathlib import Path
+
+import mujoco
+import numpy as np
 
 from benchmark.common import (
     BenchmarkConfig,
@@ -14,7 +18,14 @@ from benchmark.common import (
 )
 from benchmark.capture import CaptureConfig
 from benchmark.flat import run_flat_trial
-from benchmark.report import summarize_records
+from benchmark.icra import sample_paired_perturbations
+from benchmark.model_variants import (
+    TIRE_GEOM_NAMES,
+    replace_open_arcs_with_closed_wheels,
+    transform_for_contact_geometry,
+)
+from benchmark.report import summarize_paired_differences, summarize_records
+from src.simulation.core.model import DEFAULT_MODEL_PATH, load_model
 from src.simulation.terrain import STAIR_PRESETS, StairProfile, TerrainType
 
 
@@ -46,6 +57,59 @@ class BenchmarkTests(unittest.TestCase):
         self.assertEqual(record["controller"], "articulated-walk")
         self.assertTrue(math.isfinite(float(record["mean_vx_mps"])))
         self.assertGreater(float(record["duration_s"]), 0.0)
+        json.dumps(record)
+
+    def test_closed_wheel_transform_is_non_destructive_and_complete(self) -> None:
+        source = DEFAULT_MODEL_PATH.read_text(encoding="utf-8")
+        root = ET.fromstring(source)
+        replace_open_arcs_with_closed_wheels(root)
+        transformed = {
+            geom.get("name"): geom
+            for geom in root.findall(".//geom")
+            if geom.get("name") in TIRE_GEOM_NAMES
+        }
+        self.assertEqual(set(transformed), set(TIRE_GEOM_NAMES))
+        self.assertTrue(all(geom.get("type") == "cylinder" for geom in transformed.values()))
+        self.assertTrue(all(geom.get("mesh") is None for geom in transformed.values()))
+        self.assertEqual(DEFAULT_MODEL_PATH.read_text(encoding="utf-8"), source)
+
+    def test_closed_wheel_model_compiles_without_changing_mass_or_inertia(self) -> None:
+        open_model = load_model(floating_base=True)
+        closed_model = load_model(
+            floating_base=True,
+            xml_transform=transform_for_contact_geometry("closed-wheel"),
+        )
+        np.testing.assert_allclose(open_model.body_mass, closed_model.body_mass)
+        np.testing.assert_allclose(open_model.body_inertia, closed_model.body_inertia)
+        for name in TIRE_GEOM_NAMES:
+            geom_id = mujoco.mj_name2id(
+                closed_model,
+                mujoco.mjtObj.mjOBJ_GEOM,
+                name,
+            )
+            self.assertEqual(
+                int(closed_model.geom_type[geom_id]),
+                int(mujoco.mjtGeom.mjGEOM_CYLINDER),
+            )
+
+    def test_paired_perturbations_are_deterministic(self) -> None:
+        first = sample_paired_perturbations(seed=42, count=4)
+        second = sample_paired_perturbations(seed=42, count=4)
+        different = sample_paired_perturbations(seed=43, count=4)
+        self.assertEqual(first, second)
+        self.assertNotEqual(first, different)
+
+    def test_short_matched_closed_wheel_trial_is_serializable(self) -> None:
+        record = run_flat_trial(
+            "matched-coordinated",
+            (0.10, 0.0, 0.0),
+            command_name="forward-0.10",
+            contact_geometry="closed-wheel",
+            perturbation=Perturbation(gait_phase=0.25),
+            config=BenchmarkConfig(settle_seconds=0.02, measure_seconds=0.06),
+        )
+        self.assertEqual(record["contact_geometry"], "closed-wheel")
+        self.assertTrue(math.isfinite(float(record["mean_vx_mps"])))
         json.dumps(record)
 
     def test_custom_stair_profile_context_restores_preset(self) -> None:
@@ -83,6 +147,51 @@ class BenchmarkTests(unittest.TestCase):
         self.assertLess(rows[0]["success_wilson95_low"], 0.5)
         self.assertGreater(rows[0]["success_wilson95_high"], 0.5)
         self.assertAlmostEqual(rows[0]["mean_vx_mps_mean"], 0.15)
+
+    def test_bootstrap_and_paired_summaries_are_deterministic(self) -> None:
+        records = []
+        for pair_id, closed, opened in (("a", 0.1, 0.2), ("b", 0.2, 0.4)):
+            records.extend(
+                (
+                    {
+                        "controller": "matched-coordinated",
+                        "command_name": "forward",
+                        "pair_id": pair_id,
+                        "contact_geometry": "closed-wheel",
+                        "mean_vx_mps": closed,
+                    },
+                    {
+                        "controller": "matched-coordinated",
+                        "command_name": "forward",
+                        "pair_id": pair_id,
+                        "contact_geometry": "open-arc",
+                        "mean_vx_mps": opened,
+                    },
+                )
+            )
+        first = summarize_paired_differences(
+            records,
+            condition_field="contact_geometry",
+            reference="closed-wheel",
+            candidate="open-arc",
+            group_by=("controller", "command_name"),
+            metrics=("mean_vx_mps",),
+            bootstrap_seed=7,
+            bootstrap_samples=200,
+        )
+        second = summarize_paired_differences(
+            records,
+            condition_field="contact_geometry",
+            reference="closed-wheel",
+            candidate="open-arc",
+            group_by=("controller", "command_name"),
+            metrics=("mean_vx_mps",),
+            bootstrap_seed=7,
+            bootstrap_samples=200,
+        )
+        self.assertEqual(first, second)
+        self.assertEqual(first[0]["paired_N"], 2)
+        self.assertAlmostEqual(first[0]["mean_vx_mps_mean_difference"], 0.15)
 
     def test_write_records_supports_jsonl_and_csv(self) -> None:
         records = [{"controller": "a", "completed": True, "value": 1.0}]

@@ -19,6 +19,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             "transitions",
             "report",
             "capture",
+            "icra",
         ),
     )
     if not arguments or arguments[0] in ("-h", "--help"):
@@ -36,6 +37,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         from .transitions import main as run
     elif args.suite == "capture":
         from .capture import main as run
+    elif args.suite == "icra":
+        from .icra import main as run
     else:
         from .report import main as run
     return run(remaining)

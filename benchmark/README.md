@@ -7,6 +7,56 @@ a fresh model, data, virtual controller, and robot, then writes one JSON object.
 The benchmark is evidence about the current MuJoCo model. It is not a substitute
 for repeated physical-robot tests or simulation-to-real calibration.
 
+## Locked ICRA protocol
+
+Use the `icra` suite for publication-facing runs. It is intentionally separate
+from the historical A/B/C commands below.
+
+```bash
+# Fast end-to-end validation of both contact geometries and all output files.
+python -m benchmark icra \
+  --profile smoke \
+  --suite all \
+  --seed 2027 \
+  --output-dir benchmark/results/icra/smoke-seed-2027
+
+# Small tuning/debug set. Do not report it as the held-out evaluation.
+python -m benchmark icra --profile pilot --suite all --seed 12027
+
+# Locked publication set: 20 paired trials, a nine-command grid and all stairs.
+python -m benchmark icra --profile evaluation --suite all --seed 22027
+```
+
+The protocol crosses two contact geometries with matched controllers:
+
+| Factor | Levels |
+| --- | --- |
+| Contact | exported `open-arc`; same-radius/width `closed-wheel` cylinder |
+| Flat control | `matched-articulated`; `matched-distal-only`; `matched-coordinated` |
+| Stair control | `distal-only`; `full-scone` |
+
+The closed cylinder replaces collision geometry only. The explicit body mass,
+inertia, actuator, friction, contact solver parameters, and outer envelope are
+preserved. All matched flat controllers use the same `RollGaitConfig`, actuator
+limits, 60-degree tripod-B distal phase pose, and gait-phase calibration. For a
+given `pair_id`, every geometry/controller condition receives the same sampled
+mass, friction, actuator-strength, initial-pose and gait-phase perturbation plus
+the same terrain seed.
+
+Each output directory starts with `protocol.json` and refuses to overwrite an
+existing manifest. Records include the model-plus-mesh SHA-256, MuJoCo version,
+Git revision/dirty flag, solver settings, physics/control time steps, geometry,
+pair ID and every sampled perturbation. The suite writes raw JSONL, ordinary
+group summaries, and candidate-minus-reference paired-difference CSV files.
+Binary outcomes use Wilson intervals; continuous means and paired differences
+use deterministic percentile-bootstrap intervals.
+
+`sensitivity` reruns a fixed nominal condition at 1, 2 and 4 ms physics steps.
+This checks numerical convergence separately from controller/morphology effects.
+The mass/friction/strength ranges are sensitivity ranges, not measured hardware
+uncertainty distributions. Before submission they must be replaced or justified
+using assembled-mass, motor and TPU/contact identification data.
+
 ## Suites
 
 ### Flat A/B/C ablation
@@ -128,8 +178,8 @@ python -m benchmark transitions \
 ### Statistical summary
 
 Create a CSV grouped by benchmark, controller, and command. Continuous metrics
-include mean, sample standard deviation, and normal-approximation 95% confidence
-interval. Binary success uses a Wilson 95% interval.
+include mean, sample standard deviation, and deterministic percentile-bootstrap
+95% intervals. Binary success uses a Wilson 95% interval.
 
 ```bash
 python -m benchmark report \
@@ -178,7 +228,12 @@ least 1 N normal contact force, not MuJoCo's raw number of contact points.
 4. Do not treat identical deterministic repeats as independent trials.
 5. Report traversal-only and end-to-end stair timing separately when preparation
    time is part of the research question.
-6. The current MJCF has no mechanical joint limits and its TPU/friction model is
+6. Never mix legacy A/B/C records with `icra` matched-controller records.
+7. Run the pilot and held-out evaluation with different pre-registered seeds;
+   do not retune after inspecting evaluation outcomes.
+8. Treat the open-vs-closed result as a frozen-controller morphology effect.
+   If either geometry is retuned, report that as a separate tuned comparison.
+9. The current MJCF has no mechanical joint limits and its TPU/friction model is
    not identified from hardware; disclose this until calibration is complete.
 
 Generated result files under `benchmark/results/` are ignored by Git.

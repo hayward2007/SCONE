@@ -22,6 +22,12 @@ from src.simulation.core.model import DEFAULT_MODEL_PATH, load_model
 from src.simulation.core.pid import spec_for_motor_id
 from src.simulation.terrain import TerrainType
 
+from .model_variants import (
+    CONTACT_GEOMETRIES,
+    model_fingerprint,
+    transform_for_contact_geometry,
+)
+
 
 SCHEMA_VERSION = 1
 COMMANDS: dict[str, tuple[float, float, float]] = {
@@ -45,6 +51,7 @@ class BenchmarkConfig:
     measure_seconds: float = 8.0
     max_tilt_degrees: float = 60.0
     contact_force_threshold: float = 1.0
+    physics_dt: float | None = None
 
     def __post_init__(self) -> None:
         if min(self.control_dt, self.measure_seconds) <= 0.0:
@@ -55,6 +62,11 @@ class BenchmarkConfig:
             raise ValueError("max_tilt_degrees must be between 0 and 90")
         if self.contact_force_threshold < 0.0:
             raise ValueError("contact_force_threshold cannot be negative")
+        if self.physics_dt is not None:
+            if self.physics_dt <= 0.0:
+                raise ValueError("physics_dt must be positive")
+            if self.physics_dt > self.control_dt:
+                raise ValueError("physics_dt cannot exceed control_dt")
 
 
 @dataclass(frozen=True)
@@ -168,15 +180,24 @@ class SimulationTrial:
         perturbation: Perturbation | None = None,
         model_path: str | Path = DEFAULT_MODEL_PATH,
         profile: str = "standard",
+        contact_geometry: str = "open-arc",
     ) -> None:
         self.terrain = TerrainType.parse(terrain)
         self.terrain_seed = int(terrain_seed)
         self.perturbation = perturbation or Perturbation()
+        if contact_geometry not in CONTACT_GEOMETRIES:
+            raise ValueError(
+                f"unknown contact geometry {contact_geometry!r}; "
+                f"choose from {CONTACT_GEOMETRIES}"
+            )
+        self.contact_geometry = contact_geometry
+        self.model_path = Path(model_path).expanduser().resolve()
         self.model = load_model(
-            model_path,
+            self.model_path,
             floating_base=True,
             terrain=self.terrain,
             terrain_seed=self.terrain_seed,
+            xml_transform=transform_for_contact_geometry(contact_geometry),
         )
         apply_model_perturbation(self.model, self.perturbation)
         self.data = mujoco.MjData(self.model)
@@ -582,6 +603,22 @@ def make_record(
     return record
 
 
+def simulation_provenance(
+    *,
+    model_path: str | Path = DEFAULT_MODEL_PATH,
+    protocol_version: str | None = None,
+) -> dict[str, Any]:
+    """Return immutable model/runtime identifiers for publication records."""
+
+    provenance: dict[str, Any] = {
+        "model_sha256": model_fingerprint(Path(model_path).expanduser().resolve()),
+        "mujoco_version": getattr(mujoco, "__version__", "unknown"),
+    }
+    if protocol_version is not None:
+        provenance["protocol_version"] = protocol_version
+    return provenance
+
+
 def write_records(records: Sequence[Mapping[str, Any]], output: str | Path) -> Path:
     path = Path(output).expanduser().resolve()
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -657,6 +694,7 @@ __all__ = [
     "make_record",
     "print_summary",
     "source_revision",
+    "simulation_provenance",
     "temporary_stair_profile",
     "write_records",
 ]

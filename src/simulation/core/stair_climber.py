@@ -11,6 +11,7 @@ import mujoco
 import numpy as np
 
 from ...cli import JoystickLimits, run_velocity_joystick_cli
+from ...cli_i18n import Language, localize
 from ...hardware import Actuator
 from ...locomotion import VelocityCommand
 from ...main import SCONE
@@ -380,11 +381,16 @@ def run_scone_stair_joystick_cli(
     terrain: TerrainType | str,
     stop_event: threading.Event | None = None,
     config: SconeStairConfig | None = None,
+    language: Language | str = Language.ENGLISH,
 ) -> None:
     """Run the simulation-only common-phase stair motion from A/D input."""
 
     if not isinstance(robot.controller, MuJoCoController):
-        raise TypeError("scone-stair is available only in MuJoCo simulation")
+        raise TypeError(localize(
+            language,
+            "scone-stair is available only in MuJoCo simulation",
+            "scone-stair는 MuJoCo 시뮬레이션에서만 사용할 수 있습니다",
+        ))
     prepare_scone_stair_pose(robot)
     climber = SconeStairClimber(
         robot.controller,
@@ -403,11 +409,15 @@ def run_scone_stair_joystick_cli(
             apply_command=climber.update,
             profile_name=robot.profile_name,
             control_name=lambda: f"scone-stair/{climber.state.value}",
-            control_hint=(
+            control_hint=localize(
+                language,
                 "A/D: all six C-frames share one closed-loop stair phase; "
-                "Drive velocity and alternating lower phases are not used"
+                "Drive free-roll and alternating lower phases are disabled.",
+                "A/D: 여섯 C-frame이 하나의 폐루프 계단 위상을 공유하며, "
+                "Drive 자유회전과 교대 lower 위상은 사용하지 않습니다.",
             ),
             stop_event=stop_event,
+            language=language,
         )
     finally:
         climber.stop()
