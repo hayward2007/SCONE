@@ -26,7 +26,22 @@ macOS에서 MuJoCo viewer를 열 때는 viewer가 main thread를 사용할 수 �
 mjpython SCONE.py
 ```
 
-메뉴에서 다음을 선택할 수 있다.
+기본 UI 언어는 영어다. 한국어 메뉴, 시뮬레이션 선택 화면, 조이스틱 HUD,
+RL 관리 화면을 사용하려면 다음처럼 실행한다.
+
+```bash
+mjpython SCONE.py --language korea
+```
+
+정식 값은 `english`, `korea`이며 `en`, `ko`, `korean`도 입력 alias로
+허용한다. 언어 옵션은 표시 문구만 바꾸며 menu value, gait 이름, checkpoint,
+모터 명령에는 영향을 주지 않는다. 직접 시뮬레이션 진입점도 같은 옵션을 쓴다.
+
+```bash
+mjpython -m src.simulation --language korea
+```
+
+영어/한국어 메뉴에서 다음 작업을 선택할 수 있다.
 
 - 시뮬레이션 (자동 데모): hardcoded/improved/compare와 stairs-1..3 선택, 조종 입력 없음
 - 시뮬레이션 조종: profile, control 방식, terrain, 필요 시 RL checkpoint

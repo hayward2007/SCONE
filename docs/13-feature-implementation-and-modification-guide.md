@@ -158,6 +158,30 @@ controller의 부호를 동시에 뒤집지 말고, 다음 순서로 원인을 �
 - 하드웨어 재탐색
 - 강화학습 관리
 
+[`src/cli_i18n.py`](../src/cli_i18n.py)는 `Language`, `localize()`,
+`terrain_label()`을 제공한다. `SCONE.py`는 실제 command-line argument를
+`src.cli.main()`으로 전달하며 기본 `english`, `--language korea` 한국어를
+지원한다. 언어는 root launcher에서 simulation picker, joystick HUD,
+PPO reference/stance picker, RL 관리 메뉴까지 명시적으로 전달한다. 내부 enum
+value와 command 문자열은 번역하지 않으므로 언어를 바꿔도 실행 의미가 같다.
+
+[`src/cli_ui.py`](../src/cli_ui.py)는 모든 대화형 화면의 공통 레이아웃을
+담당한다. 바깥 폭은 74 terminal column, 내부 구분선은 72개의 `-`로 고정한다.
+`display_width()`가 한글 전각 문자를 2열로 계산하므로 영어와 한글 모두 오른쪽
+경계가 같은 열에 놓인다. 긴 문구는 `wrap_display()`가 panel 내부에서 줄바꿈하며
+redirect된 log에는 ANSI escape를 쓰지 않는다.
+
+화면 갱신 규칙은 다음과 같다.
+
+- root launcher, profile, terrain, controller, checkpoint, RL picker로 전환할 때
+  `clear_terminal()`로 이전 화면을 지운 뒤 새 고정폭 header를 그린다.
+- joystick은 50 Hz cursor-home 갱신으로 값과 stick 위치를 덮어쓰고, terminal
+  잔상이 남지 않도록 1초마다 전체 `cls`(`ESC[2J`, `ESC[H`)를 추가 수행한다.
+- 실제 하드웨어 discrete control은 매 키 입력 뒤 같은 panel을 다시 그리고 마지막
+  명령 결과를 `[ STATUS ]`에 유지한다.
+- launcher 오류나 종료 알림은 다음 화면의 `Notice` 행에 전달하여 `cls` 직후
+  사라지지 않게 한다. RL 작업 결과는 Enter 확인 전에는 지우지 않는다.
+
 시뮬레이션 세부 선택은
 [`src/simulation/core/simulator_cli.py`](../src/simulation/core/simulator_cli.py),
 실행 route는
@@ -202,6 +226,29 @@ apply_command(command, dt)
    추가한다.
 5. 메뉴 dispatch는 `test_api.py`, simulation route는 `test_simulation.py`에
    테스트한다.
+
+UI 문구나 언어를 추가하려면:
+
+1. 새 내부 command value를 만들지 말고 기존 value와 표시 label을 분리한다.
+2. 공용 영어/한국어 문구는 `localize(language, english, korean)`로 선택한다.
+3. 새 picker/worker 함수에는 `language=Language.ENGLISH` 기본 인자를 두어 기존
+   Python 호출을 깨지 않는다.
+4. thread에서 그리는 joystick UI에는 언어를 인자로 전달한다. thread-local
+   전역 상태에 의존하지 않는다.
+5. `test_api.py`에서 영어 기본값, `korea` 선택, 같은 menu value, 한국어 HUD를
+   함께 검사한다.
+
+CLI 레이아웃을 수정하려면:
+
+1. 개별 화면에서 임의 길이의 `-`나 box를 만들지 말고 `render_panel()`을 쓴다.
+2. picker는 `show_picker_screen()`으로 화면 삭제, 제목, 조작 안내를 한 번에
+   적용한다.
+3. 의도적인 들여쓰기와 한글이 있어도 모든 행의 `display_width()`가 74인지
+   `tests/test_cli_ui.py`에서 확인한다.
+4. 동적 화면은 매 frame 전체 삭제하지 않는다. cursor-home 갱신을 기본으로 하고
+   `_JoystickTerminal._full_clear_interval`에 따라 주기적으로 전체 삭제한다.
+5. 비대화형 CI/log에는 ANSI 문자가 섞이지 않아야 하므로 `clear_terminal()`의
+   TTY 판정을 우회하지 않는다.
 
 ---
 

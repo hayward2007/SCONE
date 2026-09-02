@@ -64,7 +64,7 @@ class SconeStairClimberTests(unittest.TestCase):
 
             climber = SconeStairClimber(controller, terrain=terrain)
             front_targets = climber.prepare_front_stage1()
-            advance(1.5)
+            advance(climber.config.front_stage1_sync_timeout)
             for motor_id, target in front_targets.items():
                 actual = controller.get_position(motor_id)
                 if abs(actual - target) > climber.config.front_stage1_tolerance_raw:
@@ -73,7 +73,7 @@ class SconeStairClimberTests(unittest.TestCase):
                         f"target={target}, actual={actual}"
                     )
             raw_targets = climber.prepare()
-            advance(1.5)
+            advance(climber.config.phase_sync_timeout)
             for motor_id, target in raw_targets.items():
                 actual = controller.get_position(motor_id)
                 if abs(actual - target) > climber.config.phase_tolerance_raw:

@@ -11,6 +11,7 @@ from pathlib import Path
 import numpy as np
 
 from src.cli import JoystickLimits, run_velocity_joystick_cli
+from src.cli_i18n import Language, localize
 from src.locomotion import (
     LegacyVelocityAdapter,
     SconeGait,
@@ -321,6 +322,7 @@ def run_rl_joystick(
     reference_motion: str = "hardcoded",
     hybrid_scone: bool = False,
     hybrid_config: SconeHybridControlConfig | None = None,
+    language: Language | str = Language.ENGLISH,
 ) -> None:
     """Run a PPO policy whose command is supplied by the common CLI joystick.
 
@@ -382,17 +384,24 @@ def run_rl_joystick(
                 apply_command=mode_router.apply_command,
                 profile_name=mode_router.profile.name,
                 control_name=displayed_control_name,
-                control_hint=(
+                control_hint=localize(
+                    language,
                     (
                         "slow/in-place yaw=PPO, fast=point-support+sector-roll; "
                         if hybrid is not None
                         else "R: RL Walk→Drive→Climb; "
                     )
-                    + f"ref={reference_motion}; "
-                    f"checkpoint={checkpoint_path.name}"
+                    + f"ref={reference_motion}; checkpoint={checkpoint_path.name}",
+                    (
+                        "저속/제자리 yaw=PPO, 고속=점접지+말단회전; "
+                        if hybrid is not None
+                        else "R: RL Walk→Drive→Climb; "
+                    )
+                    + f"기준={reference_motion}; checkpoint={checkpoint_path.name}",
                 ),
                 stop_event=stop_event,
                 handle_key=mode_router.handle_key,
+                language=language,
             )
         except BaseException as error:
             cli_errors.append(error)

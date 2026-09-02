@@ -4,9 +4,8 @@ The design goal is a single controller in which the tripod walking motion and
 the continuous rotation of the distal arcs run \emph{at the same time} on the
 same six joints, rather than a mode switch between a walking machine and a
 driving machine. Section~\ref{sub:tripod} defines the bounded reference shared by
-every condition, Sec.~\ref{sub:superpose} defines the controller that produced
-the results in Sec.~\ref{sec:results}, and Sec.~\ref{sub:gate} states a
-phase-gated variant of the same idea together with the properties it guarantees.
+the walking controllers, and Sec.~\ref{sub:superpose} defines the controller that
+produced the coordinated results in Sec.~\ref{sec:results}.
 
 \subsection{Alternating-Tripod Reference}\label{sub:tripod}
 
@@ -74,11 +73,11 @@ q_{d,i}$ measured on the mesh,
 \end{equation}
 the unfiltered rolling rate and its first-order realization are
 \begin{align}
- \omega_i^{\rm cmd}&=-\sigma_i\,\omega_0\,\alpha(\vect{c})\,A_i\,\kappa_i,
- \quad \omega_0=4.20\,\mathrm{rad/s},                          \label{eq:rollcmd}\\
+ \omega_i^{\rm cmd}&=-\sigma_i\omega_0\alpha(\vect{c})A_i\kappa_i,
+ &\omega_0&=4.20\,\mathrm{rad/s},                              \label{eq:rollcmd}\\
+ \lambda_r&=1-e^{-\Delta t/\tau_r},&
  \dot\theta_i^{\rm roll}&\leftarrow\dot\theta_i^{\rm roll}
- +\bigl(1-e^{-\Delta t/\tau_r}\bigr)
- \bigl(\omega_i^{\rm cmd}-\dot\theta_i^{\rm roll}\bigr),       \label{eq:rolllpf}
+ +\lambda_r(\omega_i^{\rm cmd}-\dot\theta_i^{\rm roll}),       \label{eq:rolllpf}
 \end{align}
 with $\tau_r=0.10\,$s. The walking term of (\ref{eq:superpose}) is clipped to
 $\pm110^\circ/$s and low-pass filtered with $\tau_b=0.04\,$s so that an inverse
@@ -102,84 +101,15 @@ as measured contact slip,
 Section~\ref{sec:results} uses (\ref{eq:slippredict}) as a check rather than as a
 claim.
 
-\subsection{Phase-Gated Multi-Turn Variant}\label{sub:gate}
-
-Replacing the two-level ratio $\kappa_i$ of (\ref{eq:kappa}) by a smooth gate
-lets the arc be held still while it first accepts load. For stance progress
-$p=\phi_i/D$, swing progress $a$, point-support ratio $\rho=0.55$ and swing hold
-ratio $\nu=0.70$, define
-\begin{equation}
- g_i=\begin{cases}
- 0,&p\le\rho,\\ S\!\left(\frac{p-\rho}{1-\rho}\right),&\rho<p\le1,\\
- 1,&a\le\nu,\\1-S\!\left(\frac{a-\nu}{1-\nu}\right),&a>\nu,
- \end{cases}                                                   \label{eq:rollgate}
-\end{equation}
-and drive the arc at the no-slip rate rather than a fixed rate,
-\begin{align}
- \dot\Theta_i^{\rm ideal}&=\min\!\left(\frac{\|\vect{u}_i\|_2}{r_o},
- \dot\Theta_{\max}\right),                                     \label{eq:rollrate}\\
- \Theta_{i,k+1}&=\Theta_{i,k}-\sigma_iA_i g_i
- \dot\Theta_i^{\rm ideal}\Delta t,\quad
- q_{d,i}^\star=q_{{\rm IK},d,i}^\star+\Theta_i.                \label{eq:accumulate}
-\end{align}
-Because $S(0)=S'(0)=S''(0)=0$ and $S(1)=1$, $S'(1)=S''(1)=0$, the four branches
-of (\ref{eq:rollgate}) join with matching value, slope and curvature, so
-$g_i\in C^2$ and the commanded arc acceleration is continuous at every gate
-boundary. Two further properties follow directly from the parameters. First,
-each arc is stationary for the first $55\%$ of its stance, so the patch that
-accepts load does not move while it does so. Second, with the deployment duty factor $D=0.60$ and offsets
-$\{0,\tfrac12\}$ the propulsive windows of the two tripods are
-$(\rho D,D)=(0.33,0.60)$ and $(0.83,1.10)\bmod 1$, which are disjoint: the two
-tripods never rotate under load simultaneously. Averaging (\ref{eq:rollgate})
-over one cycle gives the closed form
-\begin{equation}
- \bar g=\frac{D(1-\rho)}{2}+\frac{(1-D)(1+\nu)}{2}
- \;\overset{D=0.60}{=}\;0.475,                                 \label{eq:meangate}
-\end{equation}
-so a gated arc delivers only the fraction $\bar g$ of the commanded displacement
-and the remainder must come from articulation. This variant is implemented and
-exercised by unit tests, but the benchmark of Sec.~\ref{sec:results} uses
-(\ref{eq:superpose})--(\ref{eq:rolllpf}); (\ref{eq:rollgate})--(\ref{eq:meangate})
-are stated here as the analysed design and are not evidence for any reported
-number.
-
 \begin{figure*}[t]
 \centering\includegraphics[width=0.96\textwidth]{control_architecture.pdf}
 \caption{Control paths. Joints 1--12 track the bounded tripod reference in
 position mode while joints 13--18 run in velocity mode and add continuous arc
 rotation to the differentiated reference, so walking and rotation are commanded
-at the same instant. The residual policy and its speed blend belong to the
-deployment stack and are inactive in the reported benchmark.}
+at the same instant. The controller outputs 12 position targets and six velocity
+targets; no learned policy is used in the reported experiments.}
 \label{fig:control}
 \end{figure*}
-
-\subsection{Residual Policy and Speed Blend (Deployment Stack)}\label{sub:residual}
-
-For completeness we state the low-speed supervisor used by the interactive
-deployment stack. Residual learning augments a structured reference rather than
-relearning the contact schedule \cite{johannink2019residual,silver2018residual}.
-The 70-D observation contains body linear/angular velocity, projected gravity,
-18 joint positions, 18 joint velocities, the previous 18-D action, the command,
-and phase and heading-error sine/cosine pairs; PPO optimizes the clipped
-surrogate \cite{schulman2017ppo}
-\begin{equation}
- L^{\rm clip}=\mathbb{E}_t\!\left[\min(r_t\hat A_t,
- \operatorname{clip}(r_t,1-\epsilon,1+\epsilon)\hat A_t)\right]. \label{eq:ppo}
-\end{equation}
-At replay a smoothstep in translation speed $v=\|\vect{v}_{xy}\|$ hands authority
-from the policy to the analytical reference,
-\begin{align}
- u&=\operatorname{clip}\!\left(\frac{v-v_0}{v_1-v_0},0,1\right),\quad
- \beta(v)=3u^2-2u^3,                                           \label{eq:blend}\\
- \vect{q}^\star&=(1-\beta)\vect{q}_{\rm ref}+\beta\vect{q}_{\rm arc}\nonumber\\
- &\quad+(1-\beta)\,\vect{s}_a\odot\vect{a}_{\rm PPO},           \label{eq:finaltarget}
-\end{align}
-with $(v_0,v_1)=(0.10,0.18)\,$m/s. We state explicitly that $\beta(v_1)=1$:
-at the $0.18\,\mathrm{m\,s^{-1}}$ command used throughout Sec.~\ref{sec:results}
-the residual term vanishes, and the benchmark controllers do not instantiate the
-policy at all. The residual is therefore not offered as evidence in this paper;
-it is reported because it defines the low-speed regime that the analytical
-controller does not cover.
 
 \subsection{Stair State Sequence}
 

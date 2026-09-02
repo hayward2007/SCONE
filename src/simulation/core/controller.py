@@ -189,17 +189,49 @@ class MuJoCoController:
         for geom_id in range(model.ngeom):
             if model.geom_contype[geom_id] == 0:
                 continue
-            if model.geom_type[geom_id] != mujoco.mjtGeom.mjGEOM_MESH:
-                continue
-            mesh_id = int(model.geom_dataid[geom_id])
-            if mesh_id < 0:
-                continue
-            vert_adr = int(model.mesh_vertadr[mesh_id])
-            vert_num = int(model.mesh_vertnum[mesh_id])
-            verts = model.mesh_vert[vert_adr : vert_adr + vert_num]
             rotation = data.geom_xmat[geom_id].reshape(3, 3)
-            world = verts @ rotation.T + data.geom_xpos[geom_id]
-            zmin = float(world[:, 2].min())
+            position_z = float(data.geom_xpos[geom_id, 2])
+            geom_type = int(model.geom_type[geom_id])
+            if geom_type == mujoco.mjtGeom.mjGEOM_MESH:
+                mesh_id = int(model.geom_dataid[geom_id])
+                if mesh_id < 0:
+                    continue
+                vert_adr = int(model.mesh_vertadr[mesh_id])
+                vert_num = int(model.mesh_vertnum[mesh_id])
+                verts = model.mesh_vert[vert_adr : vert_adr + vert_num]
+                world = verts @ rotation.T + data.geom_xpos[geom_id]
+                zmin = float(world[:, 2].min())
+            elif geom_type == mujoco.mjtGeom.mjGEOM_SPHERE:
+                zmin = position_z - float(model.geom_size[geom_id, 0])
+            elif geom_type == mujoco.mjtGeom.mjGEOM_BOX:
+                extent = float(
+                    np.sum(np.abs(rotation[2]) * model.geom_size[geom_id])
+                )
+                zmin = position_z - extent
+            elif geom_type in (
+                mujoco.mjtGeom.mjGEOM_CYLINDER,
+                mujoco.mjtGeom.mjGEOM_CAPSULE,
+            ):
+                radius = float(model.geom_size[geom_id, 0])
+                half_length = float(model.geom_size[geom_id, 1])
+                axial = half_length * abs(float(rotation[2, 2]))
+                radial = radius * math.sqrt(
+                    float(rotation[2, 0]) ** 2 + float(rotation[2, 1]) ** 2
+                )
+                if geom_type == mujoco.mjtGeom.mjGEOM_CAPSULE:
+                    radial = radius
+                zmin = position_z - axial - radial
+            elif geom_type == mujoco.mjtGeom.mjGEOM_ELLIPSOID:
+                extent = math.sqrt(
+                    float(
+                        np.sum(
+                            (rotation[2] * model.geom_size[geom_id]) ** 2
+                        )
+                    )
+                )
+                zmin = position_z - extent
+            else:
+                continue
             if lowest is None or zmin < lowest:
                 lowest = zmin
         return lowest

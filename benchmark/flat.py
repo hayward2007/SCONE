@@ -22,6 +22,7 @@ from .common import (
     write_records,
 )
 from .controllers import CONTROLLER_CHOICES, make_controller
+from .model_variants import CONTACT_GEOMETRIES
 
 
 DEFAULT_OUTPUT = Path("benchmark/results/flat.jsonl")
@@ -38,6 +39,8 @@ def run_flat_trial(
     terrain_seed: int = 7,
     perturbation: Perturbation | None = None,
     config: BenchmarkConfig | None = None,
+    contact_geometry: str = "open-arc",
+    record_extra: dict[str, object] | None = None,
 ) -> dict[str, object]:
     """Run one fresh, headless trial and return one serializable record."""
 
@@ -52,11 +55,21 @@ def run_flat_trial(
         terrain=selected_terrain,
         terrain_seed=terrain_seed,
         perturbation=selected_perturbation,
+        contact_geometry=contact_geometry,
     ) as trial:
-        trial.model.opt.timestep = min(
-            float(trial.model.opt.timestep),
-            selected_config.control_dt,
+        trial.model.opt.timestep = (
+            selected_config.physics_dt
+            if selected_config.physics_dt is not None
+            else min(float(trial.model.opt.timestep), selected_config.control_dt)
         )
+        runtime_settings = {
+            "physics_timestep_s": float(trial.model.opt.timestep),
+            "solver_iterations": int(trial.model.opt.iterations),
+            "solver_tolerance": float(trial.model.opt.tolerance),
+            "solver_code": int(trial.model.opt.solver),
+            "integrator_code": int(trial.model.opt.integrator),
+            "cone_code": int(trial.model.opt.cone),
+        }
         trial.initialize()
         controller = make_controller(
             controller_name,
@@ -116,6 +129,9 @@ def run_flat_trial(
             "settle_seconds": selected_config.settle_seconds,
             "requested_measure_seconds": selected_config.measure_seconds,
             "terrain_seed": terrain_seed,
+            "contact_geometry": contact_geometry,
+            **runtime_settings,
+            **(record_extra or {}),
         },
     )
 
@@ -151,6 +167,11 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--terrain", choices=TERRAIN_CHOICES, default="flat")
     parser.add_argument("--terrain-seed", type=int, default=7)
+    parser.add_argument(
+        "--contact-geometry",
+        choices=CONTACT_GEOMETRIES,
+        default="open-arc",
+    )
     parser.add_argument("--duration", type=float, default=8.0)
     parser.add_argument("--settle", type=float, default=0.5)
     parser.add_argument(
@@ -204,6 +225,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                         settle_seconds=args.settle,
                         measure_seconds=args.duration,
                     ),
+                    contact_geometry=args.contact_geometry,
                 )
                 records.append(record)
                 print(

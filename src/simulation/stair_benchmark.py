@@ -75,9 +75,13 @@ class StairBenchmarkResult:
 
 
 class _Trial:
-    def __init__(self, terrain: TerrainType) -> None:
+    def __init__(self, terrain: TerrainType, *, terrain_seed: int = 7) -> None:
         self.terrain = terrain
-        self.model = load_model(floating_base=True, terrain=terrain)
+        self.model = load_model(
+            floating_base=True,
+            terrain=terrain,
+            terrain_seed=terrain_seed,
+        )
         self.data = mujoco.MjData(self.model)
         self.controller = MuJoCoController(self.model, self.data, verbose=False)
         self.robot = SCONE(self.controller, profile="standard")
@@ -86,6 +90,13 @@ class _Trial:
             mujoco.mjtObj.mjOBJ_BODY,
             "UPPER_BODY_1",
         )
+        self.root_joint_id = mujoco.mj_name2id(
+            self.model,
+            mujoco.mjtObj.mjOBJ_JOINT,
+            "root_freejoint",
+        )
+        if self.root_joint_id < 0:
+            raise ValueError("stair benchmark requires root_freejoint")
         self.elapsed = 0.0
         self.work = 0.0
         self.peak_force = 0.0
@@ -154,6 +165,32 @@ class _Trial:
             self.robot.initialize()
             prepare_scone_stair_pose(self.robot)
             self.advance(0.5)
+        return self.data.xpos[self.root_id].copy()
+
+    def apply_initial_pose(
+        self,
+        *,
+        x_m: float = 0.0,
+        y_m: float = 0.0,
+        yaw_degrees: float = 0.0,
+    ) -> np.ndarray:
+        """Apply a paired root-pose perturbation after stair-pose acquisition."""
+
+        address = int(self.model.jnt_qposadr[self.root_joint_id])
+        self.data.qpos[address] += x_m
+        self.data.qpos[address + 1] += y_m
+        yaw = math.radians(yaw_degrees)
+        if yaw != 0.0:
+            yaw_quaternion = np.array(
+                [math.cos(yaw / 2.0), 0.0, 0.0, math.sin(yaw / 2.0)],
+                dtype=np.float64,
+            )
+            current = self.data.qpos[address + 3 : address + 7].copy()
+            rotated = np.empty(4, dtype=np.float64)
+            mujoco.mju_mulQuat(rotated, yaw_quaternion, current)
+            self.data.qpos[address + 3 : address + 7] = rotated
+        self.data.qvel[:] = 0.0
+        mujoco.mj_forward(self.model, self.data)
         return self.data.xpos[self.root_id].copy()
 
     def prepare_after_approach(self) -> np.ndarray:
@@ -309,6 +346,11 @@ def _run_alternating_tripods(
 def run_hypothesis(
     terrain: TerrainType | str,
     strategy: str,
+    *,
+    terrain_seed: int = 7,
+    initial_x_m: float = 0.0,
+    initial_y_m: float = 0.0,
+    initial_yaw_degrees: float = 0.0,
 ) -> StairBenchmarkResult:
     """Run one historical or synchronized comparison from a side-on state."""
 
@@ -317,7 +359,7 @@ def run_hypothesis(
         raise ValueError("stair benchmark requires stairs-1, stairs-2, or stairs-3")
     if strategy not in HYPOTHESES:
         raise ValueError(f"unknown stair strategy: {strategy}")
-    trial = _Trial(parsed_terrain)
+    trial = _Trial(parsed_terrain, terrain_seed=terrain_seed)
     phase_sync_entries_to_top: int | None = None
     front_stage1_degrees: float | None = None
     front_stage1_actual_degrees: float | None = None
@@ -326,6 +368,11 @@ def run_hypothesis(
     phase_spread_at_top_degrees: float | None = None
     try:
         start = trial.prepare_side_on()
+        start = trial.apply_initial_pose(
+            x_m=initial_x_m,
+            y_m=initial_y_m,
+            yaw_degrees=initial_yaw_degrees,
+        )
 
         if strategy in ("adaptive", "synchronized-open-loop"):
             # Phase acquisition is a setup operation, not ascent.  The fixed
@@ -338,7 +385,12 @@ def run_hypothesis(
             else:
                 phase_controller = HardcodedStairRoller(trial.controller)
             front_targets = phase_controller.prepare_front_stage1()
-            trial.advance(1.5)
+            # The controller publishes how long it is allowed to take; a
+            # hard-coded window shorter than that turns a slow settle into a
+            # spurious failure. Reflected rotor inertia pushed the common-phase
+            # acquisition from under 1.5 s to about 2.0 s, still inside the
+            # 4.0 s the climber allows itself.
+            trial.advance(phase_controller.config.front_stage1_sync_timeout)
             for motor_id, target in front_targets.items():
                 actual = trial.controller.get_position(motor_id)
                 if (
@@ -350,7 +402,7 @@ def run_hypothesis(
                         f"target={target}, actual={actual}"
                     )
             raw_targets = phase_controller.prepare()
-            trial.advance(1.5)
+            trial.advance(phase_controller.config.phase_sync_timeout)
             for motor_id, target in raw_targets.items():
                 actual = trial.controller.get_position(motor_id)
                 if abs(actual - target) > phase_controller.config.phase_tolerance_raw:

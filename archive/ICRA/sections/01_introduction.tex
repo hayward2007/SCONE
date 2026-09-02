@@ -14,8 +14,8 @@ We ask a narrower mechanical question: \emph{can the last actuated link of a
 fully articulated hexapod be shaped so that the same joint and contact surface
 support foot placement, rolling transport, and stair-edge engagement?} The
 resulting platform has 18 actuators---three per leg---and an open, C-shaped TPU
-arc as each distal link (Fig.~\ref{fig:teaser}). No wheel is deployed and no
-hardware transforms between modes. Instead, the contact interpretation changes:
+arc as each distal link (Fig.~\ref{fig:teaser}). No dedicated wheel is deployed
+and no hardware transforms between regimes. Instead, the contact interpretation changes:
 the lowest arc patch is held stationary during walking, the patch advances
 around the arc during rolling, and an arc boundary or tread patch reacts against
 a stair nosing during ascent.
@@ -23,15 +23,15 @@ a stair nosing during ascent.
 \begin{figure*}[t]
   \centering
   \begin{minipage}{0.32\textwidth}\centering
-    \includegraphics[width=\linewidth]{flat_articulated-walk.jpg}\\[-1mm]
+    \includegraphics[width=\linewidth,trim=0 0 0 24,clip]{flat_articulated-walk.jpg}\\[-1mm]
     \small (a) articulated walking
   \end{minipage}\hfill
   \begin{minipage}{0.32\textwidth}\centering
-    \includegraphics[width=\linewidth]{flat_full-roll.jpg}\\[-1mm]
-    \small (b) full-body rolling
+    \includegraphics[width=\linewidth,trim=0 0 0 24,clip]{flat_full-roll.jpg}\\[-1mm]
+    \small (b) coordinated arc locomotion
   \end{minipage}\hfill
   \begin{minipage}{0.32\textwidth}\centering
-    \includegraphics[width=\linewidth]{stairs_200mm_full-scone.jpg}\\[-1mm]
+    \includegraphics[width=\linewidth,trim=0 0 0 24,clip]{stairs_200mm_full-scone.jpg}\\[-1mm]
     \small (c) $200$-mm stair simulation
   \end{minipage}
   \caption{One actuated C-shaped distal link is reused in three contact regimes.
@@ -42,21 +42,18 @@ a stair nosing during ascent.
 \end{figure*}
 
 This paper contributes: 1) a multifunctional arc--leg morphology with an explicit
-geometric model of its rolling and stair-edge contacts, including a closed-form
-riser bound that no amount of rotation can overcome; 2) \gaitname{}, a controller
-that runs the tripod walking reference and continuous arc rotation
-\emph{simultaneously} on the same six distal joints by superposing a velocity-mode
-rolling rate on the differentiated walking reference, together with a phase-gated
-variant whose smoothness and duty-averaged transport fraction we characterize in
-closed form; and 3) a same-model benchmark with controlled restrictions
----articulation only, distal rotation only, and the combined controller---in which
-the analytical contact-speed model predicts the measured slip of the rolling
-condition to within $5\%$.
+geometric model of its rolling and stair-edge contacts, including a force--torque
+balance that distinguishes a passive horizontal push from an actuated wheel;
+2) \gaitname{}, a controller that runs the tripod walking reference and
+continuous arc rotation \emph{simultaneously} on the same six distal joints by
+superposing a velocity-mode rolling rate on the differentiated walking reference;
+and 3) a same-model development benchmark---articulation only, distal rotation
+only, and the combined controller---together with a matched-parameter,
+matched-randomness validation protocol that can test the morphology separately
+from controller tuning.
 
-The scope of the evidence is stated once, here. All numbers in this paper come
-from a deterministic MuJoCo model; the nominal flat, stair, and transition
-conditions are single trials and the uneven-terrain condition uses three seeds.
-They are sufficient to separate the three control regimes on one model and to
-test the geometric bounds, and they are not sufficient for confidence intervals
-or for any physical performance claim. Physical demonstrations of the platform
-exist but are deliberately excluded from every numerical statement below.
+All numbers in the present draft come from a deterministic MuJoCo model; the
+nominal flat, stair, and transition conditions are single trials and the
+uneven-terrain condition uses three seeds. They describe the current model and
+motivate the controlled experiments of Sec.~\ref{sec:results}; they are not
+confidence intervals or physical-performance claims.

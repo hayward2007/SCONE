@@ -1,55 +1,55 @@
 \section{DISCUSSION}
 
-The experiments answer a more precise question than ``can a hybrid robot walk
-and drive.'' Using the closed-wheel bound (\ref{eq:riserlimit}) as a reference
-line, the three stair outcomes decompose the climbing capability of one distal
-link into three contributions: a rim pivot below $122.5\,$mm that any wheel of
-the same radius would also provide; an edge hook that carried a $150\,$mm riser
-with no articulation at all, which is attributable to the $135^\circ$ opening;
-and body elevation by the other two leg joints, without which the $200\,$mm
-riser was not climbed by any restriction. On flat ground the picture is the
-mirror image: rotation alone was slower and more expensive than walking, and the
-speed gain appeared only when rotation and posture were commanded together. Taken
-together these support contact reuse as the contribution---a foot, a quasi-wheel
-and an edge hook are three control regimes of one link rather than three
-installed mechanisms---and they locate where each regime stops being sufficient.
+The experiments ask a more precise question than ``can a hybrid robot walk and
+drive'': what behaviors can be obtained by reusing one actuated distal contact?
+On the open-arc model, distal rotation alone traversed the $150\,$mm profile and
+coordinated articulation was required by the tested controllers at $200\,$mm.
+On flat ground, rotation alone was slower and more expensive than walking, while
+the highest descriptive speed appeared when posture and rotation were commanded
+together. These observations motivate contact reuse---support, quasi-rolling,
+and candidate edge engagement from one link---but they do not yet attribute the
+stair result uniquely to the opening. Equation~(\ref{eq:stairmoment}) explains
+why: a wheel driven by axle torque does not share the singular force-only bound.
+The matched open-arc/closed-wheel experiment is therefore the decisive test.
 
-The costs are equally explicit. Rolling produced $6.23\times$ the slip and
-$3.18\times$ the mechanical work of walking, and (\ref{eq:contactspeed}) shows
-why: the executed controller commands an activity-scaled surface speed rather
-than the no-slip speed, so roughly half of the commanded surface motion is
-dissipated at the contact. The present model therefore supports a speed
-trade-off, not an energy-efficiency claim. The phase-gated variant of
-Sec.~\ref{sub:gate} targets exactly this term, and its duty-averaged transport
-fraction (\ref{eq:meangate}) predicts that it trades some of the speed back for
-the slip it removes; testing that prediction is the immediate next experiment.
+The costs are equally explicit. Coordinated arc locomotion produced
+$6.23\times$ the slip and $3.18\times$ the mechanical work of walking, and
+(\ref{eq:contactspeed}) explains the first-order mismatch: the executed
+controller commands an activity-scaled surface speed rather than a contact-speed
+feedback law. The commanded surface speed can therefore substantially exceed
+body speed. The present model supports a speed/cost trade-off, not an
+energy-efficiency claim. Rate control tied to measured body and contact velocity
+is a controller improvement to test separately from the morphology ablation.
 
 Four limitations bound how far these results generalize. First, the evidence is
 a deterministic simulation: TPU compliance and friction, polymer infill mass,
 gearbox efficiency, backlash, thermal limits and battery sag are approximated,
 and the modeled mass remains a parameter until the assembled robot is weighed.
 Second, the nominal conditions are single trials, so the reported differences
-order the three regimes on one model but carry no confidence intervals. Third,
-the restrictions are not tuned against each other: the walking and rolling
-conditions use different cycle frequencies and stroke limits
-(Sec.~\ref{sub:tripod}), so the comparison is between regimes rather than
-between best-tuned controllers. Fourth, the hook interpretation of the
-$150\,$mm result is inferred from geometry and from the absence of articulation
-in that condition; a same-radius closed-wheel control, which the present model
-does not include, would settle it directly. The stair supervisor is also given
-its geometry and performs no perception or foothold search.
+describe the three regimes on one model but carry no confidence intervals.
+Third, the restrictions are not matched against each other: the walking and
+rolling conditions use different cycle frequencies and stroke limits
+(Sec.~\ref{sub:tripod}), so the comparison is between implemented regimes rather
+than between equally parameterized controllers. Fourth, the edge-engagement
+interpretation of the $150\,$mm result is inferred from geometry and from the
+absence of articulation; it is not a direct morphology ablation. The locked
+paired protocol of Sec.~\ref{sec:method} addresses the last three limitations in
+simulation, but physical model identification remains necessary. The stair
+supervisor is also given its geometry and performs no perception or foothold
+search.
 
 \section{CONCLUSION}
 
 We presented an 18-actuator hexapod whose six open arc-shaped distal links are
-reused for planted support, rolling contact and stair-edge engagement, together
-with a controller that commands tripod walking and continuous arc rotation on
-the same joints at the same instant. In deterministic MuJoCo trials the
-coordinated controller reached $0.200\,\mathrm{m\,s^{-1}}$ where articulated
-walking reached $0.117\,\mathrm{m\,s^{-1}}$; its analytical contact-speed model
-predicted the measured slip to within $4.2\%$; and the three stair outcomes
-separated rim pivoting, edge hooking and articulated elevation against a
-closed-wheel bound of $122.5\,$mm. Guarded mode switches stayed upright and
-completed in under $0.7\,$s. These results establish a simulation operating
-envelope and a falsifiable physical test plan. They do not yet validate physical
-speed, endurance, energy efficiency or stair reliability.
+reused for planted support, quasi-rolling contact and candidate stair-edge
+engagement, together with a controller that commands tripod walking and
+continuous arc rotation on the same joints at the same instant. In deterministic
+MuJoCo trials the coordinated controller reached $0.200\,\mathrm{m\,s^{-1}}$
+where articulated walking reached $0.117\,\mathrm{m\,s^{-1}}$, with substantially
+greater work and slip; the open-arc stair restrictions traversed the $150\,$mm
+profile without articulation and the $200\,$mm profile only with coordinated
+articulation. Guarded transitions stayed upright and completed in under
+$0.7\,$s. These single-run results define hypotheses and a reproducible operating
+envelope, not causal morphology evidence. The accompanying matched-geometry,
+paired-trial protocol makes the remaining open-arc claim falsifiable. Physical
+speed, endurance, energy efficiency and stair reliability remain unvalidated.

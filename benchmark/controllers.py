@@ -25,7 +25,17 @@ CONTROLLER_CHOICES = (
     "distal-only-roll",
     "full-roll",
     "bounded-scone",
+    "matched-articulated",
+    "matched-distal-only",
+    "matched-coordinated",
 )
+
+MATCHED_CONTROLLER_CHOICES = (
+    "matched-articulated",
+    "matched-distal-only",
+    "matched-coordinated",
+)
+MATCHED_ROLL_CONFIG = RollGaitConfig()
 
 
 @dataclass(frozen=True)
@@ -56,6 +66,52 @@ def _diagnostics(sample) -> ControlDiagnostics:
         stride_clip_fraction=float(sample.stride_clip_fraction),
         ik_backoff_scale=float(sample.ik_backoff_scale),
     )
+
+
+def _phase_pose(planner: SconeGait, config: RollGaitConfig) -> np.ndarray:
+    pose = planner.nominal_motor_degrees
+    for leg in planner.TRIPOD_B:
+        pose[11 + leg] += config.tripod_b_phase_offset_degrees
+    return pose
+
+
+def _configure_matched_position_path(
+    trial: SimulationTrial,
+    config: RollGaitConfig,
+) -> None:
+    trial.controller.set_all_speed(config.profile_velocity)
+    trial.controller.set_accelerations(
+        {motor_id: config.profile_acceleration for motor_id in Actuator.Index.XM}
+    )
+    trial.controller.set_gait_position_stiffness(
+        config.middle_stiffness_multiplier
+    )
+
+
+def _acquire_phase_pose(
+    trial: SimulationTrial,
+    planner: SconeGait,
+    config: RollGaitConfig,
+    *,
+    recorder: MetricsRecorder | None,
+) -> np.ndarray:
+    pose = _phase_pose(planner, config)
+    _configure_matched_position_path(trial, config)
+    trial.controller.set_positions(
+        {motor_id: float(pose[motor_id - 1]) for motor_id in Actuator.Index.ALL}
+    )
+    raw_targets = {
+        motor_id: trial.controller.degrees_to_raw(motor_id, float(pose[motor_id - 1]))
+        for motor_id in Actuator.Index.ALL
+    }
+    if not trial.wait_until_raw_positions(
+        raw_targets,
+        tolerance=96,
+        timeout=4.0,
+        recorder=recorder,
+    ):
+        raise RuntimeError("matched controller phase pose did not settle")
+    return pose
 
 
 class ArticulatedWalkController:
@@ -102,9 +158,12 @@ class DistalOnlyRollController:
         *,
         phase: float = 0.0,
         config: RollGaitConfig | None = None,
+        recalibrate_phase_pose: bool = False,
     ) -> None:
         self.trial = trial
+        self.phase = phase
         self.config = config or RollGaitConfig()
+        self.recalibrate_phase_pose = recalibrate_phase_pose
         self.planner = SconeGait(
             trial.controller,
             trial.robot.profile,
@@ -153,6 +212,11 @@ class DistalOnlyRollController:
             recorder=recorder,
         ):
             raise RuntimeError("distal-only phase staggering did not settle")
+        if self.recalibrate_phase_pose:
+            pose = self.planner.nominal_motor_degrees
+            for leg in self.planner.TRIPOD_B:
+                pose[11 + leg] += self.config.tripod_b_phase_offset_degrees
+            self.planner.reset(phase=self.phase, motor_degrees=pose)
         trial.controller.set_all_mode(Actuator.OperatingMode.VELOCITY)
         trial.controller.set_velocities(
             {motor_id: 0 for motor_id in Actuator.Index.LOWER}
@@ -210,9 +274,22 @@ class DistalOnlyRollController:
 class FullRollController:
     name = "full-roll"
 
-    def __init__(self, trial: SimulationTrial, *, phase: float = 0.0) -> None:
+    def __init__(
+        self,
+        trial: SimulationTrial,
+        *,
+        phase: float = 0.0,
+        config: RollGaitConfig | None = None,
+        recalibrate_phase_pose: bool = False,
+    ) -> None:
         self.trial = trial
-        self.gait = RollGait(trial.controller, trial.robot.profile)
+        self.phase = phase
+        self.recalibrate_phase_pose = recalibrate_phase_pose
+        self.gait = RollGait(
+            trial.controller,
+            trial.robot.profile,
+            config=config,
+        )
         self.gait.planner.reset(phase=phase)
 
     def prepare(
@@ -229,6 +306,9 @@ class FullRollController:
             recorder=recorder,
         ):
             raise RuntimeError("full-roll phase staggering did not settle")
+        if self.recalibrate_phase_pose:
+            pose = _phase_pose(self.gait.planner, self.gait.config)
+            self.gait.planner.reset(phase=self.phase, motor_degrees=pose)
         self.gait.activate()
 
     def update(self, command: VelocityCommand, dt: float) -> ControlDiagnostics:
@@ -266,6 +346,44 @@ class BoundedSconeController:
         self.gait.update(VelocityCommand(), dt=0.02, send=True)
 
 
+class MatchedArticulatedController:
+    """Common-gait reference with continuous distal rotation disabled."""
+
+    name = "matched-articulated"
+
+    def __init__(self, trial: SimulationTrial, *, phase: float = 0.0) -> None:
+        self.trial = trial
+        self.phase = phase
+        self.config = MATCHED_ROLL_CONFIG
+        self.gait = SconeGait(
+            trial.controller,
+            trial.robot.profile,
+            config=self.config.planner_config(),
+        )
+        self.gait.reset(phase=phase)
+
+    def prepare(
+        self,
+        trial: SimulationTrial,
+        *,
+        recorder: MetricsRecorder | None = None,
+    ) -> None:
+        pose = _acquire_phase_pose(
+            trial,
+            self.gait,
+            self.config,
+            recorder=recorder,
+        )
+        self.gait.reset(phase=self.phase, motor_degrees=pose)
+
+    def update(self, command: VelocityCommand, dt: float) -> ControlDiagnostics:
+        sample = self.gait.update(command, dt=dt, send=True)
+        return _diagnostics(sample)
+
+    def stop(self) -> None:
+        self.gait.update(VelocityCommand(), dt=0.02, send=True)
+
+
 def make_controller(
     name: str,
     trial: SimulationTrial,
@@ -280,12 +398,30 @@ def make_controller(
         return FullRollController(trial, phase=phase)
     if name == "bounded-scone":
         return BoundedSconeController(trial, phase=phase)
+    if name == "matched-articulated":
+        return MatchedArticulatedController(trial, phase=phase)
+    if name == "matched-distal-only":
+        return DistalOnlyRollController(
+            trial,
+            phase=phase,
+            config=MATCHED_ROLL_CONFIG,
+            recalibrate_phase_pose=True,
+        )
+    if name == "matched-coordinated":
+        return FullRollController(
+            trial,
+            phase=phase,
+            config=MATCHED_ROLL_CONFIG,
+            recalibrate_phase_pose=True,
+        )
     raise ValueError(f"unknown benchmark controller {name!r}")
 
 
 __all__ = [
     "BenchmarkController",
     "CONTROLLER_CHOICES",
+    "MATCHED_CONTROLLER_CHOICES",
+    "MATCHED_ROLL_CONFIG",
     "ControlDiagnostics",
     "make_controller",
 ]

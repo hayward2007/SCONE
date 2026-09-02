@@ -28,8 +28,10 @@ therefore avoid packages that only one of those toolchains carries:
   falls back to `xeCJK` with the system Noto CJK KR faces (`CJKspace=true`,
   because Korean is space-delimited).
 - `ieeeconf.cls` sets `\rmdefault` to `ptm`, which XeLaTeX cannot resolve in its
-  Unicode encoding; both roots load `fontspec` with TeX Gyre Termes, the
-  metric-compatible Times clone, so bold and italic runs are not silently lost.
+  Unicode encoding; both roots load `fontspec` with the macOS Times New Roman
+  family so bold and italic runs are not silently lost. This is intentionally a
+  local build choice and should be replaced by an embedded project font or a
+  TeX-distributed Times-compatible family for a machine-independent release.
 
 Figures are generated from the benchmark JSONL files by
 `figures/generate_figures.py`; `make` reruns it whenever those results change.
@@ -67,9 +69,10 @@ the text, so it cannot drift away from the equations it illustrates.
 | References | 1.0 |
 | **Total** | **8.0** |
 
-Current build: English 8 pages, Korean 7 pages, zero overfull boxes, zero
-undefined references, and the two languages contain an identical multiset of
-numeric literals (checked by extracting `\d+\.\d+` from both PDFs).
+Current build: English 7 pages and Korean 7 pages, both US Letter, with zero
+overfull boxes and zero undefined references/citations. The spare page is
+reserved for the repeated matched-geometry results; it must not be filled with
+unvalidated claims.
 
 This is a budget, not a reason to pad the paper. Results and figures take priority
 over application background, implementation narration, and future work.
@@ -85,13 +88,28 @@ over application background, implementation narration, and future work.
 4. Keep the paper self-contained. Reviewers are not required to visit GitHub or
    other external links.
 5. Sec. IV must describe the controller that produced the numbers in Sec. VI.
-   `full-roll` is `RollGait`; `bounded-scone` (`SconeGait`) and the PPO speed
-   blend are design/deployment paths that no reported trial exercises, and the
-   text says so explicitly. If the benchmark controller changes, Sec. IV changes
-   with it.
+   The unused PPO residual and phase-gated variant were removed from the paper;
+   if the benchmark controller changes, Sec. IV changes with it.
 6. Bibliographic fields added on 2026-09-01 carry verified authors, titles,
    venues and years; volume and page fields still need one publisher-record pass
    before submission.
-6. Follow the ICRA AI-use policy for the final wording and disclosure. Formatting
+7. Follow the ICRA AI-use policy for the final wording and disclosure. Formatting
    and grammar assistance are treated differently from generated technical
    content; retain an internal record of how assistance was used.
+
+## Publication simulation protocol
+
+The legacy figures and tables are still the explicitly labeled single-run
+development results. New paper numbers must come from:
+
+```bash
+python -m benchmark icra --profile evaluation --suite all --seed 22027
+```
+
+This protocol compares the exported open arc with a same-envelope closed wheel,
+uses common controller parameters and starting phase poses, reuses the same
+perturbation and terrain seed for every paired condition, records immutable model
+and runtime provenance, reports Wilson/bootstrap intervals, and runs a 1/2/4 ms
+numerical-convergence check. See `benchmark/README.md` for the exact factors and
+output files. The current manuscript must not replace its tables with these
+results until the full evaluation has run from a frozen clean revision.

@@ -14,6 +14,7 @@ import mujoco
 import mujoco.viewer
 import numpy as np
 
+from ...cli_i18n import Language, localize
 from ...hardware import Actuator
 from ...locomotion import VelocityCommand
 from ...main import SCONE
@@ -184,6 +185,7 @@ def _run_single_demo(
     *,
     model_path: str | Path,
     timeout_seconds: float,
+    language: Language | str = Language.ENGLISH,
 ) -> StairDemoResult:
     model = load_model(model_path, floating_base=True, terrain=terrain)
     data = mujoco.MjData(model)
@@ -351,7 +353,11 @@ def _run_single_demo(
     )
     print(
         f"\n[SIM DEMO] {strategy.value} / {terrain.value} — "
-        "키 입력 없이 자동 실행합니다."
+        + localize(
+            language,
+            "running automatically; no keyboard input is required.",
+            "키 입력 없이 자동 실행합니다.",
+        )
     )
     try:
         with mujoco.viewer.launch_passive(model, data) as viewer:
@@ -403,10 +409,14 @@ def _run_single_demo(
     if not results:
         raise RuntimeError("stair demo viewer closed before the trial completed")
     result = results[0]
-    outcome = (
-        f"top in {result.time_to_top_seconds:.2f}s"
-        if result.time_to_top_seconds is not None
-        else "top not reached before timeout"
+    outcome = localize(
+        language,
+        f"top in {result.time_to_top_seconds:.2f}s",
+        f"{result.time_to_top_seconds:.2f}초에 상단 도달",
+    ) if result.time_to_top_seconds is not None else localize(
+        language,
+        "top not reached before timeout",
+        "제한 시간 내 상단 미도달",
     )
     print(
         f"[SIM DEMO] {strategy.value}: {outcome}; "
@@ -425,6 +435,7 @@ def run_automatic_stair_demo(
     terrain: TerrainType | str = TerrainType.STAIRS_2,
     model_path: str | Path = DEFAULT_MODEL_PATH,
     timeout_seconds: float = 16.0,
+    language: Language | str = Language.ENGLISH,
 ) -> tuple[StairDemoResult, ...]:
     """Show one or both automatic stair strategies in sequential viewers."""
 
@@ -452,6 +463,7 @@ def run_automatic_stair_demo(
                 parsed_terrain,
                 model_path=model_path,
                 timeout_seconds=timeout_seconds,
+                language=language,
             )
         )
     return tuple(results)

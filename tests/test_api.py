@@ -7,15 +7,18 @@ from unittest.mock import Mock, patch
 
 from SCONE import SCONE
 from src.cli import (
+    Language,
     JoystickState,
     KeyboardJoystick,
     _select_profile,
+    build_parser as build_launcher_parser,
     main as run_launcher,
     render_joystick_ui,
     run_control_cli,
     run_legacy_joystick_cli,
     run_tripod_gait_joystick_cli,
 )
+from src.cli_ui import display_width
 from src.hardware import Actuator, ControllerProtocol, HardwareProbe
 from src.hardware.controller import Controller, ControllerError
 from src.locomotion import GaitConfig, VelocityCommand, legacy_movement_for
@@ -234,6 +237,37 @@ class InquirerLauncherTests(unittest.TestCase):
         with patch("src.cli._inquirer", return_value=(inquirer, self._choice)):
             self.assertEqual(_select_profile(), "sport")
 
+    def test_launcher_language_defaults_to_english_and_accepts_korea(self) -> None:
+        parser = build_launcher_parser()
+
+        self.assertIs(parser.parse_args([]).language, Language.ENGLISH)
+        self.assertIs(
+            parser.parse_args(["--language", "korea"]).language,
+            Language.KOREA,
+        )
+
+    def test_korean_launcher_localizes_menu_without_changing_values(self) -> None:
+        calls = []
+        prompt = SimpleNamespace(execute=lambda: "quit")
+
+        def select(**arguments):
+            calls.append(arguments)
+            return prompt
+
+        inquirer = SimpleNamespace(select=select)
+        with (
+            patch("src.cli._inquirer", return_value=(inquirer, self._choice)),
+            patch(
+                "src.cli.discover_hardware",
+                return_value=HardwareProbe(False, detail="not connected"),
+            ),
+        ):
+            self.assertEqual(run_launcher(["--language", "korea"]), 0)
+
+        self.assertEqual(calls[0]["message"], "실행할 작업을 선택하세요")
+        self.assertEqual(calls[0]["choices"][0].value, "simulation_control")
+        self.assertIn("시뮬레이션 조종", calls[0]["choices"][0].name)
+
     def test_root_launcher_quits_from_inquirer_menu(self) -> None:
         prompt = SimpleNamespace(execute=lambda: "quit")
         inquirer = SimpleNamespace(select=lambda **_arguments: prompt)
@@ -288,10 +322,14 @@ class InquirerLauncherTests(unittest.TestCase):
             terrain=TerrainType.FLAT,
             control=SimulationControl.RL,
             checkpoint=checkpoint,
+            language=Language.ENGLISH,
             rl_reference_motion="non_rl",
             rl_standing_pose_degrees=tuple(float(i) for i in range(18)),
         )
-        reference_prompt.assert_called_once_with(default="hardcoded")
+        reference_prompt.assert_called_once_with(
+            default="hardcoded",
+            language=Language.ENGLISH,
+        )
 
     def test_root_launcher_routes_automatic_stair_demo(self) -> None:
         from src.simulation.core.stair_demo import StairDemoStrategy
@@ -322,6 +360,7 @@ class InquirerLauncherTests(unittest.TestCase):
         demo.assert_called_once_with(
             StairDemoStrategy.COMPARE,
             terrain=TerrainType.STAIRS_2,
+            language=Language.ENGLISH,
         )
 
 
@@ -374,6 +413,35 @@ class KeyboardJoystickTests(unittest.TestCase):
         self.assertIn("x=+1.00", screen)
         self.assertIn("yaw=+0.900 rad/s", screen)
         self.assertIn("profile=sport", screen)
+
+    def test_joystick_ui_can_render_korean(self) -> None:
+        state = JoystickState(y=1.0)
+        screen = render_joystick_ui(
+            state,
+            state.to_velocity_command(GaitConfig()),
+            profile_name="standard",
+            language="korea",
+        )
+
+        self.assertIn("SCONE / 속도 제어", screen)
+        self.assertIn("W/S: 전진/후진", screen)
+        self.assertIn("● 작동 중", screen)
+
+    def test_joystick_ui_uses_one_fixed_display_width(self) -> None:
+        state = JoystickState(x=-1.0, y=1.0, yaw=-1.0)
+        screen = render_joystick_ui(
+            state,
+            state.to_velocity_command(GaitConfig()),
+            profile_name="standard",
+            control_hint="R changes the active motion mode without leaving stale input",
+            language="korea",
+        )
+
+        self.assertEqual(
+            {display_width(line) for line in screen.splitlines()},
+            {74},
+        )
+        self.assertGreater(screen.count("-"), 100)
 
     def test_old_control_adapts_velocity_without_inventing_strafe(self) -> None:
         self.assertEqual(legacy_movement_for(VelocityCommand(vx=0.1)), "forward")

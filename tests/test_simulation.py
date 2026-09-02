@@ -18,6 +18,7 @@ from src.simulation.core.cli_bridge import (
     run,
 )
 from src.simulation.core.simulator_cli import build_parser
+from src.cli_i18n import Language
 
 
 class SimulationBackendTests(unittest.TestCase):
@@ -65,6 +66,15 @@ class SimulationBackendTests(unittest.TestCase):
         )
 
         self.assertEqual(arguments.rl_reference_motion, "hardcoded")
+
+    def test_direct_simulation_cli_supports_language_selection(self) -> None:
+        parser = build_parser()
+
+        self.assertIs(parser.parse_args([]).language, Language.ENGLISH)
+        self.assertIs(
+            parser.parse_args(["--language", "korea"]).language,
+            Language.KOREA,
+        )
 
     def test_cli_accepts_canonical_gait_names(self) -> None:
         parser = build_parser()

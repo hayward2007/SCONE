@@ -13,17 +13,28 @@ python -m pip install -r requirements.txt
 mjpython SCONE.py
 ```
 
+The launcher defaults to English. Select Korean with:
+
+```bash
+mjpython SCONE.py --language korea
+```
+
+`--language english` and `--language korea` keep the same internal menu values,
+controller names, checkpoints, and robot commands; only terminal UI text
+changes. The selected language continues into simulation pickers, the joystick
+dashboard, and the RL launcher.
+
 The launcher searches for a physical controller without changing torque or
-position, then displays:
+position, then displays an English control center by default:
 
 ```text
-? SCONE 실행 메뉴
-❯ 시뮬레이션 (자동 데모)
-  시뮬레이션 조종
-  하드웨어 조종 (/dev/...) or 하드웨어 조종 (현재 불가)
-  하드웨어 다시 탐색
-  강화학습 관리
-  종료
+? Choose an activity
+❯ Interactive simulation · drive with the terminal joystick
+  Automatic stair demo · no manual control
+  Hardware control · connected (...) or not detected
+  Reinforcement learning · train, inspect, replay
+  Rescan hardware
+  Quit
 ```
 
 Use the arrow keys and Enter to choose launcher, profile, terrain, and RL
@@ -53,7 +64,7 @@ The current `roll-gait` rename, PPO/hybrid `scone-gait`, Drive-to-Climb stair
 preparation, and physical stage-1 register checks are documented in
 [`docs/14-roll-gait-and-hybrid-scone-gait.md`](docs/14-roll-gait-and-hybrid-scone-gait.md).
 
-`시뮬레이션 (자동 데모)` asks only for `hardcoded`, `improved`, or sequential
+`Automatic stair demo` asks only for `hardcoded`, `improved`, or sequential
 `compare`, plus one stair preset. It does not open the terminal joystick.
 Both strategies first align the six terminal C-frames to one geometric phase.
 `hardcoded` first reproduces Legacy Climb's 270-degree vertical leading
@@ -384,7 +395,7 @@ python -m pip install -r requirements.txt
 python -m src.rl
 ```
 
-The same menu is available as `4. 강화학습 관리` from `mjpython SCONE.py`. It
+The same menu is available as `Reinforcement learning` from `mjpython SCONE.py`. It
 asks for the residual reference (`tripod-gait`, experimental `scone-gait`, or
 legacy `hardcoded`), curriculum, terrain,
 standing pose, timestep count, checkpoint interval, and local/SSH destination.
@@ -417,7 +428,7 @@ continuously mirror checkpoints while a local MuJoCo viewer is open, or replay
 any downloaded `.zip` policy.
 
 If reward or observation semantics change and a run must restart from zero,
-choose `원격 실행/체크포인트 초기화`. The launcher refuses to touch a running
+choose `Archive and reset a remote run`. The launcher refuses to touch a running
 trainer without a separate confirmation and requires the exact run name. It
 then moves the complete remote run (checkpoints, final model, PID, and log) to
 `runs/.reset_backup/<run-name>_<timestamp>` instead of permanently deleting it.

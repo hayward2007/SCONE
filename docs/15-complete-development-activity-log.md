@@ -632,3 +632,57 @@ Walk↔Roll 전환, JSONL/CSV 통계 경로를 추가하고 실제 명목·스�
 | [`14-roll-gait-and-hybrid-scone-gait.md`](14-roll-gait-and-hybrid-scone-gait.md) | 현재 이름, PPO/hybrid 공식, multi-turn과 준비 상태를 볼 때 |
 | [`16-icra-simulation-benchmark-implementation-and-results.md`](16-icra-simulation-benchmark-implementation-and-results.md) | 평지·계단 A/B/C, 강건성, 전환 실험의 조건·원본 결과·통계를 볼 때 |
 | 현재 문서 | 전체 활동의 시작점과 최종 판정을 빠르게 추적할 때 |
+
+---
+
+## 12. 2026-09-02 CLI 영어/한국어 UI와 UX 정리
+
+`SCONE.py`에 `--language`를 추가했다. 기본값은 `english`이며
+`mjpython SCONE.py --language korea`에서 한국어를 사용한다. 선택 언어는 root
+launcher에서 profile, terrain, simulation controller, stair demo, PPO
+checkpoint/reference/stance, joystick HUD와 RL 관리 메뉴까지 전달된다. menu
+value와 gait/checkpoint/controller 식별자는 번역하지 않아 두 언어의 실행 의미가
+같다.
+
+런처에는 하드웨어 감지 상태와 현재 언어를 보여 주는 control-center header를
+추가하고, 메뉴 이름을 “대상 + 수행 내용” 형식으로 정리했다. joystick HUD는
+`READY/ACTIVE`, 즉시 neutral, 자동 중앙 복귀, 현재 controller/profile을 한
+화면에 표시한다. 공용 구현은 `src/cli_i18n.py`, root argument 처리는
+`SCONE.py`와 `src/cli.py`, simulation picker는
+`src/simulation/core/simulator_cli.py`가 담당한다.
+
+언어/UI 표적 테스트 52개는 통과했다. 전체 suite 재실행에서는 이 변경과 무관한
+현재 작업 트리의 `benchmark.model_variants.TIRE_GEOM_NAMES` import 누락과 변경된
+계단 물리에서 ID 16 phase settle 실패가 남았다. CLI 변경 파일을 포함한
+`compileall`은 통과했고, 해당 두 테스트 파일을 제외한 나머지 추적 회귀
+137개도 통과했다. 두 실패 영역은 다른 진행 중 작업을 덮어쓰지 않기 위해
+수정하지 않았다.
+
+### 12.1 고정폭 화면과 실제 redraw 보완
+
+첫 언어/UI 변경 뒤 사용자가 “주기적 `cls`가 없고 구분선 길이가 제각각이며 `-`
+기호가 부족해 가독성이 낮다”고 지적했다. 확인 결과 언어와 menu label은
+정리됐지만 root/picker/RL 화면은 이전 출력 위에 누적됐고 joystick HUD에는 공통
+외곽 frame이 없었다. 따라서 첫 변경을 완료로 보지 않고 다음과 같이 보완했다.
+
+- `src/cli_ui.py`를 추가해 전체 74열, 내부 구분선 72열인 ASCII panel을 모든
+  주요 화면의 기준으로 사용했다.
+- 한글은 전각 2열로 계산하고 긴 문구를 panel 안에서 줄바꿈하여 오른쪽 `|`의
+  위치가 모든 행에서 같도록 했다.
+- root launcher와 simulation/profile/PPO/RL picker는 화면 전환마다 TTY 전체를
+  지운 뒤 새 화면을 그린다. redirect된 test/log에는 ANSI escape를 넣지 않는다.
+- joystick HUD를 `[ CONTROLS ]`, `[ MOTION MAP ]`, `[ TELEMETRY ]`로 분리하고,
+  50 Hz 값 갱신과 별도로 1초마다 전체 화면을 지워 장시간 실행 시 잔상을 없앴다.
+- 실제 하드웨어 조종도 누적 log 대신 현재 mode/profile/마지막 명령을 같은 화면에
+  다시 그린다. root 오류는 다음 `Notice`에 보존하고 RL 결과는 Enter 전까지
+  지우지 않는다.
+- 메뉴 항목과 조작 설명에는 `-` prefix를 사용하고 RL section separator는 모두
+  같은 display width로 생성한다.
+
+`mjpython SCONE.py --language korea`를 실제 TTY에서 실행하여 시작 화면이 메인
+화면으로 바뀔 때 `ESC[2J ESC[H`가 전송되는 것과, 시뮬레이션 조종을 선택했을 때
+이전 메인 화면이 지워지고 74열 controller picker만 남는 것을 확인했다. 이 검증은
+controller 선택 전 Ctrl-C로 종료하여 시뮬레이션과 실제 모터 동작을 시작하지
+않았다. 한글 고정폭, redirect 시 ANSI 미출력, 1초 주기 joystick full-clear를
+포함한 관련 회귀 테스트 76개가 통과했고, 현재 작업 트리의 전체 회귀 테스트도
+156개 모두 통과했다.

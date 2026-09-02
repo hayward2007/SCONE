@@ -1,115 +1,125 @@
 \section{\gaitname{}: 보행과 호 회전의 동시 수행}
 
-설계 목표는 삼각보 보행 운동과 말단 호의 연속 회전이 같은 여섯 관절에서
-\emph{동시에} 이루어지는 단일 제어기이며, 보행 기계와 주행 기계 사이의 모드
-전환이 아니다. \ref{sub:tripod-ko}절은 모든 조건이 공유하는 유계 기준 궤적을,
-\ref{sub:superpose-ko}절은 \ref{sec:results-ko}절의 결과를 만든 제어기를,
-\ref{sub:gate-ko}절은 같은 착상의 위상 게이트 변형과 그것이 보장하는 성질을
-정의한다.
+설계 목표는 삼각보행과 말단 호의 연속 회전을 동일한 여섯 개 관절에서
+\emph{동시에} 수행하는 하나의 제어기를 만드는 것이다. 즉, 보행 기계와 주행
+기계 사이를 전환하는 방식이 아니다. \ref{sub:tripod-ko}절에서는 모든 조건에
+사용하는 유계 기준 궤적을 정의하고, \ref{sub:superpose-ko}절에서는
+\ref{sec:results-ko}절의 협응 결과를 생성한 중첩 제어기를 설명한다.
 
-\subsection{교대 삼각보 기준 궤적}\label{sub:tripod-ko}
+\subsection{교대 삼각보행 기준 궤적}\label{sub:tripod-ko}
 
-삼각보 $\mathcal{T}_A=\{1,4,5\}$와 $\mathcal{T}_B=\{2,3,6\}$의 위상 오프셋은
-$\delta_i\in\{0,1/2\}$다. 주기 주파수 $f$와 duty factor $D$에 대해 다리 위상은
+두 삼각보행 집합을 $\mathcal{T}_A=\{1,4,5\}$,
+$\mathcal{T}_B=\{2,3,6\}$으로 두고, 각 다리의 위상 오프셋을
+$\delta_i\in\{0,1/2\}$로 설정한다. 보행 주파수가 $f$, 지지기 비율이 $D$일 때
+다리의 위상은
 \begin{equation}
  \phi_i(t)=(ft+\delta_i)\bmod 1                                \label{eq:phase-ko}
 \end{equation}
-이다. 공칭 발 위치 $\vect{p}_{i0}=[x_i,y_i,z_i]^\top$에서 명령 몸체 트위스트가
-만드는 평면 속도와 그 결과의 stance 스트로크는
+이다. 공칭 발 위치를 $\vect{p}_{i0}=[x_i,y_i,z_i]^\top$라 하면, 명령한 몸체
+트위스트로부터 $i$번째 발의 평면 속도와 지지기 스트로크를 다음과 같이 구한다.
 \begin{equation}
  \vect{u}_i=\begin{bmatrix}v_x-\omega_zy_i\\v_y+\omega_zx_i\end{bmatrix},
  \qquad\vect{s}_i=D\vect{u}_i/f                                \label{eq:stroke-ko}
 \end{equation}
-이다. 도달 불가능한 스트로크는 타원 작업공간 투영
+관절 작업공간을 벗어나는 스트로크는 다음 타원 투영으로 제한한다.
 \begin{equation*}
  \vect{s}_i\leftarrow\vect{s}_i\big/
  \max\bigl(1,\|[s_{ix}/s_x^{\max},\,s_{iy}/s_y^{\max}]\|_2\bigr)
 \end{equation*}
-로 막는다. $S(a)=10a^3-15a^4+6a^5$, $H(a)=16a^2(1-a)^2$일 때 목표 접촉 궤적은
+$S(a)=10a^3-15a^4+6a^5$, $H(a)=16a^2(1-a)^2$라 하면 목표 접촉 궤적은
 \begin{equation}
  \vect{p}_i^\star=\vect{p}_{i0}+\begin{cases}
  (\tfrac12-\phi_i/D)[\vect{s}_i^\top,0]^\top,&\phi_i<D,\\
  (S(a)-\tfrac12)[\vect{s}_i^\top,0]^\top+h_fH(a)\vect{e}_z,&\phi_i\ge D
  \end{cases}                                                   \label{eq:foot-ko}
 \end{equation}
-이고 $a=(\phi_i-D)/(1-D)$다. 감쇠 수치 역기구학이 여섯 목표를 유계 18관절 기준
-$\vect{q}^{\rm ref}$로 사상한다. (\ref{eq:phase-ko})--(\ref{eq:foot-ko})의 파라미터
-집합은 두 가지이며 서로 같지 않으므로 여기서 밝힌다. 보행 조건은
+이며 $a=(\phi_i-D)/(1-D)$다. 감쇠 수치 역기구학을 이용해 여섯 발의 목표 위치를
+유계 18관절 기준값 $\vect{q}^{\rm ref}$로 변환한다. 식
+(\ref{eq:phase-ko})--(\ref{eq:foot-ko})에 사용한 파라미터는 보행 조건과 구름
+조건에서 서로 다르므로 그 값을 명시한다. 보행 조건은
 $(f,D,h_f,s_x^{\max},s_y^{\max})=(1.0\,\mathrm{Hz},0.50,25,90,70\,\mathrm{mm})$,
 구름 조건은 $(0.8\,\mathrm{Hz},0.58,20,55,45\,\mathrm{mm})$를 사용한다. 구름
-조건의 작은 스트로크는 변위의 대부분을 보폭이 아니라 회전이 담당한다는 설계
-의도를 반영한다.
+조건에서 스트로크를 더 작게 설정한 것은 전체 변위의 대부분을 보폭이 아니라
+말단 회전이 담당하도록 하기 위해서다.
 
-\subsection{속도 모드 말단 관절에 대한 회전 중첩}\label{sub:superpose-ko}
+\subsection{속도 제어 말단 관절의 회전 중첩}\label{sub:superpose-ko}
 
-관절 $1$--$12$는 위치 모드로 $\vect{q}^{\rm ref}$를 추종한다. 여섯 말단 관절은
-1회전 한계를 없애기 위해 속도 모드로 전환되며, 연속 구름 항과 보행 기준의
-미분 항의 합으로 명령된다.
+관절 $1$--$12$는 위치 제어 모드에서 $\vect{q}^{\rm ref}$를 추종한다. 여섯 개의
+말단 관절은 한 바퀴 회전 범위에 제한되지 않도록 속도 제어 모드로 운용하며,
+연속 구름 항과 보행 기준 궤적의 미분 항을 더해 명령한다.
 \begin{equation}
  \dot q_{d,i}=\underbrace{\dot\theta_i^{\rm roll}}_{\text{이송}}
  +\lambda\underbrace{\Delta q^{\rm ref}_{d,i}/\Delta t}_{\text{보행}},
  \qquad \lambda=0.35                                           \label{eq:superpose-ko}
 \end{equation}
-이것이 "동시에 걷고 구른다"의 구체적 형태이며, 어느 항도 다른 항에 의해 차단되지
-않는다. 정규화 명령 활성도를
+식~(\ref{eq:superpose-ko})은 ``걷기와 구르기를 동시에 수행한다''는 개념을
+구체화한다. 두 항은 서로를 차단하지 않고 항상 함께 계산된다. 정규화한 명령
+활성도를
 \begin{equation}
  \alpha(\vect{c})=\operatorname{clip}\!\left(\max_j
  \frac{|c_j|}{c_j^{\max}},0,1\right),\quad
  \vect{c}^{\max}=[0.18,0.12,0.9]                               \label{eq:activity-ko}
 \end{equation}
-로 두고, stance/swing 속도비를 2단 함수
+로 정의하고, 지지기와 유각기의 회전 속도비를 다음의 2단 함수로 둔다.
 \begin{equation}
  \kappa_i(\phi_i)=\begin{cases}
- \kappa_{\rm st}=0.80,& i\in\text{stance},\\
- 1,& i\in\text{swing}\end{cases}                               \label{eq:kappa-ko}
+ \kappa_{\rm st}=0.80,& i\in\text{지지기},\\
+ 1,& i\in\text{유각기}\end{cases}                              \label{eq:kappa-ko}
 \end{equation}
-로 둔다. 메시에서 측정한 유한차분 접촉 접선
-$\vect{t}_i=\partial\vect{p}_{c,i}/\partial q_{d,i}$로부터 극성
-$\sigma_i\in\{-1,1\}$과 정렬도
+메시에서 유한차분으로 구한 접촉면의 접선
+$\vect{t}_i=\partial\vect{p}_{c,i}/\partial q_{d,i}$를 이용해 회전 방향
+$\sigma_i\in\{-1,1\}$과 진행 방향 정렬도
 \begin{equation}
  A_i=\max\!\left(0,\;\hat{\vect{t}}_i^\top
  \frac{-\vect{u}_i}{\|\vect{u}_i\|}\right)                     \label{eq:align-ko}
 \end{equation}
-를 얻으면, 미필터 회전 속도와 1차 실현은
+를 계산한다. 그러면 필터 적용 전 회전 속도와 1차 저역통과 필터를 거친 회전
+속도는
 \begin{align}
- \omega_i^{\rm cmd}&=-\sigma_i\,\omega_0\,\alpha(\vect{c})\,A_i\,\kappa_i,
- \quad \omega_0=4.20\,\mathrm{rad/s},                          \label{eq:rollcmd-ko}\\
+ \omega_i^{\rm cmd}&=-\sigma_i\omega_0\alpha(\vect{c})A_i\kappa_i,
+ &\omega_0&=4.20\,\mathrm{rad/s},                              \label{eq:rollcmd-ko}\\
+ \lambda_r&=1-e^{-\Delta t/\tau_r},&
  \dot\theta_i^{\rm roll}&\leftarrow\dot\theta_i^{\rm roll}
- +\bigl(1-e^{-\Delta t/\tau_r}\bigr)
- \bigl(\omega_i^{\rm cmd}-\dot\theta_i^{\rm roll}\bigr)        \label{eq:rolllpf-ko}
+ +\lambda_r(\omega_i^{\rm cmd}-\dot\theta_i^{\rm roll})        \label{eq:rolllpf-ko}
 \end{align}
-이며 $\tau_r=0.10\,$s이다. (\ref{eq:superpose-ko})의 보행 항은 역기구학 분기 변경이
-속도 스파이크로 나타나지 않도록 $\pm110^\circ/$s로 제한하고 $\tau_b=0.04\,$s로
-저역통과한다. 기동 시 삼각보 B의 세 호는 $60^\circ$만큼 엇갈리게 배치한다. 이
-오프셋이 없으면 여섯 개구가 동시에 지면을 향해 몸체가 내려앉는다.
+로 주어지며, 여기서 $\tau_r=0.10\,$s이다. 식~(\ref{eq:superpose-ko})의 보행 항은
+역기구학 해의 분기가 바뀔 때 속도 명령이 급격히 뛰지 않도록
+$\pm110^\circ/$s로 제한하고, 시정수 $\tau_b=0.04\,$s의 저역통과 필터를 적용한다.
+기동 시에는 삼각보행 집합 B에 속한 세 호의 초기 위상을 $60^\circ$씩 엇갈리게
+배치한다. 이 오프셋이 없으면 여섯 호의 개구부가 동시에 지면을 향해 몸체가
+주저앉을 수 있다.
 
-\ref{sec:results-ko}절에서 중요한 귀결은 (\ref{eq:rollcmd-ko})이 무슬립 속도가
-아니라 \emph{활성도 비례} 속도라는 점이다. stance 중 명령 접촉 속도는
+결과 해석에서 중요한 점은 식~(\ref{eq:rollcmd-ko})의 회전 속도가 무미끄럼
+조건으로 계산된 값이 아니라 명령 활성도에 비례하는 값이라는 사실이다. 지지기
+중 명령한 접촉면 속도는
 \begin{equation}
  v_c=r_o\,\omega_0\,\alpha\,\kappa_{\rm st}
    =0.411\ \mathrm{m\,s^{-1}}\quad(\alpha=1)                    \label{eq:contactspeed-ko}
 \end{equation}
-이므로, 몸체가 $v_c$보다 느리게 전진하면 그 차이는 실측 접촉 미끄럼으로 나타나야
-한다.
+이다. 따라서 몸체의 전진 속도가 $v_c$보다 작으면 두 속도의 차이가 접촉
+미끄럼으로 관측되어야 한다.
 \begin{equation}
  D_{\rm slip}\approx\int_0^T\bigl|v_c-\|\vect{v}_{xy}(t)\|\bigr|\,dt
                                                                \label{eq:slippredict-ko}
 \end{equation}
-\ref{sec:results-ko}절은 (\ref{eq:slippredict-ko})을 주장이 아니라 검산으로
-사용한다.
+\ref{sec:results-ko}절에서는 식~(\ref{eq:slippredict-ko})을 새로운 성능 주장에
+사용하지 않고, 측정한 미끄럼의 원인을 확인하는 검산식으로 사용한다.
 
-\subsection{위상 게이트 다회전 변형}\label{sub:gate-ko}
+\iffalse
+\subsection{다회전을 위한 위상 게이트 변형}\label{sub:gate-ko}
 
-(\ref{eq:kappa-ko})의 2단 비를 매끄러운 게이트로 바꾸면 호가 하중을 처음 받는
-동안 정지 상태를 유지할 수 있다. stance 진행도 $p=\phi_i/D$, swing 진행도 $a$,
-점지지 비율 $\rho=0.55$, swing 유지 비율 $\nu=0.70$에 대해
+식~(\ref{eq:kappa-ko})의 2단 속도비를 매끄러운 게이트 함수로 바꾸면, 호가 하중을
+받기 시작하는 동안 접촉 패치를 정지시킬 수 있다. 지지기 진행률을
+$p=\phi_i/D$, 유각기 진행률을 $a$, 점 지지 구간의 비율을 $\rho=0.55$, 유각기
+유지 비율을 $\nu=0.70$이라 두고
 \begin{equation}
  g_i=\begin{cases}
  0,&p\le\rho,\\ S\!\left(\frac{p-\rho}{1-\rho}\right),&\rho<p\le1,\\
  1,&a\le\nu,\\1-S\!\left(\frac{a-\nu}{1-\nu}\right),&a>\nu
  \end{cases}                                                   \label{eq:rollgate-ko}
 \end{equation}
-로 정의하고, 고정 속도가 아니라 무슬립 속도로 호를 구동한다.
+로 정의한다. 이 변형에서는 고정 회전 속도 대신 무미끄럼 조건에서 계산한 속도로
+호를 구동한다.
 \begin{align}
  \dot\Theta_i^{\rm ideal}&=\min\!\left(\frac{\|\vect{u}_i\|_2}{r_o},
  \dot\Theta_{\max}\right),                                     \label{eq:rollrate-ko}\\
@@ -118,63 +128,69 @@ $\sigma_i\in\{-1,1\}$과 정렬도
  q_{d,i}^\star=q_{{\rm IK},d,i}^\star+\Theta_i                 \label{eq:accumulate-ko}
 \end{align}
 $S(0)=S'(0)=S''(0)=0$이고 $S(1)=1$, $S'(1)=S''(1)=0$이므로
-(\ref{eq:rollgate-ko})의 네 분기는 값·기울기·곡률이 일치하게 접합된다. 따라서
-$g_i\in C^2$이며 모든 게이트 경계에서 명령 각가속도가 연속이다. 파라미터로부터
-두 성질이 더 따라온다. 첫째, 각 호는 stance의 처음 $55\%$ 동안 정지하므로 하중을
-받는 패치는 그동안 움직이지 않는다. 둘째, 배포 duty factor $D=0.60$과 오프셋
-$\{0,\tfrac12\}$에서 두 삼각보의 추진 구간은 $(\rho D,D)=(0.33,0.60)$과
-$(0.83,1.10)\bmod 1$이며 서로 disjoint이다. 즉 두 삼각보가 하중을 받은 채 동시에
-회전하는 순간은 없다. (\ref{eq:rollgate-ko})을 한 주기에 대해 평균하면 닫힌 형태
+식~(\ref{eq:rollgate-ko})의 네 구간은 함수값·기울기·곡률이 모두 일치하도록
+연결된다. 따라서 $g_i\in C^2$이고 모든 게이트 경계에서 명령 각가속도가
+연속이다. 설정한 파라미터에서는 두 가지 성질이 추가로 성립한다. 첫째, 각 호는
+지지기의 처음 $55\%$ 동안 회전하지 않으므로 하중을 받는 접촉 패치가 이 구간에서
+정지한다. 둘째, 실제 운용 시 지지기 비율 $D=0.60$과 위상 오프셋
+$\{0,\tfrac12\}$을 적용하면 두 삼각보행 집합의 추진 구간은 각각
+$(\rho D,D)=(0.33,0.60)$과 $(0.83,1.10)\bmod 1$이 되어 서로 겹치지 않는다.
+따라서 두 삼각보행 집합이 하중을 지지한 채 동시에 회전하는 순간은 없다.
+식~(\ref{eq:rollgate-ko})을 한 주기에 대해 평균하면 다음 닫힌 형태를 얻는다.
 \begin{equation}
  \bar g=\frac{D(1-\rho)}{2}+\frac{(1-D)(1+\nu)}{2}
  \;\overset{D=0.60}{=}\;0.475                                  \label{eq:meangate-ko}
 \end{equation}
-를 얻는다. 게이트된 호는 명령 변위의 $\bar g$ 비율만 담당하므로 나머지는 관절
-운동에서 나와야 한다. 이 변형은 구현되어 단위 시험으로 검증되지만
-\ref{sec:results-ko}절의 벤치마크는
-(\ref{eq:superpose-ko})--(\ref{eq:rolllpf-ko})을 사용한다.
-(\ref{eq:rollgate-ko})--(\ref{eq:meangate-ko})은 분석된 설계로 제시하는 것이며
-보고된 어떤 수치의 근거도 아니다.
+게이트를 적용한 호는 명령 변위 중 $\bar g$에 해당하는 비율만 담당하므로, 나머지
+변위는 관절 운동으로 만들어야 한다. 이 변형은 코드로 구현되어 단위 시험을
+통과했지만, \ref{sec:results-ko}절의 벤치마크에는
+식~(\ref{eq:superpose-ko})--(\ref{eq:rolllpf-ko})의 중첩 제어기를 사용했다.
+따라서 식~(\ref{eq:rollgate-ko})--(\ref{eq:meangate-ko})은 분석 가능한 후속
+설계안으로 제시할 뿐, 본 논문에 보고한 수치의 근거로 사용하지 않는다.
+\fi
 
 \begin{figure*}[t]
 \centering\includegraphics[width=0.96\textwidth]{control_architecture.pdf}
-\caption{제어 경로. 관절 1--12는 위치 모드로 유계 삼각보 기준을 추종하고,
-관절 13--18은 속도 모드에서 기준의 미분에 연속 호 회전을 더한다. 따라서 보행과
-회전이 같은 시점에 명령된다. residual policy와 속도 혼합은 배포 스택에 속하며
-보고된 벤치마크에서는 비활성이다.}
+\caption{제어 경로. 관절 1--12는 위치 제어 모드에서 유계 삼각보행 기준 궤적을
+추종한다. 관절 13--18은 속도 제어 모드에서 기준 궤적의 미분값에 연속 호 회전을
+더하므로 보행과 회전이 같은 시점에 명령된다. 제어기 출력은 12개의 위치 목표와
+6개의 속도 목표이며, 보고한 실험에는 학습 정책을 사용하지 않았다.}
 \label{fig:control-ko}
 \end{figure*}
 
-\subsection{Residual policy와 속도 혼합(배포 스택)}\label{sub:residual-ko}
+\iffalse
+\subsection{잔차 정책과 속도 기반 혼합(실제 운용 제어 체계)}\label{sub:residual-ko}
 
-완결성을 위해 배포 스택의 저속 supervisor를 기술한다. residual 학습은 접촉
-스케줄 전체를 다시 학습하지 않고 구조화된 기준을 보정한다
-\cite{johannink2019residual,silver2018residual}. 70차원 관측은 몸체 선속도/각속도,
-투영 중력, 18개 관절 위치, 18개 관절 속도, 이전 18차원 action, 명령, 위상과
-heading 오차의 sin/cos 쌍을 포함하며, PPO는 clipped 목적함수
-\cite{schulman2017ppo}
+전체 제어 구조를 설명하기 위해 실제 운용 체계의 저속 상위 제어기도 함께
+기술한다. 잔차 학습은 접촉 순서 전체를 새로 학습하는 대신, 구조화된 기준 궤적에
+필요한 보정량만 학습한다 \cite{johannink2019residual,silver2018residual}.
+70차원 관측 벡터는 몸체 선속도와 각속도, 몸체 좌표계에 투영한 중력, 18개 관절의
+위치와 속도, 직전 18차원 행동, 속도 명령, 위상 및 방위각 오차의 사인·코사인 쌍을
+포함한다. PPO는 다음의 클리핑 목적함수를 최적화한다 \cite{schulman2017ppo}.
 \begin{equation}
  L^{\rm clip}=\mathbb{E}_t\!\left[\min(r_t\hat A_t,
  \operatorname{clip}(r_t,1-\epsilon,1+\epsilon)\hat A_t)\right] \label{eq:ppo-ko}
 \end{equation}
-를 최적화한다. 재생 시에는 평면 속도 $v=\|\vect{v}_{xy}\|$의 smoothstep이 권한을
-policy에서 해석적 기준으로 넘긴다.
+학습된 정책을 실행할 때는 평면 속도 $v=\|\vect{v}_{xy}\|$에 대한 3차
+스무스스텝 함수로 잔차 정책과 해석적 기준 궤적 사이의 제어 권한을 전환한다.
 \begin{align}
  u&=\operatorname{clip}\!\left(\frac{v-v_0}{v_1-v_0},0,1\right),\quad
  \beta(v)=3u^2-2u^3,                                        \label{eq:blend-ko}\\
  \vect{q}^\star&=(1-\beta)\vect{q}_{\rm ref}+\beta\vect{q}_{\rm arc}\nonumber\\
  &\quad+(1-\beta)\,\vect{s}_a\odot\vect{a}_{\rm PPO}        \label{eq:finaltarget-ko}
 \end{align}
-여기서 $(v_0,v_1)=(0.10,0.18)\,$m/s이다. $\beta(v_1)=1$임을 명시한다. 즉
-\ref{sec:results-ko}절 전체에서 사용한 $0.18\,\mathrm{m\,s^{-1}}$ 명령에서
-residual 항은 사라지며, 벤치마크 제어기는 policy를 아예 생성하지 않는다. 따라서
-residual은 본 논문의 근거로 제시되지 않는다. 해석적 제어기가 담당하지 않는 저속
-구간을 규정하기 때문에 기술할 뿐이다.
+여기서 $(v_0,v_1)=(0.10,0.18)\,$m/s이고 $\beta(v_1)=1$이다. 따라서
+\ref{sec:results-ko}절의 모든 실험에 사용한 $0.18\,\mathrm{m\,s^{-1}}$ 명령에서는
+잔차 항이 완전히 사라진다. 실제로 벤치마크 제어기는 정책 신경망 자체를 생성하지
+않는다. 그러므로 잔차 정책의 성능을 본 논문의 근거로 제시하지 않는다. 이 절은
+해석적 제어기가 담당하지 않는 저속 운용 구간을 포함해 전체 운용 구조를 설명하기
+위해 수록했다.
+\fi
 
-\subsection{계단 상태 순서}
+\subsection{계단 등반 상태 전이}
 
-계단 제어기는 Walk$\rightarrow$Drive$\rightarrow$Climb를 실행하고, 각 수렴 자세를
-확인한 뒤 앞쪽 중간 관절을 지지 자세로 고정하고 여섯 말단 위상을 동기화한다.
-기하 조건부 brace는 단높이 구간에 따라 $180^\circ$, $184^\circ$, $195^\circ$를
-사용한다. 이는 계단 치수를 입력받는 결정론적 supervisor이며 지형 인식도 발판
-탐색도 수행하지 않는다.
+계단 제어기는 보행$\rightarrow$주행$\rightarrow$등반의 상태 순서를 따른다. 각
+단계의 목표 자세가 수렴했는지 확인한 뒤, 앞쪽 중간 관절을 지지 자세로 고정하고
+여섯 말단 관절의 위상을 동기화한다. 단높이에 따라 지지 각도는 $180^\circ$,
+$184^\circ$, $195^\circ$ 중 하나를 사용한다. 이 제어기는 계단 치수를 미리
+입력받는 결정론적 상위 제어기이며, 지형 인식이나 발판 탐색은 수행하지 않는다.

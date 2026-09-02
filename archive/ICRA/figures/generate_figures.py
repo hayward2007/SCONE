@@ -10,6 +10,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
 
+# PDF eXpress rejects Type 3 text in otherwise vector figures. Preserve
+# editable vector text as embedded TrueType glyphs instead.
+plt.rcParams["pdf.fonttype"] = 42
+plt.rcParams["ps.fonttype"] = 42
+
 
 ROOT = Path(__file__).resolve().parents[3]
 RESULTS = ROOT / "benchmark" / "results"
@@ -23,7 +28,7 @@ def records(name: str) -> list[dict]:
 
 def flat_metrics() -> None:
     rows = records("flat-nominal.jsonl")
-    labels = ["Walk", "Distal\nonly", "Full\nroll"]
+    labels = ["Walk", "Distal\nonly", "Coordinated\narc"]
     keys = ["articulated-walk", "distal-only-roll", "full-roll"]
     values = {row["controller"]: row for row in rows}
     fig, axes = plt.subplots(1, 3, figsize=(7.1, 2.15))
@@ -59,7 +64,7 @@ def stair_results() -> None:
     """
     rows = records("stairs-nominal.jsonl")
     controllers = ["distal-only", "synchronized-open-loop", "full-scone"]
-    names = ["Distal only", "Open loop", "Full SCONE"]
+    names = ["Distal only", "Open loop", "Full hybrid"]
     colors = ["#F2CF5B", "#72B7B2", "#4C78A8"]
     risers = [0.10, 0.15, 0.20]
     fig, ax = plt.subplots(figsize=(3.42, 1.95))
@@ -151,9 +156,17 @@ def arc_geometry() -> None:
     ax.annotate("", xy=(0.050, 0), xytext=(0.050, h),
                 arrowprops=dict(arrowstyle="<->", lw=0.8, color="#333333"))
     ax.text(0.058, h / 2 - 0.006, "$h$", fontsize=7.5)
-    ax.axhline(r_o, color="#2c7a74", lw=0.9, ls="-.")
-    ax.text(-0.295, r_o + 0.007, "$h\\to r_o:\\ F_h\\to\\infty$", fontsize=6.5,
-            color="#2c7a74")
+    ax.add_patch(FancyArrowPatch(
+        (cx - 0.040, cy + 0.035), (cx + 0.015, cy + 0.060),
+        connectionstyle="arc3,rad=-0.5", arrowstyle="-|>",
+        mutation_scale=8, linewidth=0.9, color="#2c7a74",
+    ))
+    ax.text(cx - 0.065, cy + 0.074, r"$\tau_a$", fontsize=7.5, color="#2c7a74")
+    ax.add_patch(FancyArrowPatch(
+        (cx - 0.090, cy), (cx - 0.020, cy), arrowstyle="-|>",
+        mutation_scale=8, linewidth=0.9, color="#E45756",
+    ))
+    ax.text(cx - 0.060, cy + 0.010, r"$F_h$", fontsize=7.5, color="#E45756")
     ax.set_xlim(-0.31, 0.12)
     ax.set_ylim(-0.02, 0.29)
     ax.set_aspect("equal"); ax.axis("off")
@@ -170,22 +183,28 @@ def control_architecture() -> None:
     ax.set_ylim(0, 2.4)
     ax.axis("off")
     boxes = [
-        (0.1, 0.75, 1.55, 0.9, "command\n$[v_x,v_y,\\omega_z]$", "#E8EEF7"),
-        (2.05, 1.35, 1.85, 0.72, "PPO residual\n(low speed / yaw)", "#FCE8E6"),
-        (2.05, 0.25, 1.85, 0.72, "tripod IK +\nphase-gated roll", "#E6F4EA"),
-        (4.45, 0.75, 1.7, 0.9, "smooth blend\n$\\beta(v)$", "#FFF4D6"),
-        (6.65, 0.75, 1.45, 0.9, "18 position\ntargets", "#E8EEF7"),
-        (8.55, 0.75, 1.3, 0.9, "DC motor +\nMuJoCo", "#EDE7F6"),
+        (0.1, 0.75, 1.45, 0.9, "command\n$[v_x,v_y,\\omega_z]$", "#E8EEF7"),
+        (1.95, 0.75, 1.75, 0.9, "tripod phase +\nbounded IK", "#E6F4EA"),
+        (4.10, 1.35, 1.65, 0.72, "joints 1--12\nposition targets", "#FFF4D6"),
+        (4.10, 0.25, 1.65, 0.72, "distal reference\nderivative", "#FFF4D6"),
+        (6.15, 0.25, 1.50, 0.72, "continuous arc\nrotation", "#FCE8E6"),
+        (8.05, 0.75, 1.75, 0.9, "DC motors +\nMuJoCo contacts", "#EDE7F6"),
     ]
     for x0, y0, width0, height0, label, color in boxes:
         ax.add_patch(FancyBboxPatch((x0, y0), width0, height0, boxstyle="round,pad=0.04", facecolor=color, edgecolor="#333333", linewidth=0.8))
         ax.text(x0 + width0 / 2, y0 + height0 / 2, label, ha="center", va="center", fontsize=8)
-    arrows = [((1.65, 1.35), (2.05, 1.70)), ((1.65, 1.05), (2.05, 0.62)), ((3.9, 1.70), (4.45, 1.35)), ((3.9, 0.62), (4.45, 1.05)), ((6.15, 1.2), (6.65, 1.2)), ((8.1, 1.2), (8.55, 1.2))]
+    arrows = [
+        ((1.55, 1.2), (1.95, 1.2)),
+        ((3.70, 1.35), (4.10, 1.70)),
+        ((3.70, 1.05), (4.10, 0.62)),
+        ((5.75, 0.62), (6.15, 0.62)),
+        ((5.75, 1.70), (8.05, 1.35)),
+        ((7.65, 0.62), (8.05, 1.05)),
+    ]
     for start, end in arrows:
         ax.add_patch(FancyArrowPatch(start, end, arrowstyle="-|>", mutation_scale=10, linewidth=0.9, color="#333333"))
-    ax.text(3.0, 2.20, "$70$-D observation", ha="center", fontsize=7, color="#555555")
-    ax.text(7.35, 0.43, "50 Hz", ha="center", fontsize=7, color="#555555")
-    ax.text(9.2, 0.43, "500 Hz", ha="center", fontsize=7, color="#555555")
+    ax.text(4.95, 2.20, "50 Hz targets", ha="center", fontsize=7, color="#555555")
+    ax.text(8.92, 0.43, "500 Hz physics", ha="center", fontsize=7, color="#555555")
     fig.savefig(OUT / "control_architecture.pdf", bbox_inches="tight", pad_inches=0.02)
     plt.close(fig)
 

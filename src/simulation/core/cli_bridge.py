@@ -12,6 +12,7 @@ from pathlib import Path
 import mujoco
 import mujoco.viewer
 
+from ...cli_i18n import Language, localize
 from ...cli import (
     run_legacy_joystick_cli,
     run_tripod_gait_joystick_cli,
@@ -104,6 +105,7 @@ def run(
     rl_standing_pose_degrees: Sequence[float] = SPORT_STANDING_DEGREES,
     rl_reference_motion: str = "hardcoded",
     verbose: bool = False,
+    language: Language | str = Language.ENGLISH,
 ) -> None:
     """Open one viewer while terminal input drives the shared robot API.
 
@@ -130,6 +132,7 @@ def run(
             standing_pose_degrees=rl_standing_pose_degrees,
             reference_motion=rl_reference_motion,
             hybrid_scone=selected_control is SimulationControl.SCONE_GAIT,
+            language=language,
         )
         return
 
@@ -149,7 +152,11 @@ def run(
         try:
             robot.initialize()
             if selected_control is SimulationControl.OLD:
-                run_legacy_joystick_cli(robot, stop_event=stop_event)
+                run_legacy_joystick_cli(
+                    robot,
+                    stop_event=stop_event,
+                    language=language,
+                )
             elif selected_control is SimulationControl.TRIPOD_GAIT:
                 configure_model_gait_controller(controller)
                 run_tripod_gait_joystick_cli(
@@ -161,18 +168,21 @@ def run(
                     # transient makes legs 2/5 fail immediately.  Simulation
                     # instead keeps the selected, known-solvable profile pose.
                     calibrate_from_controller=False,
+                    language=language,
                 )
             elif selected_control is SimulationControl.ROLL_GAIT:
                 run_roll_gait_joystick_cli(
                     robot,
                     stop_event=stop_event,
                     config=ROLL_GAIT_SIMULATION_CONFIG,
+                    language=language,
                 )
             elif selected_control is SimulationControl.SCONE_STAIR:
                 run_scone_stair_joystick_cli(
                     robot,
                     terrain=selected_terrain,
                     stop_event=stop_event,
+                    language=language,
                 )
             else:  # pragma: no cover - SimulationControl.parse rejects this.
                 raise AssertionError(
@@ -190,12 +200,23 @@ def run(
         daemon=True,
     )
 
-    print(
-        "\n[SIM] MuJoCo uses the terminal controller "
-        f"(control={selected_control.value})."
-    )
-    print(f"[SIM] Terrain: {selected_terrain.value} (seed={terrain_seed})")
-    print("[SIM] The viewer has no SCONE-specific keyboard mapping.\n")
+    print(localize(
+        language,
+        "\n[SIM] Terminal control is active "
+        f"(controller={selected_control.value}).",
+        "\n[SIM] 터미널 제어를 시작합니다 "
+        f"(제어기={selected_control.value}).",
+    ))
+    print(localize(
+        language,
+        f"[SIM] Terrain={selected_terrain.value} · seed={terrain_seed}",
+        f"[SIM] 지형={selected_terrain.value} · seed={terrain_seed}",
+    ))
+    print(localize(
+        language,
+        "[SIM] Robot keys stay in the terminal; the MuJoCo viewer keeps its native controls.\n",
+        "[SIM] 로봇 키는 터미널에서만 처리하며 MuJoCo viewer 키와 충돌하지 않습니다.\n",
+    ))
     try:
         with mujoco.viewer.launch_passive(model, data) as viewer:
             root_body_id = mujoco.mj_name2id(
@@ -227,7 +248,11 @@ def run(
     except RuntimeError as error:
         if sys.platform == "darwin" and "mjpython" not in Path(sys.executable).name:
             raise RuntimeError(
-                "On macOS launch the SCONE CLI with `mjpython SCONE.py`."
+                localize(
+                    language,
+                    "On macOS launch the SCONE CLI with `mjpython SCONE.py`.",
+                    "macOS에서는 `mjpython SCONE.py`로 SCONE CLI를 실행하세요.",
+                )
             ) from error
         raise
     finally:

@@ -6,7 +6,7 @@ EN_BUILD := $(OUTDIR)/root.pdf
 KO_BUILD := $(OUTDIR)/root_ko.pdf
 EN_PDF := $(OUTPUT)/SCONE_ICRA_English.pdf
 KO_PDF := $(OUTPUT)/SCONE_ICRA_Korean.pdf
-FIGURES := figures/flat_metrics.pdf figures/stair_results.pdf figures/control_architecture.pdf
+FIGURES := figures/flat_metrics.pdf figures/stair_results.pdf figures/arc_geometry.pdf figures/control_architecture.pdf
 
 .PHONY: all figures check clean
 

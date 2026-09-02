@@ -4,11 +4,15 @@
 
 RHex showed that one continuously rotating compliant leg per hip can combine
 mechanical simplicity with rugged mobility under a clock-driven tripod gait
-\cite{saranli2001rhex,altendorfer2001rhex}, and the X-RHex family carried that
-morphology into a research platform \cite{galloway2010xrhex}. Whegs abstracted
+\cite{saranli2001rhex,altendorfer2001rhex}; a dedicated controller later
+demonstrated repeated ascent of full-size stairs \cite{moore2002reliable}.
+The X-RHex family carried that morphology into a research platform
+\cite{galloway2010xrhex}. Whegs abstracted
 compliant, multi-spoke appendages and coupled propulsion to reduce actuator
 count \cite{quinn2002whegs}; Q-Whex later used quasi-wheels and reported stair
 climbing with geometry-dependent phase patterns \cite{zhang2023qwhex}. The
+motion and power demand of C-legged hexapods have also been modeled and checked
+on a physical test bench \cite{vina2021cleg}. The
 half-circle RHex leg is the closest prior morphology to ours and the distinction
 must be stated precisely: an RHex leg is a compliant C driven by a single hip
 rotation, so its contact point and the body pose are determined by the same
@@ -22,8 +26,10 @@ passive spokes when a wheel meets an obstacle \cite{kim2014wheeltransformer},
 while Quattroped and TurboQuad change a leg into a wheel with a dedicated
 transformation degree of freedom \cite{chen2014quattroped,chen2017turboquad}.
 These recover both regimes at the cost of a transformation mechanism and its
-actuation. A third family keeps a wheel drive alongside a full leg: Cassino
-Hexapod III places omni-wheels at anthropomorphic leg tips
+actuation. A third family keeps a wheel drive alongside a full leg: ASTERISK H
+switches a hexapod continuously between rolling and tripod motion using sensed
+obstacles \cite{yoshioka2008asterisk}, while Cassino Hexapod III places
+omni-wheels at anthropomorphic leg tips
 \cite{tedeschi2017cassino}, ANYmal on Wheels integrates wheel constraints into
 whole-body optimization \cite{bjelonic2019keep,bjelonic2021wholebody,hutter2016anymal},
 and two-wheeled jumpers exploit the same separation in a smaller footprint
@@ -33,14 +39,6 @@ not claim that hybrid locomotion is new. The distinction tested here is
 \emph{actuator and contact reuse}: the distal leg joint itself produces the foot
 trajectory, the rolling motion, and the edge engagement of one incomplete arc,
 with no transformation state and no additional drive.
-
-Learned controllers have become the standard way to obtain robust legged
-locomotion \cite{hwangbo2019learning,lee2020learning,miki2022learning,rudin2022minutes},
-and residual formulations keep a structured reference while learning only a
-correction \cite{johannink2019residual,silver2018residual}. We use a residual
-policy only in the low-speed regime of the deployment stack and, as
-Sec.~\ref{sub:residual} makes explicit, it is inactive at the operating point of
-every experiment reported here.
 
 \subsection{Operating-Envelope Problem}
 
@@ -67,8 +65,10 @@ H1: coordinated rolling reaches a higher mean forward speed than either walking
 or distal-only rotation on the same model. H1 is deliberately stated as speed and
 not as command tracking, because a controller that overshoots a fixed command
 scores worse on $e_v$ while travelling faster; both quantities are reported
-separately in Sec.~\ref{sec:results}. H2: coordinated articulation expands the
-climbable stair set beyond the geometric limit of arc rotation alone.
+separately in Sec.~\ref{sec:results}. H2: on the open-arc model, coordinated
+articulation reaches a stair profile on which distal-only rotation fails. A
+claim about the opening itself requires the matched closed-wheel ablation
+defined in Sec.~\ref{sec:method}.
 H3: mode switching does not violate a $60^\circ$ tilt bound.
 
 We also define the qualitative column of Table~\ref{tab:related}. Let $J_i$ map
