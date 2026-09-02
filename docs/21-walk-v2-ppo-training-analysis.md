@@ -469,3 +469,207 @@ mean/std와 env action saturation도 반드시 기록해야 한다.
   문서의 snapshot에 포함되지 않는다.
 - 현재 정책이 넘어지지 않는 것은 확인했지만, 포화된 actuator 명령이 실물에 안전하다는
   뜻은 아니다. 이 checkpoint를 실물에 배포해서는 안 된다.
+
+---
+
+## 10. 후속 수정 완료 (commit `ec5b7d7`)
+
+§6~§7의 P0 항목과 PPO update guard, 고정 평가를 실제 코드에 적용했다. 기존
+`walk-v2_full_20260902_103338` 프로세스는 당시 Python 코드를 이미 메모리에 올려
+실행 중이므로 이 수정의 영향을 받지 않으며, 중단하거나 덮어쓰지 않았다.
+
+### 10.1 누적 motor randomization 수정
+
+환경을 만들 때 다음 nominal 배열을 별도로 저장한다.
+
+```text
+nominal body_mass
+nominal body_inertia
+nominal geom_friction
+nominal actuator_gainprm
+nominal actuator_forcerange
+```
+
+매 reset은 반드시 nominal에서 다시 시작한다. mass scale `M`, friction scale `F`,
+motor strength scale `S`에 대해 현재 적용식은 다음과 같다.
+
+```text
+body_mass    = nominal_body_mass × M
+body_inertia = nominal_body_inertia × M
+sliding_friction = nominal_sliding_friction × F
+
+R = nominal_R / S
+K = nominal_K
+torque_limit = nominal_torque_limit × S
+```
+
+DC motor의 토크는 `τ = K/R × (V - Kω)`이므로 `R/S`는 같은 속도와 전압에서
+토크-속도 직선 전체를 `S`배 한다. no-load speed `V/K`는 변하지 않는다. torque
+limit도 `S`배 해야 stall 부근에서 같은 scale을 유지한다. 이전처럼 `R *= S`를
+누적하지 않는다.
+
+mass만 바꾸고 inertia를 그대로 두던 비일관성도 함께 수정했다. 변경 뒤
+`mj_setConst()`로 model 파생 상수를 다시 계산한다. 고정 scale로 두 번 reset해도
+gain, torque limit, mass, inertia, friction이 첫 reset과 완전히 같은 회귀 검사를
+추가했다.
+
+### 10.2 bounded PPO action
+
+새 학습 기본 분포는 Stable-Baselines3가 log-probability correction을 지원하는
+gSDE + tanh squash다.
+
+```text
+use_sde          = true
+squash_output    = true
+use_expln        = true
+sde_sample_freq  = 4 policy steps
+log_std_init     = -1.5  (초기 std 약 0.223)
+```
+
+이제 policy가 학습하는 행동과 환경이 받는 행동이 같은 `[-1, 1]` 공간에 있다. 이전
+unbounded Gaussian checkpoint는 `use_sde=False`, `squash_output=False`이므로
+`--resume` 시 명시적으로 거부한다. 재생은 분석·비교를 위해 계속 허용하지만 새
+환경 학습에 섞지 않는다.
+
+### 10.3 PPO update 기본값
+
+| 항목 | 실패 run | 새 기본값 |
+| --- | ---: | ---: |
+| learning rate | `3e-4` | `1e-4` |
+| epoch | 5 | 3 |
+| entropy coefficient | 0.003 | 0.0 |
+| max gradient norm | 1.0 | 0.5 |
+| target KL | 없음 | 0.02 |
+| batch size | 1,024 | 512 |
+| rollout | `512 × num_envs` | 동일 |
+
+batch size는 `n_steps × num_envs`를 나누어떨어져야 한다. 기본 512는 병렬 환경 수가
+몇 개이든 `512 × num_envs`의 약수다. 직접 잘못된 값을 지정하면 SB3 warning으로
+넘기지 않고 학습 전에 유효한 인접 약수와 함께 `ValueError`를 낸다.
+
+새 튜닝 인자는 `--learning-rate`, `--n-epochs`, `--target-kl`,
+`--entropy-coefficient`, `--max-grad-norm`, `--sde-sample-freq`,
+`--log-std-init`이다. 기본값부터 시작하고 한 번에 하나만 ablation한다.
+
+### 10.4 올바른 TensorBoard 평균
+
+기존 `RewardTermsCallback`은 vector env 사이만 평균하고 매 policy step마다 같은
+logger key를 덮어썼다. SB3가 rollout 끝에 dump할 때는 사실상 마지막 step 값만
+남았다. §3.1의 과거 값은 TensorBoard point 사이의 추세 비교에는 쓸 수 있지만
+rollout 전체 시간평균으로 해석하면 안 된다.
+
+수정 후 callback은 `n_steps × num_envs` 전체의 reward term을 누적한 뒤 rollout
+끝에 한 번 기록한다. 다음 행동 진단도 함께 추가했다.
+
+```text
+action/abs_mean
+action/abs_max
+action/saturation_fraction  # |action| >= 0.98
+action/latent_abs_mean
+action/latent_abs_max
+```
+
+### 10.5 fixed-command 평가와 best model 승격
+
+checkpoint interval마다 randomization이 없는 flat nominal 환경에서 각 3 episode,
+10초씩 다음 여섯 명령을 평가한다.
+
+```text
+idle
+vx = 0.10 / 0.25 / 0.50 m/s
+vy = 0.10 m/s
+yaw = 0.40 rad/s
+```
+
+평가 score는 dense reward 합이 아니다.
+
+```text
+tracking_error = mean(|achieved - command| / [0.70, 0.25, 0.90])
+
+score = survival_rate
+      - tracking_error
+      - 0.10 × mean_abs_heading_error / π
+      - 0.05 × action_saturation_fraction
+```
+
+생성 파일:
+
+| 파일 | 의미 |
+| --- | --- |
+| `evaluation_baseline.json` | 같은 reference의 zero residual 기준 |
+| `evaluation_history.jsonl` | 매 평가의 명령별 실제 속도·return·포화·생존 |
+| `best_candidate_model.zip` | 지금까지 policy 중 score가 가장 높은 후보 |
+| `best_candidate_metrics.json` | 후보 선택 근거 |
+| `best_model.zip` | zero residual보다 score가 높고 모든 이동축 부호가 맞는 모델만 승격 |
+| `best_model_metrics.json` | 승격 모델 근거 |
+
+따라서 학습 초기의 덜 나쁜 정책은 candidate로 보존되지만, 기준 모션보다 못하면
+실사용 best로 표시되지 않는다. `--eval-every`, `--eval-episodes`, `--eval-seconds`로
+비용을 조절할 수 있다.
+
+### 10.6 실제 64-step 스모크 결과
+
+`hardcoded`, `standard`, easy, 1 env, 32-step rollout을 두 번 실행했다.
+
+| 검증 항목 | 결과 |
+| --- | ---: |
+| 저장 policy `use_sde` | `True` |
+| 저장 policy `squash_output` | `True` |
+| target KL | 0.02 |
+| 초기 std | 0.223 |
+| 2번째 update approx KL | 0.000106 |
+| rollout 행동 포화율 | 2.26% → 1.74% |
+| deterministic fixed-eval 포화율 | 0% |
+| zero score | 0.8816 |
+| 초기 policy score | 0.8810 |
+| `best_candidate_model.zip` | 생성됨 |
+| `best_model.zip` | 생성 안 됨 — zero를 못 이겨 정상적으로 승격 거부 |
+
+이것은 성능 학습 결과가 아니라 plumbing 검증이다. 64 step policy가 zero residual을
+못 이기는 것이 정상이며, 여기서는 분포·학습·평가·저장 계약이 함께 작동하는지만
+확인했다.
+
+전체 테스트는 다음 명령으로 167개가 통과했다.
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+### 10.7 새 학습 시작 방법과 남은 순서
+
+새 환경에서는 기존 checkpoint를 resume하지 말고 easy에서 별도 run을 만든다.
+
+```bash
+python -m src.rl.walk_v2 \
+  --reference-motion tripod-gait \
+  --stance standard \
+  --terrain flat \
+  --terrain-seed 7 \
+  train \
+  --curriculum easy \
+  --timesteps 50000000 \
+  --num-envs 4 \
+  --checkpoint-every 100000 \
+  --keep-checkpoints 20 \
+  --output runs/walk-v2-bounded-easy \
+  --tensorboard-log runs/walk-v2-bounded-easy/tensorboard
+```
+
+현재 남은 단계는 easy 결과가 §7.1 gate를 통과하는지 확인한 뒤 medium/full로
+진행하는 것과, 그 후에만 impact·constant tracking reward를 ablation하는 것이다.
+
+### 10.8 기존 run 후속 상태
+
+수정 직전 원격 run을 다시 읽었을 때 40,877,568 step이었다.
+
+```text
+episode return 22.2
+approx KL      0.8497
+clip fraction  0.698
+action std     6.37
+```
+
+35M snapshot보다 더 악화됐고 목표가 1,000,000,000 step이라 자동 종료를 기다리기에는
+매우 길다. 다만 이번 수정·문서화 작업에서는 기존 프로세스를 멈추지 않았다. 새 run을
+같은 호스트에서 정상 env 수로 시작하려면 기존 run을 graceful pause해 CPU를 확보하는
+운영 결정이 별도로 필요하다.

@@ -210,7 +210,32 @@ python -m src.rl.walk_learn \
 
 ## 6. PPO 학습
 
-새 학습:
+새 82차원 `walk_v2` 학습은 bounded action과 fixed-command best-model 평가가 적용된
+다음 경로를 권장한다. 구형 70차원 `walk_learn` 명령은 기존 checkpoint 호환을 위해
+아래에 별도로 남겨 둔다.
+
+```bash
+python -m src.rl.walk_v2 --reference-motion tripod-gait --stance standard train \
+  --timesteps 50000000 \
+  --curriculum easy \
+  --num-envs 4 \
+  --checkpoint-every 100000 \
+  --keep-checkpoints 20 \
+  --output runs/walk-v2-bounded-easy \
+  --tensorboard-log runs/walk-v2-bounded-easy/tensorboard
+```
+
+V2 기본값은 learning rate `1e-4`, 3 epoch, target KL `0.02`, batch 512,
+gSDE+tanh squash, 초기 std 약 0.223이다. batch는 `n_steps × num_envs`의 약수여야
+한다. 기존 unbounded/clipped V2 checkpoint는 재생할 수 있지만 새 코드로 resume할
+수는 없다.
+
+V2 run에는 `best_candidate_model.zip`과 별도로, nominal 여섯 명령에서 zero
+residual을 이기고 모든 명령축 방향이 맞을 때만 `best_model.zip`이 생긴다. 세부
+평가식과 파일은
+[`21-walk-v2-ppo-training-analysis.md`](21-walk-v2-ppo-training-analysis.md)를 따른다.
+
+기존 70차원 정책의 새 학습:
 
 ```bash
 python -m src.rl.walk_learn --reference-motion tripod-gait train \
@@ -325,6 +350,7 @@ python -m unittest tests.test_stair_geometry tests.test_stair_climber
 python -m unittest tests.test_simulation tests.test_terrain
 python -m unittest tests.test_remote_watch tests.test_rl_inquiry
 python -m unittest tests.test_rl_joystick tests.test_rl_reference_motion
+python -m unittest tests.test_walk_v2
 ```
 
 변경별 최소 검증:
@@ -337,6 +363,7 @@ python -m unittest tests.test_rl_joystick tests.test_rl_reference_motion
 | terrain | terrain + simulation |
 | arc-wheel/계단 controller | stair geometry + stair climber + simulation |
 | reward/observation | remote-watch reward tests + environment check |
+| walk_v2 PPO distribution/randomization/evaluation | test_walk_v2 + 64-step smoke train |
 | checkpoint/remote command | remote-watch + RL inquiry |
 | joystick | API joystick + RL joystick |
 

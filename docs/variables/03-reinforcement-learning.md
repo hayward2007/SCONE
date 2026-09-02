@@ -197,6 +197,30 @@
 | `policy_kwargs.net_arch` | policy/value 각각 `[256,256]` MLP |
 | `reset_num_timesteps` | 새 모델 `True`, checkpoint 재개 `False` |
 
+### 7.1 `walk_v2` bounded PPO와 평가
+
+| 이름 | 값/목적 |
+|---|---|
+| `_nominal_body_mass/body_inertia` | reset마다 같은 nominal에서 mass와 inertia를 함께 스케일하는 원본 |
+| `_nominal_actuator_gainprm/forcerange` | 누적 변경을 막는 DC motor 원본 |
+| `strength_scale S` | `R=R0/S`, `forcerange=forcerange0×S`; no-load speed를 유지하며 토크-속도 직선을 스케일 |
+| `_validate_training_batch_size` | `batch_size`가 `n_steps×num_envs`의 약수가 아니면 학습 전 거부 |
+| `learning_rate` | V2 기본 `1e-4` |
+| `n_steps/batch_size/n_epochs` | V2 기본 `512/512/3` |
+| `target_kl` | `0.02`; 큰 update를 epoch 중간에 조기 중단 |
+| `ent_coef/max_grad_norm` | `0.0/0.5` |
+| `use_sde/sde_sample_freq` | `True/4`; state-dependent exploration noise |
+| `squash_output/use_expln/log_std_init` | `True/True/-1.5`; log-prob 보정된 bounded tanh action과 안정적인 std |
+| `_require_bounded_resume_policy` | 구형 unbounded/clipped V2 checkpoint의 학습 재개 거부 |
+| `FIXED_EVALUATION_COMMANDS` | idle, vx 0.10/0.25/0.50, vy 0.10, yaw 0.40 |
+| `action/saturation_fraction` | rollout 중 `abs(action)>=0.98`인 성분 비율 |
+| `best_candidate_model.zip` | zero 기준 통과 여부와 무관한 최고 fixed score 후보 |
+| `best_model.zip` | zero residual보다 높고 이동 명령 부호 실패가 0일 때만 승격 |
+| `evaluation_baseline.json/history.jsonl` | zero residual 기준과 매 평가의 명령별 원자료 |
+
+V2 `RewardTermsCallback`은 마지막 policy step을 덮어쓰지 않고 rollout 전체
+`n_steps×num_envs`에서 reward/action 값을 평균한 뒤 한 번 기록한다.
+
 ## 8. `src/rl/stance.py`, `policy_compat.py`
 
 | 이름 | 값/목적 |

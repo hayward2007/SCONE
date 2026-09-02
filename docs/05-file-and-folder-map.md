@@ -175,6 +175,7 @@
 | [`test_rl_inquiry.py`](../tests/test_rl_inquiry.py) | 원격 shell command, 입력 안전성, venv, reset backup, standing/reference prompt, SSH 자원 추천 |
 | [`test_rl_joystick.py`](../tests/test_rl_joystick.py) | neutral residual gate, RL Walk→Drive→Climb router, PPO/point-support hybrid 전환 |
 | [`test_rl_reference_motion.py`](../tests/test_rl_reference_motion.py) | hardcoded, tripod-gait, scone-gait 기준 모션과 lateral 처리 |
+| [`test_walk_v2.py`](../tests/test_walk_v2.py) | 누적되지 않는 mass/inertia/friction/DC motor randomization, bounded gSDE PPO, batch/KL guard, fixed-command 평가 score |
 | [`test_benchmark.py`](../tests/test_benchmark.py) | benchmark perturbation, 짧은 MuJoCo trial, custom stair 복구, 통계와 JSONL/CSV 출력 |
 
 ## 10. `benchmark/`
