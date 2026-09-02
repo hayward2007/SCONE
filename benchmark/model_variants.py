@@ -32,17 +32,15 @@ CLOSED_WHEEL_CENTER = (0.124, 0.24349991, -0.21650636)
 
 
 def _find_tire_geoms(root: ET.Element) -> list[ET.Element]:
-    """Return the six distal contact geoms, or fail loudly."""
-
-    found = {
+    by_name = {
         geom.get("name"): geom
-        for geom in root.iter("geom")
+        for geom in root.findall(".//geom")
         if geom.get("name") in TIRE_GEOM_NAMES
     }
-    missing = [name for name in TIRE_GEOM_NAMES if name not in found]
+    missing = [name for name in TIRE_GEOM_NAMES if name not in by_name]
     if missing:
-        raise ValueError(f"MJCF is missing contact geoms: {missing}")
-    return [found[name] for name in TIRE_GEOM_NAMES]
+        raise ValueError(f"MJCF is missing tire collision geoms: {missing}")
+    return [by_name[name] for name in TIRE_GEOM_NAMES]
 
 
 def replace_open_arcs_with_closed_wheels(root: ET.Element) -> None:
