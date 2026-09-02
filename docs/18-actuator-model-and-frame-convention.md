@@ -551,3 +551,85 @@ kill -TERM "$(cat runs/v2_easy/train.pid)"
   없다.
 - 학습 루프는 이 환경에 torch를 설치하지 못해 **실제로 돌려보지 못했다.** 원격에
   올리기 전에 로컬에서 `--num-envs 2 --timesteps 20000`으로 한 번 확인할 것.
+
+---
+
+## 8. CLI 개선 (2026-09-02)
+
+### 8.1 `walk_v2 check` — 진단 도구로
+
+이전에는 관측 shape, 리턴, 원시 dict를 찍었다. 이제 튜닝에 필요한 세 가지를 낸다.
+
+```
+ reference tripod-gait   curriculum easy   upright frame
+ steps  250 (5.0 s, step limit)    return   12.568
+
+           commanded      achieved     tracking
+    vx      +0.300        +0.072 m/s        24%
+    vy      +0.000        +0.006 m/s         -
+   yaw      +0.000        +0.006 rad/s       -
+
+ leg contribution over the rollout
+   leg  side       colour   contact duty   load share
+    1   R front   빨강           63.2%        19.1%
+    2   L front   초록           71.6%        21.8%
+    3   R mid     주황           29.6%         9.1%
+    4   L mid     파랑           22.0%         8.6%
+    5   R rear    노랑           58.4%        21.1%
+    6   L rear    남색           54.8%        21.3%
+   load imbalance (rms deviation from 1/6): 0.178
+
+ reward terms, summed over the rollout
+   velocity             +9.8076  |         █████████|
+   heading              +4.9994  |         █████    |
+   ...
+   (zero: air_time, inactivity, joint_limit, action_rate, collision)
+```
+
+- **명령 대비 실제**: 추종률이 바로 보인다. 위 예에서 24 %.
+- **다리별 기여**: 접촉 듀티와 하중 분담을 `model.xml`의 색상 라벨로 표시하므로
+  뷰어와 바로 대응된다. 듀티 5 % 미만이면 `<- idle` 표시가 붙는다.
+  위 예에서 중간 다리(3·4)가 하중의 9 %만 받고 있는 것이 한눈에 보인다.
+- **보상 항 막대**: 크기 순으로 정렬하고 0인 항은 마지막 줄에 모은다. 어떤 항이
+  실제로 학습을 이끄는지 보인다.
+
+새 옵션:
+
+| 옵션 | 용도 |
+| --- | --- |
+| `--command VX VY YAW` | 명령을 무작위 추출 대신 고정 |
+| `--mirror off\|on\|auto` | 좌우 미러를 강제해 양쪽을 비교 |
+
+```bash
+python -m src.rl.walk_v2 --reference-motion tripod-gait --stance standard \
+    check --steps 250 --command 0.3 0 0 --mirror off
+```
+
+### 8.2 런처 메뉴
+
+묻기 전에 상태를 먼저 보여주고, 항목을 묶고, 불가능한 동작은 감춘다.
+
+```
+──────────────────────────────────────────────────────
+ SCONE 강화학습
+──────────────────────────────────────────────────────
+ 등록된 원격 학습 5개
+   · walk-v2_full_20260902_091137 walk-v2  ssh.hayward.kim  2026-09-02 09:12
+   · walk_full_standard           walk     ssh.hayward.kim  2026-08-30 21:53
+   ...
+ 로컬 runs/: walk_full_standard, walk_full_algorithm, ... 외 1개
+──────────────────────────────────────────────────────
+? 무엇을 할까요?
+  ── 준비 ──
+❯ 학습 환경/보상 스모크 테스트
+  ── 학습 ──
+  새 학습 시작
+  ── 원격 관리 ──
+  원격 학습 상태와 로그 보기
+  ...
+```
+
+- 등록된 원격 학습(최근 6개)과 로컬 `runs/`를 헤더에 표시.
+- 준비 / 학습 / 원격 관리 / 정리 / 보기로 구분선 그룹화.
+- **원격 작업이 하나도 없으면 원격 전용 항목을 아예 감춘다.** 이전에는 선택한 뒤
+  오류를 봤다.
