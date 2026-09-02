@@ -14,6 +14,15 @@
 | [google-deepmind/mujoco_menagerie](https://github.com/google-deepmind/mujoco_menagerie/blob/main/robotis_op3/README.md) `robotis_op3` | ROBOTIS OP3 | **XM430-W350** ×20 | DeepMind 공식 컬렉션 |
 | [ROBOTIS-GIT/robotis_mujoco_menagerie](https://github.com/ROBOTIS-GIT/robotis_mujoco_menagerie) `robotis_op3` | 동일 | 동일 | **제조사 배포판** |
 | [mujoco_menagerie `aloha`](https://github.com/google-deepmind/mujoco_menagerie) | ALOHA / ViperX | XM430·XM540 계열 | 관절마다 감속·벨트가 달라 직접 비교 불가 |
+| [apirrone/Open_Duck_Playground](https://github.com/apirrone/Open_Duck_Mini) | Open Duck Mini v2 | **Feetech STS3215** | **실제 sim-to-real 배포 사례** |
+
+> **서보 종류 확인 기록.** Open Duck Mini가 다이나믹셀을 쓴다는 의견이 있어
+> 확인했다. v2의 MJCF는 default 클래스 이름이 문자 그대로 `STS3215`이고 문서도
+> Feetech STS3215를 참조하므로 **v2는 Feetech가 확실하다.** 다만 **v1(`mini_BDX`)의
+> 서보는 확인하지 못했다** — BOM이 외부 Google Sheet에 있어 열람이 안 됐다.
+> 초기 버전이 다이나믹셀 소형 서보(XL330 계열)였을 가능성은 배제하지 못한다.
+> 브랜드와 무관하게 **직렬 버스 서보 + MuJoCo + 실물 배포**라는 점에서 비교
+> 가치는 동일하다.
 
 **OP3가 결정적이다.** 우리 중간 관절(ID 7–12)과 **완전히 같은 XM430-W350**을 쓴다.
 
@@ -81,16 +90,56 @@ $$\frac{5 - 0.03}{1.084} = 4.585\ \mathrm{rad/s}$$
 가진 전압 구동 DC 모터이고, 우리 모델이 바로 그 구조다. OP3판은 모터 모델이 아예
 없는 순수 위치 소스다.
 
+### 3.1 세 번째 확인 — Open Duck Mini v2
+
+Open Duck Mini v2는 MuJoCo에서 학습해 라즈베리파이 제로 2W로 실물 배포까지 하는
+프로젝트다. 그 MJCF의 `STS3215` 클래스:
+
+```xml
+<joint  armature="0.027" damping="0.56" frictionloss="0.068"/>
+<position kp="13.37" kv="0" forcerange="-3.23 3.23"/>
+```
+
+같은 계산을 해보면
+
+$$\frac{3.23 - 0.068}{0.56} = 5.65\ \mathrm{rad/s} = 54\ \mathrm{rev/min}
+= 0.185\ \mathrm{s}/60^\circ$$
+
+12 V STS3215의 공표 무부하 속도가 약 0.19 s/60°이므로 **3 % 이내로 일치한다.**
+forcerange 3.23 N·m도 12 V 스톨 30 kg·cm(≈2.94 N·m)에 가깝다.
+
+즉 **독립적인 두 프로젝트가 모두 `position` 액추에이터의 `damping`을 서보의
+무부하 속도를 재현하도록 잡았다.** §3의 결론이 우연이 아니라 관행이다.
+
+### 3.2 우리가 가져와야 할 것 — 백래시 명시 모델
+
+Open Duck의 MJCF에는 관절마다 **별도의 backlash 관절**이 있다.
+
+```xml
+<joint armature="0.01" damping="0.01" frictionloss="0"
+       range="-0.008726646 0.008726646"/>   <!-- ±0.5도 -->
+```
+
+`docs/18` §1.7에서 "백래시 미모델링"으로 남겨둔 항목의 구체적 해법이다. 우리
+액추에이터의 백래시는 e-Manual에 명시되어 있다 — MX-28AT 20′(0.33°), XM430 15′
+(0.25°). 말단 호 반지름 0.1225 m에서 0.25°는 접촉점 0.53 mm에 해당한다.
+
+**권장:** 각 관절에 ±0.125°(=15′의 절반) 범위의 무구동 backlash 관절을 직렬로
+추가한다. 다만 관절 수가 18 → 36으로 늘어 시뮬레이션 비용이 오르므로,
+**민감도 실험으로 접촉·계단 결과가 백래시에 반응하는지 먼저 확인**한 뒤 결정한다.
+
 ---
 
 ## 4. 유일하게 남은 실질적 이견 — armature
 
 | | armature | 함의 $J_{\rm rotor}$ | 기계 시상수 $\tau_m = JR/K^2$ |
 | --- | ---: | ---: | ---: |
-| SCONE | 0.01749 | $1.40\times10^{-7}$ | **21 ms** |
-| Menagerie OP3 | 0.045 | $3.60\times10^{-7}$ | **53 ms** |
+| SCONE (XM430-W350) | 0.01749 | $1.40\times10^{-7}$ | **21 ms** |
+| Open Duck (STS3215) | 0.027 | 감속비 미확인 | — |
+| Menagerie OP3 (XM430-W350) | 0.045 | $3.60\times10^{-7}$ | **53 ms** |
 
-**2.6배 차이**다. 어느 쪽이 맞는가:
+같은 XM430-W350에 대해 **2.6배 차이**다. 그리고 서보 등급이 비슷한 Open Duck의
+0.027이 그 사이에 있다. **우리 값이 세 사례 중 가장 낮다.** 어느 쪽이 맞는가:
 
 - 같은 크기 코어리스 모터의 기계 시상수는 통상 5–20 ms다. **21 ms인 우리 값이
   교과서 범위에 가깝고 53 ms는 느리다.**
@@ -98,8 +147,9 @@ $$\frac{5 - 0.03}{1.084} = 4.585\ \mathrm{rad/s}$$
   뻣뻣한 위치 서보를 큰 timestep에서 안정화하는 **수치 안정성 손잡이**를 겸한다.
   즉 순수한 물리 추정치가 아닐 수 있다.
 
-**결론: 값을 바꾸지 않는다.** 대신 이 2.6배를 **정직한 불확실성 폭**으로 받아들이고,
-벤치마크 결론이 그 폭 안에서 뒤집히는지 확인해야 한다.
+**결론: 값을 바꾸지 않는다.** 다만 우리 값이 세 사례 중 최저라는 점은 유의해야
+한다. 이 폭을 **정직한 불확실성 구간**으로 받아들이고, 벤치마크 결론이 그 안에서
+뒤집히는지 확인해야 한다.
 
 > **다음 실험(권장).** `benchmark/icra.py`의 `_run_sensitivity`는 지금 물리
 > timestep(0.001/0.002/0.004)만 훑는다. 여기에 **armature 축을 추가**해
@@ -138,6 +188,7 @@ MuJoCo Playground 기술 보고서는 sim-to-real에서 마찰·질량·센서 �
 
 | 항목 | 공개 관행 | `walk_v2` |
 | --- | --- | --- |
+| **백래시 명시 모델** | Open Duck: ±0.5° 관절 | ✗ (§3.2 권장) |
 | 마찰 무작위화 | 표준 | ○ 0.70–1.30 |
 | 질량 무작위화 | 표준 | ○ 0.90–1.10 |
 | 구동력 스케일 | 표준 | ○ 0.85–1.15 |
@@ -157,10 +208,11 @@ MuJoCo Playground 기술 보고서는 sim-to-real에서 마찰·질량·센서 �
 
 1. 우리 액추에이터 파라미터화는 **데이터시트 두 끝점을 정확히 재현**하고, 공개
    모델보다 오히려 충실하다.
-2. damping/frictionloss를 뺀 어제의 수정은 **공개 모델의 구조가 뒷받침한다.**
-   토크-속도 특성은 한 번만 인코딩한다.
-3. **armature 2.6배 이견만 남는다.** 값은 유지하되 민감도 축으로 검증할 것.
-4. 무작위화 축은 공개 관행 수준이며, **지연의 실측**이 남았다.
+2. damping/frictionloss를 뺀 어제의 수정은 **독립적인 두 공개 모델의 구조가
+   뒷받침한다.** 토크-속도 특성은 한 번만 인코딩한다.
+3. **armature 2.6배 이견만 남는다.** 우리 값이 세 사례 중 최저다. 값은 유지하되
+   민감도 축으로 검증할 것.
+4. 무작위화 축은 공개 관행 수준이며, **지연의 실측**과 **백래시 모델**이 남았다.
 
 ### 참고
 
@@ -169,6 +221,10 @@ MuJoCo Playground 기술 보고서는 sim-to-real에서 마찰·질량·센서 �
 - [XM430-W350 e-Manual](https://emanual.robotis.com/docs/en/dxl/x/xm430-w350/)
 - [MuJoCo issue #1075 — Dynamixel XM430 액추에이터 파라미터 설정](https://github.com/google-deepmind/mujoco/issues/1075)
 - [MuJoCo Playground 기술 보고서](https://arxiv.org/html/2502.08844v1)
+- [apirrone/Open_Duck_Mini](https://github.com/apirrone/Open_Duck_Mini) 및
+  `Open_Duck_Playground`의 `open_duck_mini_v2.xml`
+- [Feetech STS3215 사양](https://servodatabase.com/servo/feetech/sts3215)
+  (12 V 수치는 정식 데이터시트가 아니라 판매처 표기 기준)
 
 ### 재현
 
