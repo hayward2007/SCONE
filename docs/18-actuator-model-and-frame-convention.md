@@ -268,18 +268,27 @@ SPORT 자세 실제 접촉 중심의 좌우 오차는 x 1.1 mm, y 1.2 mm, z 3.4 
 
 ### 결론
 
-**중간 높이가 유리하다. 양 극단은 모두 나쁘다.**
+**standard가 사용 가능한 프리셋 중 가장 높고, 측정상으로도 가장 좋다.**
+`STANCE_PRESETS`에 있는 자세는 `sport`(294 mm)와 `standard`(497 mm) 둘뿐이며
+위 표의 190/210, 210/230, 260/270은 비교를 위해 임의로 만든 각도다. 즉 실제
+선택지 안에서는 **더 높은 자세가 없고, standard를 쓰면 된다.**
+
+그렇다고 "높을수록 좋다"는 아니다. 프리셋 밖인 260/270(520 mm)에서 두 기준 모두
+급격히 나빠진다.
 
 - **너무 낮으면**(294 mm) 다리가 접혀 있어 같은 관절 스윕이 만드는 수평 발
   변위가 작다. tripod-gait 기준으로 최적 대비 속도 1/3, CoT 2.9배.
-- **너무 높으면**(520 mm) 다리가 신전 한계에 가까워 자코비안이 특이해진다. 관절이
-  움직여도 발이 주로 수직으로만 움직이고, 지지 모멘트 팔이 길어져 토크 경제가
-  나빠진다. 두 기준 모두 여기서 급격히 나빠진다.
+- **standard보다 더 높이면**(520 mm) 다리가 신전 한계에 가까워 자코비안이
+  특이해진다. 관절이 움직여도 발이 주로 수직으로만 움직이고, 지지 모멘트 팔이
+  길어져 토크 경제가 나빠진다. standard가 그 붕괴 직전의 좋은 지점이다.
 - 두 기준의 최적점이 426 mm와 497 mm로 다른 이유는 보폭 정의가 다르기 때문이다.
   관절각 고정 보폭은 낮은 자세를, Cartesian 보폭은 높은 자세를 선호한다.
   **두 결과가 겹치는 430–500 mm 구간이 안전한 선택**이다.
 
-즉 **"조금 웅크린 중간 자세"**가 답이다. 완전히 편 자세도, 낮게 앉은 자세도 아니다.
+정리하면 **standard(497 mm)를 기본으로 쓰고, 그보다 더 펴지는 방향으로는 가지
+않는다.** 새 환경의 높이 보상은 고정 목표값 대신 **해당 스탠스가 안정화된 높이를
+목표로 삼도록**(`RewardConfig.target_height = None`) 해서, 어떤 프리셋을 골라도
+보상이 자세와 싸우지 않는다.
 
 > 여기서 곧바로 따라오는 문제: 기존 RL 환경의 기본 스탠스는 SPORT(294 mm)로
 > **측정된 자세 중 가장 나쁜 것**이었다. 반면 벤치마크는 STANDARD(497 mm)를 쓴다
@@ -394,3 +403,103 @@ residual이 붙으면 여기서 출발한다.
 5. **연속 토크·열 모델**, 백래시, 관절 가동 범위 추가.
 6. **학습 실행 후 검증**: 다리별 접촉 듀티가 균등해지는지, yaw 드리프트가
    사라지는지, 최고 속도가 0.25 m/s를 넘는지.
+
+---
+
+## 7. SSH 학습 (walk_v2)
+
+`walk_v2`의 CLI 인자 배치를 `walk_learn`과 **동일하게** 맞췄기 때문에, 기존 SSH
+런처(`src.rl.inquiry`)가 코드 변경 없이 v2를 그대로 구동한다.
+
+### 7.1 런처에 등록
+
+```python
+# src/rl/inquiry.py
+"walk-v2": TrainingTask(
+    key="walk-v2",
+    label="걷기 정책 v2 (정규 좌표계 · 좌우 대칭 · 접촉 보상)",
+    module="src.rl.walk_v2",
+    checkpoint_prefix="scone_walk_v2",
+    reference_motions=("tripod-gait", "scone-gait", "hardcoded", "none"),
+),
+```
+
+`TrainingTask`에 `reference_motions` 허용 목록을 추가했다. `walk_learn`에는
+end-to-end 모드가 없으므로 `none`은 v2에서만 선택지로 뜨고, 잘못 짝지으면
+`TrainingConfig`가 거부한다.
+
+```
+$ python -m src.rl
+  무엇을 학습할까요?
+  > 걷기 정책 (PPO residual walk)
+    걷기 정책 v2 (정규 좌표계 · 좌우 대칭 · 접촉 보상)     <- 추가됨
+```
+
+이후 기존 흐름(원격 용량 조회 → 소스 동기화 → 의존성 확인 → detached 실행 →
+로그/체크포인트 미러링 → 일시정지/재개)이 그대로 적용된다.
+
+### 7.2 원격 실행 계약
+
+런처가 만드는 detached 명령은 v2에서도 동일하게 동작한다.
+
+| 경로 | 용도 |
+| --- | --- |
+| `runs/<name>/train.log` | `nohup` 출력 |
+| `runs/<name>/train.pid` | 일시정지에 쓰는 PID |
+| `runs/<name>/train.state` | `running` / `paused` |
+| `runs/<name>/checkpoints/scone_walk_v2_<steps>_steps.zip` | 롤링 체크포인트 |
+| `runs/<name>/resume.checkpoint` | 재개할 정확한 파일(run 디렉터리 상대경로) |
+| `runs/<name>/final_model.zip` | 정상 종료 시 |
+
+- `SIGTERM`(런처의 "일시정지")을 받으면 현재 rollout을 마치고 재개용 체크포인트를
+  쓴 뒤 0으로 종료한다.
+- 체크포인트 주기는 `--checkpoint-every / --num-envs` 스텝마다이고, 최신
+  `--keep-checkpoints` 개만 남긴다.
+- 모든 보상 항이 TensorBoard의 `reward/<항목>`으로 기록되므로 가중치 조정이
+  눈으로 보인다.
+
+검증한 내용(스텁 SB3로 실행):
+
+```
+save_freq = 25          (checkpoint_every 100 / num_envs 4)
+prefix    = scone_walk_v2
+kept      = [..._300_steps.zip, ..._400_steps.zip, ..._500_steps.zip]   keep_last=3
+pointer   = checkpoints/scone_walk_v2_500_steps.zip
+graceful  = True -> False (SIGTERM 이후)
+tb        = {'reward/velocity': 2.0, 'reward/impact': -1.0}
+```
+
+그리고 런처가 생성한 인자 벡터를 `walk_v2`의 파서가 그대로 받는 것을 확인했다.
+
+### 7.3 런처 없이 직접 SSH로
+
+```bash
+# 원격에서
+cd ~/Developer/SCONE
+mkdir -p runs/v2_easy/checkpoints
+nohup env PYTHONPATH=. PYTHONUNBUFFERED=1 .venv/bin/python -m src.rl.walk_v2 \
+    --terrain flat --terrain-seed 7 \
+    --reference-motion tripod-gait --stance standard \
+    train --curriculum easy --timesteps 50000000 --num-envs 16 \
+    --checkpoint-every 500000 --keep-checkpoints 10 \
+    --output runs/v2_easy --tensorboard-log runs/v2_easy/tensorboard \
+    > runs/v2_easy/train.log 2>&1 < /dev/null &
+echo $! > runs/v2_easy/train.pid
+
+# 일시정지
+kill -TERM "$(cat runs/v2_easy/train.pid)"
+
+# 재개
+... train ... --resume "runs/v2_easy/$(sed -n 1p runs/v2_easy/resume.checkpoint)" ...
+```
+
+`--num-envs`는 원격 코어 수에 맞춘다. 런처의 용량 조회가 권장치를 알려준다.
+
+### 7.4 아직 남은 것
+
+- `src/rl/remote_watch.py`는 `walk_learn.SconeWalkEnv`를 직접 import하므로 **v2
+  체크포인트를 로컬에서 실시간 재생하지 못한다.** 관측 차원이 70 → 82로 바뀌었기
+  때문에 환경 클래스를 태스크에 따라 선택하도록 손봐야 한다. 학습 자체에는 영향이
+  없다.
+- 학습 루프는 이 환경에 torch를 설치하지 못해 **실제로 돌려보지 못했다.** 원격에
+  올리기 전에 로컬에서 `--num-envs 2 --timesteps 20000`으로 한 번 확인할 것.

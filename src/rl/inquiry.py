@@ -59,6 +59,10 @@ REFERENCE_MOTION_OPTIONS = (
         "scone-gait · 부채꼴 rolling/creep 기준 (실험)",
     ),
     (
+        "none",
+        "none · 기준 모션 없이 end-to-end (walk-v2 전용)",
+    ),
+    (
         "hardcoded",
         "하드코딩 모션 · 기존 PPO 학습 기준 (재생 권장)",
     ),
@@ -79,6 +83,11 @@ class TrainingTask:
     label: str
     module: str
     checkpoint_prefix: str
+    # walk_learn has no end-to-end mode, so "none" is offered only where the
+    # trainer implements it.
+    reference_motions: tuple[str, ...] = (
+        "tripod-gait", "scone-gait", "hardcoded",
+    )
 
 
 TRAINING_TASKS = {
@@ -87,7 +96,14 @@ TRAINING_TASKS = {
         label="걷기 정책 (PPO residual walk)",
         module="src.rl.walk_learn",
         checkpoint_prefix="scone_walk",
-    )
+    ),
+    "walk-v2": TrainingTask(
+        key="walk-v2",
+        label="걷기 정책 v2 (정규 좌표계 · 좌우 대칭 · 접촉 보상)",
+        module="src.rl.walk_v2",
+        checkpoint_prefix="scone_walk_v2",
+        reference_motions=("tripod-gait", "scone-gait", "hardcoded", "none"),
+    ),
 }
 
 
@@ -124,6 +140,12 @@ class TrainingConfig:
             "reference_motion",
             normalize_reference_motion(self.reference_motion),
         )
+        allowed = TRAINING_TASKS[self.task].reference_motions
+        if self.reference_motion not in allowed:
+            raise ValueError(
+                f"{self.task} does not support reference motion "
+                f"{self.reference_motion!r}; choose from {allowed}"
+            )
         if SAFE_NAME.fullmatch(self.run_name) is None:
             raise ValueError(
                 "run name may contain only letters, digits, '.', '_', and '-'"
@@ -282,6 +304,12 @@ class RemoteJob:
             "reference_motion",
             normalize_reference_motion(self.reference_motion),
         )
+        allowed = TRAINING_TASKS[self.task].reference_motions
+        if self.reference_motion not in allowed:
+            raise ValueError(
+                f"{self.task} does not support reference motion "
+                f"{self.reference_motion!r}; choose from {allowed}"
+            )
         for name in ("num_envs", "checkpoint_every", "keep_checkpoints"):
             if getattr(self, name) < 1:
                 raise ValueError(f"{name} must be at least 1")
@@ -1382,19 +1410,27 @@ def prompt_standing_pose() -> tuple[str, tuple[float, ...]]:
     return f"custom(M={middle:g},L={lower:g})", validate_standing_pose(pose)
 
 
-def prompt_reference_motion(*, default: str = "tripod-gait") -> str:
+def prompt_reference_motion(
+    *,
+    default: str = "tripod-gait",
+    allowed: tuple[str, ...] | None = None,
+) -> str:
     """Choose the baseline that the residual policy will correct."""
 
     default = normalize_reference_motion(default)
-    if default not in {value for value, _ in REFERENCE_MOTION_OPTIONS}:
-        raise ValueError(f"unknown default reference motion: {default}")
+    options = [
+        (value, label)
+        for value, label in REFERENCE_MOTION_OPTIONS
+        if allowed is None or value in allowed
+    ]
+    if not options:
+        raise ValueError("no reference motion is available for this task")
+    if default not in {value for value, _ in options}:
+        default = options[0][0]
     inquirer, Choice = _inquirer()
     return inquirer.select(
         message="Residual RL의 기준 모션을 선택하세요.",
-        choices=[
-            Choice(value=value, name=label)
-            for value, label in REFERENCE_MOTION_OPTIONS
-        ],
+        choices=[Choice(value=value, name=label) for value, label in options],
         default=default,
     ).execute()
 
@@ -1411,7 +1447,10 @@ def _prompt_training_config(
         message="무엇을 학습할까요?",
         choices=[Choice(value=item.key, name=item.label) for item in TRAINING_TASKS.values()],
     ).execute()
-    reference_motion = prompt_reference_motion(default="tripod-gait")
+    reference_motion = prompt_reference_motion(
+        default="tripod-gait",
+        allowed=TRAINING_TASKS[task].reference_motions,
+    )
     curriculum = inquirer.select(
         message="학습 범위(커리큘럼)를 선택하세요.",
         choices=[
@@ -1515,7 +1554,10 @@ def _manual_remote_job() -> RemoteJob:
         choices=[Choice(value=value, name=label) for value, label in TERRAIN_OPTIONS],
         default="flat",
     ).execute()
-    reference_motion = prompt_reference_motion(default="tripod-gait")
+    reference_motion = prompt_reference_motion(
+        default="tripod-gait",
+        allowed=TRAINING_TASKS[task].reference_motions,
+    )
     standing_pose_name, standing_pose_degrees = prompt_standing_pose()
     return RemoteJob(
         host=settings.host,
@@ -1642,7 +1684,10 @@ def _start_training_flow() -> None:
 
 def _environment_check_flow() -> None:
     inquirer, Choice = _inquirer()
-    reference_motion = prompt_reference_motion(default="tripod-gait")
+    reference_motion = prompt_reference_motion(
+        default="tripod-gait",
+        allowed=TRAINING_TASKS[task].reference_motions,
+    )
     curriculum = inquirer.select(
         message="테스트할 커리큘럼을 선택하세요.",
         choices=["easy", "medium", "full"],

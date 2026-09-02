@@ -29,6 +29,7 @@ design is based on.
 from __future__ import annotations
 
 import math
+import time
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Sequence
@@ -39,7 +40,8 @@ import numpy as np
 from gymnasium import spaces
 
 from ..hardware import Actuator
-from ..locomotion import TripodGait, VelocityCommand
+from ..locomotion import SconeGait, TripodGait, VelocityCommand
+from ..locomotion.scone_gait import SconeGaitConfig
 from ..locomotion.tripod_gait import GaitConfig
 from ..simulation.core.controller import MuJoCoController
 from ..simulation.core.model import load_model
@@ -80,7 +82,13 @@ JOINT_MIRROR = np.array(
 )
 FOOT_MIRROR = np.array([LEG_MIRROR[i + 1] - 1 for i in range(6)], dtype=np.int64)
 
-REFERENCE_CHOICES = ("tripod-gait", "hardcoded", "none")
+REFERENCE_CHOICES = ("tripod-gait", "scone-gait", "hardcoded", "none")
+# The interactive launcher and older run records use these spellings.
+REFERENCE_ALIASES = {"non_rl": "tripod-gait"}
+
+
+def normalize_reference_motion(value: str) -> str:
+    return REFERENCE_ALIASES.get(value, value)
 
 
 @dataclass(frozen=True)
@@ -101,7 +109,9 @@ class RewardConfig:
     # posture
     projected_gravity_sigma: float = 0.25
     upright_weight: float = 0.6
-    target_height: float = 0.46                # m, measured optimum (see docs)
+    # None means "hold the height this stance settles at", which keeps the term
+    # honest whichever stance preset is selected. Set a number to override.
+    target_height: float | None = None
     height_sigma: float = 0.06
     height_weight: float = 0.4
     vertical_velocity_sigma: float = 0.30
@@ -207,9 +217,11 @@ class SconeWalkEnvV2(gym.Env[np.ndarray, np.ndarray]):
         walk_config: WalkConfig | None = None,
         terrain: TerrainType | str = TerrainType.FLAT,
         terrain_seed: int = 7,
+        standing_pose_degrees: Sequence[float] | None = None,
         render_mode: str | None = None,
     ) -> None:
         super().__init__()
+        reference_motion = normalize_reference_motion(reference_motion)
         if curriculum not in CURRICULUM_RANGES:
             raise ValueError(f"unknown curriculum {curriculum!r}")
         if reference_motion not in REFERENCE_CHOICES:
@@ -269,7 +281,11 @@ class SconeWalkEnvV2(gym.Env[np.ndarray, np.ndarray]):
         self._foot_index = {g: i for i, g in enumerate(self.foot_geom_ids)}
 
         self.default_degrees = np.asarray(
-            validate_standing_pose(STANCE_PRESETS[self.walk_config.stance_preset]),
+            validate_standing_pose(
+                STANCE_PRESETS[self.walk_config.stance_preset]
+                if standing_pose_degrees is None
+                else standing_pose_degrees
+            ),
             dtype=np.float64,
         )
         self.default_radians = np.array(
@@ -286,7 +302,7 @@ class SconeWalkEnvV2(gym.Env[np.ndarray, np.ndarray]):
             [14.0] * 6 + [16.0] * 6 + [18.0] * 6, dtype=np.float64
         )
 
-        self._reference_gait: TripodGait | None = None
+        self._reference_gait: TripodGait | SconeGait | None = None
         if self.reference_motion == "tripod-gait":
             self._reference_gait = TripodGait(
                 profile=self._motion_profile,
@@ -300,6 +316,21 @@ class SconeWalkEnvV2(gym.Env[np.ndarray, np.ndarray]):
                     step_height=0.030,
                     max_stride=0.110,
                     max_lateral_stride=0.070,
+                    max_vx=float(OBSERVATION_COMMAND_SCALE[0]),
+                    max_vy=float(OBSERVATION_COMMAND_SCALE[1]),
+                    max_yaw_rate=float(OBSERVATION_COMMAND_SCALE[2]),
+                    command_time_constant=0.0,
+                    ik_tolerance=1e-3,
+                    ik_stride_backoff_attempts=4,
+                ),
+            )
+            self._reference_gait.reset(motor_degrees=self.default_degrees)
+        elif self.reference_motion == "scone-gait":
+            self._reference_gait = SconeGait(
+                profile=self._motion_profile,
+                model_path=self.model_path,
+                config=SconeGaitConfig(
+                    control_frequency=1.0 / self.control_dt,
                     max_vx=float(OBSERVATION_COMMAND_SCALE[0]),
                     max_vy=float(OBSERVATION_COMMAND_SCALE[1]),
                     max_yaw_rate=float(OBSERVATION_COMMAND_SCALE[2]),
@@ -535,7 +566,10 @@ class SconeWalkEnvV2(gym.Env[np.ndarray, np.ndarray]):
         )
 
         height = float(self.data.qpos[self.root_qpos_address + 2]) - self._floor_height
-        height_penalty = ((height - cfg.target_height) / cfg.height_sigma) ** 2
+        target_height = (
+            self._reference_height if cfg.target_height is None else cfg.target_height
+        )
+        height_penalty = ((height - target_height) / cfg.height_sigma) ** 2
         oscillation = (
             (linear[2] / cfg.vertical_velocity_sigma) ** 2
             + (angular[0] / cfg.roll_pitch_rate_sigma) ** 2
@@ -774,62 +808,229 @@ __all__ = [
 # ---------------------------------------------------------------------------
 # Command line
 # ---------------------------------------------------------------------------
+# The argument layout intentionally matches ``src.rl.walk_learn`` so the SSH
+# launcher in ``src.rl.inquiry`` can drive either trainer with the same
+# ``build_training_arguments`` output, and so a detached remote run supports the
+# same pause/resume contract:
+#
+#   runs/<name>/checkpoints/scone_walk_v2_<steps>_steps.zip   rolling checkpoints
+#   runs/<name>/resume.checkpoint                             pointer to load
+#   runs/<name>/train.log | train.pid | train.state           launcher bookkeeping
+#
+# SIGTERM (what the launcher's pause sends) finishes the current rollout, writes
+# a resume checkpoint and exits 0.
 
-def _build_env(args: Any, index: int = 0):
-    return SconeWalkEnvV2(
-        args.model,
-        curriculum=args.curriculum,
-        reference_motion=args.reference_motion,
-        terrain=args.terrain,
-        terrain_seed=args.terrain_seed + index,
-    )
+CHECKPOINT_PREFIX = "scone_walk_v2"
+
+
+def _write_resume_pointer(run_dir: Path, checkpoint: Path) -> None:
+    """Atomically record the exact checkpoint a resume should load."""
+    try:
+        stored = checkpoint.relative_to(run_dir)
+    except ValueError:
+        stored = checkpoint
+    pointer = run_dir / "resume.checkpoint"
+    temporary = pointer.with_suffix(".tmp")
+    temporary.write_text(f"{stored}\n", encoding="utf-8")
+    temporary.replace(pointer)
+
+
+def _make_callbacks(run_dir: Path, args: Any, stop_requested):
+    import re
+
+    from stable_baselines3.common.callbacks import BaseCallback, CheckpointCallback
+
+    class PruningCheckpointCallback(CheckpointCallback):
+        """Save checkpoints, keep the newest N, and publish a resume pointer."""
+
+        def __init__(self, *a: Any, keep_last: int = 10, **kw: Any) -> None:
+            super().__init__(*a, **kw)
+            self.keep_last = max(1, keep_last)
+
+        def _on_step(self) -> bool:
+            result = super()._on_step()
+            if self.n_calls % self.save_freq == 0:
+                saved = (
+                    Path(self.save_path)
+                    / f"{self.name_prefix}_{self.num_timesteps}_steps.zip"
+                )
+                if saved.is_file():
+                    _write_resume_pointer(Path(self.save_path).parent, saved)
+                found: list[tuple[int, Path]] = []
+                for path in Path(self.save_path).glob(f"{self.name_prefix}_*_steps.zip"):
+                    match = re.search(r"_([0-9]+)_steps\.zip$", path.name)
+                    if match:
+                        found.append((int(match.group(1)), path))
+                found.sort(key=lambda item: item[0])
+                for _, path in found[: -self.keep_last]:
+                    path.unlink(missing_ok=True)
+            return result
+
+    class RewardTermsCallback(BaseCallback):
+        """Average every reward term into TensorBoard so tuning is visible."""
+
+        def _on_step(self) -> bool:
+            totals: dict[str, float] = {}
+            count = 0
+            for info in self.locals.get("infos", []):
+                terms = info.get("reward_terms")
+                if not terms:
+                    continue
+                count += 1
+                for key, value in terms.items():
+                    totals[key] = totals.get(key, 0.0) + float(value)
+            if count:
+                for key, value in totals.items():
+                    self.logger.record(f"reward/{key}", value / count)
+            return True
+
+    class GracefulStopCallback(BaseCallback):
+        def _on_step(self) -> bool:
+            return not stop_requested()
+
+    return [
+        PruningCheckpointCallback(
+            save_freq=max(1, args.checkpoint_every // max(1, args.num_envs)),
+            save_path=str(run_dir / "checkpoints"),
+            name_prefix=CHECKPOINT_PREFIX,
+            keep_last=args.keep_checkpoints,
+        ),
+        RewardTermsCallback(),
+        GracefulStopCallback(),
+    ]
+
+
+def _env_factory(args: Any, index: int, curriculum: str):
+    def build() -> SconeWalkEnvV2:
+        return SconeWalkEnvV2(
+            args.model,
+            curriculum=curriculum,
+            reference_motion=args.reference_motion,
+            terrain=args.terrain,
+            terrain_seed=args.terrain_seed + index,
+            standing_pose_degrees=args.standing_pose_degrees,
+        )
+
+    return build
 
 
 def run_check(args: Any) -> int:
-    env = _build_env(args)
+    env = _env_factory(args, 0, args.curriculum)()
     observation, _ = env.reset(seed=args.seed)
-    print(f"observation {observation.shape}  action {env.action_space.shape}")
+    print(f"observation {observation.shape}  action {env.action_space.shape}", flush=True)
     total = 0.0
+    info: dict[str, Any] = {}
     for _ in range(args.steps):
         action = (
-            env.action_space.sample() if args.random_actions else np.zeros(18, np.float32)
+            env.action_space.sample()
+            if args.random_actions
+            else np.zeros(18, dtype=np.float32)
         )
         observation, reward, terminated, truncated, info = env.step(action)
         total += reward
         if terminated or truncated:
             break
-    print(f"return {total:.3f}  vx {info['vx']:+.4f}  stance {info['stance_contacts']}")
-    print("reward terms:", {k: round(v, 5) for k, v in info["reward_terms"].items()})
+    print(
+        f"return {total:.3f}  vx {info.get('vx', 0.0):+.4f}  "
+        f"stance {info.get('stance_contacts', 0)}",
+        flush=True,
+    )
+    print(
+        "reward terms:",
+        {k: round(v, 5) for k, v in info.get("reward_terms", {}).items()},
+        flush=True,
+    )
     env.close()
     return 0
 
 
 def run_train(args: Any) -> int:
+    import signal
+
     from stable_baselines3 import PPO
-    from stable_baselines3.common.vec_env import DummyVecEnv, SubprocVecEnv, VecMonitor
+    from stable_baselines3.common.vec_env import (
+        DummyVecEnv, SubprocVecEnv, VecMonitor,
+    )
 
     run_dir = Path(args.output).expanduser().resolve()
-    run_dir.mkdir(parents=True, exist_ok=True)
+    (run_dir / "checkpoints").mkdir(parents=True, exist_ok=True)
+
     factories = [
-        (lambda i=i: _build_env(args, i)) for i in range(args.num_envs)
+        _env_factory(args, index, args.curriculum) for index in range(args.num_envs)
     ]
-    vector = (
-        DummyVecEnv(factories) if args.num_envs == 1 else SubprocVecEnv(factories)
+    vector = DummyVecEnv(factories) if args.num_envs == 1 else SubprocVecEnv(factories)
+    monitor_name = (
+        "monitor.csv" if args.resume is None
+        else f"monitor_resume_{time.strftime('%Y%m%d_%H%M%S')}.csv"
     )
-    env = VecMonitor(vector, filename=str(run_dir / "monitor.csv"))
-    model = PPO(
-        "MlpPolicy", env,
-        learning_rate=3e-4, n_steps=args.n_steps, batch_size=args.batch_size,
-        n_epochs=5, gamma=0.995, gae_lambda=0.95, clip_range=0.2,
-        ent_coef=0.003, max_grad_norm=1.0,
-        policy_kwargs={"net_arch": {"pi": [512, 256, 128], "vf": [512, 256, 128]}},
-        tensorboard_log=args.tensorboard_log, verbose=1,
-        seed=args.seed, device=args.device,
+    env = VecMonitor(vector, filename=str(run_dir / monitor_name))
+
+    stop_requested = False
+
+    def request_stop(signum: int, _frame: Any) -> None:
+        nonlocal stop_requested
+        if not stop_requested:
+            print(
+                f"[RL] signal {signum} received; finishing the current rollout "
+                "and saving a resume checkpoint...",
+                flush=True,
+            )
+        stop_requested = True
+
+    callbacks = _make_callbacks(run_dir, args, lambda: stop_requested)
+
+    tensorboard_log = (
+        None if args.tensorboard_log is None
+        else str(Path(args.tensorboard_log).expanduser().resolve())
     )
-    model.learn(total_timesteps=args.timesteps)
-    model.save(run_dir / "final_model.zip")
-    env.close()
-    print(f"saved {run_dir / 'final_model.zip'}")
+    if args.resume is None:
+        model = PPO(
+            "MlpPolicy", env,
+            learning_rate=3e-4,
+            n_steps=args.n_steps,
+            batch_size=args.batch_size,
+            n_epochs=5,
+            gamma=0.995,
+            gae_lambda=0.95,
+            clip_range=0.2,
+            ent_coef=0.003,
+            max_grad_norm=1.0,
+            policy_kwargs={"net_arch": {"pi": [512, 256, 128], "vf": [512, 256, 128]}},
+            tensorboard_log=tensorboard_log,
+            verbose=1,
+            seed=args.seed,
+            device=args.device,
+        )
+        reset_timesteps = True
+    else:
+        model = PPO.load(
+            Path(args.resume).expanduser().resolve(),
+            env=env,
+            device=args.device,
+            tensorboard_log=tensorboard_log,
+        )
+        reset_timesteps = False
+
+    previous = {
+        signum: signal.signal(signum, request_stop)
+        for signum in (signal.SIGINT, signal.SIGTERM)
+    }
+    try:
+        model.learn(
+            total_timesteps=args.timesteps,
+            callback=callbacks,
+            reset_num_timesteps=reset_timesteps,
+        )
+        final_model = run_dir / "final_model.zip"
+        model.save(final_model)
+        _write_resume_pointer(run_dir, final_model)
+        print(f"[RL] saved {final_model}", flush=True)
+    finally:
+        for signum, handler in previous.items():
+            signal.signal(signum, handler)
+        env.close()
+    if stop_requested:
+        print("[RL] stopped on request; resume with --resume", flush=True)
     return 0
 
 
@@ -837,19 +1038,26 @@ def run_enjoy(args: Any) -> int:
     from stable_baselines3 import PPO
 
     env = SconeWalkEnvV2(
-        args.model, curriculum=args.curriculum,
-        reference_motion=args.reference_motion, render_mode="human",
-        terrain=args.terrain, terrain_seed=args.terrain_seed,
+        args.model,
+        curriculum=args.curriculum,
+        reference_motion=args.reference_motion,
+        terrain=args.terrain,
+        terrain_seed=args.terrain_seed,
+        standing_pose_degrees=args.standing_pose_degrees,
+        render_mode=None if args.headless else "human",
     )
     model = PPO.load(Path(args.checkpoint).expanduser().resolve(), device=args.device)
-    for _ in range(args.episodes):
-        observation, _ = env.reset(seed=args.seed)
+    for episode in range(args.episodes):
+        observation, _ = env.reset(seed=args.seed + episode)
         done = False
+        total = 0.0
         while not done:
             action, _ = model.predict(observation, deterministic=True)
-            observation, _, terminated, truncated, _ = env.step(action)
+            observation, reward, terminated, truncated, _ = env.step(action)
+            total += reward
             env.render()
             done = terminated or truncated
+        print(f"episode {episode}: return {total:.2f}", flush=True)
     env.close()
     return 0
 
@@ -858,45 +1066,74 @@ def build_parser():
     import argparse
 
     parser = argparse.ArgumentParser(
-        prog="walk-v2", description="Redesigned SCONE walking PPO"
+        prog="python -m src.rl.walk_v2",
+        description="Redesigned SCONE walking PPO (canonical frame, symmetric)",
     )
-    parser.add_argument("--model", default=str(DEFAULT_MODEL_PATH))
+    parser.add_argument("--model", type=Path, default=DEFAULT_MODEL_PATH)
     parser.add_argument("--terrain", default="flat")
     parser.add_argument("--terrain-seed", type=int, default=7)
-    parser.add_argument("--seed", type=int, default=0)
-    parser.add_argument("--device", default="auto")
     parser.add_argument(
-        "--reference-motion", choices=REFERENCE_CHOICES, default="tripod-gait",
-        help="baseline motion the policy corrects; 'none' trains end to end",
+        "--reference-motion",
+        default="tripod-gait",
+        help="baseline the policy corrects: "
+             "tripod-gait | scone-gait | hardcoded | none (end to end)",
     )
     parser.add_argument(
-        "--curriculum", choices=tuple(CURRICULUM_RANGES), default="easy"
+        "--stance", choices=tuple(STANCE_PRESETS), default=None,
+        help="named standing pose; ignored when --standing-pose-degrees is given",
+    )
+    parser.add_argument(
+        "--standing-pose-degrees", type=float, nargs=18, default=None,
+        help="18 actuator degrees for the standing pose",
     )
     sub = parser.add_subparsers(dest="command_name", required=True)
 
-    check = sub.add_parser("check", help="single rollout smoke test")
+    check = sub.add_parser("check", help="one rollout, no learning")
+    check.add_argument("--curriculum", choices=tuple(CURRICULUM_RANGES), default="easy")
+    check.add_argument("--seed", type=int, default=0)
     check.add_argument("--steps", type=int, default=300)
     check.add_argument("--random-actions", action="store_true")
     check.set_defaults(func=run_check)
 
-    train = sub.add_parser("train")
-    train.add_argument("--output", default="runs/walk_v2")
+    train = sub.add_parser("train", help="headless training, SSH friendly")
+    train.add_argument("--curriculum", choices=tuple(CURRICULUM_RANGES), default="easy")
     train.add_argument("--timesteps", type=int, default=50_000_000)
-    train.add_argument("--num-envs", type=int, default=64)
+    train.add_argument("--num-envs", type=int, default=16)
+    train.add_argument("--checkpoint-every", type=int, default=500_000)
+    train.add_argument("--keep-checkpoints", type=int, default=10)
     train.add_argument("--n-steps", type=int, default=256)
-    train.add_argument("--batch-size", type=int, default=8192)
+    train.add_argument("--batch-size", type=int, default=4096)
+    train.add_argument("--seed", type=int, default=0)
+    train.add_argument("--device", default="auto")
+    train.add_argument("--output", type=Path, default=Path("runs/walk_v2"))
     train.add_argument("--tensorboard-log", default=None)
+    train.add_argument("--resume", type=Path, default=None)
     train.set_defaults(func=run_train)
 
-    enjoy = sub.add_parser("enjoy")
+    enjoy = sub.add_parser("enjoy", help="replay a checkpoint")
     enjoy.add_argument("checkpoint")
+    enjoy.add_argument("--curriculum", choices=tuple(CURRICULUM_RANGES), default="full")
     enjoy.add_argument("--episodes", type=int, default=3)
+    enjoy.add_argument("--seed", type=int, default=0)
+    enjoy.add_argument("--device", default="auto")
+    enjoy.add_argument("--headless", action="store_true")
     enjoy.set_defaults(func=run_enjoy)
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
+    args.reference_motion = normalize_reference_motion(args.reference_motion)
+    if args.reference_motion not in REFERENCE_CHOICES:
+        raise SystemExit(
+            f"unknown reference motion {args.reference_motion!r}; "
+            f"choose from {REFERENCE_CHOICES}"
+        )
+    if args.standing_pose_degrees is None and args.stance is not None:
+        args.standing_pose_degrees = list(STANCE_PRESETS[args.stance])
+    args.model = Path(args.model).expanduser().resolve()
+    if not args.model.exists():
+        raise SystemExit(f"model not found: {args.model}")
     return int(args.func(args))
 
 
