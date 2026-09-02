@@ -25,7 +25,7 @@
 19. [액추에이터 모델·좌표계·PPO V2 설계](18-actuator-model-and-frame-convention.md) — DC motor/armature 검증, 정규 좌표계, `walk_v2` 초기 설계와 CLI
 20. [공개된 다이나믹셀 MuJoCo 모델과 설정 대조](19-actuator-settings-vs-published-models.md) — OP3·Open Duck 모델과 SCONE dcmotor/armature를 같은 벤치에서 비교한 결과
 21. [백래시 적용과 다이나믹셀 패키지 분리](20-backlash-and-dynamixel-package.md) — 직렬 유격 모델, 단위 버그, 민감도 측정과 독립 패키지 구조
-22. [`walk_v2` PPO 실제 학습 분석과 안정화](21-walk-v2-ppo-training-analysis.md) — 35.4M checkpoint 진단, 행동 포화·누적 motor randomization 원인, bounded PPO·fixed-command best-model 구현과 재학습 gate
+22. [`walk_v2` PPO 실제 학습 분석과 2차 재설계](21-walk-v2-ppo-training-analysis.md) — 35.4M checkpoint 진단, 행동 포화·누적 motor randomization 원인, 정지 보상 제거, 학습/재생 randomization 분리, primitive curriculum, bounded PPO·fixed-command best-model과 재학습 gate
 
 ## 문서 범위와 표기
 

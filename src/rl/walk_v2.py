@@ -19,8 +19,10 @@ existing checkpoints keep replaying. The differences that matter are:
 * **The reference gait can actually reach the commanded speed**, which the
   first design could not: its reference saturated at 0.084 m/s against
   commands up to 0.50 m/s, leaving no gradient toward speed.
-* **Randomization exists.** Initial pose, heading, mass, friction, actuator
-  strength, observation noise, action delay and pushes.
+* **Training randomization is explicit.** Initial pose, heading, mass,
+  friction, actuator strength, observation noise, action delay and pushes are
+  enabled by the curriculum factory, while replay/joystick environments stay
+  on the nominal model unless the caller explicitly opts in.
 
 See docs/18-actuator-model-and-frame-convention.md for the measurements this
 design is based on.
@@ -31,7 +33,7 @@ from __future__ import annotations
 import json
 import math
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any, Sequence
 
@@ -257,33 +259,30 @@ class RewardConfig:
     """Reward weights and tolerances. All terms are scaled by the control step."""
 
     # tracking
-    # Wide enough that the exponential still has slope when the policy is only
-    # half way to a 0.7 m/s command; the progress term carries the rest.
-    linear_velocity_sigma: float = 0.30
-    yaw_velocity_sigma: float = 0.25
-    heading_error_sigma: float = 0.20          # was 0.60 rad (34 deg) -- far too loose
+    # Tracking rewards are measured relative to the stationary baseline.  A
+    # robot that ignores a non-zero command therefore earns exactly zero from
+    # these terms instead of harvesting a large positive living reward.
+    linear_velocity_sigma: float = 0.15
+    yaw_velocity_sigma: float = 0.20
+    heading_error_sigma: float = 0.35
     velocity_weight: float = 2.0
     yaw_weight: float = 0.8
-    heading_weight: float = 1.0
-    # Speed is rewarded without a ceiling: there is no fastest speed the policy
-    # is asked to stop at. The term is linear in the forward component and
-    # multiplied by a stability gate in [0, 1], so going faster always pays
-    # provided the body stays level and settled, and pays nothing at all while
-    # tumbling. That is what keeps an uncapped term from turning into a dive.
-    speed_weight: float = 4.0
-    # The gate: uprightness and body oscillation, each already normalised.
-    # Squaring makes the penalty for losing posture bite before the speed
-    # reward can compensate for it.
+    linear_progress_weight: float = 2.0
+    yaw_progress_weight: float = 0.6
+    heading_weight: float = 0.25
+    # Progress is bounded before this gate is applied.  Moving in the requested
+    # direction pays, moving in the opposite direction costs, and overspeed is
+    # still rejected by the symmetric tracking term.
     stability_gate_power: float = 2.0
 
     # posture
     projected_gravity_sigma: float = 0.25
-    upright_weight: float = 0.6
+    upright_weight: float = 0.5
     # None means "hold the height this stance settles at", which keeps the term
     # honest whichever stance preset is selected. Set a number to override.
     target_height: float | None = None
     height_sigma: float = 0.06
-    height_weight: float = 0.4
+    height_weight: float = 0.2
     vertical_velocity_sigma: float = 0.30
     roll_pitch_rate_sigma: float = 0.80
     oscillation_weight: float = 0.10
@@ -294,20 +293,25 @@ class RewardConfig:
     # summed to 6.2 against 1.7 for speed on a slow rollout, which makes
     # marching in place competitive with travelling. Sized so speed overtakes it
     # as soon as the policy is actually moving.
-    air_time_weight: float = 0.25
+    air_time_weight: float = 0.08
     inactivity_seconds: float = 1.0
-    inactivity_weight: float = 1.0
-    load_share_weight: float = 0.3
-    impact_weight: float = 0.5
+    inactivity_weight: float = 0.25
+    load_share_weight: float = 0.1
+    impact_weight: float = 0.1
     impact_reference_force: float = 40.0       # N, about one body weight
     slip_deadzone: float = 0.02
     slip_sigma: float = 0.20
     slip_weight: float = 0.15
 
     # effort
-    action_rate_weight: float = 0.05
-    action_magnitude_weight: float = 0.05      # was 0.25: it paid for idle legs
-    torque_weight: float = 0.02
+    action_rate_weight: float = 0.02
+    action_magnitude_weight: float = 0.02
+    torque_weight: float = 0.002
+    idle_velocity_weight: float = 0.75
+    idle_action_weight: float = 0.15
+    idle_linear_velocity_sigma: float = 0.04
+    idle_yaw_velocity_sigma: float = 0.08
+    idle_activity_threshold: float = 0.05
     joint_limit_weight: float = 0.3
     soft_joint_offset: float = math.radians(55.0)
     hard_joint_offset: float = math.radians(85.0)
@@ -337,39 +341,78 @@ class WalkConfig:
     # axis; do not pay for it in every training run without evidence.
     backlash: bool = False
 
-    # symmetry and robustness
-    mirror_probability: float = 0.5
-    initial_joint_noise_degrees: float = 4.0
-    initial_yaw_randomization: bool = True
+    # Nominal replay defaults.  Training must opt into a curriculum profile via
+    # ``training_walk_config``.  Keeping robustness randomization here used to
+    # make every checkpoint replay and live joystick session nondeterministic.
+    mirror_probability: float = 0.0
+    initial_joint_noise_degrees: float = 0.0
+    initial_yaw_randomization: bool = False
     push_interval_seconds: tuple[float, float] = (2.0, 5.0)
-    push_velocity: float = 0.25                # m/s impulse on the base
-    observation_noise: float = 0.01
-    action_delay_probability: float = 0.5      # one control step of delay
-    mass_scale_range: tuple[float, float] = (0.90, 1.10)
-    friction_scale_range: tuple[float, float] = (0.70, 1.30)
-    strength_scale_range: tuple[float, float] = (0.85, 1.15)
+    push_velocity: float = 0.0                 # m/s impulse on the base
+    observation_noise: float = 0.0
+    action_delay_probability: float = 0.0      # one control step of delay
+    mass_scale_range: tuple[float, float] = (1.0, 1.0)
+    friction_scale_range: tuple[float, float] = (1.0, 1.0)
+    strength_scale_range: tuple[float, float] = (1.0, 1.0)
 
 
-# Command ranges [|vx|, |vy|, |yaw|]. The reference gait is configured to be
-# able to reach the top of each stage; that was the missing piece before.
-# The open-loop reference plateaus near 0.20 m/s: pushing cadence to 3.6 Hz and
-# stride to 0.15 m only moves it from 0.116 to 0.203 while the fraction of the
-# commanded speed actually realised falls from 64 to 19 percent. That plateau is
-# the scaffold, NOT the policy's limit -- a residual of 20-26 degrees on 18
-# joints can synthesise motion the inverse kinematics never generates, and the
-# previous policy reached about 0.5 m/s against a far weaker reference.
-#
-# So the ceiling is set by the target, not by the scaffold. What must not happen
-# is the first design's failure, where the exponential tracking term went flat
-# far from the command and left no gradient; that is handled by the normalised,
-# non-saturating progress term and a wider tracking sigma rather than by
-# lowering the command.
+# Command ranges [|vx|, |vy|, |yaw|].  The verified open-loop tripod scaffold
+# reaches roughly 0.00-0.13 m/s on the evaluation suite, so training starts
+# inside that controllable envelope.  Medium/full expand only after the policy
+# has learned direction and stability; the observation normalization remains
+# at the historic V2 scale so existing 82-element checkpoints still replay.
 CURRICULUM_RANGES: dict[str, np.ndarray] = {
-    "easy": np.array([0.20, 0.00, 0.00]),
-    "medium": np.array([0.45, 0.15, 0.60]),
-    "full": np.array([0.70, 0.25, 0.90]),
+    "easy": np.array([0.15, 0.00, 0.00]),
+    "medium": np.array([0.30, 0.08, 0.35]),
+    "full": np.array([0.50, 0.15, 0.65]),
 }
 OBSERVATION_COMMAND_SCALE = np.array([0.70, 0.25, 0.90])
+
+
+def training_walk_config(curriculum: str) -> WalkConfig:
+    """Return staged training-only robustness without contaminating replay."""
+
+    if curriculum not in CURRICULUM_RANGES:
+        raise ValueError(f"unknown curriculum {curriculum!r}")
+    shared = {
+        "mirror_probability": 0.5,
+        "initial_yaw_randomization": True,
+    }
+    if curriculum == "easy":
+        return replace(
+            WalkConfig(),
+            **shared,
+            initial_joint_noise_degrees=1.0,
+            push_velocity=0.0,
+            observation_noise=0.002,
+            action_delay_probability=0.10,
+            mass_scale_range=(0.98, 1.02),
+            friction_scale_range=(0.90, 1.10),
+            strength_scale_range=(0.95, 1.05),
+        )
+    if curriculum == "medium":
+        return replace(
+            WalkConfig(),
+            **shared,
+            initial_joint_noise_degrees=2.0,
+            push_velocity=0.08,
+            observation_noise=0.005,
+            action_delay_probability=0.25,
+            mass_scale_range=(0.95, 1.05),
+            friction_scale_range=(0.80, 1.20),
+            strength_scale_range=(0.90, 1.10),
+        )
+    return replace(
+        WalkConfig(),
+        **shared,
+        initial_joint_noise_degrees=4.0,
+        push_velocity=0.15,
+        observation_noise=0.01,
+        action_delay_probability=0.50,
+        mass_scale_range=(0.90, 1.10),
+        friction_scale_range=(0.70, 1.30),
+        strength_scale_range=(0.85, 1.15),
+    )
 
 _OBS_DIM = 82
 
@@ -650,9 +693,50 @@ class SconeWalkEnvV2(gym.Env[np.ndarray, np.ndarray]):
             return self.fixed_command.copy()
         if self.np_random.random() < self.walk_config.idle_command_probability:
             return np.zeros(3)
-        command = self.np_random.uniform(-self.command_range, self.command_range)
+
+        command = np.zeros(3)
+
+        def sample_axis(axis: int, *, positive_probability: float = 0.5) -> float:
+            limit = float(self.command_range[axis])
+            minimum = min(limit, (0.04, 0.025, 0.10)[axis])
+            magnitude = float(self.np_random.uniform(minimum, limit))
+            sign = 1.0 if self.np_random.random() < positive_probability else -1.0
+            return sign * magnitude
+
+        # Learn one primitive at a time before presenting coupled commands.
+        # Sampling every axis independently from the first rollout made almost
+        # every target a simultaneous strafe-and-turn manoeuvre and obscured
+        # which action caused useful progress.
         if self.curriculum == "easy":
-            command[0] = self.np_random.uniform(-0.04, self.command_range[0])
+            command[0] = sample_axis(0, positive_probability=0.90)
+            return command
+
+        draw = float(self.np_random.random())
+        if self.curriculum == "medium":
+            if draw < 0.55:
+                command[0] = sample_axis(0, positive_probability=0.75)
+            elif draw < 0.75:
+                command[1] = sample_axis(1)
+            elif draw < 0.95:
+                command[2] = sample_axis(2)
+            else:
+                command[0] = sample_axis(0, positive_probability=0.75)
+                command[2] = sample_axis(2)
+            return command
+
+        if draw < 0.35:
+            command[0] = sample_axis(0, positive_probability=0.60)
+        elif draw < 0.50:
+            command[1] = sample_axis(1)
+        elif draw < 0.65:
+            command[2] = sample_axis(2)
+        elif draw < 0.85:
+            command[0] = sample_axis(0, positive_probability=0.60)
+            command[2] = sample_axis(2)
+        else:
+            command[0] = sample_axis(0, positive_probability=0.60)
+            command[1] = sample_axis(1)
+            command[2] = sample_axis(2)
         return command
 
     def _update_command(self) -> None:
@@ -850,57 +934,71 @@ class SconeWalkEnvV2(gym.Env[np.ndarray, np.ndarray]):
         linear, angular, gravity = self._base_state()
         position, _ = self._joint_state()
 
-        # Tracking is one-sided on the forward axis: being at or above the
-        # commanded speed is full credit, so overshooting is never punished.
-        # Lateral velocity still tracks symmetrically, because drifting
-        # sideways is an error in either direction.
+        # Tracking advantage is relative to doing nothing.  At exactly zero
+        # velocity it is therefore zero for every non-zero command.  Reaching
+        # the target is positive, wrong-way motion is negative, and overspeed
+        # loses symmetric tracking credit instead of being rewarded forever.
         command_speed = float(np.linalg.norm(self._command[:2]))
         if command_speed > 1e-6:
             direction = self._command[:2] / command_speed
             forward = float(linear[:2] @ direction)
-            lateral = float(linear[:2] @ np.array([-direction[1], direction[0]]))
-            shortfall = max(0.0, command_speed - forward)
+            linear_progress = float(np.clip(forward / command_speed, -1.0, 1.0))
         else:
-            direction = np.zeros(2)
             forward = 0.0
-            lateral = float(np.linalg.norm(linear[:2]))
-            shortfall = lateral
-        velocity_tracking = math.exp(
-            -(shortfall ** 2 + lateral ** 2) / cfg.linear_velocity_sigma ** 2
+            linear_progress = 0.0
+        linear_error = linear[:2] - self._command[:2]
+        velocity_advantage = (
+            math.exp(-float(linear_error @ linear_error) / cfg.linear_velocity_sigma ** 2)
+            - math.exp(
+                -float(self._command[:2] @ self._command[:2])
+                / cfg.linear_velocity_sigma ** 2
+            )
         )
         yaw_error = float(angular[2] - self._command[2])
-        yaw_tracking = math.exp(-yaw_error ** 2 / cfg.yaw_velocity_sigma ** 2)
+        yaw_advantage = (
+            math.exp(-yaw_error ** 2 / cfg.yaw_velocity_sigma ** 2)
+            - math.exp(-float(self._command[2] ** 2) / cfg.yaw_velocity_sigma ** 2)
+        )
+        yaw_progress = (
+            float(np.clip(angular[2] / self._command[2], -1.0, 1.0))
+            if abs(self._command[2]) > 1e-6 else 0.0
+        )
         heading_error = self._heading_error()
-        heading_tracking = math.exp(-heading_error ** 2 / cfg.heading_error_sigma ** 2)
-        upright = math.exp(
-            -float(gravity[:2] @ gravity[:2]) / cfg.projected_gravity_sigma ** 2
+        heading_penalty = min(
+            25.0, (heading_error / cfg.heading_error_sigma) ** 2
+        )
+        upright_penalty = min(
+            25.0,
+            float(gravity[:2] @ gravity[:2]) / cfg.projected_gravity_sigma ** 2,
         )
 
         height = float(self.data.qpos[self.root_qpos_address + 2]) - self._floor_height
         target_height = (
             self._reference_height if cfg.target_height is None else cfg.target_height
         )
-        height_penalty = ((height - target_height) / cfg.height_sigma) ** 2
+        height_penalty = (
+            max(0.0, target_height - height) / cfg.height_sigma
+        ) ** 2
         oscillation = (
             (linear[2] / cfg.vertical_velocity_sigma) ** 2
             + (angular[0] / cfg.roll_pitch_rate_sigma) ** 2
             + (angular[1] / cfg.roll_pitch_rate_sigma) ** 2
         )
-        # Uncapped speed reward, gated by how well the body is holding itself
-        # together. The gate is 1 for a level, settled chassis and falls toward
-        # 0 as it tips or bounces, so speed bought by throwing the body away
-        # scores nothing.
-        stability = (upright * math.exp(-oscillation)) ** cfg.stability_gate_power
-        speed_reward = max(0.0, forward) * stability
+        stability = math.exp(-(upright_penalty + oscillation)) ** (
+            cfg.stability_gate_power
+        )
 
         contact = normal > 0.0
         activity = self._command_activity()
+        command_gate = float(np.clip(
+            activity / cfg.idle_activity_threshold, 0.0, 1.0
+        ))
         # Air time: pay for a swing that lasts about air_time_target, only at the
         # instant of touchdown, and only while a motion is commanded.
         touchdown = contact & (self._previous_normal <= 0.0)
         air_reward = float(
             np.sum(np.clip(self._air_time[touchdown] - 0.05, 0.0, cfg.air_time_target))
-        ) * activity
+        ) * command_gate * max(0.0, linear_progress, yaw_progress)
         self._air_time[~contact] += dt
         self._air_time[contact] = 0.0
         self._contact_seconds_since[contact] = 0.0
@@ -924,9 +1022,9 @@ class SconeWalkEnvV2(gym.Env[np.ndarray, np.ndarray]):
             ) * stance.size
         else:
             load_penalty = 0.0
-        impact = np.clip(normal - self._previous_normal, 0.0, None) / dt
+        impact = np.clip(normal - self._previous_normal, 0.0, None)
         impact_penalty = float(
-            np.sum((impact / (cfg.impact_reference_force / 0.05)) ** 2)
+            np.mean((impact / cfg.impact_reference_force) ** 2)
         )
         self._previous_normal = normal.copy()
 
@@ -938,14 +1036,27 @@ class SconeWalkEnvV2(gym.Env[np.ndarray, np.ndarray]):
         ) / 4.0
         action_rate = float(np.mean(np.square(action - self._last_action)))
         action_magnitude = float(np.mean(np.square(action)))
+        idle_fraction = 1.0 - command_gate
+        idle_velocity_penalty = min(
+            4.0,
+            float(linear[:2] @ linear[:2]) / cfg.idle_linear_velocity_sigma ** 2
+            + float(angular[2] ** 2) / cfg.idle_yaw_velocity_sigma ** 2,
+        )
         collision = float(self._forbidden_collision())
 
         terms = {
-            "velocity": cfg.velocity_weight * velocity_tracking * dt,
-            "speed": cfg.speed_weight * speed_reward * dt,
-            "yaw": cfg.yaw_weight * yaw_tracking * dt,
-            "heading": cfg.heading_weight * heading_tracking * dt,
-            "upright": cfg.upright_weight * upright * dt,
+            "velocity_advantage": cfg.velocity_weight * velocity_advantage * dt,
+            "linear_progress": (
+                cfg.linear_progress_weight
+                * command_gate * linear_progress * stability * dt
+            ),
+            "yaw_advantage": cfg.yaw_weight * yaw_advantage * dt,
+            "yaw_progress": (
+                cfg.yaw_progress_weight
+                * command_gate * yaw_progress * stability * dt
+            ),
+            "heading": -cfg.heading_weight * heading_penalty * dt,
+            "upright": -cfg.upright_weight * upright_penalty * dt,
             "air_time": cfg.air_time_weight * air_reward,
             "height": -cfg.height_weight * height_penalty * dt,
             "oscillation": -cfg.oscillation_weight * oscillation * dt,
@@ -957,6 +1068,12 @@ class SconeWalkEnvV2(gym.Env[np.ndarray, np.ndarray]):
             "torque": -cfg.torque_weight * torque_penalty * dt,
             "action_rate": -cfg.action_rate_weight * action_rate * dt,
             "action_magnitude": -cfg.action_magnitude_weight * action_magnitude * dt,
+            "idle_velocity": (
+                -cfg.idle_velocity_weight * idle_fraction * idle_velocity_penalty * dt
+            ),
+            "idle_action": (
+                -cfg.idle_action_weight * idle_fraction * action_magnitude * dt
+            ),
             "collision": -cfg.collision_weight * collision * dt,
         }
 
@@ -976,6 +1093,7 @@ class SconeWalkEnvV2(gym.Env[np.ndarray, np.ndarray]):
 
         diagnostics = {
             "stability": stability, "forward": forward,
+            "linear_progress": linear_progress, "yaw_progress": yaw_progress,
             "vx": float(linear[0]), "vy": float(linear[1]),
             "yaw_rate": float(angular[2]), "heading_error": heading_error,
             "height": height, "stance_contacts": int(contact.sum()),
@@ -1179,6 +1297,7 @@ __all__ = [
     "WalkConfig",
     "mirror_action",
     "mirror_observation",
+    "training_walk_config",
 ]
 
 
@@ -1508,6 +1627,7 @@ def _env_factory(args: Any, index: int, curriculum: str):
             terrain_seed=args.terrain_seed + index,
             standing_pose_degrees=args.standing_pose_degrees,
             fixed_command=fixed,
+            walk_config=training_walk_config(curriculum),
         )
 
     return build
@@ -1525,14 +1645,12 @@ def _bar(value: float, scale: float, width: int = 18) -> str:
 
 
 def run_check(args: Any) -> int:
+    env = _env_factory(args, 0, args.curriculum)()
     if args.mirror != "auto":
         probability = 1.0 if args.mirror == "on" else 0.0
-        walk = WalkConfig(mirror_probability=probability)
-    else:
-        walk = None
-    env = _env_factory(args, 0, args.curriculum)()
-    if walk is not None:
-        env.walk_config = walk
+        env.walk_config = replace(
+            env.walk_config, mirror_probability=probability
+        )
     observation, _ = env.reset(seed=args.seed)
 
     contact_steps = np.zeros(6)
@@ -1786,7 +1904,7 @@ def build_parser():
     train.add_argument("--entropy-coefficient", type=float, default=0.0)
     train.add_argument("--max-grad-norm", type=float, default=0.5)
     train.add_argument("--sde-sample-freq", type=int, default=4)
-    train.add_argument("--log-std-init", type=float, default=-1.5)
+    train.add_argument("--log-std-init", type=float, default=-2.5)
     train.add_argument(
         "--eval-every", type=int, default=None,
         help="nominal fixed-command evaluation interval; defaults to checkpoint interval",

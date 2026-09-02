@@ -1,12 +1,14 @@
 # `walk_v2` PPO 학습 분석 (2026-09-02)
 
-이 문서는 현재 실행 중인 `walk-v2_full_20260902_103338` 학습을 코드, TensorBoard,
+이 문서는 최초 분석 당시 실행 중이던 `walk-v2_full_20260902_103338` 학습을 코드, TensorBoard,
 `monitor.csv`, 체크포인트 내부값, 고정 명령 재생으로 분석한 기록이다. 분석 시점의
 체크포인트는 `scone_walk_v2_35399646_steps.zip`이고, 원격 학습은 중단하거나 설정을
 바꾸지 않았다. 따라서 이후 총 step은 계속 증가할 수 있다.
 
-분석 기준 Git commit은 `4e449e2`다. 이 문서는 원인과 재학습 설계를 제시하지만 PPO
-환경이나 실행 중인 학습을 수정하지는 않는다.
+§1~§9의 최초 분석 기준 Git commit은 `4e449e2`다. 이후 §10에서 1차 안정화,
+§11에서 보상·curriculum·학습/재생 환경을 다시 설계했다. 이미 실행 중인 원격
+프로세스는 중단하거나 덮어쓰지 않았으므로, 그 프로세스에는 후속 코드가 적용되지
+않는다.
 
 ---
 
@@ -673,3 +675,296 @@ action std     6.37
 매우 길다. 다만 이번 수정·문서화 작업에서는 기존 프로세스를 멈추지 않았다. 새 run을
 같은 호스트에서 정상 env 수로 시작하려면 기존 run을 graceful pause해 CPU를 확보하는
 운영 결정이 별도로 필요하다.
+
+---
+
+## 11. PPO 보상·curriculum 2차 재설계
+
+1차 안정화는 PPO의 행동 분포와 동역학 누적 오류를 고쳤지만, reward가 요구한 목표
+자체에는 여전히 큰 결함이 있었다. `walk_v2`의 82차원 관측과 18차원 residual 의미는
+그대로 보존하면서 다음 네 부분을 다시 설계했다.
+
+1. 정지해도 쌓이던 tracking/upright 상수 보상을 제거한다.
+2. 학습용 domain randomization과 명목 replay/joystick 환경을 분리한다.
+3. 한 번에 세 축을 섞던 명령 sampling을 단일 primitive 중심 curriculum으로 바꾼다.
+4. 초기 residual 탐색 진폭을 낮추고, 검증된 `tripod-gait`를 기본 scaffold로 사용한다.
+
+### 11.0 1차 안정화 후 최신 run도 실패했는가
+
+그렇다. 1차 안정화 코드를 사용해 2026-09-02 16:17에 시작한
+`walk-v2_full_20260902_161722`도 별도로 확인했다. 이 run은 bounded gSDE와 motor
+randomization 복구는 포함하지만, 여전히 첫 step부터 `full`, reference는
+`hardcoded`, `log_std_init=-1.5`, 구 reward를 사용한다.
+
+원격 6,599,934-step 평가와 학습 로그는 다음 상태였다.
+
+| 항목 | zero residual | 6.6M PPO |
+| --- | ---: | ---: |
+| fixed score | **0.892769** | 0.846008 |
+| tracking error | **0.100033** | 0.103831 |
+| action saturation | 0% | **84.22%** |
+| 방향 실패 | 1 | 1 |
+| rollout action 평균 절댓값 | - | 0.946 |
+| rollout latent 평균 절댓값 | - | 5.96 |
+
+KL guard는 실제로 작동했지만 여러 update가 첫 epoch의 첫 단계부터 KL 0.03~0.07로
+조기 종료됐다. 최근 std는 0.183, episode return은 약 42.6이었으나, 이것은
+§11.2에서 설명한 정지/생존 상수 보상이 포함된 수치라 command tracking 개선을 뜻하지
+않는다.
+
+로컬에 있던 4,699,953-step checkpoint도 명목 hardcoded 환경에서 3 seed, 명령당
+5초로 재생했다.
+
+| 항목 | zero residual | 4.7M PPO |
+| --- | ---: | ---: |
+| fixed score | **0.896339** | 0.845704 |
+| tracking error | **0.099929** | 0.108591 |
+| heading error | **0.117265** | 0.152365 |
+| action saturation | 0% | **81.71%** |
+| action 평균 절댓값 | 0 | **0.9533** |
+
+`vx=0.25`에서 속도는 zero `0.0106 m/s`, PPO `0.0161 m/s`로 조금 늘었지만 목표
+`0.25 m/s`에는 모두 크게 못 미쳤고, PPO는 residual 대부분을 끝까지 밀어 붙였다.
+`vy=0.10`에서도 PPO의 실제 `vy`는 `0.0014 m/s`에 그쳤다.
+
+고정 평가 보존 로직도 실패를 올바르게 잡았다. `best_candidate`는 99,999 step의
+score 0.892240으로 baseline 0.892769보다 낮고 방향 실패가 3개라, 6.6M까지
+`best_model.zip`은 생성되지 않았다. 따라서 1차 수정만 더 오래 학습하는 것으로는
+해결되지 않으며 reward/curriculum/reference를 함께 바꿔 새 run을 시작해야 한다.
+이 확인 과정에서 원격 프로세스는 중단하거나 변경하지 않았다.
+
+### 11.1 기준 모션 재측정과 선택
+
+학습 없이 residual을 모두 0으로 놓고 flat/standard/명목 동역학에서 3개 seed, 명령당
+5초씩 `idle`, `vx=0.10/0.25/0.50`, `vy=0.10`, `yaw=0.40`을 측정했다.
+
+| reference | fixed score | 평균 tracking error | 평균 heading error | 방향 실패 수 |
+| --- | ---: | ---: | ---: | ---: |
+| `none` | 0.880219 | 0.11445 | 0.16734 | 3 |
+| `hardcoded` | 0.896339 | 0.09993 | 0.11727 | 2 |
+| `tripod-gait` | **0.904780** | **0.09050** | 0.14840 | **0** |
+| `scone-gait` | 0.883466 | 0.11148 | 0.15890 | 3 |
+
+`tripod-gait`만 시험한 모든 활성 축에서 명령과 같은 방향을 냈다. 예를 들어
+`vx=0.50`에서 `0.129 m/s`, `vy=0.10`에서 `0.031 m/s`, `yaw=0.40`에서
+`0.102 rad/s`였다. 반면 `hardcoded`는 lateral stride가 없고 `scone-gait`는 현재
+전진 scaffold가 너무 약하다. 따라서 새 PPO의 학습 기준은 `tripod-gait`다.
+`hardcoded`, `scone-gait`, `none`은 비교 실험 선택지로 남겨 두지만 새 장기 학습의
+권장 설정은 아니다.
+
+### 11.2 정지 보상 문제의 직접 재현
+
+구 reward에서 `none` reference가 아무 움직임 없이 5초를 버텼을 때 return은 다음과
+같았다.
+
+| 명령 | 실제 속도 | 구 reward return |
+| --- | ---: | ---: |
+| idle | 0 | +21.97 |
+| `vx=0.10` | 0 | +20.92 |
+| `vx=0.25` | 0 | +16.96 |
+| `vx=0.50` | 0 | +12.59 |
+
+즉 PPO는 이동 명령을 무시해도 매초 큰 점수를 받았다. yaw, heading, upright의 양의
+기본값까지 더해져 residual을 적극적으로 학습하는 것보다 넘어지지 않고 서 있는 쪽이
+쉬웠다. 2차 reward에서는 이상적인 정지 상태의 기본값을 0으로 두고, 이동 명령에서
+정지한 경우 tracking 관련 점수도 정확히 0이 되게 했다.
+
+### 11.3 새 명령 추종 공식
+
+몸체 평면 속도를 `v`, 평면 명령을 `c`, yaw rate와 명령을 각각 `ω`, `ω*`라 한다.
+선속도 tracking은 정지 기준과의 차이인 advantage다.
+
+```text
+A_v = exp(-||v-c||² / σ_v²) - exp(-||c||² / σ_v²)
+σ_v = 0.15 m/s
+```
+
+- `v=0`이면 명령 크기와 관계없이 `A_v=0`이다.
+- `v=c`이면 양수다.
+- overspeed와 lateral drift는 `||v-c||`에 함께 들어가므로 감점된다.
+
+명령 방향의 progress는 다음처럼 `[-1, 1]`로 제한한다.
+
+```text
+P_v = clip((v·c) / ||c||², -1, 1)  if ||c|| > 0
+P_v = 0                              otherwise
+```
+
+목표 속도에 도달하면 1, 반대 방향이면 음수다. yaw도 같은 구조다.
+
+```text
+A_ω = exp(-(ω-ω*)² / σ_ω²) - exp(-(ω*)² / σ_ω²)
+P_ω = clip(ω/ω*, -1, 1)  if |ω*| > 0, otherwise 0
+σ_ω = 0.20 rad/s
+```
+
+기울기와 진동으로 만든 stability gate는 progress에만 곱한다. command filter가 0에서
+막 움직이기 시작할 때 `P_v`, `P_ω`의 작은 분모로 잡음이 증폭되지 않도록 명령 gate
+`C=clip(command_activity/0.05, 0, 1)`도 함께 곱한다.
+
+```text
+U = min(25, ||gravity_xy||² / 0.25²)
+O = (vz/0.30)² + (roll_rate/0.80)² + (pitch_rate/0.80)²
+G = exp(-(U+O))²
+
+r_motion / dt = 2.0 A_v + 2.0 C P_v G + 0.8 A_ω + 0.6 C P_ω G
+```
+
+따라서 몸을 던져 순간 속도를 내더라도 progress 보상은 작아지고, progress 자체가
+bounded라 무제한 overspeed 이득이 생기지 않는다. heading과 upright는 더 이상 양의
+생존 보상이 아니라 각각 `-0.25 heading_error²/0.35²`, `-0.5 U`의 비용이다.
+
+idle은 명령 활성도가 0.05 아래일 때만 별도 비용이 켜진다.
+
+```text
+idle_fraction = 1 - C
+idle_velocity_cost = min(4, ||v||²/0.04² + ω²/0.08²)
+
+r_idle / dt = -0.75 idle_fraction idle_velocity_cost
+              -0.15 idle_fraction mean(action²)
+```
+
+접촉 충격은 수직력 증가량을 `dt`로 한 번 더 나누던 식을 제거했다.
+
+```text
+impact = mean((max(F_t - F_(t-1), 0) / 40 N)²)
+r_impact / dt = -0.1 impact
+```
+
+air-time 보상은 명령 활성도만으로 켜지지 않고 `max(0, P_v, P_ω)`를 곱한다. 따라서
+제자리에서 다리만 흔드는 것으로 air-time 점수를 모을 수 없다. 몸체 높이는 기준보다
+낮아진 양만 벌해 더 높은 안정 자세를 방해하지 않는다.
+
+### 11.4 primitive 중심 명령 curriculum
+
+명령 범위도 현재 scaffold가 실제로 만들 수 있는 속도에서 시작하도록 낮췄다.
+82차원 checkpoint 호환을 위해 관측 정규화 분모 `[0.70, 0.25, 0.90]`은 바꾸지
+않았다.
+
+| 단계 | `|vx|` | `|vy|` | `|yaw|` | sampling 방식 |
+| --- | ---: | ---: | ---: | --- |
+| easy | 0.15 | 0 | 0 | 전진/후진 한 축만, 90% 전진 |
+| medium | 0.30 | 0.08 | 0.35 | 55% x, 20% y, 20% yaw, 5% x+yaw |
+| full | 0.50 | 0.15 | 0.65 | 35% x, 15% y, 15% yaw, 20% x+yaw, 15% xyz |
+
+각 활성 축은 0 근처의 의미 없는 작은 명령을 피하도록 최소 크기
+`[0.04 m/s, 0.025 m/s, 0.10 rad/s]`에서 sampling한다. 모든 단계에서 15% idle과
+2~5초 hold, 0.30초 command filter는 유지한다.
+
+### 11.5 학습과 재생 domain randomization 분리
+
+이전 `WalkConfig()` 기본값은 full randomization이었다. 이 때문에 학습뿐 아니라
+`enjoy`, 실시간 원격 중계, 조이스틱 PPO 조종에서도 다음이 매 episode 적용됐다.
+
+- 초기 관절 `σ=4°`, 임의 yaw
+- 2~5초마다 최대 `0.25 m/s` base push
+- 관측 noise `0.01`, 한 step action delay 50%
+- mass 0.90~1.10, friction 0.70~1.30, strength 0.85~1.15
+
+이것은 같은 checkpoint를 열어도 화면이 매번 다르고 의도하지 않은 외란으로 흔들리는
+직접 원인이었다. 이제 `WalkConfig()` 기본은 mass/friction/strength=1, push/noise/
+delay/mirror=0인 명목 replay다. 학습 factory만 `training_walk_config(stage)`를 호출한다.
+
+| 항목 | easy | medium | full |
+| --- | ---: | ---: | ---: |
+| 초기 관절 noise | 1° | 2° | 4° |
+| base push | 0 | 0.08 m/s | 0.15 m/s |
+| 관측 noise | 0.002 | 0.005 | 0.01 |
+| action delay 확률 | 10% | 25% | 50% |
+| mass scale | 0.98~1.02 | 0.95~1.05 | 0.90~1.10 |
+| friction scale | 0.90~1.10 | 0.80~1.20 | 0.70~1.30 |
+| strength scale | 0.95~1.05 | 0.90~1.10 | 0.85~1.15 |
+
+좌우 mirror 50%와 초기 yaw randomization은 학습의 세 단계에서만 유지한다. full의
+push도 기존 0.25에서 0.15 m/s로 낮춰, robustification이 명령 학습 자체를 덮지 않게
+했다.
+
+### 11.6 초기 행동 탐색 축소
+
+1차 bounded PPO의 `log_std_init=-1.5`는 분포 std 약 0.223이었지만 512차원 gSDE
+feature가 합쳐진 실제 초기 action 평균 절댓값은 약 0.53이었다. residual scale
+20~26°에 곱하면 아직 큰 무작위 관절 이동이다. 새 기본값은 다음과 같다.
+
+```text
+log_std_init = -2.5
+initial std  ≈ 0.0821
+```
+
+64-step 실제 학습에서 rollout action 평균 절댓값은 0.250, 최대 0.595,
+`|action|>=0.98` 포화율은 0%였다. deterministic actor mean은 평균 0.00273으로 거의
+zero residual에서 시작했다. 나머지 PPO guard는 learning rate `1e-4`, epoch 3,
+target KL 0.02, entropy 0, gradient norm 0.5를 유지한다.
+
+### 11.7 실제 검증 결과
+
+새 reward에서 5초 check를 다시 실행했다.
+
+| reference/명령 | 실제 vx | return |
+| --- | ---: | ---: |
+| `none`, `vx=0.15` | 0.000 m/s | **-0.002** |
+| `tripod-gait`, idle | 0.000 m/s | -0.003 |
+| `tripod-gait`, `vx=0.15` | 0.012 m/s | **+0.987** |
+
+정지 정책의 구 reward `+16.96` 같은 수치가 사라졌고, 실제 같은 방향 progress를 내는
+reference만 양의 점수를 얻는다.
+
+이어 easy/tripod-gait에서 1 env, 1,024 step, 256-step rollout으로 짧게 PPO를
+실행했다. 이것은 성능 완료 학습이 아니라 update/저장/evaluation 배관 검사다.
+
+| 항목 | 결과 |
+| --- | ---: |
+| action saturation | 전 rollout 0% |
+| action std | 0.0821 |
+| 최대 approx KL | 0.004255 |
+| 마지막 approx KL | 0.001073 |
+| 최대 clip fraction | 0.0143 |
+| zero-residual fixed score | 0.904158 |
+| step 512 policy score | **0.904511, 승격 성공** |
+| step 1,024 policy score | **0.905513, 갱신 성공** |
+| 방향 실패 | 0 |
+
+1,024 step의 작은 차이는 보행 성능이 완성됐다는 증거가 아니다. 다만 이전 run의
+KL 0.85, clip fraction 0.70, 포화 95%와 달리 PPO update가 bounded이고, 기준을
+넘은 512-step 모델을 승격한 뒤 더 나은 1,024-step 모델로 `best_model.zip`을
+갱신하는 계약이 실제로 동작했다. 직전 reward 후보에서는 512-step 모델이 기준보다
+낮아 승격이 거부되기도 했으므로, 통과/거부 양쪽 경로를 모두 실제 실행으로 확인했다.
+
+다음 회귀 검사를 포함해 전체 테스트 173개가 통과했다.
+
+- replay 기본값은 명목 동역학이고 학습 randomization은 별도 profile이다.
+- easy는 x 한 축 primitive만 sampling한다.
+- 비영 명령에서 정지는 tracking 점수 0이다.
+- 반대 방향 이동은 정지보다 낮은 점수다.
+- idle drift와 idle residual은 모두 음의 비용이다.
+- motor randomization은 reset마다 nominal에서 다시 계산된다.
+
+### 11.8 재학습 운영 기준
+
+새 설계는 관측 shape 82와 residual action 18차원을 유지하므로 구 V2 checkpoint의
+분석 재생은 가능하다. 그러나 reward, command 분포, randomization, policy 분포의
+의미가 모두 바뀌었으므로 구 checkpoint를 resume해서 새 학습에 섞으면 안 된다.
+
+새 run은 다음처럼 `tripod-gait + easy`로 시작한다.
+
+```bash
+python -m src.rl.walk_v2 \
+  --reference-motion tripod-gait \
+  --stance standard \
+  --terrain flat \
+  train \
+  --curriculum easy \
+  --timesteps 2000000 \
+  --checkpoint-every 100000 \
+  --eval-every 100000 \
+  --output runs/walk-v2-redesign-easy \
+  --tensorboard-log runs/walk-v2-redesign-easy/tensorboard
+```
+
+100k마다 §7.1 gate와 `best_model_metrics.json`을 보고, easy에서 전진 명령 개선이
+반복 seed로 확인된 뒤 medium, 그 뒤 full로 넓힌다. 기존 원격 run은 이 작업에서
+계속 건드리지 않았다. 현재 CPU를 사용 중인 `walk-v2_full_20260902_161722`에 새
+설계가 자동 적용되지는 않으므로, 같은 원격 CPU로 새 run을 실행하려면 먼저 사용자가
+이 run을 graceful pause할지 결정해야 한다.
+
+마지막으로 이 검증은 headless MuJoCo 수치와 짧은 학습에 대한 것이다. 장시간 GUI
+움직임, 여러 terrain, 실물 안전성과 sim-to-real 성능은 아직 증명하지 않는다.
