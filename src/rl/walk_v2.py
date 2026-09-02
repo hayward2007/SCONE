@@ -107,15 +107,24 @@ class RewardConfig:
     """Reward weights and tolerances. All terms are scaled by the control step."""
 
     # tracking
-    linear_velocity_sigma: float = 0.20
+    # Wide enough that the exponential still has slope when the policy is only
+    # half way to a 0.7 m/s command; the progress term carries the rest.
+    linear_velocity_sigma: float = 0.30
     yaw_velocity_sigma: float = 0.25
     heading_error_sigma: float = 0.20          # was 0.60 rad (34 deg) -- far too loose
     velocity_weight: float = 2.0
     yaw_weight: float = 0.8
     heading_weight: float = 1.0
-    # A linear progress term that does not saturate, so the policy still gains
-    # from going faster once it is inside the exponential's shoulder.
-    progress_weight: float = 1.5
+    # Speed is rewarded without a ceiling: there is no fastest speed the policy
+    # is asked to stop at. The term is linear in the forward component and
+    # multiplied by a stability gate in [0, 1], so going faster always pays
+    # provided the body stays level and settled, and pays nothing at all while
+    # tumbling. That is what keeps an uncapped term from turning into a dive.
+    speed_weight: float = 4.0
+    # The gate: uprightness and body oscillation, each already normalised.
+    # Squaring makes the penalty for losing posture bite before the speed
+    # reward can compensate for it.
+    stability_gate_power: float = 2.0
 
     # posture
     projected_gravity_sigma: float = 0.25
@@ -131,7 +140,11 @@ class RewardConfig:
 
     # gait quality
     air_time_target: float = 0.25              # s
-    air_time_weight: float = 0.6
+    # Bootstraps stepping early, then gets out of the way: at weight 0.6 it
+    # summed to 6.2 against 1.7 for speed on a slow rollout, which makes
+    # marching in place competitive with travelling. Sized so speed overtakes it
+    # as soon as the policy is actually moving.
+    air_time_weight: float = 0.25
     inactivity_seconds: float = 1.0
     inactivity_weight: float = 1.0
     load_share_weight: float = 0.3
@@ -189,12 +202,24 @@ class WalkConfig:
 
 # Command ranges [|vx|, |vy|, |yaw|]. The reference gait is configured to be
 # able to reach the top of each stage; that was the missing piece before.
+# The open-loop reference plateaus near 0.20 m/s: pushing cadence to 3.6 Hz and
+# stride to 0.15 m only moves it from 0.116 to 0.203 while the fraction of the
+# commanded speed actually realised falls from 64 to 19 percent. That plateau is
+# the scaffold, NOT the policy's limit -- a residual of 20-26 degrees on 18
+# joints can synthesise motion the inverse kinematics never generates, and the
+# previous policy reached about 0.5 m/s against a far weaker reference.
+#
+# So the ceiling is set by the target, not by the scaffold. What must not happen
+# is the first design's failure, where the exponential tracking term went flat
+# far from the command and left no gradient; that is handled by the normalised,
+# non-saturating progress term and a wider tracking sigma rather than by
+# lowering the command.
 CURRICULUM_RANGES: dict[str, np.ndarray] = {
-    "easy": np.array([0.12, 0.00, 0.00]),
-    "medium": np.array([0.22, 0.08, 0.50]),
-    "full": np.array([0.35, 0.15, 0.90]),
+    "easy": np.array([0.20, 0.00, 0.00]),
+    "medium": np.array([0.45, 0.15, 0.60]),
+    "full": np.array([0.70, 0.25, 0.90]),
 }
-OBSERVATION_COMMAND_SCALE = np.array([0.35, 0.15, 0.90])
+OBSERVATION_COMMAND_SCALE = np.array([0.70, 0.25, 0.90])
 
 _OBS_DIM = 82
 
@@ -343,8 +368,12 @@ class SconeWalkEnvV2(gym.Env[np.ndarray, np.ndarray]):
             dtype=np.float64,
         )
         self._motion_profile = motion_profile_for_standing_pose(self.default_degrees)
+        # Authority, not correction. To exceed the reference's 0.2 m/s plateau
+        # the policy has to be able to rewrite the stride, not merely trim it:
+        # 20 degrees at the proximal joint is about 0.10 m of extra foot travel
+        # on a 0.29 m leg, comparable to the whole reference stride.
         self.residual_scale_degrees = np.array(
-            [14.0] * 6 + [16.0] * 6 + [18.0] * 6, dtype=np.float64
+            [20.0] * 6 + [22.0] * 6 + [26.0] * 6, dtype=np.float64
         )
 
         self._reference_gait: TripodGait | SconeGait | None = None
@@ -354,12 +383,15 @@ class SconeWalkEnvV2(gym.Env[np.ndarray, np.ndarray]):
                 model_path=self.model_path,
                 config=GaitConfig(
                     control_frequency=1.0 / self.control_dt,
-                    # Sized so the reference can reach the top of the command
-                    # range: u_max = stride * f / duty = 0.11 * 1.2 / 0.5.
-                    cycle_frequency=1.2,
+                    # The best measured open-loop operating point: 2.0 Hz with
+                    # a 0.13 m stride reaches 0.186 m/s and stays upright
+                    # (min uprightness 0.999). Faster cadence buys almost
+                    # nothing open loop, so the policy is expected to supply the
+                    # rest rather than the scaffold.
+                    cycle_frequency=2.0,
                     duty_factor=0.5,
-                    step_height=0.030,
-                    max_stride=0.110,
+                    step_height=0.035,
+                    max_stride=0.130,
                     max_lateral_stride=0.070,
                     max_vx=float(OBSERVATION_COMMAND_SCALE[0]),
                     max_vy=float(OBSERVATION_COMMAND_SCALE[1]),
@@ -563,8 +595,10 @@ class SconeWalkEnvV2(gym.Env[np.ndarray, np.ndarray]):
         phase_sine = math.sin(2.0 * math.pi * self._phase)
         # Canonical +vx must advance the chassis toward its own -x, which the
         # legacy stride convention produces with a positive offset.
-        forward_scale = float(np.clip(self._command[0] / 0.35, -1.0, 1.0))
-        yaw_scale = float(np.clip(self._command[2] / 0.90, -1.0, 1.0))
+        forward_scale = float(np.clip(
+            self._command[0] / OBSERVATION_COMMAND_SCALE[0], -1.0, 1.0))
+        yaw_scale = float(np.clip(
+            self._command[2] / OBSERVATION_COMMAND_SCALE[2], -1.0, 1.0))
         lead = set(TRIPOD_B)
         for motor_id in Actuator.Index.UPPER:
             tripod_sign = -1.0 if motor_id in lead else 1.0
@@ -597,14 +631,24 @@ class SconeWalkEnvV2(gym.Env[np.ndarray, np.ndarray]):
         linear, angular, gravity = self._base_state()
         position, _ = self._joint_state()
 
-        error = linear[:2] - self._command[:2]
-        velocity_tracking = math.exp(-float(error @ error) / cfg.linear_velocity_sigma ** 2)
+        # Tracking is one-sided on the forward axis: being at or above the
+        # commanded speed is full credit, so overshooting is never punished.
+        # Lateral velocity still tracks symmetrically, because drifting
+        # sideways is an error in either direction.
         command_speed = float(np.linalg.norm(self._command[:2]))
         if command_speed > 1e-6:
             direction = self._command[:2] / command_speed
-            progress = float(np.clip(linear[:2] @ direction, 0.0, None))
+            forward = float(linear[:2] @ direction)
+            lateral = float(linear[:2] @ np.array([-direction[1], direction[0]]))
+            shortfall = max(0.0, command_speed - forward)
         else:
-            progress = 0.0
+            direction = np.zeros(2)
+            forward = 0.0
+            lateral = float(np.linalg.norm(linear[:2]))
+            shortfall = lateral
+        velocity_tracking = math.exp(
+            -(shortfall ** 2 + lateral ** 2) / cfg.linear_velocity_sigma ** 2
+        )
         yaw_error = float(angular[2] - self._command[2])
         yaw_tracking = math.exp(-yaw_error ** 2 / cfg.yaw_velocity_sigma ** 2)
         heading_error = self._heading_error()
@@ -623,6 +667,12 @@ class SconeWalkEnvV2(gym.Env[np.ndarray, np.ndarray]):
             + (angular[0] / cfg.roll_pitch_rate_sigma) ** 2
             + (angular[1] / cfg.roll_pitch_rate_sigma) ** 2
         )
+        # Uncapped speed reward, gated by how well the body is holding itself
+        # together. The gate is 1 for a level, settled chassis and falls toward
+        # 0 as it tips or bounces, so speed bought by throwing the body away
+        # scores nothing.
+        stability = (upright * math.exp(-oscillation)) ** cfg.stability_gate_power
+        speed_reward = max(0.0, forward) * stability
 
         contact = normal > 0.0
         activity = self._command_activity()
@@ -641,12 +691,20 @@ class SconeWalkEnvV2(gym.Env[np.ndarray, np.ndarray]):
         )
         inactivity_penalty = float(np.sum(inactive)) * activity
 
-        total_normal = float(normal.sum())
-        if total_normal > 1e-6:
-            share = normal / total_normal
-            load_penalty = float(np.sum((share - 1.0 / 6.0) ** 2)) * 6.0
+        # Share is measured among the feet that are actually down. An
+        # alternating tripod stands on three feet by design, so scoring all six
+        # against 1/6 penalises the gait itself: measured, it cost 0.34
+        # reward/s during normal walking, the second largest term in the whole
+        # function and pointing the wrong way.
+        stance = normal[contact]
+        total_normal = float(stance.sum())
+        if stance.size > 1 and total_normal > 1e-6:
+            share = stance / total_normal
+            load_penalty = float(
+                np.sum((share - 1.0 / stance.size) ** 2)
+            ) * stance.size
         else:
-            load_penalty = 1.0
+            load_penalty = 0.0
         impact = np.clip(normal - self._previous_normal, 0.0, None) / dt
         impact_penalty = float(
             np.sum((impact / (cfg.impact_reference_force / 0.05)) ** 2)
@@ -665,7 +723,7 @@ class SconeWalkEnvV2(gym.Env[np.ndarray, np.ndarray]):
 
         terms = {
             "velocity": cfg.velocity_weight * velocity_tracking * dt,
-            "progress": cfg.progress_weight * progress * dt,
+            "speed": cfg.speed_weight * speed_reward * dt,
             "yaw": cfg.yaw_weight * yaw_tracking * dt,
             "heading": cfg.heading_weight * heading_tracking * dt,
             "upright": cfg.upright_weight * upright * dt,
@@ -698,6 +756,7 @@ class SconeWalkEnvV2(gym.Env[np.ndarray, np.ndarray]):
             total -= cfg.termination_penalty
 
         diagnostics = {
+            "stability": stability, "forward": forward,
             "vx": float(linear[0]), "vy": float(linear[1]),
             "yaw_rate": float(angular[2]), "heading_error": heading_error,
             "height": height, "stance_contacts": int(contact.sum()),
@@ -1234,8 +1293,11 @@ def build_parser():
     train.add_argument("--num-envs", type=int, default=16)
     train.add_argument("--checkpoint-every", type=int, default=500_000)
     train.add_argument("--keep-checkpoints", type=int, default=10)
-    train.add_argument("--n-steps", type=int, default=256)
-    train.add_argument("--batch-size", type=int, default=4096)
+    train.add_argument("--n-steps", type=int, default=512)
+    # 512 x 16 envs = 8192 samples split into 8 minibatches. One
+    # minibatch per epoch, which the previous default produced, gives
+    # PPO a single very large gradient step per epoch.
+    train.add_argument("--batch-size", type=int, default=1024)
     train.add_argument("--seed", type=int, default=0)
     train.add_argument("--device", default="auto")
     train.add_argument("--output", type=Path, default=Path("runs/walk_v2"))
