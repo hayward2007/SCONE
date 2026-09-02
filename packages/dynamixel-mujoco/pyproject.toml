@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dynamixel-mujoco"
+version = "0.1.0"
+description = "Model a DYNAMIXEL actuator in MuJoCo without double-counting gearbox loss"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+keywords = ["mujoco", "dynamixel", "robotics", "sim-to-real", "reinforcement-learning"]
+dependencies = ["mujoco>=3.0", "numpy>=1.24"]
+
+[project.scripts]
+dynamixel-mujoco-bench = "dynamixel_mujoco.bench:main"
+
+[tool.setuptools.packages.find]
+include = ["dynamixel_mujoco*"]

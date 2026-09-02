@@ -44,7 +44,11 @@ from ..locomotion import SconeGait, TripodGait, VelocityCommand
 from ..locomotion.scone_gait import SconeGaitConfig
 from ..locomotion.tripod_gait import GaitConfig
 from ..simulation.core.controller import MuJoCoController
-from ..simulation.core.model import load_model
+from ..simulation.core.model import (
+    BACKLASH_SUFFIX,
+    add_joint_backlash,
+    load_model,
+)
 from ..simulation.terrain import TerrainType
 from .motion_profile import motion_profile_for_standing_pose
 from .stance import STANCE_PRESETS, validate_standing_pose
@@ -161,6 +165,11 @@ class WalkConfig:
     max_height_drop: float = 0.15
     contact_force_threshold: float = 1.0
     stance_preset: str = "standard"            # 240/255: the measured fast posture
+    # Gear play from the e-Manual (20 arcmin on the MX-28AT, 15 on the XM430),
+    # modelled as a limited free joint in series with each actuated joint. At
+    # the arc radius that is 0.53 mm of contact position, which the policy has
+    # to be robust to because the hardware cannot remove it.
+    backlash: bool = True
 
     # symmetry and robustness
     mirror_probability: float = 0.5
@@ -249,7 +258,10 @@ class SconeWalkEnvV2(gym.Env[np.ndarray, np.ndarray]):
         )
 
         self.model = load_model(
-            self.model_path, terrain=self.terrain, terrain_seed=terrain_seed
+            self.model_path,
+            terrain=self.terrain,
+            terrain_seed=terrain_seed,
+            xml_transform=add_joint_backlash if self.walk_config.backlash else None,
         )
         self.model.opt.timestep = self.walk_config.physics_timestep
         self.data = mujoco.MjData(self.model)
@@ -276,6 +288,29 @@ class SconeWalkEnvV2(gym.Env[np.ndarray, np.ndarray]):
             name = mujoco.mj_id2name(self.model, mujoco.mjtObj.mjOBJ_GEOM, geom_id)
             if name and name.startswith("terrain_"):
                 self.ground_geom_ids.add(geom_id)
+
+        # Actuated joints, and the play joint in series with each when backlash
+        # is modelled. The X-series encoder sits on the output shaft, so the
+        # measured angle is the sum of the pair, and only the driven dof carries
+        # actuator force.
+        self._actuated_dofs: list[int] = []
+        self._play_qpos: list[int] = []
+        for motor_id in Actuator.Index.ALL:
+            name = mujoco.mj_id2name(
+                self.model, mujoco.mjtObj.mjOBJ_JOINT,
+                int(self.model.actuator_trnid[motor_id - 1, 0]),
+            )
+            joint_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_JOINT, name)
+            self._actuated_dofs.append(int(self.model.jnt_dofadr[joint_id]))
+            play_id = mujoco.mj_name2id(
+                self.model, mujoco.mjtObj.mjOBJ_JOINT, f"{name}{BACKLASH_SUFFIX}"
+            )
+            self._play_qpos.append(
+                -1 if play_id < 0 else int(self.model.jnt_qposadr[play_id])
+            )
+        self._actuated_dofs_array = np.asarray(self._actuated_dofs, dtype=np.int64)
+        self._play_qpos_array = np.asarray(self._play_qpos, dtype=np.int64)
+        self._has_play = bool((self._play_qpos_array >= 0).all())
 
         self.foot_geom_ids: list[int] = []
         for leg in range(1, 7):
@@ -473,6 +508,9 @@ class SconeWalkEnvV2(gym.Env[np.ndarray, np.ndarray]):
         velocity = np.array(
             [self.controller._joint_velocity(i) for i in Actuator.Index.ALL]
         )
+        if self._has_play:
+            # Output-shaft encoder: what the servo reports includes the play.
+            position = position + self.data.qpos[self._play_qpos_array]
         return position, velocity
 
     def _observation(self, normal: np.ndarray) -> np.ndarray:
@@ -616,7 +654,7 @@ class SconeWalkEnvV2(gym.Env[np.ndarray, np.ndarray]):
         excess = np.maximum(0.0, joint_offset - cfg.soft_joint_offset)
         joint_limit_penalty = float(np.mean(np.square(excess / math.radians(15.0))))
         torque_penalty = float(
-            np.mean(np.square(self.data.qfrc_actuator[self.root_dof_address + 6:]))
+            np.mean(np.square(self.data.qfrc_actuator[self._actuated_dofs_array]))
         ) / 4.0
         action_rate = float(np.mean(np.square(action - self._last_action)))
         action_magnitude = float(np.mean(np.square(action)))
