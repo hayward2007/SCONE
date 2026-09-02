@@ -23,6 +23,7 @@ from src.main import SCONE
 from src.simulation.terrain import TerrainType
 
 from .motion_profile import motion_profile_for_standing_pose
+from .policy_compat import checkpoint_observation_shape, is_v2_checkpoint
 from .remote_watch import _load_policy, _observation_for_policy, _validate_ppo_zip
 from .stance import SPORT_STANDING_DEGREES
 from .walk_learn import (
@@ -32,6 +33,13 @@ from .walk_learn import (
     REFERENCE_MOTION_CHOICES,
     SconeWalkEnv,
     WalkConfig,
+)
+from .walk_v2 import (
+    OBSERVATION_COMMAND_SCALE as V2_OBSERVATION_COMMAND_SCALE,
+    REFERENCE_CHOICES as V2_REFERENCE_MOTION_CHOICES,
+    SconeWalkEnvV2,
+    WalkConfig as V2WalkConfig,
+    normalize_reference_motion as normalize_v2_reference_motion,
 )
 
 
@@ -124,7 +132,7 @@ class SconeHybridController:
 
     def __init__(
         self,
-        env: SconeWalkEnv,
+        env: SconeWalkEnv | SconeWalkEnvV2,
         *,
         config: SconeHybridControlConfig | None = None,
     ) -> None:
@@ -199,7 +207,17 @@ class SconeHybridController:
                     / 360.0
                 )
             )
-        sample = self.gait.step(command, self.env.control_dt)
+        gait_command = command
+        if isinstance(self.env, SconeWalkEnvV2):
+            # V2 exposes REP-103 x-forward/y-left commands while the open-loop
+            # gait consumes the exported chassis frame (both planar axes are
+            # reversed). Keep hybrid motion aligned with the trained policy.
+            gait_command = VelocityCommand(
+                vx=-command.vx,
+                vy=-command.vy,
+                yaw_rate=command.yaw_rate,
+            )
+        sample = self.gait.step(gait_command, self.env.control_dt)
         if not sample.converged:
             raise RuntimeError(
                 "scone-gait hybrid reference IK failed for legs "
@@ -335,21 +353,42 @@ def run_rl_joystick(
 
     checkpoint_path = Path(checkpoint).expanduser().resolve()
     _validate_ppo_zip(checkpoint_path)
-    if reference_motion not in REFERENCE_MOTION_CHOICES:
+    observation_shape = checkpoint_observation_shape(checkpoint_path, device)
+    uses_v2 = is_v2_checkpoint(observation_shape)
+    if uses_v2:
+        reference_motion = normalize_v2_reference_motion(reference_motion)
+    reference_choices = (
+        V2_REFERENCE_MOTION_CHOICES if uses_v2 else REFERENCE_MOTION_CHOICES
+    )
+    if reference_motion not in reference_choices:
         raise ValueError(
             f"unknown reference motion {reference_motion!r}; "
-            f"choose from {REFERENCE_MOTION_CHOICES}"
+            f"choose from {reference_choices}"
         )
-    env = SconeWalkEnv(
-        model_path,
-        fixed_command=[0.0, 0.0, 0.0],
-        render_mode="human",
-        walk_config=WalkConfig(episode_seconds=24.0 * 60.0 * 60.0),
-        terrain=terrain,
-        terrain_seed=terrain_seed,
-        standing_pose_degrees=standing_pose_degrees,
-        reference_motion=reference_motion,
-    )
+    if uses_v2:
+        env = SconeWalkEnvV2(
+            model_path,
+            fixed_command=[0.0, 0.0, 0.0],
+            render_mode="human",
+            walk_config=V2WalkConfig(episode_seconds=24.0 * 60.0 * 60.0),
+            terrain=terrain,
+            terrain_seed=terrain_seed,
+            standing_pose_degrees=standing_pose_degrees,
+            reference_motion=reference_motion,
+        )
+        command_scale = V2_OBSERVATION_COMMAND_SCALE
+    else:
+        env = SconeWalkEnv(
+            model_path,
+            fixed_command=[0.0, 0.0, 0.0],
+            render_mode="human",
+            walk_config=WalkConfig(episode_seconds=24.0 * 60.0 * 60.0),
+            terrain=terrain,
+            terrain_seed=terrain_seed,
+            standing_pose_degrees=standing_pose_degrees,
+            reference_motion=reference_motion,
+        )
+        command_scale = OBSERVATION_COMMAND_SCALE
     policy = _load_policy(checkpoint_path, env, device)
     observation, _ = env.reset(seed=seed)
     mailbox = _VelocityMailbox()
@@ -367,9 +406,9 @@ def run_rl_joystick(
     stop_event = threading.Event()
     cli_errors: list[BaseException] = []
     limits = JoystickLimits(
-        max_vx=float(OBSERVATION_COMMAND_SCALE[0]),
-        max_vy=float(OBSERVATION_COMMAND_SCALE[1]),
-        max_yaw_rate=float(OBSERVATION_COMMAND_SCALE[2]),
+        max_vx=float(command_scale[0]),
+        max_vy=float(command_scale[1]),
+        max_yaw_rate=float(command_scale[2]),
     )
 
     def input_worker() -> None:
@@ -439,8 +478,12 @@ def run_rl_joystick(
             policy_action, _ = policy.predict(
                 policy_observation, deterministic=True
             )
-            action = neutral_gate.apply(
-                command.as_array(), policy_action, env.control_dt
+            action = (
+                policy_action
+                if uses_v2
+                else neutral_gate.apply(
+                    command.as_array(), policy_action, env.control_dt
+                )
             )
             if hybrid is not None:
                 action = hybrid.apply(command, action)

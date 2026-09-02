@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import subprocess
 import unittest
+from pathlib import Path
 from unittest.mock import patch
 
 from src.rl.inquiry import (
@@ -24,6 +25,8 @@ from src.rl.inquiry import (
     prompt_reference_motion,
     prompt_standing_pose,
     recommend_num_envs,
+    view_local_model,
+    watch_remote_job,
 )
 from src.rl.stance import STANDARD_STANDING_DEGREES
 
@@ -89,6 +92,43 @@ class RLInquiryCommandTests(unittest.TestCase):
         self.assertEqual(
             arguments[arguments.index("--output") + 1], "runs/walk_easy_test"
         )
+
+    def test_live_remote_viewer_passes_the_recorded_v2_task(self) -> None:
+        job = RemoteJob(
+            host="ssh.hayward.kim",
+            project_dir="~/Developer/SCONE",
+            run_name="walk-v2-test",
+            task="walk-v2",
+            reference_motion="hardcoded",
+        )
+        completed = subprocess.CompletedProcess([], 0)
+
+        with patch("src.rl.inquiry.subprocess.run", return_value=completed) as run:
+            result = watch_remote_job(job)
+
+        self.assertEqual(result, 0)
+        command = run.call_args.args[0]
+        self.assertEqual(command[command.index("--task") + 1], "walk-v2")
+        self.assertEqual(
+            command[command.index("--prefix") + 1], "scone_walk_v2"
+        )
+
+    def test_local_replay_routes_82_observations_to_walk_v2(self) -> None:
+        completed = subprocess.CompletedProcess([], 0)
+        with (
+            patch("src.rl.remote_watch._validate_ppo_zip"),
+            patch(
+                "src.rl.policy_compat.checkpoint_observation_shape",
+                return_value=(82,),
+            ),
+            patch("src.rl.inquiry.subprocess.run", return_value=completed) as run,
+        ):
+            result = view_local_model(Path("new-v2.zip"), episodes=1)
+
+        self.assertEqual(result, 0)
+        command = run.call_args.args[0]
+        self.assertEqual(command[command.index("-m") + 1], "src.rl.walk_v2")
+        self.assertIn("--command", command)
 
     def test_remote_command_is_detached_and_persists_pid_and_log(self) -> None:
         command = build_remote_launch_command(

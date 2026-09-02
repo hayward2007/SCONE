@@ -49,6 +49,7 @@ from ..simulation.core.model import (
     add_joint_backlash,
     load_model,
 )
+from ..simulation.core.viewer import configure_simulation_viewer
 from ..simulation.terrain import TerrainType
 from .motion_profile import motion_profile_for_standing_pose
 from .stance import STANCE_PRESETS, validate_standing_pose
@@ -440,6 +441,9 @@ class SconeWalkEnvV2(gym.Env[np.ndarray, np.ndarray]):
         self._previous_normal = np.zeros(6)
         self._reference_height = 0.0
         self._contact_force = np.zeros(6)
+        self._reference_override_degrees: np.ndarray | None = None
+        self._reference_override_blend = 0.0
+        self._reference_override_unwrapped_lower = False
         self._viewer: Any | None = None
 
     # -- frame helpers ------------------------------------------------------
@@ -469,6 +473,25 @@ class SconeWalkEnvV2(gym.Env[np.ndarray, np.ndarray]):
         return float(math.atan2(math.sin(error), math.cos(error)))
 
     # -- command ------------------------------------------------------------
+
+    def set_velocity_command(
+        self, command: np.ndarray | list[float] | tuple[float, float, float]
+    ) -> np.ndarray:
+        """Set the live canonical ``[vx, vy, yaw_rate]`` joystick command."""
+
+        parsed = np.asarray(command, dtype=np.float64)
+        if parsed.shape != (3,):
+            raise ValueError("velocity command must contain [vx, vy, yaw_rate]")
+        if not np.all(np.isfinite(parsed)):
+            raise ValueError("velocity command must contain only finite values")
+        clipped = np.clip(
+            parsed,
+            -OBSERVATION_COMMAND_SCALE,
+            OBSERVATION_COMMAND_SCALE,
+        )
+        self.fixed_command = clipped.copy()
+        self._command_target[:] = clipped
+        return clipped.copy()
 
     def _sample_command(self) -> np.ndarray:
         if self.fixed_command is not None:
@@ -546,6 +569,11 @@ class SconeWalkEnvV2(gym.Env[np.ndarray, np.ndarray]):
         if self._has_play:
             # Output-shaft encoder: what the servo reports includes the play.
             position = position + self.data.qpos[self._play_qpos_array]
+        if self._reference_override_unwrapped_lower:
+            lower_delta = position[12:] - self.default_radians[12:]
+            position[12:] = self.default_radians[12:] + (
+                lower_delta + math.pi
+            ) % (2.0 * math.pi) - math.pi
         return position, velocity
 
     def _observation(self, normal: np.ndarray) -> np.ndarray:
@@ -574,6 +602,29 @@ class SconeWalkEnvV2(gym.Env[np.ndarray, np.ndarray]):
         return observation.astype(np.float32)
 
     # -- reference and action ----------------------------------------------
+
+    def set_reference_override(
+        self,
+        motor_degrees: Sequence[float] | None,
+        *,
+        blend: float = 1.0,
+        unwrapped_lower: bool = False,
+    ) -> None:
+        """Install the replay-only fast SCONE reference used by hybrid mode."""
+
+        if motor_degrees is None:
+            self._reference_override_degrees = None
+            self._reference_override_blend = 0.0
+            self._reference_override_unwrapped_lower = False
+            return
+        parsed = np.asarray(motor_degrees, dtype=np.float64)
+        if parsed.shape != (18,) or not np.all(np.isfinite(parsed)):
+            raise ValueError("reference override must contain 18 finite degrees")
+        if not 0.0 <= blend <= 1.0:
+            raise ValueError("reference override blend must be in [0, 1]")
+        self._reference_override_degrees = parsed.copy()
+        self._reference_override_blend = float(blend)
+        self._reference_override_unwrapped_lower = bool(unwrapped_lower)
 
     def _reference_degrees(self) -> np.ndarray:
         if self._reference_gait is not None:
@@ -614,10 +665,26 @@ class SconeWalkEnvV2(gym.Env[np.ndarray, np.ndarray]):
 
     def _apply_action(self, action: np.ndarray) -> None:
         reference = self._reference_degrees()
+        if self._reference_override_degrees is not None:
+            blend = self._reference_override_blend
+            if self._reference_override_unwrapped_lower:
+                lower_reference = reference[12:]
+                lower_override = self._reference_override_degrees[12:]
+                reference[12:] = lower_reference + 360.0 * np.round(
+                    (lower_override - lower_reference) / 360.0
+                )
+            reference = (
+                (1.0 - blend) * reference
+                + blend * self._reference_override_degrees
+            )
         targets = reference + self.residual_scale_degrees * action
         targets = np.clip(
             targets, self.default_degrees - 65.0, self.default_degrees + 65.0
         )
+        if self._reference_override_unwrapped_lower:
+            targets[12:] = (
+                reference[12:] + self.residual_scale_degrees[12:] * action[12:]
+            )
         for motor_id, target in enumerate(targets, start=1):
             self.controller.set_position(motor_id, float(target))
 
@@ -846,6 +913,7 @@ class SconeWalkEnvV2(gym.Env[np.ndarray, np.ndarray]):
         self._air_time.fill(0.0)
         self._contact_seconds_since.fill(0.0)
         self._previous_normal.fill(0.0)
+        self.set_reference_override(None)
         self._command.fill(0.0)
         self._command_target = self._sample_command()
         self._next_command_step = 0
@@ -885,7 +953,38 @@ class SconeWalkEnvV2(gym.Env[np.ndarray, np.ndarray]):
         self._episode_step += 1
         truncated = self._episode_step >= self.max_episode_steps
         info = {"reward_terms": terms, "command": self._command.copy(), **diagnostics}
-        return self._observation(normal), reward, terminated, truncated, info
+        observation = self._observation(normal)
+        if self.render_mode == "human":
+            self.render()
+        return observation, reward, terminated, truncated, info
+
+    def advance_external_control(self) -> None:
+        """Keep MuJoCo and its viewer alive during legacy mode transitions."""
+
+        for _ in range(self.walk_config.frame_skip):
+            with self.controller.lock:
+                self.controller.update(self.model.opt.timestep)
+                mujoco.mj_step(self.model, self.data)
+        if self.render_mode == "human":
+            self.render()
+
+    def resume_after_external_control(self) -> np.ndarray:
+        """Re-align policy state after Drive/Climb returns to PPO Walk."""
+
+        self.fixed_command = np.zeros(3, dtype=np.float64)
+        self._command.fill(0.0)
+        self._command_target.fill(0.0)
+        self._last_action.fill(0.0)
+        self._pending_action.fill(0.0)
+        self.set_reference_override(None)
+        self._target_heading = self._canonical_yaw()
+        if self._reference_gait is not None:
+            self._reference_gait.reset(
+                phase=self._phase,
+                motor_degrees=self.default_degrees,
+            )
+        normal, _, _ = self._foot_contacts()
+        return self._observation(normal)
 
     def render(self) -> None:  # pragma: no cover - viewer only
         if self.render_mode != "human":
@@ -893,12 +992,21 @@ class SconeWalkEnvV2(gym.Env[np.ndarray, np.ndarray]):
         import mujoco.viewer
         if self._viewer is None:
             self._viewer = mujoco.viewer.launch_passive(self.model, self.data)
-        self._viewer.sync()
+            configure_simulation_viewer(
+                self._viewer,
+                self.model,
+                self.data,
+                tracking_body_id=self.root_body_id,
+            )
+        if self._viewer.is_running():
+            self._viewer.sync()
 
     def close(self) -> None:  # pragma: no cover - viewer only
         if self._viewer is not None:
             self._viewer.close()
             self._viewer = None
+        if hasattr(self, "controller"):
+            self.controller.close()
 
 
 __all__ = [
@@ -1224,6 +1332,7 @@ def run_enjoy(args: Any) -> int:
     env = SconeWalkEnvV2(
         args.model,
         curriculum=args.curriculum,
+        fixed_command=args.command,
         reference_motion=args.reference_motion,
         terrain=args.terrain,
         terrain_seed=args.terrain_seed,
@@ -1239,7 +1348,6 @@ def run_enjoy(args: Any) -> int:
             action, _ = model.predict(observation, deterministic=True)
             observation, reward, terminated, truncated, _ = env.step(action)
             total += reward
-            env.render()
             done = terminated or truncated
         print(f"episode {episode}: return {total:.2f}", flush=True)
     env.close()
@@ -1311,6 +1419,14 @@ def build_parser():
     enjoy.add_argument("--episodes", type=int, default=3)
     enjoy.add_argument("--seed", type=int, default=0)
     enjoy.add_argument("--device", default="auto")
+    enjoy.add_argument(
+        "--command",
+        type=float,
+        nargs=3,
+        metavar=("VX", "VY", "YAW"),
+        default=[0.25, 0.0, 0.0],
+        help="hold one canonical velocity command while replaying",
+    )
     enjoy.add_argument("--headless", action="store_true")
     enjoy.set_defaults(func=run_enjoy)
     return parser

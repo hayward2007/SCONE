@@ -24,9 +24,47 @@ from src.rl.walk_learn import (
     WalkConfig,
     _write_resume_pointer,
 )
+from src.rl.walk_v2 import (
+    SconeWalkEnvV2,
+    WalkConfig as WalkConfigV2,
+)
 
 
 class RemoteWatchCompatibilityTests(unittest.TestCase):
+    def test_walk_v2_live_command_uses_v2_observation_limits(self) -> None:
+        env = SconeWalkEnvV2(fixed_command=[0.0, 0.0, 0.0])
+        try:
+            accepted = env.set_velocity_command([2.0, -2.0, 2.0])
+        finally:
+            env.close()
+
+        np.testing.assert_allclose(accepted, [0.7, -0.25, 0.9])
+
+    def test_walk_v2_human_step_opens_the_render_path(self) -> None:
+        env = SconeWalkEnvV2(
+            fixed_command=[0.0, 0.0, 0.0],
+            render_mode="human",
+            walk_config=WalkConfigV2(
+                settle_seconds=0.0,
+                frame_skip=1,
+                mirror_probability=0.0,
+                initial_joint_noise_degrees=0.0,
+                initial_yaw_randomization=False,
+                mass_scale_range=(1.0, 1.0),
+                friction_scale_range=(1.0, 1.0),
+                strength_scale_range=(1.0, 1.0),
+                observation_noise=0.0,
+                action_delay_probability=0.0,
+            ),
+        )
+        try:
+            env.reset(seed=7)
+            with patch.object(env, "render") as render:
+                env.step(np.zeros(18, dtype=np.float32))
+            render.assert_called_once_with()
+        finally:
+            env.close()
+
     def test_standard_stance_starts_higher_than_sport_without_collision(self) -> None:
         measurements = {}
         for name, pose in (

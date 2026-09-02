@@ -27,6 +27,7 @@ RL_REFERENCE_MOTION_CHOICES = (
     "tripod-gait",
     "scone-gait",
     "hardcoded",
+    "none",
     "non_rl",
 )
 
@@ -94,7 +95,7 @@ def build_parser() -> argparse.ArgumentParser:
         help=(
             "residual reference used when replaying PPO; legacy checkpoints "
             "use hardcoded; tripod-gait/scone-gait require matching models; "
-            "non_rl is a legacy alias for tripod-gait"
+            "none is walk-v2 only; non_rl is a legacy alias for tripod-gait"
         ),
     )
     parser.add_argument(

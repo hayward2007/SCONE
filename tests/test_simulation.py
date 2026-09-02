@@ -67,6 +67,20 @@ class SimulationBackendTests(unittest.TestCase):
 
         self.assertEqual(arguments.rl_reference_motion, "hardcoded")
 
+    def test_direct_rl_cli_accepts_walk_v2_end_to_end_reference(self) -> None:
+        arguments = build_parser().parse_args(
+            [
+                "--control",
+                "rl",
+                "--checkpoint",
+                "policy.zip",
+                "--rl-reference-motion",
+                "none",
+            ]
+        )
+
+        self.assertEqual(arguments.rl_reference_motion, "none")
+
     def test_direct_simulation_cli_supports_language_selection(self) -> None:
         parser = build_parser()
 

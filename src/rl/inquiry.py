@@ -1327,15 +1327,21 @@ def view_local_model(
     reference_motion: str = "hardcoded",
     standing_pose_degrees: Sequence[float] = SPORT_STANDING_DEGREES,
 ) -> int:
+    from .policy_compat import checkpoint_observation_shape, is_v2_checkpoint
     from .remote_watch import _validate_ppo_zip
 
     checkpoint = checkpoint.expanduser().resolve()
     _validate_ppo_zip(checkpoint)
+    module = (
+        "src.rl.walk_v2"
+        if is_v2_checkpoint(checkpoint_observation_shape(checkpoint))
+        else "src.rl.walk_learn"
+    )
     executable = shutil.which("mjpython") or sys.executable
     process = [
         executable,
         "-m",
-        "src.rl.walk_learn",
+        module,
         "--terrain",
         terrain,
         "--terrain-seed",
@@ -1369,6 +1375,8 @@ def watch_remote_job(job: RemoteJob) -> int:
         str(RUNS_DIR / job.run_name / "checkpoints"),
         "--prefix",
         job.task_spec.checkpoint_prefix,
+        "--task",
+        job.task,
         "--terrain",
         job.terrain,
         "--terrain-seed",
