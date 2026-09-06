@@ -2002,6 +2002,25 @@ def run_enjoy(args: Any) -> int:
     return 0
 
 
+def _leg_number(value: str) -> int:
+    """argparse type for a leg number, so a typo is a usage error.
+
+    Without this the set-level check in main() raises after argparse is done
+    and the user gets a traceback instead of the one-line message argparse
+    prints for every other bad argument.
+    """
+
+    try:
+        leg = int(value)
+    except ValueError:
+        raise argparse.ArgumentTypeError(f"{value!r} is not a leg number") from None
+    if leg not in LEG_INDICES:
+        raise argparse.ArgumentTypeError(
+            f"leg {leg} does not exist; SCONE has legs {LEG_INDICES}"
+        )
+    return leg
+
+
 def _add_failure_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--failure-mode",
@@ -2054,7 +2073,7 @@ def build_parser() -> argparse.ArgumentParser:
     check = subparsers.add_parser("check", help="Report the scaffold and reward")
     check.add_argument("--curriculum", choices=tuple(CURRICULUM_RANGES), default="full")
     check.add_argument("--command", type=float, nargs=3, default=[0.06, 0.0, 0.0])
-    check.add_argument("--failed-legs", type=int, nargs="*", default=[])
+    check.add_argument("--failed-legs", type=_leg_number, nargs="*", default=[])
     check.add_argument("--steps", type=int, default=400)
     check.add_argument("--seed", type=int, default=0)
     check.add_argument(
@@ -2103,7 +2122,7 @@ def build_parser() -> argparse.ArgumentParser:
     enjoy = subparsers.add_parser("enjoy", help="Replay a saved policy")
     enjoy.add_argument("checkpoint", type=Path)
     enjoy.add_argument("--command", type=float, nargs=3, default=[0.06, 0.0, 0.0])
-    enjoy.add_argument("--failed-legs", type=int, nargs="*", default=[])
+    enjoy.add_argument("--failed-legs", type=_leg_number, nargs="*", default=[])
     enjoy.add_argument("--seconds", type=float, default=30.0)
     enjoy.add_argument(
         "--episodes", type=int, default=0,

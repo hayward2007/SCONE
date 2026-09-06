@@ -465,12 +465,54 @@ class RewardBudgetTests(unittest.TestCase):
         self.assertEqual(config.reward_budget, config.tracking_weight)
 
     def test_ending_an_episode_is_never_cheaper_than_surviving_it(self) -> None:
-        from src.rl.walk_failsafe import RewardConfig
+        from src.rl.walk_failsafe import RewardConfig, WalkConfig
 
         config = RewardConfig()
         self.assertGreaterEqual(config.termination_severity, 1.0)
         with self.assertRaises(ValueError):
             RewardConfig(termination_severity=0.5)
+        seconds = WalkConfig().episode_seconds
+        worst_survival = -config.penalty_budget * seconds
+        charge = -config.termination_severity * config.penalty_budget * seconds
+        self.assertLess(charge, worst_survival)
+
+    def test_the_termination_charge_is_actually_applied(self) -> None:
+        """Nothing terminates in practice, so this path needs forcing.
+
+        A bounded residual on a statically stable wave scaffold does not fall
+        over even at full adversarial amplitude, which is what the graded tilt
+        and support costs are for. That also means a sign error in the fall
+        check would never show up on its own.
+        """
+
+        from src.rl.walk_failsafe import RewardConfig, SconeFailsafeEnv, WalkConfig
+
+        config = RewardConfig()
+        env = SconeFailsafeEnv(
+            curriculum="full",
+            fixed_command=[0.14, 0.0, 0.0],
+            fixed_failed_legs=[5],
+            standing_pose_degrees=STANDARD_STANDING_DEGREES,
+            walk_config=WalkConfig(max_tilt_degrees=0.5),
+        )
+        env.reset(seed=0)
+        action = np.zeros(18, dtype=np.float32)
+        for step in range(env.max_episode_steps):
+            _obs, reward, terminated, _truncated, info = env.step(action)
+            if terminated:
+                remaining = (env.max_episode_steps - step) * env.control_dt
+                expected = (
+                    -config.termination_severity * config.penalty_budget * remaining
+                )
+                self.assertTrue(info["fallen"])
+                self.assertAlmostEqual(
+                    info["reward_terms"]["termination"], expected, places=6
+                )
+                self.assertLess(reward, 0.0)
+                break
+        else:
+            self.fail("a 0.5 degree tilt threshold never terminated")
+        env.close()
 
     def test_standing_still_under_a_moving_command_scores_about_nothing(self) -> None:
         from src.rl.walk_failsafe import RewardConfig
@@ -621,6 +663,14 @@ class LauncherWiringTests(unittest.TestCase):
         self.assertEqual(args.curriculum, "easy")
         self.assertEqual(args.max_failed_legs, 2)
         self.assertEqual(len(args.standing_pose_degrees), 18)
+
+    def test_a_mistyped_leg_number_is_a_usage_error(self) -> None:
+        from src.rl.walk_failsafe import build_parser
+
+        for bad in ("7", "0", "-1", "five"):
+            with self.subTest(value=bad):
+                with self.assertRaises(SystemExit):
+                    build_parser().parse_args(["check", "--failed-legs", bad])
 
     def test_the_subcommand_name_does_not_collide_with_the_velocity(self) -> None:
         # check and enjoy both define --command, so a subparser dest spelled
