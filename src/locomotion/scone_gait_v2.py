@@ -47,10 +47,10 @@ import numpy as np
 from numpy.typing import ArrayLike, NDArray
 
 from src.hardware import ControllerProtocol
-from src.kinematics import IKResult
+from src.kinematics import IKResult, RobotKinematics
 from src.kinematics.leg import DEFAULT_MODEL_PATH
 
-from .profile import MotionProfile, SPORT
+from .profile import MotionProfile, SPORT, get_profile
 from .sector_wheel import RollSolution, SectorWheelModel
 from .tripod_gait import (
     GaitConfig,
@@ -83,7 +83,7 @@ class SconeGaitV2Config(GaitConfig):
     """
 
     cycle_frequency: float = 2.0
-    duty_factor: float = 0.5
+    duty_factor: float = 0.60
     step_height: float = 0.025
     max_stride: float = 0.090
     max_lateral_stride: float | None = 0.070
@@ -134,6 +134,13 @@ class SconeGaitV2Config(GaitConfig):
     # sector, which turns 40 degrees while unloaded, needs its clearance
     # whatever fraction of the ceiling was asked for.
     swing_lift_reference_speed: float = 0.05
+    # IK is warm-started from the previous frame, and a steered leg has two
+    # solutions for the same contact.  Once a leg falls into the folded one
+    # the warm start keeps it there for the rest of the run -- measured at
+    # 86 degrees of stage-2 away from the stance branch on leg 1, with the
+    # robot riding up on that leg and stalling.  A solved stage-2 further
+    # than this from the stance pose is re-solved from the stance pose.
+    ik_branch_guard_degrees: float = 40.0
     arc_lift_tolerance: float = 0.002
     arc_scan_step: float = 2.0
 
@@ -161,6 +168,8 @@ class SconeGaitV2Config(GaitConfig):
             raise ValueError("arc_reserve_safety must be at least 1")
         if self.swing_lift_reference_speed <= 0.0:
             raise ValueError("swing_lift_reference_speed must be positive")
+        if self.ik_branch_guard_degrees <= 0.0:
+            raise ValueError("ik_branch_guard_degrees must be positive")
 
 
 class SconeGaitV2(TripodGait):
@@ -177,18 +186,81 @@ class SconeGaitV2(TripodGait):
         config: SconeGaitV2Config | None = None,
         end_effector_points: dict[int, ArrayLike] | None = None,
     ) -> None:
+        selected = config or SconeGaitV2Config()
+        resolved = get_profile(profile) if isinstance(profile, str) else profile
+        stance = self._stance_motor_degrees(resolved, model_path, selected)
+        if end_effector_points is None:
+            end_effector_points = self._infer_support_points(
+                RobotKinematics(model_path),
+                np.radians(stance - 180.0),
+            )
         super().__init__(
             controller,
-            profile,
+            resolved,
             model_path=model_path,
-            config=config or SconeGaitV2Config(),
+            config=selected,
             end_effector_points=end_effector_points,
         )
         self._wheels: SectorWheelModel | None = None
+        super().reset(motor_degrees=stance)
         self._build_wheel_model()
         self._reset_role_state()
 
     # -- setup -----------------------------------------------------------
+
+    @staticmethod
+    def _sector_window_for(
+        arc_min: float,
+        arc_max: float,
+        nominal_lower: float,
+        headroom: float,
+    ) -> tuple[float, float]:
+        """Intersect one leg's tread with the 0..360 degree actuator range."""
+
+        return (
+            max(arc_min, -nominal_lower + headroom),
+            min(arc_max, 360.0 - nominal_lower - headroom),
+        )
+
+    @classmethod
+    def _stance_motor_degrees(
+        cls,
+        profile: MotionProfile,
+        model_path: str | Path,
+        config: SconeGaitV2Config,
+    ) -> NDArray[np.float64]:
+        """Stand with each sector at the centre of the arc it can still use.
+
+        The profile pose parks every sector against the trailing end of its
+        own tread: 240 degrees of arc one way, four the other.  A leg that has
+        to roll the short way would then have to pre-index most of the arc
+        during a single swing, and the two directions would behave nothing
+        alike -- which is exactly the front/rear asymmetry that turned into a
+        heading bias.  Centring the stance pose inside the tread, and inside
+        the actuator range, makes both directions symmetric and cheap.
+
+        Rotating the sector does not change the contact height, so this moves
+        the tread under the robot without changing how it stands.
+        """
+
+        nominal = cls._profile_motor_degrees(profile)
+        probe = SectorWheelModel(
+            RobotKinematics(model_path),
+            nominal,
+            arc_lift_tolerance=config.arc_lift_tolerance,
+            arc_scan_step=config.arc_scan_step,
+        )
+        stance = nominal.copy()
+        for leg in range(1, 7):
+            geometry = probe.geometry[leg]
+            low, high = cls._sector_window_for(
+                geometry.arc_min_degrees,
+                geometry.arc_max_degrees,
+                float(nominal[leg + 11]),
+                config.motor_headroom_degrees,
+            )
+            stance[leg + 11] += 0.5 * (low + high)
+        return stance
 
     def _build_wheel_model(self) -> None:
         self._wheels = SectorWheelModel(
@@ -200,15 +272,11 @@ class SconeGaitV2(TripodGait):
         self._sector_window = np.zeros((6, 2), dtype=np.float64)
         for leg in range(1, 7):
             geometry = self._wheels.geometry[leg]
-            nominal_lower = float(self._nominal_motor_degrees[leg + 11])
-            headroom = self.config.motor_headroom_degrees
-            lower = max(
+            lower, upper = self._sector_window_for(
                 geometry.arc_min_degrees,
-                -nominal_lower + headroom,
-            )
-            upper = min(
                 geometry.arc_max_degrees,
-                360.0 - nominal_lower - headroom,
+                float(self._nominal_motor_degrees[leg + 11]),
+                self.config.motor_headroom_degrees,
             )
             margin = min(
                 self.config.arc_margin_degrees,
@@ -479,6 +547,7 @@ class SconeGaitV2(TripodGait):
             qualified = [False] * 6
 
         targets = np.empty((6, 3), dtype=np.float64)
+        bases = np.empty((6, 3), dtype=np.float64)
         stance_legs: list[int] = []
         clipped_legs = 0
 
@@ -549,12 +618,13 @@ class SconeGaitV2(TripodGait):
                 offset = self._stance_offset[index]
 
             self._swinging[index] = swinging
-            targets[index] = self.steered_foot(leg, steering) + offset
+            bases[index] = self.steered_foot(leg, steering)
+            targets[index] = bases[index] + offset
 
         self._last_stride_clip_fraction = clipped_legs / 6.0
         self._last_cycle_frequency = self.config.cycle_frequency
 
-        results, solved_targets, backoff = self._solve_ik(targets)
+        results, solved_targets, backoff = self._solve_ik(targets, bases)
         solved = self._last_angles.copy()
         for leg, result in results.items():
             if result.converged:
@@ -660,39 +730,80 @@ class SconeGaitV2(TripodGait):
     def _solve_ik(
         self,
         targets: NDArray[np.float64],
+        bases: NDArray[np.float64],
     ) -> tuple[dict[int, IKResult], NDArray[np.float64], float]:
+        # Back off toward the steered stance position this frame actually
+        # used.  Backing off toward the fully steered pose while a leg is
+        # mid-swing pulls it somewhere it was not asked to be, and the retry
+        # can be less reachable than the request.
         requested = targets.copy()
-        nominal = np.stack(
-            [
-                self.steered_foot(leg, self._steering[leg - 1])
-                for leg in range(1, 7)
-            ]
-        )
-        results = self.kinematics.inverse(
-            targets,
-            initial_angles=self._last_angles,
-            frame="body",
-            tolerance=self.config.ik_tolerance,
-            max_iterations=self.config.ik_max_iterations,
-            damping=self.config.ik_damping,
-            max_step=self.config.ik_max_step,
-        )
+        nominal = bases
+        results = self._guard_branches(targets, self._inverse(targets, self._last_angles))
         backoff = 1.0
         for _ in range(self.config.ik_stride_backoff_attempts):
             if all(result.converged for result in results.values()):
                 break
             backoff *= self.config.ik_stride_backoff_factor
             targets = nominal + (requested - nominal) * backoff
-            results = self.kinematics.inverse(
+            results = self._guard_branches(
                 targets,
-                initial_angles=self._last_angles,
-                frame="body",
-                tolerance=self.config.ik_tolerance,
-                max_iterations=self.config.ik_max_iterations,
-                damping=self.config.ik_damping,
-                max_step=self.config.ik_max_step,
+                self._inverse(targets, self._last_angles),
             )
         return results, targets, backoff
+
+    def _inverse(
+        self,
+        targets: NDArray[np.float64],
+        seed: NDArray[np.float64],
+    ) -> dict[int, IKResult]:
+        return self.kinematics.inverse(
+            targets,
+            initial_angles=seed,
+            frame="body",
+            tolerance=self.config.ik_tolerance,
+            max_iterations=self.config.ik_max_iterations,
+            damping=self.config.ik_damping,
+            max_step=self.config.ik_max_step,
+        )
+
+    def _guard_branches(
+        self,
+        targets: NDArray[np.float64],
+        results: dict[int, IKResult],
+    ) -> dict[int, IKResult]:
+        """Pull any leg that has folded into the far IK branch back out.
+
+        Steering gives the same contact two solutions, and the warm start has
+        no reason to prefer the one the rest of the gait assumes.  A leg that
+        takes the other one stops behaving like a wheel under the robot and
+        starts behaving like a strut it climbs.
+        """
+
+        tolerance = math.radians(self.config.ik_branch_guard_degrees)
+
+        def deviation(result: IKResult, leg: int) -> float:
+            return abs(
+                float(result.angles.stage2) - float(self._nominal_angles[leg + 11])
+            )
+
+        suspect = [
+            leg
+            for leg, result in results.items()
+            if not result.converged or deviation(result, leg) > tolerance
+        ]
+        if not suspect:
+            return results
+        fallback = self._inverse(targets, self._nominal_angles)
+        for leg in suspect:
+            candidate = fallback[leg]
+            if not candidate.converged:
+                continue
+            current = results[leg]
+            if not current.converged or deviation(candidate, leg) < deviation(
+                current, leg
+            ):
+                results[leg] = candidate
+        return results
 
 
 __all__ = [

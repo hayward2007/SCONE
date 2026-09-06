@@ -367,7 +367,32 @@ class RoleSplitSconeController:
         *,
         recorder: MetricsRecorder | None = None,
     ) -> None:
-        del recorder
+        # The gait stands with every sector at the centre of its tread, which
+        # is about 88 degrees from where the profile parks it.  Rolling there
+        # at the unlimited gait speed would drive the robot half a body length
+        # sideways before the first command frame, so acquire the pose under a
+        # profile limit first.
+        pose = self.gait.nominal_motor_degrees
+        trial.controller.set_all_speed(60)
+        trial.controller.set_accelerations(
+            {motor_id: 20 for motor_id in Actuator.Index.XM}
+        )
+        trial.controller.set_positions(
+            {motor_id: float(pose[motor_id - 1]) for motor_id in Actuator.Index.ALL}
+        )
+        raw_targets = {
+            motor_id: trial.controller.degrees_to_raw(
+                motor_id, float(pose[motor_id - 1])
+            )
+            for motor_id in Actuator.Index.ALL
+        }
+        if not trial.wait_until_raw_positions(
+            raw_targets,
+            tolerance=96,
+            timeout=6.0,
+            recorder=recorder,
+        ):
+            raise RuntimeError("role-split sector stance pose did not settle")
         configure_model_gait_controller(trial.controller)
 
     def update(self, command: VelocityCommand, dt: float) -> ControlDiagnostics:
