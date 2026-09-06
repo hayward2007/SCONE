@@ -179,7 +179,10 @@ class RewardConfig:
     tracking_weight: float = 3.00
 
     # -- accuracy deficits --------------------------------------------------
-    heading_error_cap: float = 0.60            # rad of error scoring full cost
+    # Half cost at this error, approaching full cost beyond it. Not a cap: a
+    # veer that the policy is ignoring keeps growing, and a clipped cost would
+    # stop telling it so.
+    heading_error_scale: float = 0.30          # rad
     heading_weight: float = 0.50
     # Heading is a *hold* objective and only means something while no turn is
     # commanded. The target integrates the commanded yaw rate, so any shortfall
@@ -248,7 +251,7 @@ class RewardConfig:
         ) <= 0.0:
             raise ValueError("every reward tolerance must be positive")
         if min(
-            self.heading_error_cap,
+            self.heading_error_scale,
             self.tilt_cap,
             self.height_cap,
             self.oscillation_cap,
@@ -386,6 +389,40 @@ def _normalized(cost: float, cap: float) -> float:
     """Map a raw penalty into ``[0, 1]`` so its weight is also its budget."""
 
     return float(np.clip(cost / cap, 0.0, 1.0))
+
+
+def _saturating(cost: float, scale: float) -> float:
+    """Map a non-negative cost into ``[0, 1)`` without ever going flat.
+
+    ``_normalized`` clips, which is right for a term the robot never drives to
+    its cap. It is wrong for one that lives past it: a clipped cost is a
+    constant charge with no gradient, so the policy is punished for a state it
+    is given no reason to leave. This reaches ``0.5`` at ``scale`` and
+    approaches one, so the weight still bounds the term's budget.
+    """
+
+    return float(cost / (cost + scale)) if cost > 0.0 else 0.0
+
+
+def _support_cost(margin: float, target: float) -> float:
+    """Cost of falling short of the target support margin.
+
+    Zero at or above the target. Enumerated over every two-leg fault, twelve
+    of fifteen leave the scaffold between -0.09 and -0.21 m, well past any
+    fixed cap, so this saturates softly rather than clipping.
+    """
+
+    return _saturating(max(0.0, target - margin), target)
+
+
+def _heading_cost(error: float, scale: float) -> float:
+    """Cost of a heading error, for the same reason.
+
+    A leg-loss veer keeps growing while the policy does nothing about it, so
+    the cost has to keep growing with it.
+    """
+
+    return _saturating(abs(error), scale)
 
 
 class SconeFailsafeEnv(gym.Env[np.ndarray, np.ndarray]):
@@ -1165,8 +1202,8 @@ class SconeFailsafeEnv(gym.Env[np.ndarray, np.ndarray]):
 
         # -- accuracy and stability deficits --------------------------------
         heading_error = self._heading_error()
-        heading_cost = self._yaw_hold_gate() * _normalized(
-            abs(heading_error), config.heading_error_cap
+        heading_cost = self._yaw_hold_gate() * _heading_cost(
+            heading_error, config.heading_error_scale
         )
         tilt = float(np.linalg.norm(gravity[:2]))
         tilt_cost = _normalized(tilt, config.tilt_cap)
@@ -1174,8 +1211,7 @@ class SconeFailsafeEnv(gym.Env[np.ndarray, np.ndarray]):
         height_cost = _normalized(
             abs(height - self._reference_height), config.height_cap
         )
-        target = config.support_margin_target
-        support_cost = _normalized(target - margin, 2.0 * target)
+        support_cost = _support_cost(margin, config.support_margin_target)
 
         oscillation = (
             (linear[2] / 0.30) ** 2

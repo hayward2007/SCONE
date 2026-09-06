@@ -521,6 +521,44 @@ class RewardBudgetTests(unittest.TestCase):
         credit = math.exp(-(0.12**2) / config.linear_velocity_sigma**2)
         self.assertLess(credit * config.tracking_weight, 0.75)
 
+    def test_the_support_cost_keeps_a_gradient_where_the_robot_goes(self) -> None:
+        """A penalty pinned at its cap teaches nothing.
+
+        Enumerating every two-leg fault, twelve of fifteen leave the scaffold
+        at a worst margin of -0.09 to -0.21 m, and the trainer samples two-leg
+        faults in a fifth of its episodes. A cost that saturates at -target
+        would be a flat, unavoidable charge across all of them -- exactly the
+        dead signal that the heading term had.
+        """
+
+        from src.rl.walk_failsafe import RewardConfig, _support_cost
+
+        config = RewardConfig()
+        target = config.support_margin_target
+        self.assertAlmostEqual(_support_cost(target, target), 0.0)
+        deep = [-0.05, -0.10, -0.15, -0.21, -0.30]
+        costs = [_support_cost(margin, target) for margin in deep]
+        for lower, higher in zip(costs, costs[1:]):
+            self.assertGreater(
+                higher, lower, "the support cost stopped responding to margin"
+            )
+        self.assertLess(max(costs), 1.0)
+        # Still sensitive where a single-leg fault actually lives.
+        self.assertGreater(_support_cost(0.0, target), 0.3)
+        self.assertLess(_support_cost(0.030, target), 0.25)
+
+    def test_the_heading_cost_keeps_a_gradient_past_its_scale(self) -> None:
+        from src.rl.walk_failsafe import RewardConfig, _heading_cost
+
+        config = RewardConfig()
+        errors = [0.1, 0.3, 0.6, 1.0, 2.0, 3.0]
+        costs = [
+            _heading_cost(error, config.heading_error_scale) for error in errors
+        ]
+        for lower, higher in zip(costs, costs[1:]):
+            self.assertGreater(higher, lower)
+        self.assertLess(max(costs), 1.0)
+
     def test_a_zero_entropy_coefficient_is_refused(self) -> None:
         from src.rl.walk_failsafe import _ppo_kwargs, build_parser
 
