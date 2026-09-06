@@ -643,6 +643,40 @@ class PromotionGateTests(unittest.TestCase):
 
         return build
 
+    def test_the_gate_scores_only_commands_the_curriculum_trains(self) -> None:
+        """A command outside the curriculum is not evidence about the policy.
+
+        The gate used a fixed grid. On easy, whose range is 0.06 m/s forward
+        only, that grid asked for 0.12 m/s and a 0.25 rad/s turn -- neither
+        ever sampled in training. Measured on one run, the worst-case score it
+        reported was 0.470 against 1.235 inside the range, so the promotion
+        criterion was decided by motion the policy was never taught.
+        """
+
+        from src.rl.walk_failsafe import CURRICULUM_RANGES, evaluation_commands
+
+        for name, ranges in CURRICULUM_RANGES.items():
+            with self.subTest(curriculum=name):
+                commands = evaluation_commands(name)
+                self.assertTrue(commands)
+                for command in commands:
+                    for value, limit in zip(command, ranges):
+                        self.assertLessEqual(
+                            abs(value), limit + 1e-9,
+                            f"{name} gate asks for {command}, range is {ranges}",
+                        )
+                # The curriculum's own maximum forward speed is always scored.
+                self.assertIn((float(ranges[0]), 0.0, 0.0), commands)
+
+    def test_the_gate_exercises_every_axis_the_curriculum_has(self) -> None:
+        from src.rl.walk_failsafe import evaluation_commands
+
+        easy = evaluation_commands("easy")
+        self.assertTrue(all(command[1] == 0.0 and command[2] == 0.0 for command in easy))
+        full = evaluation_commands("full")
+        self.assertTrue(any(command[2] > 0.0 for command in full), "no turn scored")
+        self.assertTrue(any(command[1] > 0.0 for command in full), "no lateral scored")
+
     def test_the_scaffold_baseline_is_repeatable(self) -> None:
         from src.rl.walk_failsafe import evaluate_policy_over_faults
 
@@ -681,7 +715,7 @@ class PromotionGateTests(unittest.TestCase):
         """
 
         from src.rl.walk_failsafe import (
-            EVALUATION_COMMANDS, EVALUATION_FAULTS, evaluate_policy_over_faults,
+            EVALUATION_FAULTS, evaluate_policy_over_faults, evaluation_commands,
         )
 
         zero = np.zeros(18, dtype=np.float32)
@@ -691,7 +725,8 @@ class PromotionGateTests(unittest.TestCase):
             ("overdamped", self._yaw_damper(4.0)),
         ]
         build = self._factory()
-        faults, commands = EVALUATION_FAULTS[:3], EVALUATION_COMMANDS[:2]
+        faults = EVALUATION_FAULTS[:3]
+        commands = evaluation_commands("full")[:2]
         seconds = 3.0
 
         def training_reward(act) -> float:

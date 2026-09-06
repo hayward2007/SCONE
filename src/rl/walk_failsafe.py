@@ -1483,9 +1483,30 @@ class SconeFailsafeEnv(gym.Env[np.ndarray, np.ndarray]):
 EVALUATION_FAULTS: tuple[tuple[int, ...], ...] = (
     (), (1,), (2,), (3,), (4,), (5,), (6,), (2, 5),
 )
-EVALUATION_COMMANDS: tuple[tuple[float, float, float], ...] = (
-    (0.06, 0.0, 0.0), (0.12, 0.0, 0.0), (0.0, 0.0, 0.25),
-)
+def evaluation_commands(
+    curriculum: str,
+) -> tuple[tuple[float, float, float], ...]:
+    """Commands the gate scores on, taken from the curriculum being trained.
+
+    A fixed grid asks the policy for motion it may never have been trained to
+    produce: on ``easy``, whose range is 0.06 m/s forward only, a hardcoded
+    0.12 m/s and a 0.25 rad/s turn are both outside the distribution entirely.
+    Measured on one run, that dropped the gate's worst-case score from 1.235 to
+    0.470 -- so the promotion criterion was being decided by a command the
+    policy was never taught, and improvement inside its own range could not
+    show up.
+    """
+
+    forward, lateral, yaw = (float(value) for value in CURRICULUM_RANGES[curriculum])
+    commands: list[tuple[float, float, float]] = [
+        (0.5 * forward, 0.0, 0.0),
+        (forward, 0.0, 0.0),
+    ]
+    if yaw > 0.0:
+        commands.append((0.0, 0.0, yaw))
+    if lateral > 0.0:
+        commands.append((0.5 * forward, lateral, 0.0))
+    return tuple(commands)
 
 
 def _write_json_atomic(path: Path, payload: dict[str, Any]) -> None:
@@ -1601,7 +1622,7 @@ def evaluate_policy_over_faults(
     *,
     seconds: float = 8.0,
     faults: Sequence[tuple[int, ...]] = EVALUATION_FAULTS,
-    commands: Sequence[tuple[float, float, float]] = EVALUATION_COMMANDS,
+    commands: Sequence[tuple[float, float, float]] = evaluation_commands("full"),
 ) -> dict[str, Any]:
     """Score a controller across every fault case and command, deterministically."""
 
@@ -1662,6 +1683,7 @@ class FaultEvalCallback(BaseCallback):
         every: int,
         seconds: float,
         patience: int,
+        commands: Sequence[tuple[float, float, float]],
     ) -> None:
         super().__init__()
         self.run_dir = run_dir
@@ -1669,6 +1691,7 @@ class FaultEvalCallback(BaseCallback):
         self.every = every
         self.seconds = seconds
         self.patience = patience
+        self.commands = tuple(commands)
         self.baseline: dict[str, Any] | None = None
         self.best: float | None = None
         self.failures_since_promotion = 0
@@ -1677,7 +1700,10 @@ class FaultEvalCallback(BaseCallback):
     def _on_training_start(self) -> None:
         zero = np.zeros(18, dtype=np.float32)
         self.baseline = evaluate_policy_over_faults(
-            self.make_env, lambda _observation: zero, seconds=self.seconds
+            self.make_env,
+            lambda _observation: zero,
+            seconds=self.seconds,
+            commands=self.commands,
         )
         _write_json_atomic(self.run_dir / "scaffold_baseline.json", self.baseline)
         print(
@@ -1697,7 +1723,7 @@ class FaultEvalCallback(BaseCallback):
             return np.asarray(action, dtype=np.float32)
 
         result = evaluate_policy_over_faults(
-            self.make_env, act, seconds=self.seconds
+            self.make_env, act, seconds=self.seconds, commands=self.commands
         )
         assert self.baseline is not None
         beats = bool(
@@ -1980,6 +2006,7 @@ def run_train(args: Any) -> int:
             every=args.eval_every,
             seconds=args.eval_seconds,
             patience=args.eval_patience,
+            commands=evaluation_commands(args.curriculum),
         ),
         GracefulStopCallback(run_dir, lambda: stop_requested),
     ]
