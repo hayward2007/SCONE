@@ -433,6 +433,67 @@ class RewardBudgetTests(unittest.TestCase):
             _ppo_kwargs(args)
 
 
+class PromotionGateTests(unittest.TestCase):
+    """The gate decides whether a run is worth continuing, so it has to be
+    both repeatable and actually sensitive to a better controller."""
+
+    @staticmethod
+    def _factory():
+        from src.rl.walk_failsafe import SconeFailsafeEnv
+
+        def build(failed, command):
+            return SconeFailsafeEnv(
+                curriculum="full",
+                fixed_command=list(command),
+                fixed_failed_legs=list(failed),
+                standing_pose_degrees=STANDARD_STANDING_DEGREES,
+            )
+
+        return build
+
+    def test_the_scaffold_baseline_is_repeatable(self) -> None:
+        from src.rl.walk_failsafe import evaluate_policy_over_faults
+
+        zero = np.zeros(18, dtype=np.float32)
+        first = evaluate_policy_over_faults(
+            self._factory(), lambda _o: zero, seconds=1.5
+        )
+        second = evaluate_policy_over_faults(
+            self._factory(), lambda _o: zero, seconds=1.5
+        )
+        self.assertEqual(first["score"], second["score"])
+        self.assertEqual(first["worst_score"], second["worst_score"])
+
+    def test_a_better_controller_is_promoted(self) -> None:
+        """The objective has to be climbable before a run is worth starting.
+
+        walk_v3 spent 100M steps discovering that its own was not. A hand
+        written residual that only damps yaw rate -- the scaffold's known
+        defect once a leg is lost -- must beat the scaffold on both the mean
+        and the worst case, or the gate is measuring noise.
+        """
+
+        from src.rl.walk_failsafe import evaluate_policy_over_faults
+
+        zero = np.zeros(18, dtype=np.float32)
+        mirror = np.array([1, -1, 1, -1, 1, -1], dtype=np.float32)
+
+        def damp_yaw(observation: np.ndarray) -> np.ndarray:
+            action = np.zeros(18, dtype=np.float32)
+            yaw_rate = float(observation[5]) * 5.0
+            action[:6] = np.float32(np.clip(-yaw_rate * 1.5, -1.0, 1.0)) * mirror
+            return action
+
+        scaffold = evaluate_policy_over_faults(
+            self._factory(), lambda _o: zero, seconds=2.0
+        )
+        damped = evaluate_policy_over_faults(
+            self._factory(), damp_yaw, seconds=2.0
+        )
+        self.assertGreater(damped["score"], scaffold["score"])
+        self.assertGreaterEqual(damped["worst_score"], scaffold["worst_score"])
+
+
 class LauncherWiringTests(unittest.TestCase):
     def test_the_launcher_registers_the_trainer(self) -> None:
         from src.rl.inquiry import TRAINING_TASKS
