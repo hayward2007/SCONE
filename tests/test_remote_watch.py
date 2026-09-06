@@ -12,8 +12,11 @@ import mujoco
 
 from src.rl.remote_watch import (
     LocalCheckpointSource,
+    REFERENCE_MOTION_CHOICES_ALL,
     _observation_for_policy,
+    build_parser,
     mirror_checkpoint,
+    reference_motion_for_environment,
 )
 from src.rl.policy_compat import load_compatible_policy
 from src.rl.stance import SPORT_STANDING_DEGREES, STANDARD_STANDING_DEGREES
@@ -301,6 +304,62 @@ class CheckpointMirroringTests(unittest.TestCase):
             self.assertEqual(refreshed, downloaded)
             with zipfile.ZipFile(refreshed) as archive:
                 self.assertEqual(archive.read("data"), b"second")
+
+
+class ReferenceMotionCompatibilityTests(unittest.TestCase):
+    def test_viewer_accepts_the_walk_v2_end_to_end_reference(self) -> None:
+        args = build_parser().parse_args(
+            ["--local-dir", "runs", "--task", "walk-v2", "--reference-motion", "none"]
+        )
+
+        self.assertEqual(args.reference_motion, "none")
+        self.assertIn("none", REFERENCE_MOTION_CHOICES_ALL)
+
+    def test_viewer_can_be_pinned_to_every_trainer(self) -> None:
+        for task in ("auto", "walk", "walk-v2", "walk-v3"):
+            with self.subTest(task=task):
+                args = build_parser().parse_args(
+                    ["--local-dir", "runs", "--task", task]
+                )
+                self.assertEqual(args.task, task)
+
+    def test_end_to_end_reference_reaches_a_walk_v2_environment_unchanged(self) -> None:
+        self.assertEqual(
+            reference_motion_for_environment("none", task="walk-v2"), "none"
+        )
+
+    def test_end_to_end_reference_falls_back_for_walk_learn(self) -> None:
+        with patch("builtins.print") as printed:
+            adapted = reference_motion_for_environment("none", task="walk")
+
+        self.assertEqual(adapted, "hardcoded")
+        self.assertIn("walk", printed.call_args.args[0])
+
+    def test_gait_reference_falls_back_for_walk_v3(self) -> None:
+        # v3 scaffolds the hand-authored gait only, so an IK-gait run record
+        # must not abort its own viewer.
+        with patch("builtins.print") as printed:
+            adapted = reference_motion_for_environment("tripod-gait", task="walk-v3")
+
+        self.assertEqual(adapted, "hardcoded")
+        self.assertIn("walk-v3", printed.call_args.args[0])
+        self.assertEqual(
+            reference_motion_for_environment("none", task="walk-v3"), "none"
+        )
+
+    def test_legacy_alias_normalizes_in_both_environments(self) -> None:
+        for task in ("walk", "walk-v2"):
+            with self.subTest(task=task):
+                self.assertEqual(
+                    reference_motion_for_environment("non_rl", task=task),
+                    "tripod-gait",
+                )
+
+    def test_unknown_reference_and_task_are_still_rejected(self) -> None:
+        with self.assertRaises(ValueError):
+            reference_motion_for_environment("moonwalk", task="walk-v2")
+        with self.assertRaises(ValueError):
+            reference_motion_for_environment("hardcoded", task="walk-v9")
 
 
 if __name__ == "__main__":

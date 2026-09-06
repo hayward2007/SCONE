@@ -21,6 +21,22 @@ CURRENT_OBSERVATION_SHAPE = (70,)
 # Its policies cannot be replayed against a walk_learn environment, so the
 # viewer picks the environment from the checkpoint rather than rejecting it.
 V2_OBSERVATION_SHAPE = (82,)
+# src.rl.walk_v3 adds only the six contact flags to walk_learn's observation.
+V3_OBSERVATION_SHAPE = (76,)
+# src.rl.walk_failsafe adds six leg-health flags, six contact flags, the
+# signed support margin and the ground-plane offset from the support centroid
+# to the centre of mass.
+FAILSAFE_OBSERVATION_SHAPE = (85,)
+# Observation width is what identifies the trainer a checkpoint came from, so
+# every replay path routes through TASK_FOR_OBSERVATION_SHAPE instead of
+# re-deriving the mapping.
+TASK_FOR_OBSERVATION_SHAPE = {
+    LEGACY_OBSERVATION_SHAPE: "walk",
+    CURRENT_OBSERVATION_SHAPE: "walk",
+    V2_OBSERVATION_SHAPE: "walk-v2",
+    V3_OBSERVATION_SHAPE: "walk-v3",
+    FAILSAFE_OBSERVATION_SHAPE: "walk-failsafe",
+}
 
 
 def load_compatible_policy(
@@ -60,6 +76,25 @@ def checkpoint_observation_shape(
 
 def is_v2_checkpoint(shape: tuple[int, ...]) -> bool:
     return tuple(shape) == V2_OBSERVATION_SHAPE
+
+
+def is_v3_checkpoint(shape: tuple[int, ...]) -> bool:
+    return tuple(shape) == V3_OBSERVATION_SHAPE
+
+
+def is_failsafe_checkpoint(shape: tuple[int, ...]) -> bool:
+    return tuple(shape) == FAILSAFE_OBSERVATION_SHAPE
+
+
+def task_for_observation_shape(shape: tuple[int, ...]) -> str:
+    """Name the trainer whose environment can replay this observation width.
+
+    An unknown width falls back to ``walk``: the legacy viewer then reports the
+    exact mismatch from ``load_compatible_policy`` instead of the launcher
+    guessing at a trainer that does not exist.
+    """
+
+    return TASK_FOR_OBSERVATION_SHAPE.get(tuple(shape), "walk")
 
 
 def observation_for_policy(policy: PPO, observation: np.ndarray) -> np.ndarray:

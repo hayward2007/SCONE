@@ -106,6 +106,24 @@ TRAINING_TASKS = {
         checkpoint_prefix="scone_walk_v2",
         reference_motions=("tripod-gait", "scone-gait", "hardcoded", "none"),
     ),
+    # v3 scaffolds only the hand-authored gait: the IK gaits' stride cap is the
+    # speed ceiling it was written to remove.
+    "walk-v3": TrainingTask(
+        key="walk-v3",
+        label="걷기 정책 v3 (속도 상한 없음 · 높이 자유 · 자세 고정)",
+        module="src.rl.walk_v3",
+        checkpoint_prefix="scone_walk_v3",
+        reference_motions=("hardcoded", "none"),
+    ),
+    # The fail-safe trainer scaffolds a fault-adaptive wave gait, so it does
+    # not offer the other trainers' reference names.
+    "walk-failsafe": TrainingTask(
+        key="walk-failsafe",
+        label="결손 대응 정책 (다리 1~2개 상실 · 안정성/정확성 우선)",
+        module="src.rl.walk_failsafe",
+        checkpoint_prefix="scone_walk_failsafe",
+        reference_motions=("fault-adaptive", "tripod-gait", "none"),
+    ),
 }
 
 _ENGLISH_TERRAIN_OPTIONS = (
@@ -153,6 +171,12 @@ def _task_label(task: "TrainingTask", language: Language | str) -> str:
     return {
         "walk": "Walking policy · PPO residual walk",
         "walk-v2": "Walking policy v2 · canonical coordinates and contact reward",
+        "walk-v3": (
+            "Walking policy v3 · no speed limit, free body height, locked attitude"
+        ),
+        "walk-failsafe": (
+            "Fail-safe policy · walks with one or two legs lost, stability first"
+        ),
     }.get(task.key, task.key)
 
 
@@ -901,15 +925,22 @@ def run_environment_check(
     terrain: str,
     steps: int,
     random_actions: bool,
+    task: str = "walk",
     reference_motion: str = "tripod-gait",
     standing_pose_degrees: Sequence[float] = SPORT_STANDING_DEGREES,
 ) -> int:
-    """Run the environment/reward smoke check before committing to training."""
+    """Run the environment/reward smoke check before committing to training.
 
+    All three trainers accept the same ``check`` flags, so the task selects the
+    module and nothing else changes.
+    """
+
+    if task not in TRAINING_TASKS:
+        raise ValueError(f"unknown training task: {task}")
     command = [
         sys.executable,
         "-m",
-        "src.rl.walk_learn",
+        TRAINING_TASKS[task].module,
         "--terrain",
         terrain,
         "--reference-motion",
@@ -1327,16 +1358,19 @@ def view_local_model(
     reference_motion: str = "hardcoded",
     standing_pose_degrees: Sequence[float] = SPORT_STANDING_DEGREES,
 ) -> int:
-    from .policy_compat import checkpoint_observation_shape, is_v2_checkpoint
-    from .remote_watch import _validate_ppo_zip
+    from .policy_compat import (
+        checkpoint_observation_shape,
+        task_for_observation_shape,
+    )
+    from .remote_watch import _validate_ppo_zip, reference_motion_for_environment
 
     checkpoint = checkpoint.expanduser().resolve()
     _validate_ppo_zip(checkpoint)
-    module = (
-        "src.rl.walk_v2"
-        if is_v2_checkpoint(checkpoint_observation_shape(checkpoint))
-        else "src.rl.walk_learn"
-    )
+    task = task_for_observation_shape(checkpoint_observation_shape(checkpoint))
+    module = TRAINING_TASKS[task].module
+    # The replay menu offers every reference any trainer knows, so a name one
+    # trainer lacks has to be adapted to the module that actually runs.
+    reference_motion = reference_motion_for_environment(reference_motion, task=task)
     executable = shutil.which("mjpython") or sys.executable
     process = [
         executable,
@@ -1914,12 +1948,18 @@ def _environment_check_flow(
     language: Language | str = Language.ENGLISH,
 ) -> None:
     inquirer, Choice = _inquirer()
-    # ``run_environment_check`` currently exercises the original walk
-    # environment. Do not present walk-v2 as an option until it has its own
-    # check runner.
-    task = "walk"
+    task = inquirer.select(
+        message=localize(
+            language, "Which environment to test", "어떤 학습 환경을 검사할까요"
+        ),
+        choices=[
+            Choice(value=item.key, name=_task_label(item, language))
+            for item in TRAINING_TASKS.values()
+        ],
+        default="walk",
+    ).execute()
     reference_motion = prompt_reference_motion(
-        default="tripod-gait",
+        default=TRAINING_TASKS[task].reference_motions[0],
         allowed=TRAINING_TASKS[task].reference_motions,
         language=language,
     )
@@ -1955,6 +1995,7 @@ def _environment_check_flow(
         terrain=terrain,
         steps=steps,
         random_actions=random_actions,
+        task=task,
         reference_motion=reference_motion,
         standing_pose_degrees=standing_pose_degrees,
     )

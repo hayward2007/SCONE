@@ -113,6 +113,66 @@ class RLInquiryCommandTests(unittest.TestCase):
             command[command.index("--prefix") + 1], "scone_walk_v2"
         )
 
+    def test_live_remote_viewer_command_accepts_an_end_to_end_run(self) -> None:
+        from src.rl.remote_watch import build_parser
+
+        job = RemoteJob(
+            host="ssh.hayward.kim",
+            project_dir="~/Developer/SCONE",
+            run_name="walk-v2_full_20260902_173610",
+            task="walk-v2",
+            reference_motion="none",
+        )
+        completed = subprocess.CompletedProcess([], 0)
+
+        with patch("src.rl.inquiry.subprocess.run", return_value=completed) as run:
+            watch_remote_job(job)
+
+        command = run.call_args.args[0]
+        self.assertEqual(command[command.index("--reference-motion") + 1], "none")
+        # The viewer used to reject its own launcher's argument list.
+        args = build_parser().parse_args(command[command.index("--host") :])
+        self.assertEqual(args.reference_motion, "none")
+        self.assertEqual(args.task, "walk-v2")
+
+    def test_local_replay_keeps_walk_learn_off_the_end_to_end_reference(self) -> None:
+        completed = subprocess.CompletedProcess([], 0)
+        with (
+            patch("src.rl.remote_watch._validate_ppo_zip"),
+            patch(
+                "src.rl.policy_compat.checkpoint_observation_shape",
+                return_value=(70,),
+            ),
+            patch("src.rl.inquiry.subprocess.run", return_value=completed) as run,
+        ):
+            view_local_model(
+                Path("legacy.zip"), episodes=1, reference_motion="none"
+            )
+
+        command = run.call_args.args[0]
+        self.assertEqual(command[command.index("-m") + 1], "src.rl.walk_learn")
+        self.assertEqual(
+            command[command.index("--reference-motion") + 1], "hardcoded"
+        )
+
+    def test_local_replay_keeps_the_end_to_end_reference_for_walk_v2(self) -> None:
+        completed = subprocess.CompletedProcess([], 0)
+        with (
+            patch("src.rl.remote_watch._validate_ppo_zip"),
+            patch(
+                "src.rl.policy_compat.checkpoint_observation_shape",
+                return_value=(82,),
+            ),
+            patch("src.rl.inquiry.subprocess.run", return_value=completed) as run,
+        ):
+            view_local_model(
+                Path("new-v2.zip"), episodes=1, reference_motion="none"
+            )
+
+        command = run.call_args.args[0]
+        self.assertEqual(command[command.index("-m") + 1], "src.rl.walk_v2")
+        self.assertEqual(command[command.index("--reference-motion") + 1], "none")
+
     def test_local_replay_routes_82_observations_to_walk_v2(self) -> None:
         completed = subprocess.CompletedProcess([], 0)
         with (

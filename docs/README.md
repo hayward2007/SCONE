@@ -26,6 +26,12 @@
 20. [공개된 다이나믹셀 MuJoCo 모델과 설정 대조](19-actuator-settings-vs-published-models.md) — OP3·Open Duck 모델과 SCONE dcmotor/armature를 같은 벤치에서 비교한 결과
 21. [백래시 적용과 다이나믹셀 패키지 분리](20-backlash-and-dynamixel-package.md) — 직렬 유격 모델, 단위 버그, 민감도 측정과 독립 패키지 구조
 22. [`walk_v2` PPO 실제 학습 분석과 2차 재설계](21-walk-v2-ppo-training-analysis.md) — 35.4M checkpoint 진단, 행동 포화·누적 motor randomization 원인, 정지 보상 제거, 학습/재생 randomization 분리, primitive curriculum, bounded PPO·fixed-command best-model과 재학습 gate
+23. [`walk_v3` 설계와 보정](22-walk-v3-residual-design.md) — v1 residual 구조 복귀, 명령에서 역산하는 기준 모션 보정표, 단측 속도 보상(속도 상한 없음), 높이 자유·자세 고정 제약, 76차원 관측과 체크포인트 라우팅
+24. [`walk_v3` 신설 작업 기록](23-walk-v3-session-record.md) — 원격 재생 오류의 원인과 수정, v3 요구사항 확인, 측정 기반 보정 과정, 발견한 두 결함, 승격 규칙 수정, 검증 결과와 다음 단계
+25. [리팩토링 진단과 방향](24-refactoring-assessment.md) — 학습기 3종의 인프라 중복(및 그것이 만든 실제 버그), 패키지 순환 의존, 죽은 shim, 사유 속성 접근, 우선순위와 ICRA 동결 기준 순서, 건드리면 안 되는 것
+26. [ICRA 제출 실험 계획](25-icra-submission-plan.md) — matched 프로토콜이 동작하지 않는 원인과 수정, 주장↔증거 대응표, E0~E7 실험과 소요 시간, RL·실물 포함 결정, 표·그림 목록과 동결 체크리스트
+27. [계단·하이브리드 이동 이론](26-stair-and-hybrid-locomotion-theory.md) — 위상 고정 heave 측정, 계단 5단계 모델과 `h>R_o`에서 관절이 필수인 이유, slip ratio로 정식화한 "미끄러지듯 이동", 회전율 제어 법칙 제안과 반증 가능한 예측
+28. [결손 대응 PPO와 다리 상실 모델링](27-failsafe-ppo-and-leg-loss.md) — 교대 삼각보가 다리 하나에 무너지는 이유, `detached`/`limp` 두 결손 모델과 런타임 변이, 웨이브 스케줄·몸체 시프트 유도와 측정, 관절공간 스캐폴드 보정표, 하나만 얻고 여럿을 잃는 보상 예산
 
 ## 문서 범위와 표기
 
@@ -37,7 +43,7 @@
 
 ## 현재 상태에서 특히 주의할 점
 
-- 구형 70차원 정책의 기준은 `src/rl/walk_learn.py`, 새 82차원 정책의 기준은 `src/rl/walk_v2.py`다. 두 환경의 checkpoint는 서로 호환되지 않는다. V2의 현재 보상·관측·학습 상태는 [`21-walk-v2-ppo-training-analysis.md`](21-walk-v2-ppo-training-analysis.md)를 우선한다.
+- 구형 70차원 정책의 기준은 `src/rl/walk_learn.py`, 82차원은 `src/rl/walk_v2.py`, 76차원은 `src/rl/walk_v3.py`, 85차원은 `src/rl/walk_failsafe.py`다. 네 환경의 checkpoint는 서로 호환되지 않으며, 관측 폭이 학습기를 식별한다(`policy_compat.task_for_observation_shape`). V2의 학습 상태는 [`21-walk-v2-ppo-training-analysis.md`](21-walk-v2-ppo-training-analysis.md), V3의 설계·측정 근거는 [`22-walk-v3-residual-design.md`](22-walk-v3-residual-design.md), 다리를 잃은 상태의 보행은 [`27-failsafe-ppo-and-leg-loss.md`](27-failsafe-ppo-and-leg-loss.md)를 우선한다.
 - 현재 시뮬레이터는 액추에이터 이름(`A01_` … `A18_`)을 통해 관절을 찾는다. 과거의 고정 mirror-pair 재배열 방식은 현재 구현이 아니다.
 - 실물 장치 코드는 보존되어 있으며 시뮬레이션의 좌우 축 보정은 MJCF 모델에서 처리한다.
 - RL 정책은 시뮬레이션에서 학습·재생한다. 실제 로봇에 바로 배포하는 상태 추정·안전 계층은 아직 완성된 기능이 아니다.

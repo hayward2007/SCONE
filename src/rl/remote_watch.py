@@ -33,11 +33,10 @@ from stable_baselines3 import PPO
 
 from .policy_compat import (
     LEGACY_OBSERVATION_SHAPE,
-    V2_OBSERVATION_SHAPE,
     checkpoint_observation_shape as _checkpoint_shape,
-    is_v2_checkpoint as _is_v2,
     load_compatible_policy as _load_policy,
     observation_for_policy as _observation_for_policy,
+    task_for_observation_shape as _task_for_shape,
 )
 from .stance import SPORT_STANDING_DEGREES
 from .walk_learn import (
@@ -46,14 +45,64 @@ from .walk_learn import (
     NeutralResidualGate,
     REFERENCE_MOTION_CHOICES,
     SconeWalkEnv,
+    normalize_reference_motion as _normalize_legacy_reference,
 )
-from .walk_v2 import SconeWalkEnvV2
+from .walk_v2 import (
+    REFERENCE_CHOICES as V2_REFERENCE_MOTION_CHOICES,
+    SconeWalkEnvV2,
+    normalize_reference_motion as _normalize_v2_reference,
+)
+from .walk_v3 import (
+    REFERENCE_CHOICES as V3_REFERENCE_MOTION_CHOICES,
+    SconeWalkEnvV3,
+    normalize_reference_motion as _normalize_v3_reference,
+)
+from .walk_failsafe import (
+    REFERENCE_CHOICES as FAILSAFE_REFERENCE_MOTION_CHOICES,
+    SconeFailsafeEnv,
+    normalize_reference_motion as _normalize_failsafe_reference,
+)
 from src.simulation.terrain import TERRAIN_CHOICES, TerrainType
 
 
 CHECKPOINT_NAME = re.compile(r"^(?P<prefix>.+)_(?P<steps>[0-9]+)_steps\.zip$")
 SAFE_SSH_HOST = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.@-]*$")
 SAFE_PREFIX = re.compile(r"^[A-Za-z0-9_.-]+$")
+TASK_CHOICES = ("auto", "walk", "walk-v2", "walk-v3", "walk-failsafe")
+# What each trainer's environment accepts, how it spells legacy names, and the
+# reference to fall back to when a run was recorded with one the environment
+# about to open does not implement.
+# Each entry is (accepted choices, legacy-name normaliser, fallback). The
+# fallback has to be per-family: walk_failsafe scaffolds a fault-adaptive wave
+# gait and has no "hardcoded" reference to fall back to.
+REFERENCE_MOTION_FAMILIES = {
+    "walk": (REFERENCE_MOTION_CHOICES, _normalize_legacy_reference, "hardcoded"),
+    "walk-v2": (V2_REFERENCE_MOTION_CHOICES, _normalize_v2_reference, "hardcoded"),
+    "walk-v3": (V3_REFERENCE_MOTION_CHOICES, _normalize_v3_reference, "hardcoded"),
+    "walk-failsafe": (
+        FAILSAFE_REFERENCE_MOTION_CHOICES,
+        _normalize_failsafe_reference,
+        "fault-adaptive",
+    ),
+}
+# A run record can name any reference any trainer accepts, so the viewer takes
+# the union and adapts it to whichever environment it ends up opening.
+REFERENCE_MOTION_CHOICES_ALL = REFERENCE_MOTION_CHOICES + tuple(
+    dict.fromkeys(
+        choice
+        for choices, _normalize, _fallback in REFERENCE_MOTION_FAMILIES.values()
+        for choice in choices
+        if choice not in REFERENCE_MOTION_CHOICES
+    )
+)
+# Kept for callers written before the fallback became per-family.
+REFERENCE_FALLBACK = "hardcoded"
+ENVIRONMENT_FOR_TASK = {
+    "walk": SconeWalkEnv,
+    "walk-v2": SconeWalkEnvV2,
+    "walk-v3": SconeWalkEnvV3,
+    "walk-failsafe": SconeFailsafeEnv,
+}
 
 @dataclass(frozen=True)
 class CheckpointCandidate:
@@ -299,41 +348,71 @@ def run_download_once(
     return 0
 
 
-def _resolve_environment(
-    args: argparse.Namespace, source: CheckpointSource
-) -> tuple[type, bool]:
-    """Pick the environment family the newest checkpoint was trained in.
+def _resolve_task(args: argparse.Namespace, source: CheckpointSource) -> str:
+    """Name the trainer whose environment can replay the newest checkpoint.
 
-    walk_v2 observations are 82 values against walk_learn's 70, so a v2 policy
-    cannot be replayed in a walk_learn environment at all; before this the
-    viewer reported "unsupported checkpoint observation shape: (82,)" and showed
-    the baseline gait forever.
+    Observation widths differ per trainer -- 70 for walk_learn, 82 for walk_v2,
+    76 for walk_v3 -- so a policy simply cannot run in the wrong one; before
+    this the viewer reported "unsupported checkpoint observation shape" and
+    showed the baseline gait forever.
     """
 
-    if args.task == "walk":
-        return SconeWalkEnv, False
-    if args.task == "walk-v2":
-        return SconeWalkEnvV2, True
+    if args.task != "auto":
+        return args.task
     try:
         candidate = source.latest(args.prefix)
         if candidate is None:
-            return SconeWalkEnv, False
+            return "walk"
         path = mirror_checkpoint(source, candidate, args.cache_dir)
         shape = _checkpoint_shape(path, args.device)
     except Exception as exc:  # noqa: BLE001 - fall back to the legacy viewer
         print(f"[remote-watch] could not inspect the newest checkpoint: {exc}",
               flush=True)
-        return SconeWalkEnv, False
-    if _is_v2(shape):
-        print(f"[remote-watch] checkpoint observation {shape}: using walk_v2",
-              flush=True)
-        return SconeWalkEnvV2, True
-    return SconeWalkEnv, False
+        return "walk"
+    task = _task_for_shape(shape)
+    if task != "walk":
+        print(
+            f"[remote-watch] checkpoint observation {tuple(shape)}: using {task}",
+            flush=True,
+        )
+    return task
+
+
+def reference_motion_for_environment(reference_motion: str, *, task: str) -> str:
+    """Translate a run's recorded reference motion for the replay environment.
+
+    The trainers do not implement the same set: walk_v2 added the reference-free
+    ``none`` mode that walk_learn never had, and walk_v3 offers only
+    ``hardcoded`` and ``none`` because the IK gaits' stride cap is the speed
+    ceiling it exists to remove. Without this translation the replay aborts on
+    the argument itself and no window opens.
+    """
+
+    if task not in REFERENCE_MOTION_FAMILIES:
+        raise ValueError(
+            f"unknown task {task!r}; choose from "
+            f"{tuple(REFERENCE_MOTION_FAMILIES)}"
+        )
+    if reference_motion not in REFERENCE_MOTION_CHOICES_ALL:
+        raise ValueError(
+            f"unknown reference motion {reference_motion!r}; "
+            f"choose from {REFERENCE_MOTION_CHOICES_ALL}"
+        )
+    choices, normalize, fallback = REFERENCE_MOTION_FAMILIES[task]
+    normalized = normalize(reference_motion)
+    if normalized in choices:
+        return normalized
+    print(
+        f"[RL] {task} has no {normalized!r} reference motion; replaying "
+        f"against the {fallback} baseline instead",
+        flush=True,
+    )
+    return fallback
 
 
 def run_viewer(args: argparse.Namespace, source: CheckpointSource) -> int:
-    environment_class, is_v2 = _resolve_environment(args, source)
-    env = environment_class(
+    task = _resolve_task(args, source)
+    env = ENVIRONMENT_FOR_TASK[task](
         args.model,
         curriculum=args.curriculum,
         fixed_command=args.command,
@@ -341,12 +420,15 @@ def run_viewer(args: argparse.Namespace, source: CheckpointSource) -> int:
         terrain=args.terrain,
         terrain_seed=args.terrain_seed,
         standing_pose_degrees=args.standing_pose_degrees,
-        reference_motion=args.reference_motion,
+        reference_motion=reference_motion_for_environment(
+            args.reference_motion, task=task
+        ),
     )
     observation, _ = env.reset(seed=args.seed)
     zero_action = np.zeros(env.action_space.shape, dtype=np.float32)
-    # walk_v2 handles the idle command inside its own reward and reference, so
-    # the legacy neutral-residual gate only applies to walk_learn policies.
+    # walk_v2 and walk_v3 both train their own idle behaviour through the
+    # reward, so the legacy neutral-residual gate only applies to walk_learn.
+    uses_raw_action = task != "walk"
     neutral_gate = NeutralResidualGate()
     policy: PPO | None = None
     active_step = -1
@@ -396,7 +478,7 @@ def run_viewer(args: argparse.Namespace, source: CheckpointSource) -> int:
                 )
                 action = (
                     policy_action
-                    if args.raw_policy or is_v2
+                    if args.raw_policy or uses_raw_action
                     else neutral_gate.apply(
                         args.command, policy_action, env.control_dt
                     )
@@ -445,7 +527,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--prefix", default="scone_walk")
     parser.add_argument(
         "--task",
-        choices=("auto", "walk", "walk-v2"),
+        choices=TASK_CHOICES,
         default="auto",
         help=(
             "which trainer produced the checkpoint; 'auto' reads the newest "
@@ -463,8 +545,12 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--terrain-seed", type=int, default=7)
     parser.add_argument(
         "--reference-motion",
-        choices=REFERENCE_MOTION_CHOICES,
+        choices=REFERENCE_MOTION_CHOICES_ALL,
         default="hardcoded",
+        help=(
+            "baseline the checkpoint was trained against; a name the replay "
+            f"environment does not implement falls back to {REFERENCE_FALLBACK}"
+        ),
     )
     parser.add_argument(
         "--standing-pose-degrees",

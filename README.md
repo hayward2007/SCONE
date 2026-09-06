@@ -207,6 +207,11 @@ src/rl/
   inquiry.py                     InquirerPy local/SSH training launcher
   joystick_control.py            live PPO policy + x/y/yaw simulation runner
   walk_learn.py                  Gym environment, observations, rewards, PPO CLI
+  walk_v2.py                     canonical-frame redesign (82 observations)
+  walk_v3.py                     residual walk with no speed limit, free body
+                                 height and a locked attitude (76 observations)
+  walk_failsafe.py               walking with one or two legs lost: fault-adaptive
+                                 wave scaffold, stability first (85 observations)
   remote_watch.py                SSH checkpoint mirroring and local replay
 src/assets/                       MJCF and meshes used by simulation/RL
 runs/                             generated training/checkpoint data (gitignored)
@@ -468,6 +473,20 @@ PYTHONPATH=. python -m src.rl.walk_learn --reference-motion scone-gait check \
 PYTHONPATH=. python -m src.rl.walk_learn --reference-motion tripod-gait train \
   --curriculum easy --timesteps 1000000 --num-envs 4
 
+# walk_v3: one scaffold rollout, then training. The reference tracks the
+# command instead of saturating, body height is free and attitude is the hard
+# constraint (docs/22-walk-v3-residual-design.md)
+PYTHONPATH=. python -m src.rl.walk_v3 --stance standard check --command 0.30 0 0
+PYTHONPATH=. python -m src.rl.walk_v3 --stance standard train \
+  --curriculum easy --timesteps 20000000 --num-envs 8
+
+# walk_failsafe: the same robot with a leg gone. The scaffold reschedules
+# itself around the working legs and shifts the body back inside the support
+# polygon (docs/27-failsafe-ppo-and-leg-loss.md)
+PYTHONPATH=. python -m src.rl.walk_failsafe check --failed-legs 5 --command 0.06 0 0
+PYTHONPATH=. python -m src.rl.walk_failsafe train \
+  --curriculum easy --timesteps 20000000 --num-envs 8
+
 # Unit and integration-contract tests
 python -m unittest discover -s tests -v
 
@@ -477,4 +496,9 @@ python -m src.simulation.stair_benchmark --all --tuning
 
 The locomotion reward configuration is defined by `RewardConfig` in
 `src/rl/walk_learn.py`; reward calculation and per-term logging
-are implemented in `SconeWalkEnv` in the same file.
+are implemented in `SconeWalkEnv` in the same file. `src/rl/walk_v3.py` carries
+its own `RewardConfig`/`SconeWalkEnvV3` pair: a one-sided speed reward with no
+ceiling, no height term at all, and attitude enforced by cost and termination.
+`src/rl/walk_failsafe.py` inverts that shape: command tracking is the only way
+to score, everything else is a bounded deficit, and the configuration refuses
+any weighting whose penalties out-budget the reward.

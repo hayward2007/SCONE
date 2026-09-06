@@ -23,23 +23,35 @@ from src.main import SCONE
 from src.simulation.terrain import TerrainType
 
 from .motion_profile import motion_profile_for_standing_pose
-from .policy_compat import checkpoint_observation_shape, is_v2_checkpoint
-from .remote_watch import _load_policy, _observation_for_policy, _validate_ppo_zip
+from .policy_compat import checkpoint_observation_shape, task_for_observation_shape
+from .remote_watch import (
+    _load_policy,
+    _observation_for_policy,
+    _validate_ppo_zip,
+    reference_motion_for_environment,
+)
 from .stance import SPORT_STANDING_DEGREES
 from .walk_learn import (
     DEFAULT_MODEL_PATH,
     NeutralResidualGate,
     OBSERVATION_COMMAND_SCALE,
-    REFERENCE_MOTION_CHOICES,
     SconeWalkEnv,
     WalkConfig,
 )
 from .walk_v2 import (
     OBSERVATION_COMMAND_SCALE as V2_OBSERVATION_COMMAND_SCALE,
-    REFERENCE_CHOICES as V2_REFERENCE_MOTION_CHOICES,
     SconeWalkEnvV2,
     WalkConfig as V2WalkConfig,
-    normalize_reference_motion as normalize_v2_reference_motion,
+)
+from .walk_v3 import (
+    OBSERVATION_COMMAND_SCALE as V3_OBSERVATION_COMMAND_SCALE,
+    SconeWalkEnvV3,
+    WalkConfig as V3WalkConfig,
+)
+from .walk_failsafe import (
+    OBSERVATION_COMMAND_SCALE as FAILSAFE_OBSERVATION_COMMAND_SCALE,
+    SconeFailsafeEnv,
+    WalkConfig as FailsafeWalkConfig,
 )
 
 
@@ -348,47 +360,70 @@ def run_rl_joystick(
     pre-selection checkpoints were trained against that exact action meaning.
     A gait-referenced checkpoint must select the same ``tripod-gait`` or
     ``scone-gait`` reference used during training. ``non_rl`` remains a legacy
-    alias for ``tripod-gait``.
+    alias for ``tripod-gait``, and ``none`` is the end-to-end mode of walk-v2
+    and walk-v3; a reference the checkpoint's own trainer does not implement
+    falls back to the hardcoded baseline.
     """
 
     checkpoint_path = Path(checkpoint).expanduser().resolve()
     _validate_ppo_zip(checkpoint_path)
     observation_shape = checkpoint_observation_shape(checkpoint_path, device)
-    uses_v2 = is_v2_checkpoint(observation_shape)
-    if uses_v2:
-        reference_motion = normalize_v2_reference_motion(reference_motion)
-    reference_choices = (
-        V2_REFERENCE_MOTION_CHOICES if uses_v2 else REFERENCE_MOTION_CHOICES
-    )
-    if reference_motion not in reference_choices:
-        raise ValueError(
-            f"unknown reference motion {reference_motion!r}; "
-            f"choose from {reference_choices}"
-        )
-    if uses_v2:
+    task = task_for_observation_shape(observation_shape)
+    reference_motion = reference_motion_for_environment(reference_motion, task=task)
+    # An hour-long episode: the joystick session ends when the viewer closes,
+    # not when a training episode would have been truncated.
+    episode_seconds = 24.0 * 60.0 * 60.0
+    if task == "walk-v2":
         env = SconeWalkEnvV2(
             model_path,
             fixed_command=[0.0, 0.0, 0.0],
             render_mode="human",
-            walk_config=V2WalkConfig(episode_seconds=24.0 * 60.0 * 60.0),
+            walk_config=V2WalkConfig(episode_seconds=episode_seconds),
             terrain=terrain,
             terrain_seed=terrain_seed,
             standing_pose_degrees=standing_pose_degrees,
             reference_motion=reference_motion,
         )
         command_scale = V2_OBSERVATION_COMMAND_SCALE
+    elif task == "walk-failsafe":
+        env = SconeFailsafeEnv(
+            model_path,
+            fixed_command=[0.0, 0.0, 0.0],
+            render_mode="human",
+            walk_config=FailsafeWalkConfig(episode_seconds=episode_seconds),
+            terrain=terrain,
+            terrain_seed=terrain_seed,
+            standing_pose_degrees=standing_pose_degrees,
+            reference_motion=reference_motion,
+        )
+        command_scale = FAILSAFE_OBSERVATION_COMMAND_SCALE
+    elif task == "walk-v3":
+        env = SconeWalkEnvV3(
+            model_path,
+            fixed_command=[0.0, 0.0, 0.0],
+            render_mode="human",
+            walk_config=V3WalkConfig(episode_seconds=episode_seconds),
+            terrain=terrain,
+            terrain_seed=terrain_seed,
+            standing_pose_degrees=standing_pose_degrees,
+            reference_motion=reference_motion,
+        )
+        command_scale = V3_OBSERVATION_COMMAND_SCALE
     else:
         env = SconeWalkEnv(
             model_path,
             fixed_command=[0.0, 0.0, 0.0],
             render_mode="human",
-            walk_config=WalkConfig(episode_seconds=24.0 * 60.0 * 60.0),
+            walk_config=WalkConfig(episode_seconds=episode_seconds),
             terrain=terrain,
             terrain_seed=terrain_seed,
             standing_pose_degrees=standing_pose_degrees,
             reference_motion=reference_motion,
         )
         command_scale = OBSERVATION_COMMAND_SCALE
+    # v2 and v3 learn their own idle behaviour, so only walk_learn policies go
+    # through the neutral-residual gate.
+    uses_raw_action = task != "walk"
     policy = _load_policy(checkpoint_path, env, device)
     observation, _ = env.reset(seed=seed)
     mailbox = _VelocityMailbox()
@@ -480,7 +515,7 @@ def run_rl_joystick(
             )
             action = (
                 policy_action
-                if uses_v2
+                if uses_raw_action
                 else neutral_gate.apply(
                     command.as_array(), policy_action, env.control_dt
                 )

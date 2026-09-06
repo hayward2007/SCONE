@@ -350,7 +350,8 @@ python -m unittest tests.test_stair_geometry tests.test_stair_climber
 python -m unittest tests.test_simulation tests.test_terrain
 python -m unittest tests.test_remote_watch tests.test_rl_inquiry
 python -m unittest tests.test_rl_joystick tests.test_rl_reference_motion
-python -m unittest tests.test_walk_v2
+python -m unittest tests.test_walk_v2 tests.test_walk_v3
+python -m unittest tests.test_walk_failsafe
 ```
 
 변경별 최소 검증:
