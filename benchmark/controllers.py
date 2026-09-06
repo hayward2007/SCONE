@@ -9,9 +9,10 @@ from typing import Protocol
 import numpy as np
 
 from src.hardware import Actuator
-from src.locomotion import SconeGait, TripodGait, VelocityCommand
+from src.locomotion import SconeGait, SconeGaitV2, TripodGait, VelocityCommand
 from src.simulation.core.cli_bridge import (
     SCONE_GAIT_SIMULATION_CONFIG,
+    SCONE_GAIT_V2_SIMULATION_CONFIG,
     TRIPOD_GAIT_SIMULATION_CONFIG,
     configure_model_gait_controller,
 )
@@ -25,6 +26,7 @@ CONTROLLER_CHOICES = (
     "distal-only-roll",
     "full-roll",
     "bounded-scone",
+    "role-split-scone",
     "matched-articulated",
     "matched-distal-only",
     "matched-coordinated",
@@ -346,6 +348,36 @@ class BoundedSconeController:
         self.gait.update(VelocityCommand(), dt=0.02, send=True)
 
 
+class RoleSplitSconeController:
+    """scone-gait-v2: corner legs roll on steered sectors, middle legs walk."""
+
+    name = "role-split-scone"
+
+    def __init__(self, trial: SimulationTrial, *, phase: float = 0.0) -> None:
+        self.gait = SconeGaitV2(
+            trial.controller,
+            trial.robot.profile,
+            config=SCONE_GAIT_V2_SIMULATION_CONFIG,
+        )
+        self.gait.reset(phase=phase)
+
+    def prepare(
+        self,
+        trial: SimulationTrial,
+        *,
+        recorder: MetricsRecorder | None = None,
+    ) -> None:
+        del recorder
+        configure_model_gait_controller(trial.controller)
+
+    def update(self, command: VelocityCommand, dt: float) -> ControlDiagnostics:
+        sample = self.gait.update(command, dt=dt, send=True)
+        return _diagnostics(sample)
+
+    def stop(self) -> None:
+        self.gait.update(VelocityCommand(), dt=0.02, send=True)
+
+
 class MatchedArticulatedController:
     """Common-gait reference with continuous distal rotation disabled."""
 
@@ -398,6 +430,8 @@ def make_controller(
         return FullRollController(trial, phase=phase)
     if name == "bounded-scone":
         return BoundedSconeController(trial, phase=phase)
+    if name == "role-split-scone":
+        return RoleSplitSconeController(trial, phase=phase)
     if name == "matched-articulated":
         return MatchedArticulatedController(trial, phase=phase)
     if name == "matched-distal-only":

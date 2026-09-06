@@ -15,10 +15,11 @@ import mujoco.viewer
 from ...cli_i18n import Language, localize
 from ...cli import (
     run_legacy_joystick_cli,
+    run_scone_gait_v2_joystick_cli,
     run_tripod_gait_joystick_cli,
 )
 from ...hardware import Actuator
-from ...locomotion import GaitConfig, SconeGaitConfig
+from ...locomotion import GaitConfig, SconeGaitConfig, SconeGaitV2Config
 from ...main import SCONE
 from ...rl.stance import SPORT_STANDING_DEGREES
 from .controller import MuJoCoController
@@ -46,6 +47,9 @@ SCONE_GAIT_SIMULATION_CONFIG = SconeGaitConfig(
     ik_tolerance=1e-3,
     ik_stride_backoff_attempts=4,
 )
+# scone-gait-v2 keeps tripod-gait's stride budget on purpose: any speed it
+# gains has to come from the rolling, not from a wider stroke.
+SCONE_GAIT_V2_SIMULATION_CONFIG = SconeGaitV2Config()
 ROLL_GAIT_SIMULATION_CONFIG = RollGaitConfig()
 # Compatibility constant for code written before continuous rotation was
 # renamed from scone-gait to roll-gait.
@@ -72,6 +76,7 @@ class SimulationControl(str, Enum):
     OLD = "old"
     TRIPOD_GAIT = "tripod-gait"
     SCONE_GAIT = "scone-gait"
+    SCONE_GAIT_V2 = "scone-gait-v2"
     ROLL_GAIT = "roll-gait"
     SCONE_STAIR = "scone-stair"
     RL = "rl"
@@ -167,6 +172,18 @@ def run(
                     # first frame.  Re-centering IK on that edge-of-workspace
                     # transient makes legs 2/5 fail immediately.  Simulation
                     # instead keeps the selected, known-solvable profile pose.
+                    calibrate_from_controller=False,
+                    language=language,
+                )
+            elif selected_control is SimulationControl.SCONE_GAIT_V2:
+                configure_model_gait_controller(controller)
+                run_scone_gait_v2_joystick_cli(
+                    robot,
+                    stop_event=stop_event,
+                    gait_config=SCONE_GAIT_V2_SIMULATION_CONFIG,
+                    # Same reasoning as tripod-gait: the loaded pose sags
+                    # before the first frame, and re-centering on that
+                    # transient starts the gait at the edge of its workspace.
                     calibrate_from_controller=False,
                     language=language,
                 )
@@ -272,6 +289,7 @@ __all__ = [
     "SCONE_ROLLING_GAIT_SIMULATION_CONFIG",
     "SimulationControl",
     "TRIPOD_GAIT_SIMULATION_CONFIG",
+    "SCONE_GAIT_V2_SIMULATION_CONFIG",
     "configure_model_gait_controller",
     "run",
 ]

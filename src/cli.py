@@ -20,6 +20,8 @@ from .locomotion import (
     LegacyVelocityAdapter,
     SconeGait,
     SconeGaitConfig,
+    SconeGaitV2,
+    SconeGaitV2Config,
     TripodGait,
     VelocityCommand,
 )
@@ -580,6 +582,35 @@ def run_scone_gait_joystick_cli(
     )
 
 
+def run_scone_gait_v2_joystick_cli(
+    robot: SCONE,
+    *,
+    stop_event: threading.Event | None = None,
+    gait_config: SconeGaitV2Config | None = None,
+    calibrate_from_controller: bool = True,
+    language: Language | str = Language.ENGLISH,
+) -> None:
+    """Drive the role-split steer-and-roll gait."""
+
+    if robot.profile_name == "sport":
+        print(localize(
+            language,
+            "[SCONE] scone-gait-v2 steers the corner legs by up to 35 degrees "
+            "and needs sector clearance. Standard is recommended.",
+            "[SCONE] scone-gait-v2는 모서리 다리를 최대 35도까지 조향하고 "
+            "부채꼴 접지 여유가 필요합니다. Standard 자세를 권장합니다.",
+        ))
+    gait = SconeGaitV2(robot.controller, robot.profile, config=gait_config)
+    _run_gait_joystick_cli(
+        robot,
+        gait,
+        control_name="scone-gait-v2",
+        stop_event=stop_event,
+        calibrate_from_controller=calibrate_from_controller,
+        language=language,
+    )
+
+
 # Compatibility name for code written before the gait names became explicit.
 run_joystick_cli = run_tripod_gait_joystick_cli
 
@@ -985,6 +1016,7 @@ __all__ = [
     "run_joystick_cli",
     "run_legacy_joystick_cli",
     "run_scone_gait_joystick_cli",
+    "run_scone_gait_v2_joystick_cli",
     "run_tripod_gait_joystick_cli",
     "run_velocity_joystick_cli",
 ]

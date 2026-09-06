@@ -264,6 +264,14 @@ def select_simulation_control(
                 ),
             ),
             Choice(
+                value=SimulationControl.SCONE_GAIT_V2,
+                name=localize(
+                    language,
+                    "- scone-gait-v2 / corner legs roll, middle legs walk",
+                    "- scone-gait-v2 / 모서리 다리는 굴리고 가운데 다리는 보행",
+                ),
+            ),
+            Choice(
                 value=SimulationControl.ROLL_GAIT,
                 name=localize(
                     language,
