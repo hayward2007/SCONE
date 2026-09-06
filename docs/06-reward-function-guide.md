@@ -3,7 +3,10 @@
 > 범위: 이 문서의 본문은 기존 70차원 `walk_learn` 정책을 설명한다. 새 82차원
 > `walk_v2`의 현재 보상식, 실제 35.4M-step 항별 기여와 문제점은
 > [`21-walk-v2-ppo-training-analysis.md`](21-walk-v2-ppo-training-analysis.md)를
-> 기준으로 한다. 두 환경의 숫자와 checkpoint를 섞어 쓰면 안 된다.
+> 기준으로 한다. 76차원 `walk_v3`의 보상은 구조가 다르다 — 단측 속도 보상,
+> 높이 항 없음, 자세 비용·종료가 하드 제약 —
+> [`22-walk-v3-residual-design.md`](22-walk-v3-residual-design.md) §3을 본다.
+> 세 환경의 숫자와 checkpoint를 섞어 쓰면 안 된다.
 
 ## 1. 기준 파일과 변경 지점
 
