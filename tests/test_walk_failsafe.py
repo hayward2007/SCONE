@@ -27,6 +27,7 @@ from src.rl.policy_compat import (
     task_for_observation_shape,
 )
 from src.rl.stance import STANDARD_STANDING_DEGREES
+from src.rl.walk_failsafe import OBSERVATION_COMMAND_SCALE
 from src.simulation.core.model import (
     DETACHED_MASS_SCALE,
     LegFailureRuntime,
@@ -285,6 +286,34 @@ class FailsafeEnvironmentTests(unittest.TestCase):
         self.assertEqual(
             task_for_observation_shape(observation.shape), "walk-failsafe"
         )
+        env.close()
+
+    def test_a_command_from_the_shared_viewer_stays_in_distribution(self) -> None:
+        """The replay viewer's command range is the widest trainer's, not ours.
+
+        walk_learn normalises by [0.50, 0.25, 0.80] and this trainer by
+        [0.14, 0.06, 0.30], so the shared viewer's own default command already
+        exceeds this scale. Passing it through unclamped puts the observation
+        several times outside anything the policy saw while training, with no
+        sign that anything is wrong.
+        """
+
+        env = self._env(fixed_command=[0.50, 0.25, 0.80], fixed_failed_legs=[5])
+        observation, _info = env.reset(seed=0)
+        command = observation[63:66]
+        self.assertLessEqual(
+            float(np.max(np.abs(command))), 1.0 + 1e-6,
+            f"normalised command {command} left the trained range",
+        )
+        np.testing.assert_allclose(
+            env.fixed_command, OBSERVATION_COMMAND_SCALE, atol=1e-9
+        )
+        env.close()
+
+    def test_a_command_inside_the_range_is_untouched(self) -> None:
+        env = self._env(fixed_command=[0.10, -0.04, 0.20], fixed_failed_legs=[])
+        env.reset(seed=0)
+        np.testing.assert_allclose(env.fixed_command, [0.10, -0.04, 0.20])
         env.close()
 
     def test_the_health_mask_and_contact_flags_report_the_fault(self) -> None:

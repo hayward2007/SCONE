@@ -427,8 +427,27 @@ class SconeFailsafeEnv(gym.Env[np.ndarray, np.ndarray]):
             if fixed_command is None
             else np.asarray(fixed_command, dtype=np.float64)
         )
-        if self.fixed_command is not None and self.fixed_command.shape != (3,):
-            raise ValueError("fixed_command must contain [vx, vy, yaw_rate]")
+        if self.fixed_command is not None:
+            if self.fixed_command.shape != (3,):
+                raise ValueError("fixed_command must contain [vx, vy, yaw_rate]")
+            # The shared replay viewer normalises commands by walk_learn's much
+            # wider scale, so its own default already exceeds this trainer's.
+            # Left unclamped it reaches the policy as an observation several
+            # times outside anything it saw in training, and nothing says so.
+            clamped = np.clip(
+                self.fixed_command,
+                -OBSERVATION_COMMAND_SCALE,
+                OBSERVATION_COMMAND_SCALE,
+            )
+            if not np.allclose(clamped, self.fixed_command):
+                print(
+                    "[RL] command "
+                    f"{np.round(self.fixed_command, 3).tolist()} is outside this "
+                    "trainer's range; clamped to "
+                    f"{np.round(clamped, 3).tolist()}",
+                    flush=True,
+                )
+            self.fixed_command = clamped
         self.fixed_failed_legs = (
             None
             if fixed_failed_legs is None
