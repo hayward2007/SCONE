@@ -32,6 +32,7 @@
 26. [ICRA 제출 실험 계획](25-icra-submission-plan.md) — matched 프로토콜이 동작하지 않는 원인과 수정, 주장↔증거 대응표, E0~E7 실험과 소요 시간, RL·실물 포함 결정, 표·그림 목록과 동결 체크리스트
 27. [계단·하이브리드 이동 이론](26-stair-and-hybrid-locomotion-theory.md) — 위상 고정 heave 측정, 계단 5단계 모델과 `h>R_o`에서 관절이 필수인 이유, slip ratio로 정식화한 "미끄러지듯 이동", 회전율 제어 법칙 제안과 반증 가능한 예측
 28. [결손 대응 PPO와 다리 상실 모델링](27-failsafe-ppo-and-leg-loss.md) — 교대 삼각보가 다리 하나에 무너지는 이유, `detached`/`limp` 두 결손 모델과 런타임 변이, 웨이브 스케줄·몸체 시프트 유도와 측정, 관절공간 스캐폴드 보정표, 하나만 얻고 여럿을 잃는 보상 예산
+29. [`scone-gait-v2` 역할 분리형 조향 굴림 보행](28-scone-gait-v2-role-split-rolling.md) — 현재 `scone-gait`가 걷기보다 느린 이유의 실측 진단, 부채꼴이 stage-2 축 중심 바퀴임을 보인 접점 불변성 측정, 방사 굴림 헤딩과 상단 수직축 조향, 굴림/관절 stroke 분해와 역할 배정, 호 예산·재색인 스케줄
 
 ## 문서 범위와 표기
 
