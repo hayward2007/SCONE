@@ -432,6 +432,35 @@ class LauncherWiringTests(unittest.TestCase):
             reference_motion_for_environment("none", task="walk-failsafe"), "none"
         )
 
+    def test_every_reference_the_task_offers_can_be_selected(self) -> None:
+        # prompt_reference_motion intersects the task's allowlist with the
+        # launcher's own option list, so a name missing from the option list is
+        # silently unreachable -- including the trainer's default.
+        from src.rl.inquiry import REFERENCE_MOTION_OPTIONS, TRAINING_TASKS
+
+        offered = {value for value, _label in REFERENCE_MOTION_OPTIONS}
+        for key, task in TRAINING_TASKS.items():
+            missing = sorted(set(task.reference_motions) - offered)
+            self.assertEqual(
+                missing, [], f"{key} offers references the launcher cannot show"
+            )
+
+    def test_the_reference_prompt_can_return_the_trainer_default(self) -> None:
+        from src.rl.inquiry import TRAINING_TASKS, _reference_motion_options
+        from src.rl.walk_failsafe import REFERENCE_CHOICES
+
+        allowed = TRAINING_TASKS["walk-failsafe"].reference_motions
+        options = [
+            value
+            for value, _label in _reference_motion_options("english")
+            if value in allowed
+        ]
+        self.assertIn("fault-adaptive", options)
+        # The trainer's own first choice is what the launcher must preselect,
+        # and both training prompts take their default from the task.
+        self.assertEqual(REFERENCE_CHOICES[0], "fault-adaptive")
+        self.assertEqual(allowed[0], "fault-adaptive")
+
     def test_the_cli_accepts_the_launcher_argument_layout(self) -> None:
         from src.rl.walk_failsafe import build_parser
 

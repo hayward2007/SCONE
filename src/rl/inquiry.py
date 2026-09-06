@@ -62,11 +62,15 @@ REFERENCE_MOTION_OPTIONS = (
     ),
     (
         "none",
-        "none · 기준 모션 없이 end-to-end (walk-v2 전용)",
+        "none · 기준 모션 없이 end-to-end (walk-v2/v3 전용)",
     ),
     (
         "hardcoded",
         "하드코딩 모션 · 기존 PPO 학습 기준 (재생 권장)",
+    ),
+    (
+        "fault-adaptive",
+        "fault-adaptive · 작동 다리에 맞춰 재편성되는 웨이브 (walk-failsafe 전용)",
     ),
 )
 REFERENCE_MOTION_ALIASES = {"non_rl": "tripod-gait"}
@@ -141,8 +145,12 @@ _ENGLISH_TERRAIN_OPTIONS = (
 _ENGLISH_REFERENCE_MOTION_OPTIONS = {
     "tripod-gait": "tripod-gait · alternating tripod + IK",
     "scone-gait": "scone-gait · sector rolling/creep reference (experimental)",
-    "none": "none · end-to-end without a reference (walk-v2 only)",
+    "none": "none · end-to-end without a reference (walk-v2/v3 only)",
     "hardcoded": "hardcoded · original PPO training reference (replay default)",
+    "fault-adaptive": (
+        "fault-adaptive · wave gait rescheduled around the working legs "
+        "(walk-failsafe only)"
+    ),
 }
 
 
@@ -1606,7 +1614,7 @@ def _prompt_training_config(
         ],
     ).execute()
     reference_motion = prompt_reference_motion(
-        default="tripod-gait",
+        default=TRAINING_TASKS[task].reference_motions[0],
         allowed=TRAINING_TASKS[task].reference_motions,
         language=language,
     )
@@ -1744,7 +1752,7 @@ def _manual_remote_job(
         default="flat",
     ).execute()
     reference_motion = prompt_reference_motion(
-        default="tripod-gait",
+        default=TRAINING_TASKS[task].reference_motions[0],
         allowed=TRAINING_TASKS[task].reference_motions,
         language=language,
     )
