@@ -473,9 +473,22 @@ class LauncherWiringTests(unittest.TestCase):
             "--keep-checkpoints", "3", "--seed", "0", "--device", "cpu",
             "--output", "runs/x", "--tensorboard-log", "runs/x/tensorboard",
         ])
+        self.assertEqual(args.command_name, "train")
         self.assertEqual(args.curriculum, "easy")
         self.assertEqual(args.max_failed_legs, 2)
         self.assertEqual(len(args.standing_pose_degrees), 18)
+
+    def test_the_subcommand_name_does_not_collide_with_the_velocity(self) -> None:
+        # check and enjoy both define --command, so a subparser dest spelled
+        # "command" is silently overwritten by the velocity vector.
+        from src.rl.walk_failsafe import build_parser
+
+        args = build_parser().parse_args(
+            ["check", "--command", "0.06", "0", "0", "--failed-legs", "5"]
+        )
+        self.assertEqual(args.command_name, "check")
+        self.assertEqual(args.command, [0.06, 0.0, 0.0])
+        self.assertEqual(args.failed_legs, [5])
 
 
 if __name__ == "__main__":  # pragma: no cover

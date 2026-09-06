@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import subprocess
 import unittest
+from dataclasses import replace
 from pathlib import Path
 from unittest.mock import patch
 
@@ -70,6 +71,37 @@ class RLInquiryCommandTests(unittest.TestCase):
             seed=3,
             device="cpu",
         )
+
+    def test_every_trainer_accepts_the_argv_the_launcher_builds(self) -> None:
+        """The launcher must never generate a command its own trainer rejects.
+
+        This is the shape of a bug that has already shipped twice: the launcher
+        recorded a reference name one trainer implemented and handed it to
+        another, which died in argparse before a window ever opened.  Parsing
+        the generated argv with each trainer's own parser catches the drift at
+        the moment it is introduced.
+        """
+
+        import importlib
+
+        from src.rl.inquiry import TRAINING_TASKS
+
+        for key, task in TRAINING_TASKS.items():
+            with self.subTest(task=key):
+                config = replace(
+                    self.config,
+                    task=key,
+                    run_name=f"{key}_argv_test",
+                    reference_motion=task.reference_motions[0],
+                )
+                module = importlib.import_module(task.module)
+                arguments = build_training_arguments(config)
+                args = module.build_parser().parse_args(arguments)
+                self.assertEqual(args.command_name, "train")
+                self.assertEqual(
+                    args.reference_motion, task.reference_motions[0]
+                )
+                self.assertEqual(str(args.output), config.relative_run_dir)
 
     def test_training_arguments_capture_interactive_settings(self) -> None:
         arguments = build_training_arguments(self.config)

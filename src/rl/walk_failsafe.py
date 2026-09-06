@@ -2001,7 +2001,10 @@ def build_parser() -> argparse.ArgumentParser:
         help="18 motor degrees; defaults to the Standard stance.",
     )
     parser.add_argument("--stance", choices=("standard", "sport"), default="standard")
-    subparsers = parser.add_subparsers(dest="command", required=True)
+    # "command_name", not "command": check and enjoy both define a --command
+    # velocity, and a subparser dest of the same name is silently overwritten
+    # by it. The other three trainers already use this spelling.
+    subparsers = parser.add_subparsers(dest="command_name", required=True)
 
     check = subparsers.add_parser("check", help="Report the scaffold and reward")
     check.add_argument("--curriculum", choices=tuple(CURRICULUM_RANGES), default="full")
@@ -2044,14 +2047,16 @@ def build_parser() -> argparse.ArgumentParser:
     )
     train.add_argument("--seed", type=int, default=0)
     train.add_argument("--device", default="auto")
-    train.add_argument("--output", default="runs/scone_walk_failsafe")
-    train.add_argument("--tensorboard-log", default=None)
-    train.add_argument("--resume", default=None)
+    train.add_argument(
+        "--output", type=Path, default=Path("runs/scone_walk_failsafe")
+    )
+    train.add_argument("--tensorboard-log", type=Path, default=None)
+    train.add_argument("--resume", type=Path, default=None)
     _add_failure_arguments(train)
     train.set_defaults(handler=run_train)
 
     enjoy = subparsers.add_parser("enjoy", help="Replay a saved policy")
-    enjoy.add_argument("checkpoint")
+    enjoy.add_argument("checkpoint", type=Path)
     enjoy.add_argument("--command", type=float, nargs=3, default=[0.06, 0.0, 0.0])
     enjoy.add_argument("--failed-legs", type=int, nargs="*", default=[])
     enjoy.add_argument("--seconds", type=float, default=30.0)
