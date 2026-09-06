@@ -13,6 +13,12 @@ from .tripod_gait import (
     VelocityCommand,
 )
 from .scone_gait import SconeGait, SconeGaitConfig
+from .scone_gait_v2 import LegRole, SconeGaitV2, SconeGaitV2Config
+from .sector_wheel import (
+    RollSolution,
+    SectorWheelModel,
+    WheelGeometry,
+)
 from .stair_geometry import (
     ArcWheelGeometry,
     SCONE_V2_ARC_WHEEL,
@@ -35,16 +41,22 @@ __all__ = [
     "MotionProfile",
     "GaitConfig",
     "GaitSample",
+    "LegRole",
     "LegacyVelocityAdapter",
     "NonRLWalk",
     "PhoenixTripodGait",
+    "RollSolution",
     "SconeGait",
     "SconeGaitConfig",
+    "SconeGaitV2",
+    "SconeGaitV2Config",
+    "SectorWheelModel",
     "SCONE_V2_ARC_WHEEL",
     "SPORT",
     "STANDARD",
     "VelocityCommand",
     "TripodGait",
+    "WheelGeometry",
     "Walk",
     "get_profile",
     "legged_wheel_opening_ratio",
