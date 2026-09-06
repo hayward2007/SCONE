@@ -393,6 +393,64 @@ class FailsafeEnvironmentTests(unittest.TestCase):
         self.assertGreater(float(contacts[4]), 0.5)
 
 
+class VelocityTrackingTests(unittest.TestCase):
+    """Tracking is the only positive term, so what it measures decides the run.
+
+    A walking body surges and rocks within every gait cycle. Measured on the
+    bare scaffold, vx has a standard deviation of 0.039-0.064 m/s and yaw rate
+    0.13-0.23 rad/s -- both comparable to or larger than the tolerances -- so
+    an instantaneous kernel scores mostly ripple that no policy can remove.
+    Worse, the only way to raise it is to move less: the healthy robot at
+    0.12 m/s scored 0.155 while tracking its command to 1.9%, below a damaged
+    robot ambling at 0.06.
+    """
+
+    @staticmethod
+    def _kernel(failed, command, steps=400):
+        from src.rl.walk_failsafe import SconeFailsafeEnv
+
+        env = SconeFailsafeEnv(
+            curriculum="full",
+            fixed_command=[command, 0.0, 0.0],
+            fixed_failed_legs=list(failed),
+            standing_pose_degrees=STANDARD_STANDING_DEGREES,
+        )
+        env.reset(seed=0)
+        action = np.zeros(18, dtype=np.float32)
+        values, speeds = [], []
+        for _ in range(steps):
+            _obs, _reward, _term, _trunc, info = env.step(action)
+            values.append(float(info["tracking"]))
+            speeds.append(float(info["vx"]))
+        env.close()
+        # Discard the start-up transient the filter has to charge through.
+        settled = len(values) // 4
+        return float(np.mean(values[settled:])), float(np.mean(speeds[settled:]))
+
+    def test_a_scaffold_that_tracks_its_command_scores_well(self) -> None:
+        for command in (0.06, 0.12):
+            with self.subTest(command=command):
+                kernel, speed = self._kernel([], command)
+                self.assertAlmostEqual(speed / command, 1.0, delta=0.20)
+                self.assertGreater(
+                    kernel, 0.70,
+                    f"tracked {speed:.4f} against {command} and scored {kernel:.3f}",
+                )
+
+    def test_moving_less_is_not_a_way_to_score_better(self) -> None:
+        fast, _speed = self._kernel([], 0.12)
+        slow, _speed = self._kernel([], 0.06)
+        self.assertGreater(
+            fast, 0.8 * slow,
+            "the faster commanded gait scores far worse purely for rippling more",
+        )
+
+    def test_a_veering_robot_still_scores_worse(self) -> None:
+        healthy, _s = self._kernel([], 0.06)
+        damaged, _s = self._kernel([5], 0.06)
+        self.assertLess(damaged, healthy)
+
+
 class HeadingHoldTests(unittest.TestCase):
     """Heading is a hold objective, and only while no turn is commanded.
 
@@ -598,6 +656,78 @@ class PromotionGateTests(unittest.TestCase):
         self.assertEqual(first["score"], second["score"])
         self.assertEqual(first["worst_score"], second["worst_score"])
 
+    @staticmethod
+    def _yaw_damper(gain: float):
+        mirror = np.array([1, -1, 1, -1, 1, -1], dtype=np.float32)
+
+        def act(observation: np.ndarray) -> np.ndarray:
+            action = np.zeros(18, dtype=np.float32)
+            yaw_rate = float(observation[5]) * 5.0
+            action[:6] = np.float32(np.clip(-yaw_rate * gain, -1.0, 1.0)) * mirror
+            return action
+
+        return act
+
+    def test_the_gate_and_the_reward_pick_the_same_best_controller(self) -> None:
+        """The gate must agree with the reward on what is better.
+
+        They are different expressions -- three terms against twelve -- so the
+        gate could reject a policy that is genuinely improving. Full rank
+        agreement is too strong to assert once the velocity filter is in
+        place: controllers that differ only in ripple now score within a
+        percent of each other, and ordering noise at that scale means nothing.
+        Agreeing on the argmax, and on which controller is clearly bad, is the
+        property that decides whether a run is stopped correctly.
+        """
+
+        from src.rl.walk_failsafe import (
+            EVALUATION_COMMANDS, EVALUATION_FAULTS, evaluate_policy_over_faults,
+        )
+
+        zero = np.zeros(18, dtype=np.float32)
+        controllers = [
+            ("scaffold", lambda _o: zero),
+            ("damped", self._yaw_damper(1.0)),
+            ("overdamped", self._yaw_damper(4.0)),
+        ]
+        build = self._factory()
+        faults, commands = EVALUATION_FAULTS[:3], EVALUATION_COMMANDS[:2]
+        seconds = 3.0
+
+        def training_reward(act) -> float:
+            totals = []
+            for failed in faults:
+                for command in commands:
+                    env = build(failed, command)
+                    observation, _info = env.reset(seed=0)
+                    total, steps = 0.0, 0
+                    for _ in range(int(seconds / env.control_dt)):
+                        observation, reward, terminated, truncated, _i = env.step(
+                            act(observation)
+                        )
+                        total += reward
+                        steps += 1
+                        if terminated or truncated:
+                            break
+                    env.close()
+                    totals.append(total / (steps * 0.02))
+            return float(np.mean(totals))
+
+        by_reward = [training_reward(act) for _name, act in controllers]
+        by_score = [
+            evaluate_policy_over_faults(
+                build, act, seconds=seconds, faults=faults, commands=commands
+            )["score"]
+            for _name, act in controllers
+        ]
+        self.assertEqual(
+            int(np.argmax(by_reward)), int(np.argmax(by_score)),
+            f"reward {by_reward} and gate {by_score} disagree on the best",
+        )
+        # The badly overdamped controller has to be visibly worse to both.
+        self.assertLess(by_reward[2], max(by_reward))
+        self.assertLess(by_score[2], max(by_score))
+
     def test_a_better_controller_is_promoted(self) -> None:
         """The objective has to be climbable before a run is worth starting.
 
@@ -612,11 +742,8 @@ class PromotionGateTests(unittest.TestCase):
         zero = np.zeros(18, dtype=np.float32)
         mirror = np.array([1, -1, 1, -1, 1, -1], dtype=np.float32)
 
-        def damp_yaw(observation: np.ndarray) -> np.ndarray:
-            action = np.zeros(18, dtype=np.float32)
-            yaw_rate = float(observation[5]) * 5.0
-            action[:6] = np.float32(np.clip(-yaw_rate * 1.5, -1.0, 1.0)) * mirror
-            return action
+        damp_yaw = self._yaw_damper(1.5)
+        del mirror
 
         scaffold = evaluate_policy_over_faults(
             self._factory(), lambda _o: zero, seconds=2.0

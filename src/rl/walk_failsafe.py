@@ -177,6 +177,16 @@ class RewardConfig:
     linear_velocity_sigma: float = 0.10        # m/s
     yaw_velocity_sigma: float = 0.15           # rad/s
     tracking_weight: float = 3.00
+    # Tracking is scored on a low-pass of the body velocity, not the instant
+    # one. A walking body surges and rocks every cycle: measured on the bare
+    # scaffold, vx has a standard deviation of 0.039-0.064 m/s and yaw rate
+    # 0.13-0.23 rad/s, both at or above the tolerances above. Scored raw, the
+    # only positive term is mostly ripple no policy can remove, and the one
+    # way to raise it is to move less -- the healthy robot at 0.12 m/s scored
+    # 0.155 while tracking its command to within 2%. One gait cycle at the
+    # 1.2 Hz cadence is 0.83 s, and command holds are 2.5-5 s, so this
+    # averages a full stride without lagging a command change.
+    velocity_filter_seconds: float = 0.50
 
     # -- accuracy deficits --------------------------------------------------
     # Half cost at this error, approaching full cost beyond it. Not a cap: a
@@ -248,6 +258,7 @@ class RewardConfig:
             self.support_margin_target,
             self.idle_activity_threshold,
             self.yaw_hold_threshold,
+            self.velocity_filter_seconds,
         ) <= 0.0:
             raise ValueError("every reward tolerance must be positive")
         if min(
@@ -639,6 +650,7 @@ class SconeFailsafeEnv(gym.Env[np.ndarray, np.ndarray]):
         )
         self._schedule: GaitSchedule | None = None
         self._contact_seconds_since = np.zeros(6, dtype=np.float64)
+        self._filtered_velocity = np.zeros(3, dtype=np.float64)
         self._cached_contacts: tuple[np.ndarray, float, np.ndarray] = (
             np.zeros(6, dtype=np.float64),
             UNSUPPORTED_MARGIN,
@@ -1193,8 +1205,12 @@ class SconeFailsafeEnv(gym.Env[np.ndarray, np.ndarray]):
         position, _ = self._joint_state()
 
         # -- the one thing to earn ------------------------------------------
-        linear_error = linear[:2] - self._command[:2]
-        yaw_error = float(angular[2] - self._command[2])
+        alpha = 1.0 - math.exp(-dt / config.velocity_filter_seconds)
+        self._filtered_velocity += alpha * (
+            np.array([linear[0], linear[1], angular[2]]) - self._filtered_velocity
+        )
+        linear_error = self._filtered_velocity[:2] - self._command[:2]
+        yaw_error = float(self._filtered_velocity[2] - self._command[2])
         tracking = math.exp(
             -float(linear_error @ linear_error) / config.linear_velocity_sigma**2
             - yaw_error**2 / config.yaw_velocity_sigma**2
@@ -1296,6 +1312,9 @@ class SconeFailsafeEnv(gym.Env[np.ndarray, np.ndarray]):
             "vx": float(linear[0]),
             "vy": float(linear[1]),
             "yaw_rate": float(angular[2]),
+            "filtered_vx": float(self._filtered_velocity[0]),
+            "filtered_vy": float(self._filtered_velocity[1]),
+            "filtered_yaw_rate": float(self._filtered_velocity[2]),
             "tracking": tracking,
             "heading_error": heading_error,
             "yaw_hold": self._yaw_hold_gate(),
@@ -1362,6 +1381,12 @@ class SconeFailsafeEnv(gym.Env[np.ndarray, np.ndarray]):
         self._episode_step = 0
         self._last_action.fill(0.0)
         self._contact_seconds_since.fill(0.0)
+        # Start the filter at the settled state rather than at zero, so the
+        # first second of every episode is not scored as a failure to move.
+        settled_linear, settled_angular, _gravity = self._base_state()
+        self._filtered_velocity[:] = (
+            settled_linear[0], settled_linear[1], settled_angular[2]
+        )
         self._reference_cadence = 0.0
         self._reference_stride_degrees = 0.0
         self._command.fill(0.0)
