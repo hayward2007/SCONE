@@ -393,6 +393,60 @@ class FailsafeEnvironmentTests(unittest.TestCase):
         self.assertGreater(float(contacts[4]), 0.5)
 
 
+class HeadingHoldTests(unittest.TestCase):
+    """Heading is a hold objective, and only while no turn is commanded.
+
+    docs/21 section 12: integrating a heading target through a rate the robot
+    cannot quite make grows an error the policy has no way to recover, because
+    it was asked for a rate and charged for a position. v2 shipped it, v3 fixed
+    it by gating, and this trainer inherited v1's integrator.
+    """
+
+    @staticmethod
+    def _env(command, failed):
+        from src.rl.walk_failsafe import SconeFailsafeEnv
+
+        return SconeFailsafeEnv(
+            curriculum="full",
+            fixed_command=list(command),
+            fixed_failed_legs=list(failed),
+            standing_pose_degrees=STANDARD_STANDING_DEGREES,
+        )
+
+    def _drift(self, command, failed, seconds=12.0):
+        env = self._env(command, failed)
+        env.reset(seed=0)
+        action = np.zeros(18, dtype=np.float32)
+        error = 0.0
+        cost = 0.0
+        steps = int(seconds / env.control_dt)
+        taken = 0
+        for _ in range(steps):
+            _obs, _reward, terminated, truncated, info = env.step(action)
+            error = abs(float(info["heading_error"]))
+            cost += float(info["reward_terms"]["heading"])
+            taken += 1
+            if terminated or truncated:
+                break
+        env.close()
+        return error, cost / (taken * 0.02)
+
+    def test_a_commanded_turn_does_not_accumulate_a_heading_debt(self) -> None:
+        # Two legs lost is where the scaffold's turn rate falls furthest short
+        # of the command, so it is where an integrating target diverges first.
+        error, cost = self._drift([0.0, 0.0, 0.30], [2, 5])
+        self.assertLess(error, 0.10, f"heading error grew to {error:.3f} rad")
+        self.assertGreater(cost, -0.05, f"heading cost was {cost:.4f}/s")
+
+    def test_a_straight_command_still_charges_for_veering(self) -> None:
+        # The opposite failure: gate too much and the trainer stops noticing
+        # the veer it exists to correct. With a leg lost the scaffold really
+        # does turn away from where it was pointed.
+        error, cost = self._drift([0.14, 0.0, 0.0], [5])
+        self.assertGreater(error, 0.05, "the known veer stopped being measured")
+        self.assertLess(cost, -0.02, f"heading cost was {cost:.4f}/s")
+
+
 class RewardBudgetTests(unittest.TestCase):
     def test_penalties_can_never_out_budget_the_reward(self) -> None:
         from src.rl.walk_failsafe import RewardConfig

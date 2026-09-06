@@ -181,6 +181,15 @@ class RewardConfig:
     # -- accuracy deficits --------------------------------------------------
     heading_error_cap: float = 0.60            # rad of error scoring full cost
     heading_weight: float = 0.50
+    # Heading is a *hold* objective and only means something while no turn is
+    # commanded. The target integrates the commanded yaw rate, so any shortfall
+    # accumulates an angle the policy cannot recover -- it was asked for a rate
+    # and charged for a position. Measured on the bare scaffold with two legs
+    # lost, a 0.30 rad/s command grew 0.59 rad of debt in 12 s, most of the
+    # 0.60 cap, purely from tracking short. Above this yaw command the target
+    # re-anchors to the current heading and the cost switches off; the yaw term
+    # of the tracking reward does the work instead (docs/21 section 12).
+    yaw_hold_threshold: float = 0.05           # rad/s
 
     # -- attitude, height, support -----------------------------------------
     # 0.26 of projected gravity is 15 degrees of tilt; the measured wave-gait
@@ -235,6 +244,7 @@ class RewardConfig:
             self.yaw_velocity_sigma,
             self.support_margin_target,
             self.idle_activity_threshold,
+            self.yaw_hold_threshold,
         ) <= 0.0:
             raise ValueError("every reward tolerance must be positive")
         if min(
@@ -735,6 +745,14 @@ class SconeFailsafeEnv(gym.Env[np.ndarray, np.ndarray]):
         error = self._heading_yaw() - self._target_heading
         return float(math.atan2(math.sin(error), math.cos(error)))
 
+    def _yaw_hold_gate(self) -> float:
+        """One while the robot is asked to hold a heading, zero while turning."""
+
+        threshold = self.reward_config.yaw_hold_threshold
+        return 1.0 - float(
+            np.clip(abs(float(self._command[2])) / threshold, 0.0, 1.0)
+        )
+
     def _contact_normal_force(self, contact_index: int) -> float:
         self._contact_force.fill(0.0)
         mujoco.mj_contactForce(
@@ -1147,7 +1165,9 @@ class SconeFailsafeEnv(gym.Env[np.ndarray, np.ndarray]):
 
         # -- accuracy and stability deficits --------------------------------
         heading_error = self._heading_error()
-        heading_cost = _normalized(abs(heading_error), config.heading_error_cap)
+        heading_cost = self._yaw_hold_gate() * _normalized(
+            abs(heading_error), config.heading_error_cap
+        )
         tilt = float(np.linalg.norm(gravity[:2]))
         tilt_cost = _normalized(tilt, config.tilt_cap)
         height = float(self.data.qpos[self.root_qpos_address + 2])
@@ -1242,6 +1262,7 @@ class SconeFailsafeEnv(gym.Env[np.ndarray, np.ndarray]):
             "yaw_rate": float(angular[2]),
             "tracking": tracking,
             "heading_error": heading_error,
+            "yaw_hold": self._yaw_hold_gate(),
             "tilt_degrees": math.degrees(math.asin(min(1.0, tilt))),
             "height": height,
             "support_margin": margin,
@@ -1337,7 +1358,12 @@ class SconeFailsafeEnv(gym.Env[np.ndarray, np.ndarray]):
         self, action: np.ndarray
     ) -> tuple[np.ndarray, float, bool, bool, dict[str, Any]]:
         self._update_command()
-        self._target_heading += self._command[2] * self.control_dt
+        if self._yaw_hold_gate() > 0.0:
+            self._target_heading += self._command[2] * self.control_dt
+        else:
+            # Turning: there is no heading to hold, so re-anchor rather than
+            # let the target run away from a rate the robot cannot match.
+            self._target_heading = self._heading_yaw()
         used_action = self._apply_action(action)
 
         for _ in range(self.walk_config.frame_skip):
