@@ -199,6 +199,42 @@ class RollingStrokeTests(unittest.TestCase):
         np.testing.assert_allclose(gait.sector_degrees, np.zeros(6), atol=1e-12)
 
 
+class RollLegSelectionTests(unittest.TestCase):
+    """A named pair turns the gait into a two-leg drive."""
+
+    def _rolling_after(self, roll_legs, steps: int = 90) -> tuple[int, ...]:
+        gait = SconeGaitV2(
+            config=SconeGaitV2Config(
+                command_time_constant=0.0,
+                roll_legs=roll_legs,
+            )
+        )
+        for _ in range(steps):
+            sample = gait.step(VelocityCommand(vx=0.30), dt=0.02)
+            self.assertTrue(sample.converged, sample.failed_legs)
+        return gait.rolling_legs
+
+    def test_a_named_pair_is_the_only_pair_that_rolls(self) -> None:
+        self.assertEqual(self._rolling_after((1, 2)), (1, 2))
+        self.assertEqual(self._rolling_after((5, 6)), (5, 6))
+
+    def test_a_leg_that_cannot_roll_the_command_still_walks(self) -> None:
+        # Legs 3 and 4 are 90 degrees off a forward command whatever the
+        # config says, so naming them changes nothing about who rolls.
+        self.assertEqual(self._rolling_after((3, 4)), ())
+
+    def test_an_empty_selection_is_the_walking_control(self) -> None:
+        gait = SconeGaitV2(
+            config=SconeGaitV2Config(command_time_constant=0.0, roll_legs=())
+        )
+        for _ in range(90):
+            gait.step(VelocityCommand(vx=0.30), dt=0.02)
+
+        self.assertEqual(gait.rolling_legs, ())
+        np.testing.assert_allclose(gait.sector_degrees, np.zeros(6), atol=1e-12)
+        np.testing.assert_allclose(gait.steering_degrees, np.zeros(6), atol=1e-12)
+
+
 class ConfigValidationTests(unittest.TestCase):
     def test_invalid_tuning_is_rejected(self) -> None:
         for arguments in (
@@ -214,6 +250,9 @@ class ConfigValidationTests(unittest.TestCase):
             {"arc_reserve_safety": 0.9},
             {"swing_lift_reference_speed": 0.0},
             {"ik_branch_guard_degrees": 0.0},
+            {"roll_legs": (1, 1)},
+            {"roll_legs": (0, 2)},
+            {"roll_legs": (7,)},
         ):
             with self.subTest(arguments=arguments), self.assertRaises(ValueError):
                 SconeGaitV2Config(**arguments)

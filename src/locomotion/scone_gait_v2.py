@@ -107,6 +107,11 @@ class SconeGaitV2Config(GaitConfig):
     max_steering_degrees: float = 35.0
     min_roll_alignment: float = 0.70
     minimum_rolling_legs: int = 2
+    # Restrict the ROLL role to these legs.  ``None`` lets the kinematics
+    # decide, which is the default and what the four-corner forward gait uses.
+    # Naming a pair turns the gait into a two-leg drive: those legs roll and
+    # the other four walk, whatever the command.
+    roll_legs: tuple[int, ...] | None = None
     # Kept away from both ends of the measured arc and from the 0..360 degree
     # actuator range.
     arc_margin_degrees: float = 20.0
@@ -154,6 +159,10 @@ class SconeGaitV2Config(GaitConfig):
             raise ValueError("min_roll_alignment must be between 0 and 1")
         if not 0 <= self.minimum_rolling_legs <= 6:
             raise ValueError("minimum_rolling_legs must be between 0 and 6")
+        if self.roll_legs is not None:
+            legs = tuple(self.roll_legs)
+            if len(set(legs)) != len(legs) or not set(legs) <= set(range(1, 7)):
+                raise ValueError("roll_legs must be distinct leg numbers 1..6")
         if self.arc_margin_degrees < 0.0 or self.motor_headroom_degrees < 0.0:
             raise ValueError("arc margin and motor headroom cannot be negative")
         if self.roll_derate_degrees <= 0.0:
@@ -537,8 +546,14 @@ class SconeGaitV2(TripodGait):
             )
             for leg in range(1, 7)
         ]
+        allowed = (
+            set(range(1, 7))
+            if self.config.roll_legs is None
+            else set(self.config.roll_legs)
+        )
         qualified = [
             moving
+            and leg in allowed
             and solution.alignment >= self.config.min_roll_alignment
             and float(np.linalg.norm(travel[leg - 1])) > self.config.idle_epsilon
             for leg, solution in enumerate(solutions, start=1)
