@@ -3,13 +3,20 @@
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Protocol
 
 import numpy as np
 
 from src.hardware import Actuator
-from src.locomotion import SconeGait, SconeGaitV2, TripodGait, VelocityCommand
+from src.locomotion import (
+    GaitConfig,
+    SconeGait,
+    SconeGaitV2,
+    SconeGaitV2Config,
+    TripodGait,
+    VelocityCommand,
+)
 from src.simulation.core.cli_bridge import (
     SCONE_GAIT_SIMULATION_CONFIG,
     SCONE_GAIT_V2_SIMULATION_CONFIG,
@@ -27,6 +34,10 @@ CONTROLLER_CHOICES = (
     "full-roll",
     "bounded-scone",
     "role-split-scone",
+    "rear-pair-roll",
+    "front-pair-roll",
+    "no-roll-baseline",
+    "fast-articulated-walk",
     "matched-articulated",
     "matched-distal-only",
     "matched-coordinated",
@@ -119,9 +130,19 @@ def _acquire_phase_pose(
 class ArticulatedWalkController:
     name = "articulated-walk"
 
-    def __init__(self, trial: SimulationTrial, *, phase: float = 0.0) -> None:
+    def __init__(
+        self,
+        trial: SimulationTrial,
+        *,
+        phase: float = 0.0,
+        config: GaitConfig | None = None,
+        name: str | None = None,
+    ) -> None:
+        if name is not None:
+            self.name = name
         self.trial = trial
         self.phase = phase
+        self.config = config or TRIPOD_GAIT_SIMULATION_CONFIG
         self.gait: TripodGait | None = None
 
     def prepare(
@@ -135,7 +156,7 @@ class ArticulatedWalkController:
         self.gait = TripodGait(
             trial.controller,
             trial.robot.profile,
-            config=TRIPOD_GAIT_SIMULATION_CONFIG,
+            config=self.config,
         )
         self.gait.reset(phase=self.phase)
 
@@ -348,16 +369,49 @@ class BoundedSconeController:
         self.gait.update(VelocityCommand(), dt=0.02, send=True)
 
 
+# Two-leg drives: only the named pair rolls and the other four walk.  Legs 1
+# and 2 trail a forward command and already supply most of the push when the
+# robot only walks; legs 5 and 6 lead it and are the pair that brakes.
+REAR_PAIR_ROLL_CONFIG = replace(SCONE_GAIT_V2_SIMULATION_CONFIG, roll_legs=(1, 2))
+FRONT_PAIR_ROLL_CONFIG = replace(SCONE_GAIT_V2_SIMULATION_CONFIG, roll_legs=(5, 6))
+# The control for every rolling claim: the same scheduler, the same stride
+# budget, the same cadence, with no leg allowed to roll.  Any difference
+# against it is the rolling and nothing else.
+NO_ROLL_CONFIG = replace(SCONE_GAIT_V2_SIMULATION_CONFIG, roll_legs=())
+# The same budget given to the plain tripod walker, which is a different
+# code path and therefore a second, independent control.
+FAST_WALK_CONFIG = GaitConfig(
+    cycle_frequency=SCONE_GAIT_V2_SIMULATION_CONFIG.cycle_frequency,
+    duty_factor=SCONE_GAIT_V2_SIMULATION_CONFIG.duty_factor,
+    step_height=SCONE_GAIT_V2_SIMULATION_CONFIG.step_height,
+    max_stride=SCONE_GAIT_V2_SIMULATION_CONFIG.max_stride,
+    max_lateral_stride=SCONE_GAIT_V2_SIMULATION_CONFIG.max_lateral_stride,
+    max_vx=SCONE_GAIT_V2_SIMULATION_CONFIG.max_vx,
+    max_vy=SCONE_GAIT_V2_SIMULATION_CONFIG.max_vy,
+    ik_tolerance=1e-3,
+    ik_stride_backoff_attempts=4,
+)
+
+
 class RoleSplitSconeController:
     """scone-gait-v2: corner legs roll on steered sectors, middle legs walk."""
 
     name = "role-split-scone"
 
-    def __init__(self, trial: SimulationTrial, *, phase: float = 0.0) -> None:
+    def __init__(
+        self,
+        trial: SimulationTrial,
+        *,
+        phase: float = 0.0,
+        config: "SconeGaitV2Config | None" = None,
+        name: str | None = None,
+    ) -> None:
+        if name is not None:
+            self.name = name
         self.gait = SconeGaitV2(
             trial.controller,
             trial.robot.profile,
-            config=SCONE_GAIT_V2_SIMULATION_CONFIG,
+            config=config or SCONE_GAIT_V2_SIMULATION_CONFIG,
         )
         self.gait.reset(phase=phase)
 
@@ -457,6 +511,34 @@ def make_controller(
         return BoundedSconeController(trial, phase=phase)
     if name == "role-split-scone":
         return RoleSplitSconeController(trial, phase=phase)
+    if name == "rear-pair-roll":
+        return RoleSplitSconeController(
+            trial,
+            phase=phase,
+            config=REAR_PAIR_ROLL_CONFIG,
+            name="rear-pair-roll",
+        )
+    if name == "no-roll-baseline":
+        return RoleSplitSconeController(
+            trial,
+            phase=phase,
+            config=NO_ROLL_CONFIG,
+            name="no-roll-baseline",
+        )
+    if name == "fast-articulated-walk":
+        return ArticulatedWalkController(
+            trial,
+            phase=phase,
+            config=FAST_WALK_CONFIG,
+            name="fast-articulated-walk",
+        )
+    if name == "front-pair-roll":
+        return RoleSplitSconeController(
+            trial,
+            phase=phase,
+            config=FRONT_PAIR_ROLL_CONFIG,
+            name="front-pair-roll",
+        )
     if name == "matched-articulated":
         return MatchedArticulatedController(trial, phase=phase)
     if name == "matched-distal-only":
@@ -480,7 +562,11 @@ __all__ = [
     "BenchmarkController",
     "CONTROLLER_CHOICES",
     "MATCHED_CONTROLLER_CHOICES",
+    "FAST_WALK_CONFIG",
+    "FRONT_PAIR_ROLL_CONFIG",
+    "NO_ROLL_CONFIG",
     "MATCHED_ROLL_CONFIG",
+    "REAR_PAIR_ROLL_CONFIG",
     "ControlDiagnostics",
     "make_controller",
 ]
