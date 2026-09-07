@@ -374,3 +374,6 @@ swing 중인 다리를 완전히 조향된 자세로 되돌리는 것은 애초�
   조향으로 좁아진 발자국의 전복 여유를 실측해야 한다.
 - `SconeGait`(v1)는 손대지 않았다. ICRA 벤치마크와 residual RL reference가 그
   동작에 고정돼 있다.
+- 네 모서리를 다 굴릴 필요가 있는지는 따로 측정했다. 두 다리만 굴리는 구성과
+  어느 쌍이 실제로 놀고 있는지는
+  [`29-two-leg-sector-drive.md`](29-two-leg-sector-drive.md)에 있다.
