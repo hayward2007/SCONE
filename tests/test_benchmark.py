@@ -19,6 +19,7 @@ from benchmark.common import (
 from benchmark.capture import CaptureConfig
 from benchmark.flat import run_flat_trial
 from benchmark.icra import sample_paired_perturbations
+from benchmark.leg_usage import measure_leg_usage
 from benchmark.model_variants import (
     TIRE_GEOM_NAMES,
     replace_open_arcs_with_closed_wheels,
@@ -58,6 +59,27 @@ class BenchmarkTests(unittest.TestCase):
         self.assertTrue(math.isfinite(float(record["mean_vx_mps"])))
         self.assertGreater(float(record["duration_s"]), 0.0)
         json.dumps(record)
+
+    def test_leg_usage_accounts_for_every_leg_and_signs_the_floor_force(self) -> None:
+        record = measure_leg_usage(
+            "articulated-walk",
+            (0.18, 0.0, 0.0),
+            config=BenchmarkConfig(measure_seconds=1.0),
+        )
+        legs = record["legs"]
+
+        self.assertEqual(tuple(leg.leg for leg in legs), (1, 2, 3, 4, 5, 6))
+        self.assertGreater(record["displacement_x_m"], 0.0)
+        for leg in legs:
+            with self.subTest(leg=leg.leg):
+                self.assertGreater(leg.contact_fraction, 0.0)
+                self.assertLessEqual(leg.contact_fraction, 1.0)
+                # The floor cannot pull the robot down, so every leg's vertical
+                # impulse has to come out positive once the contact normal is
+                # oriented.  A negative one means the sign fix is broken.
+                self.assertGreater(leg.vertical_impulse_ns, 0.0)
+                self.assertGreaterEqual(leg.forward_impulse_ns, 0.0)
+                self.assertGreaterEqual(leg.braking_impulse_ns, 0.0)
 
     def test_closed_wheel_transform_is_non_destructive_and_complete(self) -> None:
         source = DEFAULT_MODEL_PATH.read_text(encoding="utf-8")
