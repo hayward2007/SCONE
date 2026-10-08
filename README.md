@@ -1,10 +1,217 @@
 # SCONE
 
-> **Archived on 2026-10-09.** Development has ended for this project.
-> The final source, CAD, paper/video packets, experiments and saved checkpoints
-> are preserved for reference. Start with the
-> [project closeout and restoration guide](docs/31-project-archive.md).
-> Install Git LFS and run `git lfs pull` after cloning to retrieve binary assets.
+**도움이 필요한 사람에게 직접 찾아가는 로봇을 만들고 싶었습니다.**<br>
+**Building a robot that can bring help to the person who needs it.**
+
+Six-legged robot Capable Of rotational motioN · 김형석 / Hyoung-Seok Kim
+
+[한국어](#한국어) · [English](#english) · [Posters & papers](#posters-and-papers) · [Videos](#videos) · [Development archive](#development-archive)
+
+![SCONE v2 실물 로봇 / Physical SCONE v2 prototype](archive/ICRA_2027_revision4_20260913/figures/archive_SCONEv2_18.png)
+
+*SCONE v2의 실제 제작·동작 기록에서 가져온 장면입니다. / A frame from the original SCONE v2 hardware footage.*
+
+> **보관된 프로젝트 / Archived project · 2026-10-09**<br>
+> 제작 과정, 소스, 포스터, 논문, 실물 영상과 후속 설계를 함께 보존합니다.<br>
+> Hardware history, source code, posters, papers, videos and later designs are preserved here.<br>
+> [전체 정리 및 복원 안내 / Project closeout and restoration](docs/31-project-archive.md)
+
+## 한국어
+
+### 왜 만들었는가
+
+고등학교에서 동아리를 홍보하던 중 친구가 쓰러진 일이 있었습니다.
+그 일을 겪으며, 의식을 잃은 사람을 혼자 힘으로 옮기는 일이 얼마나 어려운지 실감했습니다.
+도움이 필요한 사람에게 필요한 장비가 직접 찾아갈 수 있다면 어떨까 하는 생각이 들었습니다.
+
+그 경험이 SCONE을 만들기 시작한 계기였습니다. 사람에게 직접 도달할 수 있는 이동 로봇을 만들고,
+그 로봇을 **자동제세동기(AED)를 환자에게 전달하는 로봇으로 응용해 보았습니다.**
+그 과정에서 중요하게 생각한 것은 평지에서 움직이는 것뿐 아니라, 실제 이동 경로에서 마주치는
+계단과 턱도 통과할 수 있는 구조였습니다.
+
+이 질문은 친환경 배송과 응급 장비 전달이라는 두 응용으로 이어졌습니다.
+초기 논문과 포스터에는 배송 로봇의 이동 문제, 제작 과정, 실패와 개선을 정리했고,
+포스터의 마지막에는 AED 같은 중요한 물품을 필요한 사람에게 직접 전달하는 방향을 담았습니다.
+이 저장소는 그 생각이 실제 로봇, 실험, 설계와 코드로 발전한 기록입니다.
+
+### 어떤 로봇인가
+
+SCONE은 다리 끝에 **C자형 부채꼴 바퀴**를 붙인 6족 로봇입니다.
+같은 말단 구조를 회전시키거나 다리 관절을 움직여 걷기, 구르기와 계단 이동을 탐구했습니다.
+초기 실물은 3D 프린팅 프레임과 DYNAMIXEL 모터로 제작했고, 이후에는 MuJoCo에서 접촉 기하,
+보행 제어와 계단 자세를 비교하며 동작을 분석했습니다.
+
+이 저장소에는 다음 작업이 함께 들어 있습니다.
+
+- **실물 제작:** 초기 평행 링크 구조, 프레임·타이어·모터·전원 개선과 v1/v2 동작 영상.
+- **이동 제어:** Walk/Drive/Climb, 교대 삼각보, 연속 굴림과 다리별 굴림·보행 역할 분리.
+- **시뮬레이션과 학습:** MuJoCo 모델, 지형 생성, PPO 학습, 다리 상실 대응과 반복 벤치마크.
+- **후속 설계:** MARC 계열의 4족 기구, 하우징, 팔, Jetson·U2D2 배치 및 전원 검토.
+
+자료에는 성공한 동작과 함께 전원 부족, 미끄러짐, 모터 과부하, 프레임 문제와 실패한 실험도 남겼습니다.
+실물 제작 영상과 후속 시뮬레이션의 정량 실험은 각각의 조건과 근거를 따라 읽을 수 있도록 구분했습니다.
+
+## English
+
+### Why I built it
+
+The idea began when a friend collapsed while I was promoting a club at my high school.
+That experience made me realize how difficult it can be for one person to move someone who has lost consciousness.
+I began thinking about a robot that could bring essential equipment directly to the person who needed it.
+
+That became the starting point for SCONE. I wanted to build a mobile robot that could reach people,
+and I explored **delivering an automated external defibrillator (AED) as an application.**
+The mobility problem mattered: reaching a person could mean dealing with stairs and curbs as well as a flat floor.
+
+The project connected that motivation with two applications: environmentally friendly delivery and emergency equipment delivery.
+The original papers and poster document the delivery problem, construction, failures and improvements.
+The poster also presents bringing vital supplies such as an AED directly to the recipient as a future application.
+This repository preserves how that idea developed into hardware, experiments, designs and software.
+
+### What SCONE is
+
+SCONE is a six-legged robot with **C-shaped arc wheels at the ends of its limbs**.
+By rotating the terminal frames and articulating the legs, I explored walking, rolling and stair climbing
+with the same mechanism. The early hardware used 3D-printed parts and DYNAMIXEL actuators.
+Later work used MuJoCo to study contact geometry, gait control and stair postures.
+
+The archive brings together:
+
+- **Hardware development:** the original parallel-link design, frame, tire, actuator and power revisions, and v1/v2 footage.
+- **Locomotion:** Walk/Drive/Climb, tripod walking, continuous rolling and per-leg rolling/stepping roles.
+- **Simulation and learning:** MuJoCo models, generated terrain, PPO training, leg-loss adaptation and repeated benchmarks.
+- **Later designs:** the four-legged MARC mechanism, housing, arm, Jetson/U2D2 integration and power-system review.
+
+The records include successful motions and the problems encountered along the way: insufficient power,
+slipping, actuator overload, structural issues and failed trials.
+The historical hardware footage and the quantitative simulation studies retain their own experimental context.
+
+## Posters and papers
+
+### 제작 포스터 / Original project poster
+
+실제 제작 사진, v1에서 v2로의 개선, 실험 결과와 AED 전달 응용을 한 장에 담은 포스터입니다.
+The original poster brings together hardware photos, the v1-to-v2 improvements, experiments and the AED delivery application.
+
+[![Eco-friendly delivery, SCONE — original research poster](archive/assets/Eco-friendly%20deliver%20SCONE%20Poster.jpg)](archive/assets/Eco-friendly%20deliver%20SCONE%20Poster.jpg)
+
+[원본 포스터 열기 / Open the full-resolution poster](archive/assets/Eco-friendly%20deliver%20SCONE%20Poster.jpg)
+
+### 연구 요약 / Quad chart
+
+연구 질문, 제작 방법, 초기 결과와 개선 방향을 정리한 원본 요약 자료입니다.
+The original quad chart summarizes the research question, methods, early results and planned improvements.
+
+[![SCONE original research quad chart](archive/assets/Eco-friendly%20deliver%20SCONE%20Quad%20Chart.png)](archive/assets/Eco-friendly%20deliver%20SCONE%20Quad%20Chart.png)
+
+[원본 요약 자료 열기 / Open the full-resolution quad chart](archive/assets/Eco-friendly%20deliver%20SCONE%20Quad%20Chart.png)
+
+### 초기 논문과 도면 / Original papers and drawing
+
+| 자료 / Material | 내용 / Contents | 원본 / Original |
+| --- | --- | --- |
+| **회전운동이 가능한 6족 로봇, 스콘의 개발** | 제21회 KSEF 과학프로젝트대회 국문 논문, 10쪽. 제작 배경과 초기 구조·실험. / Korean paper with construction and early experiments. | [국문 PDF / Korean PDF](archive/papers/대한민국_한국디지털미디어고등학교_김형석_논문.pdf) |
+| **Eco-friendly deliver, SCONE** | KSEF 영문 논문, 6쪽. 배송 로봇의 이동 문제와 초기 실물의 성능·한계. / English paper on delivery mobility and the early prototype. | [영문 PDF / English PDF](archive/papers/Eco-friendly%20deliver%20SCONE%20Paper.pdf) |
+| **SCONE v2 Arc-Shaped Wheel** | 부채꼴 말단의 치수와 형상을 기록한 원본 제작 도면. / Original dimensioned arc-wheel drawing. | [도면 PDF / Drawing PDF](archive/assets/SCONEv2%20Arc-Shaped%20Wheel.pdf) |
+
+### 후속 이동 연구 / Later locomotion research
+
+**Posture and Contact Geometry in Simple Hybrid Locomotion of an Articulated Arc-Leg Hexapod**
+
+ICRA 2027용으로 준비한 6쪽 연구 원고입니다. 같은 6족 기체에서 평지 이동과 계단 오르기에
+필요한 제어를 얼마나 단순화할 수 있는지 살펴봅니다. 원고에는 별도의 MuJoCo 평지 176회,
+계단 102회 실험과 접촉 형상·관절 자세·수치 민감도 비교를 담았습니다.
+
+This six-page manuscript was prepared for ICRA 2027. It studies how much control can be simplified
+while retaining flat transport and stair ascent on the same hexapod. It reports separate 176-trial flat
+and 102-trial stair studies in MuJoCo, including contact geometry, posture and numerical sensitivity.
+
+[연구 원고 PDF / Manuscript PDF](archive/ICRA_2027_submission_20260914/01_UPLOAD/SCONE_ICRA2027_Paper.pdf)
+· [한글 검토서 / Korean review](archive/ICRA_2027_revision5_20260913/output/pdf/SCONE_ICRA2027_Review_KO.pdf)
+· [LaTeX 원문 / LaTeX source](archive/ICRA_2027_revision5_20260913/paper.tex)
+· [실험 근거 / Experiment records](archive/ICRA_2027_revision5_20260913/evidence/)
+· [원고와 실험 설명 / Research notes](archive/ICRA_2027_revision5_20260913/README.md)
+
+![후속 연구의 계단 시뮬레이션 / Stair simulation from the later research](archive/ICRA_2027_revision5_20260913/figures/stair_overview.png)
+
+*MuJoCo 시뮬레이션 그림입니다. 실물 시험 영상은 아래에 따로 보존했습니다. / MuJoCo simulation; original hardware videos are linked below.*
+
+### 원고 이력 / Manuscript history
+
+이전 버전의 한글·영문 원고와 개정 자료도 함께 공개합니다. 위 PDF를 최신 보관 원고로 읽고,
+아래 파일은 각 작성 시점의 연구 기록으로 확인할 수 있습니다.
+Earlier bilingual drafts and revisions are retained alongside the latest archived manuscript.
+
+| 버전 / Version | 원고 / Manuscript | 관련 자료 / Notes |
+| --- | --- | --- |
+| 초기 ICRA 작업 원고 / Early ICRA draft | [한국어 / Korean](archive/ICRA/output/SCONE_ICRA_Korean.pdf) · [English](archive/ICRA/output/SCONE_ICRA_English.pdf) | [원문·빌드·설명 / Sources and notes](archive/ICRA/README.md) |
+| 2026-09-12 초안 / Initial packet | [English PDF](archive/ICRA_2027_20260912/output/pdf/SCONE_ICRA2027_Manuscript_EN.pdf) | [검토·개정 자료 / Review and revision records](archive/ICRA_2027_20260912/) |
+| Revision 2 | [English PDF](archive/ICRA_2027_revision2_20260912/output/pdf/SCONE_ICRA2027_Manuscript_EN.pdf) | [자료 / Packet](archive/ICRA_2027_revision2_20260912/) |
+| Revision 3 | [English PDF](archive/ICRA_2027_revision3_20260913/output/pdf/SCONE_ICRA2027_Manuscript_EN.pdf) | [자료 / Packet](archive/ICRA_2027_revision3_20260913/) |
+| Revision 4 | [English PDF](archive/ICRA_2027_revision4_20260913/output/pdf/SCONE_ICRA2027_Manuscript_EN.pdf) | [자료 / Packet](archive/ICRA_2027_revision4_20260913/) |
+| Revision 5 | [English PDF](archive/ICRA_2027_revision5_20260913/output/pdf/SCONE_ICRA2027_Manuscript_EN.pdf) | [자료 / Packet](archive/ICRA_2027_revision5_20260913/) |
+
+## Videos
+
+### 실물 제작과 이동 / Original hardware demonstrations
+
+![실제 SCONE v2 계단 동작 기록 / Frames from the SCONE v2 physical stair footage](archive/ICRA_2027_revision4_20260913/figures/hardware_stairs.png)
+
+| 영상 / Video | 내용 / Contents |
+| --- | --- |
+| [SCONE v1](archive/videos/SCONEv1.mp4) | 초기 실물의 동작 기록. / Original prototype footage. |
+| [SCONE v2](archive/videos/SCONEv2.mp4) | 개선한 기체의 평지 동작과 자세 전환. / Revised hardware, floor motion and posture changes. |
+| [SCONE v2 — stairs](archive/videos/SCONEv2_stairs.mp4) | 실제 계단에서 촬영한 원본 영상. / Original physical stair-climbing footage. |
+| [실물 중심 보조 영상 / Hardware-focused companion video](archive/ICRA_2027_submission_20260914/01_UPLOAD/SCONE_ICRA2027_Video.mp4) | v2 실물 영상 두 편 전체와 시뮬레이션 장면을 구분한 편집본, 약 96초. / Full v2 hardware clips followed by labeled simulation segments, about 96 seconds. |
+
+[편집 출처와 구성 / Video sources and edit notes](archive/ICRA_2027_video_revision2_20260920/README_KO.md)
+· [원본 실물 영상 폴더 / Hardware video archive](archive/videos/)
+
+### 시뮬레이션 / Simulation demonstrations
+
+| 영상 / Video | 내용 / Contents |
+| --- | --- |
+| [평지 주기적 이동 / Periodic flat motion](archive/ICRA_2027_revision4_20260913/media/joint_P.mp4) | 후속 평지 제어의 시뮬레이션 재생. / Replay of the later flat controller. |
+| [150 mm 계단 / 150 mm stairs](archive/ICRA_2027_revision5_20260913/media/stair_45.mp4) | 계단 통과와 지지 정지 재생. / Stair ascent and supported halt. |
+| [같은 계단의 원형 바퀴 비교 / Matched closed-wheel comparison](archive/ICRA_2027_revision5_20260913/media/stair_47.mp4) | 접촉 형상을 바꾼 비교 재생. / Replay with the matched wheel geometry. |
+| [200 mm 계단의 실패 사례 / 200 mm stair failure](archive/ICRA_2027_revision5_20260913/media/stair_75.mp4) | 뒷다리 전체 통과를 완료하지 못한 한계도 보존. / Retained example of incomplete rear-leg transfer. |
+
+[추가 시뮬레이션 영상·이미지 / More simulation videos and images](archive/simulation_media/README.md)
+
+## Development archive
+
+SCONE은 고등학교의 초기 제작에서 이동 제어·학습·후속 기구 설계로 이어졌습니다.
+MARC는 그 부채꼴 바퀴 원리를 이어가는 계열 이름이며, 4족 설계는 초기 6족 실물과 구분해 보관합니다.
+
+SCONE grew from the high-school prototypes into locomotion control, learning and later mechanical designs.
+MARC names the continuing arc-wheel robot family; the later four-legged designs are kept distinct from the original hexapods.
+
+[![후속 MARC 기구 설계 / Later MARC mechanical design](artifacts/housing/20260930_c1_l1/final_assembly.png)](artifacts/housing/20260930_c1_l1/)
+
+*후속 설계의 CAD 화면입니다. / CAD view of a later design.*
+
+| 기록 / Record | 보관 위치 / Archive |
+| --- | --- |
+| 전체 기술·개발 문서 / Technical documentation and development history | [문서 색인 / Documentation index](docs/README.md) |
+| 굴림·보행 역할 분리와 두 다리 구동 / Rolling/stepping roles and two-leg rolling | [역할 분리 / Role split](docs/28-scone-gait-v2-role-split-rolling.md) · [두 다리 구동 / Two-leg rolling](docs/29-two-leg-sector-drive.md) |
+| MARC 설계 계보와 검증 명세 / MARC lineage and verification plan | [설계 명세 / Design plan](docs/30-scone-v3-design-plan.md) |
+| CAD·하우징·팔·전장 / CAD, housing, arm and electronics | [산출물 / Artifacts](artifacts/) |
+| 배터리·전원 PCB 검토 / Battery and power-board review | [검토 PDF / Review PDF](output/pdf/MARC_v4_battery_P1_review_20261007.pdf) |
+| 실험·소프트웨어 시험 / Benchmarks and software tests | [Benchmarks](benchmark/README.md) · [Tests](tests/) |
+| 학습 정책과 별도 개발 상태 / Saved policies and development snapshots | [복원 안내 / Snapshot and checkpoint notes](archive/development_snapshots/20261009/README.md) |
+| 전체 보관 범위와 남은 작업 / Complete archive scope and remaining work | [종료 문서 / Closeout guide](docs/31-project-archive.md) |
+
+CAD, 영상과 체크포인트 등 Git LFS 자료를 로컬에서 열려면 복제 후 `git lfs pull`을 실행합니다.
+Install Git LFS and run `git lfs pull` after cloning to retrieve the binary originals.
+PDF와 MP4는 위 링크에서 열거나 내려받을 수 있습니다.
+PDFs and MP4s can be opened or downloaded from the links above.
+
+## Run and develop
+
+<details>
+<summary><strong>실행·API·구조·학습 가이드 펼치기 / Expand the runtime, API, architecture and training guide</strong></summary>
+
+The original technical guide is preserved below. For detailed Korean instructions, see the [documentation index](docs/README.md).
 
 SCONE is a six-legged robot project with one high-level control API and two
 interchangeable backends: physical DYNAMIXEL hardware and MuJoCo simulation.
@@ -508,3 +715,5 @@ ceiling, no height term at all, and attitude enforced by cost and termination.
 `src/rl/walk_failsafe.py` inverts that shape: command tracking is the only way
 to score, everything else is a bounded deficit, and the configuration refuses
 any weighting whose penalties out-budget the reward.
+
+</details>
