@@ -1,0 +1,964 @@
+[
+  {
+    "path": "E10 Jetson rear electronics brace:1+P1:1",
+    "component": "P1",
+    "transform": [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "bodies": [
+      {
+        "name": "P1 body-Jetson brace - 4x M2.5x8 plus 2x M3x12",
+        "box": [
+          [
+            104.1,
+            5.4,
+            38.7
+          ],
+          [
+            239.0,
+            39.8,
+            136.5
+          ]
+        ],
+        "faces": 98
+      }
+    ],
+    "features": [
+      {
+        "name": "P1 body-Jetson brace - 4x M2.5x8 plus 2x M3x12",
+        "source_bodies": 1,
+        "result_bodies": 1
+      }
+    ]
+  },
+  {
+    "path": "E10 Jetson rear electronics brace:1+P2:1",
+    "component": "P2",
+    "transform": [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "bodies": [
+      {
+        "name": "P2 lift-out PCB plate - 2x M2.5x8 captive nuts",
+        "box": [
+          [
+            103.54999999999998,
+            19.5,
+            45.5
+          ],
+          [
+            240.0,
+            34.0,
+            134.5
+          ]
+        ],
+        "faces": 198
+      }
+    ],
+    "features": [
+      {
+        "name": "P2 lift-out PCB plate - 2x M2.5x8 captive nuts",
+        "source_bodies": 1,
+        "result_bodies": 1
+      }
+    ]
+  },
+  {
+    "path": "E10 Jetson rear electronics brace:1+P3:1",
+    "component": "P3",
+    "transform": [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "bodies": [
+      {
+        "name": "P3 PCB spacer 4.85mm 1",
+        "box": [
+          [
+            162.7,
+            23.500000000000007,
+            53.2
+          ],
+          [
+            170.29999999999998,
+            28.35,
+            60.8
+          ]
+        ],
+        "faces": 4
+      },
+      {
+        "name": "P3 PCB spacer 4.85mm 2",
+        "box": [
+          [
+            162.7,
+            23.500000000000007,
+            95.19999999999999
+          ],
+          [
+            170.29999999999998,
+            28.35,
+            102.80000000000001
+          ]
+        ],
+        "faces": 4
+      },
+      {
+        "name": "P3 PCB spacer 4.85mm 3",
+        "box": [
+          [
+            224.70000000000002,
+            23.500000000000007,
+            53.2
+          ],
+          [
+            232.3,
+            28.35,
+            60.8
+          ]
+        ],
+        "faces": 4
+      },
+      {
+        "name": "P3 PCB spacer 4.85mm 4",
+        "box": [
+          [
+            224.70000000000002,
+            23.500000000000007,
+            95.19999999999999
+          ],
+          [
+            232.3,
+            28.35,
+            102.80000000000001
+          ]
+        ],
+        "faces": 4
+      }
+    ],
+    "features": [
+      {
+        "name": "P3 PCB spacer 4.85mm 1",
+        "source_bodies": 1,
+        "result_bodies": 1
+      },
+      {
+        "name": "P3 PCB spacer 4.85mm 2",
+        "source_bodies": 1,
+        "result_bodies": 1
+      },
+      {
+        "name": "P3 PCB spacer 4.85mm 3",
+        "source_bodies": 1,
+        "result_bodies": 1
+      },
+      {
+        "name": "P3 PCB spacer 4.85mm 4",
+        "source_bodies": 1,
+        "result_bodies": 1
+      }
+    ]
+  },
+  {
+    "path": "E10 Jetson rear electronics brace:1+P4:1",
+    "component": "P4",
+    "transform": [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "bodies": [
+      {
+        "name": "P4 U2D2 upward port shelf - 4x M2x5",
+        "box": [
+          [
+            164.0,
+            23.5,
+            104.5
+          ],
+          [
+            231.0,
+            44.5,
+            114.0
+          ]
+        ],
+        "faces": 50
+      }
+    ],
+    "features": [
+      {
+        "name": "P4 U2D2 upward port shelf - 4x M2x5",
+        "source_bodies": 1,
+        "result_bodies": 1
+      }
+    ]
+  },
+  {
+    "path": "E10 Jetson rear electronics brace:1+R3 Power PCB 70x50 mechanical reference:1",
+    "component": "R3 Power PCB 70x50 mechanical reference",
+    "transform": [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "bodies": [
+      {
+        "name": "REF power PCB 70x50x1.6 - mechanical envelope",
+        "box": [
+          [
+            162.5,
+            28.35,
+            53.0
+          ],
+          [
+            232.5,
+            29.950000000000003,
+            103.0
+          ]
+        ],
+        "faces": 14
+      }
+    ],
+    "features": [
+      {
+        "name": "REF power PCB 70x50x1.6 - mechanical envelope",
+        "source_bodies": 1,
+        "result_bodies": 1
+      }
+    ]
+  },
+  {
+    "path": "E10 Jetson rear electronics brace:1+R1 PHB power terminals upward:1",
+    "component": "R1 PHB power terminals upward",
+    "transform": [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "bodies": [
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+CUI_PJ-102A-95_1:1",
+        "box": [
+          [
+            127.16897564469,
+            26.50000000000004,
+            99.031165213215
+          ],
+          [
+            130.1689756447,
+            38.60000000000503,
+            101.411165213215
+          ]
+        ],
+        "faces": 13
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+SCREW_TERMINAL_BLOCK_3_5MM_-101:1",
+        "box": [
+          [
+            136.558620112707,
+            30.5000000000045,
+            102.000020839195
+          ],
+          [
+            138.858620112707,
+            33.700000000004394,
+            107.50002083920499
+          ]
+        ],
+        "faces": 7
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+MBRS340FSCT-ND_1:1",
+        "box": [
+          [
+            126.59875087177798,
+            29.999999999996003,
+            86.64034212373501
+          ],
+          [
+            134.64876405983,
+            32.932224114193,
+            92.89034212374
+          ]
+        ],
+        "faces": 42
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+JST_B4B_EH_A_1:1",
+        "box": [
+          [
+            147.244730398935,
+            26.800000000002004,
+            89.084470070825
+          ],
+          [
+            159.74473039895,
+            36.000000000005,
+            92.884470070835
+          ]
+        ],
+        "faces": 126
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+SCREW_TERMINAL_BLOCK_3_5MM_-119:1",
+        "box": [
+          [
+            135.708620068003,
+            29.99999999999,
+            101.200020839195
+          ],
+          [
+            143.008620068013,
+            38.4,
+            108.00002083919999
+          ]
+        ],
+        "faces": 48
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+CUI_PJ-102A-127_1:1",
+        "box": [
+          [
+            124.16897564469,
+            30.0,
+            98.491165213215
+          ],
+          [
+            133.1689756447,
+            41.00000000001,
+            112.891165213225
+          ]
+        ],
+        "faces": 41
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+CUI_PJ-102A-133_1:1",
+        "box": [
+          [
+            127.66897564469501,
+            26.500000000000014,
+            105.06616521322
+          ],
+          [
+            129.668975644695,
+            37.500000000000014,
+            111.31616521322
+          ]
+        ],
+        "faces": 8
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+EDGED7B6KTYP_1:1",
+        "box": [
+          [
+            113.61251923703,
+            25.27801153938,
+            82.79603705083973
+          ],
+          [
+            124.082286678895,
+            44.572500439414,
+            98.63636523776002
+          ]
+        ],
+        "faces": 122
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+SCREW_TERMINAL_BLOCK_3_5MM_-145:1",
+        "box": [
+          [
+            140.05862011271591,
+            30.5000000000045,
+            102.0000208392
+          ],
+          [
+            142.35862011271598,
+            33.700000000004394,
+            107.5000208392
+          ]
+        ],
+        "faces": 7
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+SCREW_TERMINAL_BLOCK_3_5MM_-151:1",
+        "box": [
+          [
+            136.45862009781058,
+            33.999999999989996,
+            103.45002083920059
+          ],
+          [
+            138.7586200978106,
+            38.399999999991,
+            105.7500208392006
+          ]
+        ],
+        "faces": 25
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+SCREW_TERMINAL_BLOCK_3_5MM_-157:1",
+        "box": [
+          [
+            140.73362009781053,
+            27.79999999999,
+            104.22502083919794
+          ],
+          [
+            141.48362009781093,
+            30.39999999999,
+            104.97502083919832
+          ]
+        ],
+        "faces": 4
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+CUI_PJ-102A-163_1:1",
+        "box": [
+          [
+            131.1689756447,
+            26.500000000027004,
+            100.941165213224
+          ],
+          [
+            133.568975644696,
+            33.000000000005,
+            103.44116521322499
+          ]
+        ],
+        "faces": 13
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+SCREW_TERMINAL_BLOCK_3_5MM_-169:1",
+        "box": [
+          [
+            137.23362009781064,
+            27.89999999999,
+            104.22502083920676
+          ],
+          [
+            137.98362009781104,
+            30.499999999989996,
+            104.97502083920715
+          ]
+        ],
+        "faces": 4
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+PART_1_1:1",
+        "box": [
+          [
+            112.4999612727634,
+            28.35,
+            51.0000208392027
+          ],
+          [
+            160.49996127276341,
+            30.4,
+            108.00002083920269
+          ]
+        ],
+        "faces": 108
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+JST_B3B_EH_A_1:1",
+        "box": [
+          [
+            136.49996127275801,
+            26.800000000002004,
+            77.10927946857939
+          ],
+          [
+            146.49996127276802,
+            36.000000000005,
+            80.9092794685894
+          ]
+        ],
+        "faces": 104
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+039281023_1:1",
+        "box": [
+          [
+            112.90716644315498,
+            26.499999999996,
+            76.23078874715
+          ],
+          [
+            123.907166443165,
+            42.80000000001,
+            82.430788747155
+          ]
+        ],
+        "faces": 77
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+CP_ELEC_8X10_1:1",
+        "box": [
+          [
+            125.78472788073199,
+            30.0,
+            76.856102839535
+          ],
+          [
+            135.284727880742,
+            39.999999966667005,
+            85.156102839535
+          ]
+        ],
+        "faces": 40
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+SCREW_TERMINAL_BLOCK_3_5MM_-205:1",
+        "box": [
+          [
+            139.95862009781038,
+            34.0,
+            103.45002083919942
+          ],
+          [
+            142.2586200978104,
+            38.4,
+            105.75002083919942
+          ]
+        ],
+        "faces": 25
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+JST_B4B_EH_A_1:2",
+        "box": [
+          [
+            147.244730398935,
+            26.800000000002004,
+            77.10927946857939
+          ],
+          [
+            159.74473039895,
+            36.000000000005,
+            80.9092794685894
+          ]
+        ],
+        "faces": 126
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+JST_B3B_EH_A_1:2",
+        "box": [
+          [
+            136.49996127275801,
+            26.800000000002004,
+            89.084470070825
+          ],
+          [
+            146.49996127276802,
+            36.000000000005,
+            92.884470070835
+          ]
+        ],
+        "faces": 104
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+JST_B4B_EH_A_1:3",
+        "box": [
+          [
+            147.244730398935,
+            26.800000000002004,
+            83.131537664605
+          ],
+          [
+            159.74473039895,
+            36.000000000005,
+            86.93153766461499
+          ]
+        ],
+        "faces": 126
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+JST_B3B_EH_A_1:3",
+        "box": [
+          [
+            136.49996127275801,
+            26.800000000002004,
+            83.131537664605
+          ],
+          [
+            146.49996127276802,
+            36.000000000005,
+            86.93153766461499
+          ]
+        ],
+        "faces": 104
+      }
+    ],
+    "features": [
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+CUI_PJ-102A-95_1:1",
+        "source_bodies": 1,
+        "result_bodies": 1
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+SCREW_TERMINAL_BLOCK_3_5MM_-101:1",
+        "source_bodies": 1,
+        "result_bodies": 1
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+MBRS340FSCT-ND_1:1",
+        "source_bodies": 1,
+        "result_bodies": 1
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+JST_B4B_EH_A_1:1",
+        "source_bodies": 1,
+        "result_bodies": 1
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+SCREW_TERMINAL_BLOCK_3_5MM_-119:1",
+        "source_bodies": 1,
+        "result_bodies": 1
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+CUI_PJ-102A-127_1:1",
+        "source_bodies": 1,
+        "result_bodies": 1
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+CUI_PJ-102A-133_1:1",
+        "source_bodies": 1,
+        "result_bodies": 1
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+EDGED7B6KTYP_1:1",
+        "source_bodies": 1,
+        "result_bodies": 1
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+SCREW_TERMINAL_BLOCK_3_5MM_-145:1",
+        "source_bodies": 1,
+        "result_bodies": 1
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+SCREW_TERMINAL_BLOCK_3_5MM_-151:1",
+        "source_bodies": 1,
+        "result_bodies": 1
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+SCREW_TERMINAL_BLOCK_3_5MM_-157:1",
+        "source_bodies": 1,
+        "result_bodies": 1
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+CUI_PJ-102A-163_1:1",
+        "source_bodies": 1,
+        "result_bodies": 1
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+SCREW_TERMINAL_BLOCK_3_5MM_-169:1",
+        "source_bodies": 1,
+        "result_bodies": 1
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+PART_1_1:1",
+        "source_bodies": 1,
+        "result_bodies": 1
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+JST_B3B_EH_A_1:1",
+        "source_bodies": 1,
+        "result_bodies": 1
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+039281023_1:1",
+        "source_bodies": 1,
+        "result_bodies": 1
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+CP_ELEC_8X10_1:1",
+        "source_bodies": 1,
+        "result_bodies": 1
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+SCREW_TERMINAL_BLOCK_3_5MM_-205:1",
+        "source_bodies": 1,
+        "result_bodies": 1
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+JST_B4B_EH_A_1:2",
+        "source_bodies": 1,
+        "result_bodies": 1
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+JST_B3B_EH_A_1:2",
+        "source_bodies": 1,
+        "result_bodies": 1
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+JST_B4B_EH_A_1:3",
+        "source_bodies": 1,
+        "result_bodies": 1
+      },
+      {
+        "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+JST_B3B_EH_A_1:3",
+        "source_bodies": 1,
+        "result_bodies": 1
+      }
+    ]
+  },
+  {
+    "path": "E10 Jetson rear electronics brace:1+R2 U2D2 communication ports upward:1",
+    "component": "R2 U2D2 communication ports upward",
+    "transform": [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "bodies": [
+      {
+        "name": "ROBOTIS U2D2 U2D2_CASE_B_DUMMY:1",
+        "box": [
+          [
+            172.00000000000003,
+            23.999999999999993,
+            108.0
+          ],
+          [
+            220.0,
+            42.0,
+            116.4
+          ]
+        ],
+        "faces": 277
+      },
+      {
+        "name": "ROBOTIS U2D2 U2D2_CASE_T_DUMMY:1",
+        "box": [
+          [
+            172.00000000000003,
+            23.999999999999993,
+            114.9
+          ],
+          [
+            220.0,
+            42.0,
+            122.9
+          ]
+        ],
+        "faces": 545
+      },
+      {
+        "name": "ROBOTIS U2D2 USB-C_DUMMY:1",
+        "box": [
+          [
+            212.15000000000003,
+            28.53000000000001,
+            116.5
+          ],
+          [
+            219.50000000000003,
+            37.470000000000006,
+            119.76
+          ]
+        ],
+        "faces": 36
+      },
+      {
+        "name": "ROBOTIS U2D2 UART_4P:1",
+        "box": [
+          [
+            177.00000000000003,
+            35.55,
+            116.6
+          ],
+          [
+            187.00000000000003,
+            40.199999999999996,
+            122.55000000000001
+          ]
+        ],
+        "faces": 95
+      },
+      {
+        "name": "ROBOTIS U2D2 TTL_3P:1",
+        "box": [
+          [
+            177.00000000000003,
+            29.6,
+            116.5
+          ],
+          [
+            187.00000000000003,
+            33.4,
+            122.5
+          ]
+        ],
+        "faces": 43
+      },
+      {
+        "name": "ROBOTIS U2D2 RS-485_4P:1",
+        "box": [
+          [
+            177.00000000000003,
+            25.4,
+            116.5
+          ],
+          [
+            189.50000000000003,
+            29.2,
+            122.5
+          ]
+        ],
+        "faces": 48
+      }
+    ],
+    "features": [
+      {
+        "name": "ROBOTIS U2D2 U2D2_CASE_B_DUMMY:1",
+        "source_bodies": 1,
+        "result_bodies": 1
+      },
+      {
+        "name": "ROBOTIS U2D2 U2D2_CASE_T_DUMMY:1",
+        "source_bodies": 1,
+        "result_bodies": 1
+      },
+      {
+        "name": "ROBOTIS U2D2 USB-C_DUMMY:1",
+        "source_bodies": 1,
+        "result_bodies": 1
+      },
+      {
+        "name": "ROBOTIS U2D2 UART_4P:1",
+        "source_bodies": 1,
+        "result_bodies": 1
+      },
+      {
+        "name": "ROBOTIS U2D2 TTL_3P:1",
+        "source_bodies": 1,
+        "result_bodies": 1
+      },
+      {
+        "name": "ROBOTIS U2D2 RS-485_4P:1",
+        "source_bodies": 1,
+        "result_bodies": 1
+      }
+    ]
+  },
+  {
+    "path": "E10 Jetson rear electronics brace:1",
+    "component": "E10 Jetson rear electronics brace",
+    "transform": [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "bodies": [],
+    "features": []
+  }
+]

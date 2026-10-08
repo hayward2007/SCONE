@@ -1,0 +1,52 @@
+{
+  "parts": [
+    {
+      "name": "R01 Rear smooth PLA chassis",
+      "lumps": 3,
+      "volume_cm3": 95.94888197739328
+    },
+    {
+      "name": "R03 Smooth PLA sensor cover",
+      "lumps": 1,
+      "volume_cm3": 164.83063973860226
+    },
+    {
+      "name": "P04 PLA electronics tray",
+      "lumps": 3,
+      "volume_cm3": 22.794621433365688
+    }
+  ],
+  "camera_shift_z_mm": -8,
+  "camera_mount_holes_mm": [
+    [
+      167.8,
+      -10.5,
+      71.7
+    ],
+    [
+      167.8,
+      -10.5,
+      85.15
+    ],
+    [
+      167.8,
+      10.5,
+      71.7
+    ],
+    [
+      167.8,
+      10.5,
+      85.15
+    ]
+  ],
+  "rear_tray_mount_mm": [
+    [
+      57,
+      -59
+    ],
+    [
+      57,
+      59
+    ]
+  ]
+}

@@ -1,5 +1,11 @@
 # SCONE
 
+> **Archived on 2026-10-09.** Development has ended for this project.
+> The final source, CAD, paper/video packets, experiments and saved checkpoints
+> are preserved for reference. Start with the
+> [project closeout and restoration guide](docs/31-project-archive.md).
+> Install Git LFS and run `git lfs pull` after cloning to retrieve binary assets.
+
 SCONE is a six-legged robot project with one high-level control API and two
 interchangeable backends: physical DYNAMIXEL hardware and MuJoCo simulation.
 

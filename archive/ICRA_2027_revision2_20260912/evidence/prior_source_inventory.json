@@ -1,0 +1,644 @@
+[
+  {
+    "path": "src/__init__.py",
+    "lines": 76,
+    "classes": 0,
+    "functions": 1
+  },
+  {
+    "path": "src/cli.py",
+    "lines": 990,
+    "classes": 4,
+    "functions": 29
+  },
+  {
+    "path": "src/cli_i18n.py",
+    "lines": 98,
+    "classes": 1,
+    "functions": 4
+  },
+  {
+    "path": "src/cli_ui.py",
+    "lines": 147,
+    "classes": 0,
+    "functions": 7
+  },
+  {
+    "path": "src/hardware/__init__.py",
+    "lines": 32,
+    "classes": 0,
+    "functions": 1
+  },
+  {
+    "path": "src/hardware/actuator.py",
+    "lines": 58,
+    "classes": 4,
+    "functions": 1
+  },
+  {
+    "path": "src/hardware/actuator_control_table.py",
+    "lines": 96,
+    "classes": 4,
+    "functions": 0
+  },
+  {
+    "path": "src/hardware/actuator_index.py",
+    "lines": 38,
+    "classes": 1,
+    "functions": 1
+  },
+  {
+    "path": "src/hardware/config.py",
+    "lines": 6,
+    "classes": 0,
+    "functions": 0
+  },
+  {
+    "path": "src/hardware/controller.py",
+    "lines": 351,
+    "classes": 2,
+    "functions": 33
+  },
+  {
+    "path": "src/hardware/discovery.py",
+    "lines": 84,
+    "classes": 1,
+    "functions": 3
+  },
+  {
+    "path": "src/hardware/interface.py",
+    "lines": 33,
+    "classes": 1,
+    "functions": 20
+  },
+  {
+    "path": "src/kinematics/__init__.py",
+    "lines": 22,
+    "classes": 0,
+    "functions": 0
+  },
+  {
+    "path": "src/kinematics/leg.py",
+    "lines": 277,
+    "classes": 1,
+    "functions": 12
+  },
+  {
+    "path": "src/kinematics/robot.py",
+    "lines": 183,
+    "classes": 1,
+    "functions": 10
+  },
+  {
+    "path": "src/kinematics/types.py",
+    "lines": 95,
+    "classes": 4,
+    "functions": 8
+  },
+  {
+    "path": "src/locomotion/__init__.py",
+    "lines": 58,
+    "classes": 0,
+    "functions": 0
+  },
+  {
+    "path": "src/locomotion/climb.py",
+    "lines": 127,
+    "classes": 1,
+    "functions": 8
+  },
+  {
+    "path": "src/locomotion/drive.py",
+    "lines": 47,
+    "classes": 1,
+    "functions": 5
+  },
+  {
+    "path": "src/locomotion/fault_gait.py",
+    "lines": 489,
+    "classes": 2,
+    "functions": 15
+  },
+  {
+    "path": "src/locomotion/legacy_velocity.py",
+    "lines": 119,
+    "classes": 2,
+    "functions": 12
+  },
+  {
+    "path": "src/locomotion/mode.py",
+    "lines": 63,
+    "classes": 1,
+    "functions": 5
+  },
+  {
+    "path": "src/locomotion/non_rl_walk.py",
+    "lines": 24,
+    "classes": 0,
+    "functions": 0
+  },
+  {
+    "path": "src/locomotion/profile.py",
+    "lines": 55,
+    "classes": 1,
+    "functions": 1
+  },
+  {
+    "path": "src/locomotion/scone_gait.py",
+    "lines": 436,
+    "classes": 2,
+    "functions": 14
+  },
+  {
+    "path": "src/locomotion/scone_gait_v2.py",
+    "lines": 828,
+    "classes": 3,
+    "functions": 27
+  },
+  {
+    "path": "src/locomotion/sector_wheel.py",
+    "lines": 334,
+    "classes": 3,
+    "functions": 12
+  },
+  {
+    "path": "src/locomotion/stair_geometry.py",
+    "lines": 250,
+    "classes": 1,
+    "functions": 13
+  },
+  {
+    "path": "src/locomotion/support_polygon.py",
+    "lines": 145,
+    "classes": 0,
+    "functions": 5
+  },
+  {
+    "path": "src/locomotion/tripod_gait.py",
+    "lines": 590,
+    "classes": 4,
+    "functions": 25
+  },
+  {
+    "path": "src/locomotion/walk.py",
+    "lines": 241,
+    "classes": 1,
+    "functions": 14
+  },
+  {
+    "path": "src/main.py",
+    "lines": 247,
+    "classes": 4,
+    "functions": 19
+  },
+  {
+    "path": "src/rl/__init__.py",
+    "lines": 18,
+    "classes": 0,
+    "functions": 1
+  },
+  {
+    "path": "src/rl/__main__.py",
+    "lines": 7,
+    "classes": 0,
+    "functions": 0
+  },
+  {
+    "path": "src/rl/inquiry.py",
+    "lines": 2419,
+    "classes": 6,
+    "functions": 67
+  },
+  {
+    "path": "src/rl/joystick_control.py",
+    "lines": 554,
+    "classes": 4,
+    "functions": 21
+  },
+  {
+    "path": "src/rl/motion_profile.py",
+    "lines": 41,
+    "classes": 0,
+    "functions": 1
+  },
+  {
+    "path": "src/rl/policy_compat.py",
+    "lines": 113,
+    "classes": 0,
+    "functions": 7
+  },
+  {
+    "path": "src/rl/remote_watch.py",
+    "lines": 623,
+    "classes": 5,
+    "functions": 24
+  },
+  {
+    "path": "src/rl/stance.py",
+    "lines": 38,
+    "classes": 0,
+    "functions": 1
+  },
+  {
+    "path": "src/rl/walk_failsafe.py",
+    "lines": 2240,
+    "classes": 7,
+    "functions": 77
+  },
+  {
+    "path": "src/rl/walk_learn.py",
+    "lines": 1501,
+    "classes": 7,
+    "functions": 47
+  },
+  {
+    "path": "src/rl/walk_v2.py",
+    "lines": 1957,
+    "classes": 7,
+    "functions": 56
+  },
+  {
+    "path": "src/rl/walk_v3.py",
+    "lines": 2079,
+    "classes": 7,
+    "functions": 64
+  },
+  {
+    "path": "src/simulation/__init__.py",
+    "lines": 44,
+    "classes": 0,
+    "functions": 0
+  },
+  {
+    "path": "src/simulation/__main__.py",
+    "lines": 5,
+    "classes": 0,
+    "functions": 0
+  },
+  {
+    "path": "src/simulation/cli_bridge.py",
+    "lines": 6,
+    "classes": 0,
+    "functions": 0
+  },
+  {
+    "path": "src/simulation/controller.py",
+    "lines": 6,
+    "classes": 0,
+    "functions": 0
+  },
+  {
+    "path": "src/simulation/core/__init__.py",
+    "lines": 44,
+    "classes": 0,
+    "functions": 0
+  },
+  {
+    "path": "src/simulation/core/cli_bridge.py",
+    "lines": 277,
+    "classes": 1,
+    "functions": 4
+  },
+  {
+    "path": "src/simulation/core/controller.py",
+    "lines": 595,
+    "classes": 1,
+    "functions": 44
+  },
+  {
+    "path": "src/simulation/core/model.py",
+    "lines": 548,
+    "classes": 1,
+    "functions": 21
+  },
+  {
+    "path": "src/simulation/core/pid.py",
+    "lines": 217,
+    "classes": 2,
+    "functions": 8
+  },
+  {
+    "path": "src/simulation/core/scone_rolling_gait.py",
+    "lines": 387,
+    "classes": 3,
+    "functions": 8
+  },
+  {
+    "path": "src/simulation/core/simulator_cli.py",
+    "lines": 459,
+    "classes": 0,
+    "functions": 8
+  },
+  {
+    "path": "src/simulation/core/stair_climber.py",
+    "lines": 436,
+    "classes": 3,
+    "functions": 14
+  },
+  {
+    "path": "src/simulation/core/stair_demo.py",
+    "lines": 477,
+    "classes": 3,
+    "functions": 12
+  },
+  {
+    "path": "src/simulation/core/viewer.py",
+    "lines": 37,
+    "classes": 0,
+    "functions": 1
+  },
+  {
+    "path": "src/simulation/model.py",
+    "lines": 6,
+    "classes": 0,
+    "functions": 0
+  },
+  {
+    "path": "src/simulation/pid.py",
+    "lines": 22,
+    "classes": 0,
+    "functions": 0
+  },
+  {
+    "path": "src/simulation/simulator_cli.py",
+    "lines": 22,
+    "classes": 0,
+    "functions": 0
+  },
+  {
+    "path": "src/simulation/stair_benchmark.py",
+    "lines": 619,
+    "classes": 2,
+    "functions": 15
+  },
+  {
+    "path": "src/simulation/terrain/__init__.py",
+    "lines": 22,
+    "classes": 0,
+    "functions": 0
+  },
+  {
+    "path": "src/simulation/terrain/generator.py",
+    "lines": 323,
+    "classes": 1,
+    "functions": 11
+  },
+  {
+    "path": "src/simulation/terrain/presets.py",
+    "lines": 69,
+    "classes": 0,
+    "functions": 0
+  },
+  {
+    "path": "src/simulation/terrain/types.py",
+    "lines": 88,
+    "classes": 4,
+    "functions": 4
+  },
+  {
+    "path": "benchmark/__init__.py",
+    "lines": 11,
+    "classes": 0,
+    "functions": 0
+  },
+  {
+    "path": "benchmark/__main__.py",
+    "lines": 48,
+    "classes": 0,
+    "functions": 1
+  },
+  {
+    "path": "benchmark/actuator_bench.py",
+    "lines": 190,
+    "classes": 0,
+    "functions": 7
+  },
+  {
+    "path": "benchmark/capture.py",
+    "lines": 593,
+    "classes": 4,
+    "functions": 23
+  },
+  {
+    "path": "benchmark/common.py",
+    "lines": 700,
+    "classes": 5,
+    "functions": 26
+  },
+  {
+    "path": "benchmark/controllers.py",
+    "lines": 427,
+    "classes": 7,
+    "functions": 28
+  },
+  {
+    "path": "benchmark/flat.py",
+    "lines": 247,
+    "classes": 0,
+    "functions": 3
+  },
+  {
+    "path": "benchmark/icra.py",
+    "lines": 447,
+    "classes": 1,
+    "functions": 7
+  },
+  {
+    "path": "benchmark/leg_usage.py",
+    "lines": 278,
+    "classes": 2,
+    "functions": 10
+  },
+  {
+    "path": "benchmark/model_variants.py",
+    "lines": 120,
+    "classes": 0,
+    "functions": 5
+  },
+  {
+    "path": "benchmark/report.py",
+    "lines": 271,
+    "classes": 0,
+    "functions": 10
+  },
+  {
+    "path": "benchmark/robustness.py",
+    "lines": 113,
+    "classes": 0,
+    "functions": 3
+  },
+  {
+    "path": "benchmark/stairs.py",
+    "lines": 239,
+    "classes": 1,
+    "functions": 6
+  },
+  {
+    "path": "benchmark/transitions.py",
+    "lines": 236,
+    "classes": 0,
+    "functions": 4
+  },
+  {
+    "path": "tests/test_actuators.py",
+    "lines": 26,
+    "classes": 1,
+    "functions": 2
+  },
+  {
+    "path": "tests/test_api.py",
+    "lines": 584,
+    "classes": 9,
+    "functions": 61
+  },
+  {
+    "path": "tests/test_benchmark.py",
+    "lines": 207,
+    "classes": 1,
+    "functions": 11
+  },
+  {
+    "path": "tests/test_cli_ui.py",
+    "lines": 48,
+    "classes": 1,
+    "functions": 3
+  },
+  {
+    "path": "tests/test_kinematics.py",
+    "lines": 79,
+    "classes": 2,
+    "functions": 3
+  },
+  {
+    "path": "tests/test_remote_watch.py",
+    "lines": 366,
+    "classes": 3,
+    "functions": 24
+  },
+  {
+    "path": "tests/test_rl_inquiry.py",
+    "lines": 486,
+    "classes": 4,
+    "functions": 30
+  },
+  {
+    "path": "tests/test_rl_joystick.py",
+    "lines": 190,
+    "classes": 6,
+    "functions": 16
+  },
+  {
+    "path": "tests/test_rl_reference_motion.py",
+    "lines": 275,
+    "classes": 1,
+    "functions": 12
+  },
+  {
+    "path": "tests/test_scone_gait.py",
+    "lines": 125,
+    "classes": 1,
+    "functions": 8
+  },
+  {
+    "path": "tests/test_scone_gait_v2.py",
+    "lines": 250,
+    "classes": 5,
+    "functions": 19
+  },
+  {
+    "path": "tests/test_scone_rolling_gait.py",
+    "lines": 139,
+    "classes": 1,
+    "functions": 3
+  },
+  {
+    "path": "tests/test_simulation.py",
+    "lines": 439,
+    "classes": 1,
+    "functions": 22
+  },
+  {
+    "path": "tests/test_stair_climber.py",
+    "lines": 180,
+    "classes": 1,
+    "functions": 6
+  },
+  {
+    "path": "tests/test_stair_demo.py",
+    "lines": 97,
+    "classes": 1,
+    "functions": 4
+  },
+  {
+    "path": "tests/test_stair_geometry.py",
+    "lines": 80,
+    "classes": 1,
+    "functions": 5
+  },
+  {
+    "path": "tests/test_terrain.py",
+    "lines": 213,
+    "classes": 1,
+    "functions": 13
+  },
+  {
+    "path": "tests/test_tripod_gait.py",
+    "lines": 240,
+    "classes": 2,
+    "functions": 19
+  },
+  {
+    "path": "tests/test_walk_failsafe.py",
+    "lines": 889,
+    "classes": 9,
+    "functions": 64
+  },
+  {
+    "path": "tests/test_walk_v2.py",
+    "lines": 283,
+    "classes": 3,
+    "functions": 16
+  },
+  {
+    "path": "tests/test_walk_v3.py",
+    "lines": 487,
+    "classes": 5,
+    "functions": 31
+  },
+  {
+    "path": "packages/dynamixel-mujoco/dynamixel_mujoco/__init__.py",
+    "lines": 10,
+    "classes": 0,
+    "functions": 0
+  },
+  {
+    "path": "packages/dynamixel-mujoco/dynamixel_mujoco/bench.py",
+    "lines": 144,
+    "classes": 0,
+    "functions": 6
+  },
+  {
+    "path": "packages/dynamixel-mujoco/dynamixel_mujoco/mjcf.py",
+    "lines": 172,
+    "classes": 0,
+    "functions": 6
+  },
+  {
+    "path": "packages/dynamixel-mujoco/dynamixel_mujoco/specs.py",
+    "lines": 121,
+    "classes": 1,
+    "functions": 11
+  },
+  {
+    "path": "packages/dynamixel-mujoco/tests/conftest.py",
+    "lines": 6,
+    "classes": 0,
+    "functions": 0
+  },
+  {
+    "path": "packages/dynamixel-mujoco/tests/test_specs.py",
+    "lines": 78,
+    "classes": 0,
+    "functions": 9
+  }
+]

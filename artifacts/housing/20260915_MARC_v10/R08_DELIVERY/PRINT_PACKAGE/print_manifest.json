@@ -1,0 +1,272 @@
+[
+  {
+    "part": "R01 Rear smooth PLA chassis",
+    "filename": "R01_PLA_mm.stl",
+    "quantity": 1,
+    "material": "PLA",
+    "orientation": "Lower planar face on bed",
+    "dimensions_mm": [
+      144.4,
+      138.0,
+      36.8
+    ],
+    "fits_256mm": true,
+    "triangles": 9810,
+    "nonmanifold_edge_count": 0,
+    "mesh_volume_error_pct": 0.0003357136307613473,
+    "native_lumps": 1,
+    "collinear_boundary_splits": 10
+  },
+  {
+    "part": "R02 Front smooth PLA chassis",
+    "filename": "R02_PLA_mm.stl",
+    "quantity": 1,
+    "material": "PLA",
+    "orientation": "Lower planar face on bed",
+    "dimensions_mm": [
+      162.45,
+      154.0,
+      81.5
+    ],
+    "fits_256mm": true,
+    "triangles": 13856,
+    "nonmanifold_edge_count": 0,
+    "mesh_volume_error_pct": 0.00037058908480824826,
+    "native_lumps": 1,
+    "collinear_boundary_splits": 8
+  },
+  {
+    "part": "S01 Rear fairing lid",
+    "filename": "S01_PLA_mm.stl",
+    "quantity": 1,
+    "material": "PLA",
+    "orientation": "Flat exterior/top face on bed, part upside down",
+    "dimensions_mm": [
+      144.25,
+      154.0,
+      70.2
+    ],
+    "fits_256mm": true,
+    "triangles": 3000,
+    "nonmanifold_edge_count": 0,
+    "mesh_volume_error_pct": 0.0031204966923881194,
+    "native_lumps": 1,
+    "collinear_boundary_splits": 0
+  },
+  {
+    "part": "S02 Front camera fairing lid",
+    "filename": "S02_PLA_mm.stl",
+    "quantity": 1,
+    "material": "PLA",
+    "orientation": "Flat exterior/top face on bed, part upside down",
+    "dimensions_mm": [
+      144.45001,
+      154.0,
+      70.2
+    ],
+    "fits_256mm": true,
+    "triangles": 3744,
+    "nonmanifold_edge_count": 0,
+    "mesh_volume_error_pct": 0.014552240249721127,
+    "native_lumps": 1,
+    "collinear_boundary_splits": 0
+  },
+  {
+    "part": "P04 PLA electronics tray",
+    "filename": "P04_PLA_mm.stl",
+    "quantity": 1,
+    "material": "PLA",
+    "orientation": "Lower planar face on bed",
+    "dimensions_mm": [
+      99.276,
+      128.0,
+      12.9
+    ],
+    "fits_256mm": true,
+    "triangles": 1372,
+    "nonmanifold_edge_count": 0,
+    "mesh_volume_error_pct": 0.005016538002977633,
+    "native_lumps": 1,
+    "collinear_boundary_splits": 0
+  },
+  {
+    "part": "M01 Rear removable motor bridge",
+    "filename": "M01_PLA_mm.stl",
+    "quantity": 1,
+    "material": "PLA",
+    "orientation": "Flat exterior/top face on bed, part upside down",
+    "dimensions_mm": [
+      39.5087,
+      86.0,
+      7.7
+    ],
+    "fits_256mm": true,
+    "triangles": 1692,
+    "nonmanifold_edge_count": 0,
+    "mesh_volume_error_pct": 0.06238656482879801,
+    "native_lumps": 1,
+    "collinear_boundary_splits": 0
+  },
+  {
+    "part": "M02 Front removable motor bridge",
+    "filename": "M02_PLA_mm.stl",
+    "quantity": 1,
+    "material": "PLA",
+    "orientation": "Flat exterior/top face on bed, part upside down",
+    "dimensions_mm": [
+      39.49129,
+      86.0,
+      7.7
+    ],
+    "fits_256mm": true,
+    "triangles": 1690,
+    "nonmanifold_edge_count": 0,
+    "mesh_volume_error_pct": 0.05557619458858021,
+    "native_lumps": 1,
+    "collinear_boundary_splits": 0
+  },
+  {
+    "part": "L11 separate 5mm LINK plate",
+    "filename": "L11_PLA_mm.stl",
+    "quantity": 2,
+    "material": "PLA",
+    "orientation": "5mm plate flat on bed, hole axes vertical",
+    "dimensions_mm": [
+      123.75,
+      38.2,
+      5.0
+    ],
+    "fits_256mm": true,
+    "triangles": 1120,
+    "nonmanifold_edge_count": 0,
+    "mesh_volume_error_pct": 0.04187839650913183,
+    "native_lumps": 1,
+    "collinear_boundary_splits": 0
+  },
+  {
+    "part": "L12 separate 5mm LINK plate",
+    "filename": "L12_PLA_mm.stl",
+    "quantity": 2,
+    "material": "PLA",
+    "orientation": "5mm plate flat on bed, hole axes vertical",
+    "dimensions_mm": [
+      123.75,
+      38.2,
+      5.0
+    ],
+    "fits_256mm": true,
+    "triangles": 1120,
+    "nonmanifold_edge_count": 0,
+    "mesh_volume_error_pct": 0.041878396509242855,
+    "native_lumps": 1,
+    "collinear_boundary_splits": 0
+  },
+  {
+    "part": "L21 separate 5mm LINK plate",
+    "filename": "L21_PLA_mm.stl",
+    "quantity": 2,
+    "material": "PLA",
+    "orientation": "5mm plate flat on bed, hole axes vertical",
+    "dimensions_mm": [
+      123.75,
+      38.2,
+      5.0
+    ],
+    "fits_256mm": true,
+    "triangles": 1120,
+    "nonmanifold_edge_count": 0,
+    "mesh_volume_error_pct": 0.04187839650937608,
+    "native_lumps": 1,
+    "collinear_boundary_splits": 0
+  },
+  {
+    "part": "L22 separate 5mm LINK plate",
+    "filename": "L22_PLA_mm.stl",
+    "quantity": 2,
+    "material": "PLA",
+    "orientation": "5mm plate flat on bed, hole axes vertical",
+    "dimensions_mm": [
+      123.75,
+      38.2,
+      5.0
+    ],
+    "fits_256mm": true,
+    "triangles": 1120,
+    "nonmanifold_edge_count": 0,
+    "mesh_volume_error_pct": 0.04187839650942049,
+    "native_lumps": 1,
+    "collinear_boundary_splits": 0
+  },
+  {
+    "part": "T01 TPU tyre 20mm",
+    "filename": "T01_TPU_mm.stl",
+    "quantity": 2,
+    "material": "TPU",
+    "orientation": "Lower planar face on bed",
+    "dimensions_mm": [
+      144.95559,
+      244.96172,
+      20.0
+    ],
+    "fits_256mm": true,
+    "triangles": 960,
+    "nonmanifold_edge_count": 0,
+    "mesh_volume_error_pct": 0.03461664646193796,
+    "native_lumps": 1,
+    "collinear_boundary_splits": 0
+  },
+  {
+    "part": "W01 PLA rim 18mm seat, original hub",
+    "filename": "W01_PLA_mm.stl",
+    "quantity": 2,
+    "material": "PLA",
+    "orientation": "Lower planar face on bed",
+    "dimensions_mm": [
+      124.97085,
+      225.0,
+      18.0
+    ],
+    "fits_256mm": true,
+    "triangles": 1888,
+    "nonmanifold_edge_count": 0,
+    "mesh_volume_error_pct": 0.013618937179804558,
+    "native_lumps": 1,
+    "collinear_boundary_splits": 0
+  },
+  {
+    "part": "T11 TPU tyre 20mm",
+    "filename": "T11_TPU_mm.stl",
+    "quantity": 2,
+    "material": "TPU",
+    "orientation": "Lower planar face on bed",
+    "dimensions_mm": [
+      144.95559,
+      244.96172,
+      20.0
+    ],
+    "fits_256mm": true,
+    "triangles": 960,
+    "nonmanifold_edge_count": 0,
+    "mesh_volume_error_pct": 0.03461664646223772,
+    "native_lumps": 1,
+    "collinear_boundary_splits": 0
+  },
+  {
+    "part": "W11 PLA rim 18mm seat, original hub",
+    "filename": "W11_PLA_mm.stl",
+    "quantity": 2,
+    "material": "PLA",
+    "orientation": "Original hub mounting face on bed, 18mm seat upward",
+    "dimensions_mm": [
+      124.97085,
+      225.0,
+      18.0
+    ],
+    "fits_256mm": true,
+    "triangles": 1888,
+    "nonmanifold_edge_count": 0,
+    "mesh_volume_error_pct": 0.013530955223484131,
+    "native_lumps": 1,
+    "collinear_boundary_splits": 0
+  }
+]

@@ -1,0 +1,124 @@
+{
+  "pose_source": "saved user_pose_before.json transforms applied explicitly to current component bodies",
+  "current_user_pose_hits": [
+    {
+      "a": "LEG 1:5+XM430:2+X-430_IDLE:1/\ubcf8\uccb41",
+      "b": "R01 Rear smooth PLA chassis:1",
+      "overlap_mm3": 59.82608020191234,
+      "bounds": [
+        [
+          21.422753,
+          -56.430727,
+          6.26987
+        ],
+        [
+          25.647524,
+          -51.602659,
+          32.773132
+        ]
+      ]
+    },
+    {
+      "a": "LEG 1:5+XM430:2+X-430_SPACER_RING:6/\ubcf8\uccb41",
+      "b": "R01 Rear smooth PLA chassis:1",
+      "overlap_mm3": 3.194406938824644,
+      "bounds": [
+        [
+          22.073038,
+          -54.830814,
+          27.205146
+        ],
+        [
+          23.590871,
+          -52.50072,
+          31.90294
+        ]
+      ]
+    }
+  ],
+  "hardware_hits": [],
+  "printed_hits": [],
+  "user_pose_continuous_spin_hits": [],
+  "mirrored_user_pose_continuous_spin_hits": [],
+  "front_90_180_continuous_spin_hits": [],
+  "camera_assembly": {
+    "cover_removed": true,
+    "entry_lift_step_mm": 2,
+    "entry_hits": [],
+    "forward_slide_step_mm": 1,
+    "forward_slide_hits": [],
+    "driver_diameter_mm": 4,
+    "driver_shaft_hits": [],
+    "camera_shift_z_mm": -8
+  },
+  "part_topology": [
+    {
+      "name": "P04 PLA electronics tray:1",
+      "lumps": 1,
+      "volume_cm3": 22.863793482290934,
+      "bounds": [
+        [
+          33.0,
+          -64.0,
+          36.3
+        ],
+        [
+          131.0,
+          64.0,
+          49.2
+        ]
+      ]
+    },
+    {
+      "name": "R03 Smooth PLA sensor cover:1",
+      "lumps": 1,
+      "volume_cm3": 165.56563451739066,
+      "bounds": [
+        [
+          -24.0,
+          -77.001756,
+          33.8
+        ],
+        [
+          190.748701,
+          77.0,
+          104.0
+        ]
+      ]
+    },
+    {
+      "name": "R01 Rear smooth PLA chassis:1",
+      "lumps": 1,
+      "volume_cm3": 96.73163654235228,
+      "bounds": [
+        [
+          -61.391297,
+          -77.0,
+          -0.5
+        ],
+        [
+          83.0,
+          77.0,
+          40.0
+        ]
+      ]
+    },
+    {
+      "name": "R02 Front smooth PLA chassis:1",
+      "lumps": 1,
+      "volume_cm3": 151.2137079288056,
+      "bounds": [
+        [
+          65.15,
+          -77.0,
+          -0.5
+        ],
+        [
+          227.608703,
+          77.0,
+          81.0
+        ]
+      ]
+    }
+  ]
+}

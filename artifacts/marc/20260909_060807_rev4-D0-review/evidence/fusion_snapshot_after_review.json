@@ -1,0 +1,1665 @@
+{
+ "doc": "MARC-PARAM-D0 v4",
+ "version": 4,
+ "timeline": 135,
+ "nComponents": 15,
+ "components": [
+  {
+   "name": "MARC_Motor_XM430_W350_T_REAL",
+   "mass_g": 82.0,
+   "bodies": [
+    {
+     "n": "MARC_Motor_XM430_W350_T_REAL_MESH",
+     "kind": "mesh",
+     "mat": "MARC_XM430_W350_DATASHEET_82g",
+     "vis": true
+    }
+   ]
+  },
+  {
+   "name": "MARC-PARAM-D0 v4",
+   "mass_g": 3115.46854,
+   "bodies": []
+  },
+  {
+   "name": "Spin_Module_D0",
+   "mass_g": 245.43663,
+   "bodies": [
+    {
+     "n": "PLA_sector_D0_SOLID_HUB",
+     "kind": "brep",
+     "cm3": 154.56745,
+     "g": 182.3896,
+     "mat": "MARC_v4_PLA_D0",
+     "vis": true
+    },
+    {
+     "n": "TPU_tire_D0_EFFECTIVE_ENVELOPE",
+     "kind": "brep",
+     "cm3": 127.62558,
+     "g": 63.04704,
+     "mat": "MARC_v4_TPU_envelope_D0",
+     "vis": true
+    }
+   ]
+  },
+  {
+   "name": "Yaw_Module_D0",
+   "mass_g": 42.60508,
+   "bodies": [
+    {
+     "n": "Yoke1_D0",
+     "kind": "brep",
+     "cm3": 19.474,
+     "g": 22.97932,
+     "mat": "MARC_v4_PLA_D0",
+     "vis": true
+    },
+    {
+     "n": "Yoke2_D0",
+     "kind": "brep",
+     "cm3": 16.632,
+     "g": 19.62576,
+     "mat": "MARC_v4_PLA_D0",
+     "vis": true
+    }
+   ]
+  },
+  {
+   "name": "Crank_Link_D0",
+   "mass_g": 66.71778,
+   "bodies": [
+    {
+     "n": "PLA_crank_90_110_25deg",
+     "kind": "brep",
+     "cm3": 56.54049,
+     "g": 66.71778,
+     "mat": "MARC_v4_PLA_D0",
+     "vis": true
+    }
+   ]
+  },
+  {
+   "name": "Frame_D0",
+   "mass_g": 299.43,
+   "bodies": [
+    {
+     "n": "Frame_box_beams_cross_and_long_ribs",
+     "kind": "brep",
+     "cm3": 162.75424,
+     "g": 192.05,
+     "mat": "MARC_v4_PLA_D0",
+     "vis": true
+    },
+    {
+     "n": "Deck_D0_NO_STANDOFFS",
+     "kind": "brep",
+     "cm3": 91.0,
+     "g": 107.38,
+     "mat": "MARC_v4_PLA_D0",
+     "vis": true
+    }
+   ]
+  },
+  {
+   "name": "MARC_Motor_MX28AT_REAL",
+   "mass_g": 77.0,
+   "bodies": [
+    {
+     "n": "MARC_Motor_MX28AT_REAL_MESH",
+     "kind": "mesh",
+     "mat": "MARC_MX28AT_DATASHEET_77g",
+     "vis": true
+    }
+   ]
+  },
+  {
+   "name": "_STUDY_D0_UNRESOLVED",
+   "mass_g": 0.00041,
+   "bodies": [
+    {
+     "n": "battery_slot_SPACE",
+     "kind": "brep",
+     "cm3": 160.0,
+     "g": 0.00016,
+     "mat": "MARC_UNMASSED_ENVELOPE",
+     "vis": false
+    },
+    {
+     "n": "mast_SPACE",
+     "kind": "brep",
+     "cm3": 144.0,
+     "g": 0.00014,
+     "mat": "MARC_UNMASSED_ENVELOPE",
+     "vis": false
+    }
+   ]
+  },
+  {
+   "name": "Fork_FL_ENVELOPE",
+   "mass_g": 3e-05,
+   "bodies": [
+    {
+     "n": "Arm_A",
+     "kind": "brep",
+     "cm3": 9.68,
+     "g": 1e-05,
+     "mat": "MARC_UNMASSED_ENVELOPE",
+     "vis": false
+    },
+    {
+     "n": "Arm_B",
+     "kind": "brep",
+     "cm3": 9.68,
+     "g": 1e-05,
+     "mat": "MARC_UNMASSED_ENVELOPE",
+     "vis": false
+    },
+    {
+     "n": "Bridge",
+     "kind": "brep",
+     "cm3": 7.48,
+     "g": 1e-05,
+     "mat": "MARC_UNMASSED_ENVELOPE",
+     "vis": false
+    }
+   ]
+  },
+  {
+   "name": "Fork_FR_ENVELOPE",
+   "mass_g": 3e-05,
+   "bodies": [
+    {
+     "n": "Arm_A",
+     "kind": "brep",
+     "cm3": 9.68,
+     "g": 1e-05,
+     "mat": "MARC_UNMASSED_ENVELOPE",
+     "vis": false
+    },
+    {
+     "n": "Arm_B",
+     "kind": "brep",
+     "cm3": 9.68,
+     "g": 1e-05,
+     "mat": "MARC_UNMASSED_ENVELOPE",
+     "vis": false
+    },
+    {
+     "n": "Bridge",
+     "kind": "brep",
+     "cm3": 7.48,
+     "g": 1e-05,
+     "mat": "MARC_UNMASSED_ENVELOPE",
+     "vis": false
+    }
+   ]
+  },
+  {
+   "name": "Fork_RL_ENVELOPE",
+   "mass_g": 3e-05,
+   "bodies": [
+    {
+     "n": "Arm_A",
+     "kind": "brep",
+     "cm3": 9.68,
+     "g": 1e-05,
+     "mat": "MARC_UNMASSED_ENVELOPE",
+     "vis": false
+    },
+    {
+     "n": "Arm_B",
+     "kind": "brep",
+     "cm3": 9.68,
+     "g": 1e-05,
+     "mat": "MARC_UNMASSED_ENVELOPE",
+     "vis": false
+    },
+    {
+     "n": "Bridge",
+     "kind": "brep",
+     "cm3": 7.48,
+     "g": 1e-05,
+     "mat": "MARC_UNMASSED_ENVELOPE",
+     "vis": false
+    }
+   ]
+  },
+  {
+   "name": "Fork_RR_ENVELOPE",
+   "mass_g": 3e-05,
+   "bodies": [
+    {
+     "n": "Arm_A",
+     "kind": "brep",
+     "cm3": 9.68,
+     "g": 1e-05,
+     "mat": "MARC_UNMASSED_ENVELOPE",
+     "vis": false
+    },
+    {
+     "n": "Arm_B",
+     "kind": "brep",
+     "cm3": 9.68,
+     "g": 1e-05,
+     "mat": "MARC_UNMASSED_ENVELOPE",
+     "vis": false
+    },
+    {
+     "n": "Bridge",
+     "kind": "brep",
+     "cm3": 7.48,
+     "g": 1e-05,
+     "mat": "MARC_UNMASSED_ENVELOPE",
+     "vis": false
+    }
+   ]
+  },
+  {
+   "name": "Payload_ENVELOPES_D0",
+   "mass_g": 433.00014,
+   "bodies": [
+    {
+     "n": "battery_ENVELOPE",
+     "kind": "brep",
+     "cm3": 93.17186,
+     "g": 204.0,
+     "mat": "MARC_battery_DATASHEET_204g",
+     "vis": true
+    },
+    {
+     "n": "U2D2_ENVELOPE",
+     "kind": "brep",
+     "cm3": 12.8736,
+     "g": 9.0,
+     "mat": "MARC_U2D2_DATASHEET_9g",
+     "vis": true
+    },
+    {
+     "n": "SPDB_ENVELOPE",
+     "kind": "brep",
+     "cm3": 138.6,
+     "g": 0.00014,
+     "mat": "MARC_UNMASSED_ENVELOPE",
+     "vis": true
+    },
+    {
+     "n": "Jetson_ENVELOPE",
+     "kind": "brep",
+     "cm3": 232.0,
+     "g": 145.0,
+     "mat": "MARC_Jetson_DATASHEET_145g",
+     "vis": true
+    },
+    {
+     "n": "lidar_ENVELOPE",
+     "kind": "brep",
+     "cm3": 50.50964,
+     "g": 45.0,
+     "mat": "MARC_lidar_DATASHEET_45g",
+     "vis": true
+    }
+   ]
+  },
+  {
+   "name": "Stereo_OPTICAL_ENVELOPE",
+   "mass_g": 30.0,
+   "bodies": [
+    {
+     "n": "IMX219_83_ENVELOPE",
+     "kind": "brep",
+     "cm3": 41.50944,
+     "g": 30.0,
+     "mat": "MARC_stereo_ESTIMATE_30g",
+     "vis": true
+    }
+   ]
+  },
+  {
+   "name": "MARC_Motor_XM430_W210_T_REAL",
+   "mass_g": 82.0,
+   "bodies": [
+    {
+     "n": "MARC_Motor_XM430_W210_T_REAL_MESH",
+     "kind": "mesh",
+     "mat": "MARC_XM430_W210_DATASHEET_82g",
+     "vis": true
+    }
+   ]
+  }
+ ],
+ "occurrences": [
+  {
+   "occ": "Frame_D0:1",
+   "comp": "Frame_D0",
+   "logical": null,
+   "origin_mm": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "R_cols": [
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0
+    ]
+   ]
+  },
+  {
+   "occ": "Yaw_Module_D0:1",
+   "comp": "Yaw_Module_D0",
+   "logical": null,
+   "origin_mm": [
+    50.0,
+    160.0,
+    20.5
+   ],
+   "R_cols": [
+    [
+     1.0,
+     -0.0,
+     0.0
+    ],
+    [
+     -0.0,
+     1.0,
+     -0.0
+    ],
+    [
+     -0.0,
+     -0.0,
+     1.0
+    ]
+   ]
+  },
+  {
+   "occ": "Crank_Link_D0:1",
+   "comp": "Crank_Link_D0",
+   "logical": null,
+   "origin_mm": [
+    108.0,
+    160.0,
+    0.0
+   ],
+   "R_cols": [
+    [
+     0.435607,
+     -0.0,
+     -0.900137
+    ],
+    [
+     0.900137,
+     0.0,
+     0.435607
+    ],
+    [
+     0.0,
+     -1.0,
+     0.0
+    ]
+   ]
+  },
+  {
+   "occ": "_STUDY_D0_UNRESOLVED:1",
+   "comp": "_STUDY_D0_UNRESOLVED",
+   "logical": null,
+   "origin_mm": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "R_cols": [
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0
+    ]
+   ]
+  },
+  {
+   "occ": "Yaw_Module_D0:2",
+   "comp": "Yaw_Module_D0",
+   "logical": null,
+   "origin_mm": [
+    50.0,
+    -160.0,
+    20.5
+   ],
+   "R_cols": [
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     -0.0,
+     1.0,
+     -0.0
+    ],
+    [
+     0.0,
+     -0.0,
+     1.0
+    ]
+   ]
+  },
+  {
+   "occ": "Crank_Link_D0:2",
+   "comp": "Crank_Link_D0",
+   "logical": null,
+   "origin_mm": [
+    108.0,
+    -160.0,
+    0.0
+   ],
+   "R_cols": [
+    [
+     0.435607,
+     0.0,
+     -0.900137
+    ],
+    [
+     0.900137,
+     -0.0,
+     0.435607
+    ],
+    [
+     0.0,
+     -1.0,
+     -0.0
+    ]
+   ]
+  },
+  {
+   "occ": "Yaw_Module_D0:3",
+   "comp": "Yaw_Module_D0",
+   "logical": null,
+   "origin_mm": [
+    -50.0,
+    160.0,
+    20.5
+   ],
+   "R_cols": [
+    [
+     -1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     -1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0
+    ]
+   ]
+  },
+  {
+   "occ": "Crank_Link_D0:3",
+   "comp": "Crank_Link_D0",
+   "logical": null,
+   "origin_mm": [
+    -108.0,
+    160.0,
+    0.0
+   ],
+   "R_cols": [
+    [
+     -0.435607,
+     0.0,
+     -0.900137
+    ],
+    [
+     -0.900137,
+     0.0,
+     0.435607
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ]
+   ]
+  },
+  {
+   "occ": "Yaw_Module_D0:4",
+   "comp": "Yaw_Module_D0",
+   "logical": null,
+   "origin_mm": [
+    -50.0,
+    -160.0,
+    20.5
+   ],
+   "R_cols": [
+    [
+     -1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     -1.0,
+     -0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0
+    ]
+   ]
+  },
+  {
+   "occ": "Crank_Link_D0:4",
+   "comp": "Crank_Link_D0",
+   "logical": null,
+   "origin_mm": [
+    -108.0,
+    -160.0,
+    0.0
+   ],
+   "R_cols": [
+    [
+     -0.435607,
+     -0.0,
+     -0.900137
+    ],
+    [
+     -0.900137,
+     0.0,
+     0.435607
+    ],
+    [
+     -0.0,
+     1.0,
+     -0.0
+    ]
+   ]
+  },
+  {
+   "occ": "Payload_ENVELOPES_D0:1",
+   "comp": "Payload_ENVELOPES_D0",
+   "logical": null,
+   "origin_mm": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "R_cols": [
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0
+    ]
+   ]
+  },
+  {
+   "occ": "Spin_Module_D0:1",
+   "comp": "Spin_Module_D0",
+   "logical": null,
+   "origin_mm": [
+    232.4775,
+    160.0,
+    -150.5
+   ],
+   "R_cols": [
+    [
+     1.0,
+     -0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0
+    ],
+    [
+     -0.0,
+     -1.0,
+     0.0
+    ]
+   ]
+  },
+  {
+   "occ": "Spin_Module_D0:2",
+   "comp": "Spin_Module_D0",
+   "logical": null,
+   "origin_mm": [
+    232.4775,
+    -160.0,
+    -150.5
+   ],
+   "R_cols": [
+    [
+     1.0,
+     -0.0,
+     0.0
+    ],
+    [
+     -0.0,
+     0.0,
+     1.0
+    ],
+    [
+     -0.0,
+     -1.0,
+     0.0
+    ]
+   ]
+  },
+  {
+   "occ": "Spin_Module_D0:4",
+   "comp": "Spin_Module_D0",
+   "logical": null,
+   "origin_mm": [
+    -232.4775,
+    -160.0,
+    -150.5
+   ],
+   "R_cols": [
+    [
+     -1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     -0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ]
+   ]
+  },
+  {
+   "occ": "Spin_Module_D0:3",
+   "comp": "Spin_Module_D0",
+   "logical": null,
+   "origin_mm": [
+    -232.4775,
+    160.0,
+    -150.5
+   ],
+   "R_cols": [
+    [
+     -1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ]
+   ]
+  },
+  {
+   "occ": "MARC_Motor_MX28AT_REAL:1",
+   "comp": "MARC_Motor_MX28AT_REAL",
+   "logical": "M04_RR_yaw",
+   "origin_mm": [
+    -50.0,
+    -160.0,
+    0.0
+   ],
+   "R_cols": [
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0
+    ]
+   ]
+  },
+  {
+   "occ": "MARC_Motor_XM430_W350_T_REAL:1",
+   "comp": "MARC_Motor_XM430_W350_T_REAL",
+   "logical": "M08_RR_q1",
+   "origin_mm": [
+    -108.0,
+    -160.0,
+    0.0
+   ],
+   "R_cols": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ]
+   ]
+  },
+  {
+   "occ": "MARC_Motor_XM430_W210_T_REAL:1",
+   "comp": "MARC_Motor_XM430_W210_T_REAL",
+   "logical": "M12_RR_q2",
+   "origin_mm": [
+    -232.4775,
+    -123.13,
+    -150.5
+   ],
+   "R_cols": [
+    [
+     0.0,
+     0.0,
+     1.0
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     -1.0,
+     0.0
+    ]
+   ]
+  },
+  {
+   "occ": "MARC_Motor_MX28AT_REAL:2",
+   "comp": "MARC_Motor_MX28AT_REAL",
+   "logical": "M03_RL_yaw",
+   "origin_mm": [
+    -50.0,
+    160.0,
+    0.0
+   ],
+   "R_cols": [
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0
+    ]
+   ]
+  },
+  {
+   "occ": "MARC_Motor_XM430_W350_T_REAL:2",
+   "comp": "MARC_Motor_XM430_W350_T_REAL",
+   "logical": "M07_RL_q1",
+   "origin_mm": [
+    -108.0,
+    160.0,
+    0.0
+   ],
+   "R_cols": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ]
+   ]
+  },
+  {
+   "occ": "MARC_Motor_XM430_W210_T_REAL:2",
+   "comp": "MARC_Motor_XM430_W210_T_REAL",
+   "logical": "M11_RL_q2",
+   "origin_mm": [
+    -232.4775,
+    123.13,
+    -150.5
+   ],
+   "R_cols": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ]
+   ]
+  },
+  {
+   "occ": "MARC_Motor_MX28AT_REAL:3",
+   "comp": "MARC_Motor_MX28AT_REAL",
+   "logical": "M02_FR_yaw",
+   "origin_mm": [
+    50.0,
+    -160.0,
+    0.0
+   ],
+   "R_cols": [
+    [
+     0.0,
+     -1.0,
+     0.0
+    ],
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0
+    ]
+   ]
+  },
+  {
+   "occ": "MARC_Motor_XM430_W350_T_REAL:3",
+   "comp": "MARC_Motor_XM430_W350_T_REAL",
+   "logical": "M06_FR_q1",
+   "origin_mm": [
+    108.0,
+    -160.0,
+    0.0
+   ],
+   "R_cols": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     -1.0,
+     0.0
+    ]
+   ]
+  },
+  {
+   "occ": "MARC_Motor_XM430_W210_T_REAL:3",
+   "comp": "MARC_Motor_XM430_W210_T_REAL",
+   "logical": "M10_FR_q2",
+   "origin_mm": [
+    232.4775,
+    -123.13,
+    -150.5
+   ],
+   "R_cols": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     -1.0,
+     0.0
+    ]
+   ]
+  },
+  {
+   "occ": "MARC_Motor_MX28AT_REAL:4",
+   "comp": "MARC_Motor_MX28AT_REAL",
+   "logical": "M01_FL_yaw",
+   "origin_mm": [
+    50.0,
+    160.0,
+    0.0
+   ],
+   "R_cols": [
+    [
+     0.0,
+     -1.0,
+     0.0
+    ],
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0
+    ]
+   ]
+  },
+  {
+   "occ": "MARC_Motor_XM430_W350_T_REAL:4",
+   "comp": "MARC_Motor_XM430_W350_T_REAL",
+   "logical": "M05_FL_q1",
+   "origin_mm": [
+    108.0,
+    160.0,
+    0.0
+   ],
+   "R_cols": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     -1.0,
+     0.0
+    ]
+   ]
+  },
+  {
+   "occ": "MARC_Motor_XM430_W210_T_REAL:4",
+   "comp": "MARC_Motor_XM430_W210_T_REAL",
+   "logical": "M09_FL_q2",
+   "origin_mm": [
+    232.4775,
+    123.13,
+    -150.5
+   ],
+   "R_cols": [
+    [
+     0.0,
+     0.0,
+     1.0
+    ],
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ]
+   ]
+  }
+ ],
+ "asBuiltJoints": [
+  {
+   "n": "M01_FL_yaw",
+   "type": 1,
+   "axis": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "value_deg": 0.0,
+   "limits_deg": [
+    true,
+    -60.0,
+    true,
+    60.0
+   ],
+   "origin_mm": [
+    50.0,
+    160.0,
+    20.5
+   ]
+  },
+  {
+   "n": "M02_FR_yaw",
+   "type": 1,
+   "axis": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "value_deg": 0.0,
+   "limits_deg": [
+    true,
+    -60.0,
+    true,
+    60.0
+   ],
+   "origin_mm": [
+    50.0,
+    -160.0,
+    20.5
+   ]
+  },
+  {
+   "n": "M03_RL_yaw",
+   "type": 1,
+   "axis": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "value_deg": 0.0,
+   "limits_deg": [
+    true,
+    -60.0,
+    true,
+    60.0
+   ],
+   "origin_mm": [
+    -50.0,
+    160.0,
+    20.5
+   ]
+  },
+  {
+   "n": "M04_RR_yaw",
+   "type": 1,
+   "axis": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "value_deg": 0.0,
+   "limits_deg": [
+    true,
+    -60.0,
+    true,
+    60.0
+   ],
+   "origin_mm": [
+    -50.0,
+    -160.0,
+    20.5
+   ]
+  },
+  {
+   "n": "M05_FL_q1",
+   "type": 1,
+   "axis": [
+    0.0,
+    -1.0,
+    0.0
+   ],
+   "value_deg": 0.0,
+   "limits_deg": [
+    true,
+    -29.59391,
+    true,
+    25.40609
+   ],
+   "origin_mm": [
+    108.0,
+    160.0,
+    0.0
+   ]
+  },
+  {
+   "n": "M06_FR_q1",
+   "type": 1,
+   "axis": [
+    0.0,
+    -1.0,
+    0.0
+   ],
+   "value_deg": 0.0,
+   "limits_deg": [
+    true,
+    -29.59391,
+    true,
+    25.40609
+   ],
+   "origin_mm": [
+    108.0,
+    -160.0,
+    0.0
+   ]
+  },
+  {
+   "n": "M07_RL_q1",
+   "type": 1,
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "value_deg": 0.0,
+   "limits_deg": [
+    true,
+    -29.59391,
+    true,
+    25.40609
+   ],
+   "origin_mm": [
+    -108.0,
+    160.0,
+    0.0
+   ]
+  },
+  {
+   "n": "M08_RR_q1",
+   "type": 1,
+   "axis": [
+    -0.0,
+    1.0,
+    0.0
+   ],
+   "value_deg": 0.0,
+   "limits_deg": [
+    true,
+    -29.59391,
+    true,
+    25.40609
+   ],
+   "origin_mm": [
+    -108.0,
+    -160.0,
+    0.0
+   ]
+  },
+  {
+   "n": "M09_FL_q2",
+   "type": 1,
+   "axis": [
+    0.0,
+    -1.0,
+    0.0
+   ],
+   "value_deg": 0.0,
+   "limits_deg": [
+    false,
+    0.0,
+    false,
+    0.0
+   ],
+   "origin_mm": [
+    232.4775,
+    160.0,
+    -150.5
+   ]
+  },
+  {
+   "n": "M10_FR_q2",
+   "type": 1,
+   "axis": [
+    0.0,
+    -1.0,
+    -0.0
+   ],
+   "value_deg": 0.0,
+   "limits_deg": [
+    false,
+    0.0,
+    false,
+    0.0
+   ],
+   "origin_mm": [
+    232.4775,
+    -160.0,
+    -150.5
+   ]
+  },
+  {
+   "n": "M11_RL_q2",
+   "type": 1,
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "value_deg": 0.0,
+   "limits_deg": [
+    false,
+    0.0,
+    false,
+    0.0
+   ],
+   "origin_mm": [
+    -232.4775,
+    160.0,
+    -150.5
+   ]
+  },
+  {
+   "n": "M12_RR_q2",
+   "type": 1,
+   "axis": [
+    -0.0,
+    1.0,
+    -0.0
+   ],
+   "value_deg": 0.0,
+   "limits_deg": [
+    false,
+    0.0,
+    false,
+    0.0
+   ],
+   "origin_mm": [
+    -232.4775,
+    -160.0,
+    -150.5
+   ]
+  }
+ ],
+ "userParameters": [
+  {
+   "n": "geometry_R_tread_mm",
+   "e": "122.5 mm",
+   "v": 12.25,
+   "u": "mm"
+  },
+  {
+   "n": "geometry_t_tire_mm",
+   "e": "10.0 mm",
+   "v": 1.0,
+   "u": "mm"
+  },
+  {
+   "n": "geometry_b_sector_mm",
+   "e": "20.0 mm",
+   "v": 2.0,
+   "u": "mm"
+  },
+  {
+   "n": "geometry_th_tread_deg",
+   "e": "225.0 deg",
+   "v": 3.9269908169872414,
+   "u": "deg"
+  },
+  {
+   "n": "geometry_d_lobe_deg",
+   "e": "45.0 deg",
+   "v": 0.7853981633974483,
+   "u": "deg"
+  },
+  {
+   "n": "geometry_r_lobe_tip_mm",
+   "e": "112.5 mm",
+   "v": 11.25,
+   "u": "mm"
+  },
+  {
+   "n": "geometry_profile_step_deg",
+   "e": "0.5 deg",
+   "v": 0.008726646259971648,
+   "u": "deg"
+  },
+  {
+   "n": "geometry_nose_fillet_mm",
+   "e": "0.0 mm",
+   "v": 0.0,
+   "u": "mm"
+  },
+  {
+   "n": "geometry_t_rim_mm",
+   "e": "3.0 mm",
+   "v": 0.30000000000000004,
+   "u": "mm"
+  },
+  {
+   "n": "geometry_t_lip_mm",
+   "e": "3.0 mm",
+   "v": 0.30000000000000004,
+   "u": "mm"
+  },
+  {
+   "n": "geometry_h_lip_mm",
+   "e": "12.0 mm",
+   "v": 1.2000000000000002,
+   "u": "mm"
+  },
+  {
+   "n": "geometry_t_web_mm",
+   "e": "2.0 mm",
+   "v": 0.2,
+   "u": "mm"
+  },
+  {
+   "n": "geometry_r_hub_mm",
+   "e": "22.0 mm",
+   "v": 2.2,
+   "u": "mm"
+  },
+  {
+   "n": "geometry_hub_boss_h_mm",
+   "e": "10.0 mm",
+   "v": 1.0,
+   "u": "mm"
+  },
+  {
+   "n": "geometry_t_rib_mm",
+   "e": "2.0 mm",
+   "v": 0.2,
+   "u": "mm"
+  },
+  {
+   "n": "geometry_web_pocket_fraction",
+   "e": "0.0",
+   "v": 0.0,
+   "u": ""
+  },
+  {
+   "n": "geometry_link_hole_fraction",
+   "e": "0.0",
+   "v": 0.0,
+   "u": ""
+  },
+  {
+   "n": "leg_steer_axis_x_mm",
+   "e": "50.0 mm",
+   "v": 5.0,
+   "u": "mm"
+  },
+  {
+   "n": "leg_steer_axis_z_mm",
+   "e": "20.5 mm",
+   "v": 2.0500000000000003,
+   "u": "mm"
+  },
+  {
+   "n": "leg_stage1_axis_x_mm",
+   "e": "108.0 mm",
+   "v": 10.8,
+   "u": "mm"
+  },
+  {
+   "n": "leg_stage1_axis_z_mm",
+   "e": "0.0 mm",
+   "v": 0.0,
+   "u": "mm"
+  },
+  {
+   "n": "leg_link_a_mm",
+   "e": "90.0 mm",
+   "v": 9.0,
+   "u": "mm"
+  },
+  {
+   "n": "leg_link_b_mm",
+   "e": "110.0 mm",
+   "v": 11.0,
+   "u": "mm"
+  },
+  {
+   "n": "leg_gamma_crank_deg",
+   "e": "25.0 deg",
+   "v": 0.4363323129985824,
+   "u": "deg"
+  },
+  {
+   "n": "leg_H_reference_mm",
+   "e": "255.0 mm",
+   "v": 25.5,
+   "u": "mm"
+  },
+  {
+   "n": "leg_alpha_abs_reference_deg",
+   "e": "0.0 deg",
+   "v": 0.0,
+   "u": "deg"
+  },
+  {
+   "n": "leg_box_w_mm",
+   "e": "34.0 mm",
+   "v": 3.4000000000000004,
+   "u": "mm"
+  },
+  {
+   "n": "leg_box_h_mm",
+   "e": "37.0 mm",
+   "v": 3.7,
+   "u": "mm"
+  },
+  {
+   "n": "leg_wall_link_mm",
+   "e": "2.8 mm",
+   "v": 0.27999999999999997,
+   "u": "mm"
+  },
+  {
+   "n": "leg_wall_yoke_mm",
+   "e": "3.5 mm",
+   "v": 0.35000000000000003,
+   "u": "mm"
+  },
+  {
+   "n": "leg_clevis_gap_mm",
+   "e": "2.0 mm",
+   "v": 0.2,
+   "u": "mm"
+  },
+  {
+   "n": "leg_clevis_arm_t_mm",
+   "e": "5.0 mm",
+   "v": 0.5,
+   "u": "mm"
+  },
+  {
+   "n": "body_track_half_y_mm",
+   "e": "160.0 mm",
+   "v": 16.0,
+   "u": "mm"
+  },
+  {
+   "n": "body_hip_motor_center_x_mm",
+   "e": "36.7 mm",
+   "v": 3.6700000000000004,
+   "u": "mm"
+  },
+  {
+   "n": "body_hip_motor_center_z_mm",
+   "e": "3.3 mm",
+   "v": 0.33,
+   "u": "mm"
+  },
+  {
+   "n": "body_frame_x_mm",
+   "e": "130.0 mm",
+   "v": 13.0,
+   "u": "mm"
+  },
+  {
+   "n": "body_frame_end_allowance_mm",
+   "e": "30.0 mm",
+   "v": 3.0,
+   "u": "mm"
+  },
+  {
+   "n": "body_frame_bottom_z_mm",
+   "e": "-18.0 mm",
+   "v": -1.8,
+   "u": "mm"
+  },
+  {
+   "n": "body_frame_beam_w_mm",
+   "e": "12.0 mm",
+   "v": 1.2000000000000002,
+   "u": "mm"
+  },
+  {
+   "n": "body_frame_beam_h_mm",
+   "e": "10.0 mm",
+   "v": 1.0,
+   "u": "mm"
+  },
+  {
+   "n": "body_frame_beam_wall_mm",
+   "e": "2.4 mm",
+   "v": 0.24,
+   "u": "mm"
+  },
+  {
+   "n": "body_frame_plate_bottom_z_mm",
+   "e": "-15.0 mm",
+   "v": -1.5,
+   "u": "mm"
+  },
+  {
+   "n": "body_frame_plate_t_mm",
+   "e": "2.0 mm",
+   "v": 0.2,
+   "u": "mm"
+  },
+  {
+   "n": "body_cross_rib_t_mm",
+   "e": "2.4 mm",
+   "v": 0.24,
+   "u": "mm"
+  },
+  {
+   "n": "body_deck_bottom_z_mm",
+   "e": "28.0 mm",
+   "v": 2.8000000000000003,
+   "u": "mm"
+  },
+  {
+   "n": "body_deck_t_mm",
+   "e": "2.0 mm",
+   "v": 0.2,
+   "u": "mm"
+  },
+  {
+   "n": "body_com_z_candidate_mm",
+   "e": "12.0 mm",
+   "v": 1.2000000000000002,
+   "u": "mm"
+  },
+  {
+   "n": "body_camera_pitch_down_deg",
+   "e": "30.0 deg",
+   "v": 0.5235987755982988,
+   "u": "deg"
+  }
+ ],
+ "materials": [
+  {
+   "n": "MARC_XM430_W350_DATASHEET_82g",
+   "density_kg_m3": 1892.34418233917
+  },
+  {
+   "n": "MARC_MX28AT_DATASHEET_77g",
+   "density_kg_m3": 1750.517198276547
+  },
+  {
+   "n": "MARC_XM430_W210_DATASHEET_82g",
+   "density_kg_m3": 1892.34418233917
+  },
+  {
+   "n": "MARC_battery_DATASHEET_204g",
+   "density_kg_m3": 2189.5023750519676
+  },
+  {
+   "n": "MARC_U2D2_DATASHEET_9g",
+   "density_kg_m3": 699.1051454138701
+  },
+  {
+   "n": "MARC_Jetson_DATASHEET_145g",
+   "density_kg_m3": 624.9999999999999
+  },
+  {
+   "n": "MARC_lidar_DATASHEET_45g",
+   "density_kg_m3": 890.9189698505892
+  },
+  {
+   "n": "MARC_UNMASSED_ENVELOPE",
+   "density_kg_m3": 0.001
+  },
+  {
+   "n": "MARC_stereo_ESTIMATE_30g",
+   "density_kg_m3": 722.7271676033212
+  },
+  {
+   "n": "MARC_v4_PLA_D0",
+   "density_kg_m3": 1180.0
+  },
+  {
+   "n": "MARC_v4_TPU_envelope_D0",
+   "density_kg_m3": 494.0
+  },
+  {
+   "n": "강철",
+   "density_kg_m3": 7850.0
+  }
+ ],
+ "root": {
+  "mass_g": 3115.46854,
+  "volume_cm3": 3255.74488,
+  "com_mm": [
+   0.6741,
+   8.9232,
+   -65.0755
+  ]
+ }
+}

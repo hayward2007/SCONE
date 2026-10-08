@@ -1,0 +1,25 @@
+{
+  "original_path": ".claude/worktrees/wf_619614a6-1b7-5",
+  "head": "86c3a0fa789a1975f3c7f5229c0613187a04eeb9",
+  "status": "?? meshes/\n?? model.xml\n?? simulator.py\n?? simulator_cli.py\n?? src/simulation/\n",
+  "untracked_files": [
+    "meshes/ARC_SHAPED_WHEEL.stl",
+    "meshes/BODY.stl",
+    "meshes/BODY_ACTUATOR.stl",
+    "meshes/FR07.stl",
+    "meshes/FR12.stl",
+    "meshes/LEG_ACTUATOR.stl",
+    "meshes/LINK.stl",
+    "meshes/TIRE.stl",
+    "model.xml",
+    "simulator.py",
+    "simulator_cli.py",
+    "src/simulation/__init__.py",
+    "src/simulation/__main__.py",
+    "src/simulation/app.py",
+    "src/simulation/cli_bridge.py",
+    "src/simulation/controller.py",
+    "src/simulation/pid.py",
+    "src/simulation/runner.py"
+  ]
+}

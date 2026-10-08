@@ -1,0 +1,28 @@
+{
+  "pdfs": {
+    "SCONE_ICRA2027_Manuscript_EN.pdf": {
+      "pages": 8,
+      "sha256": "587b404cd7b8fb9d3229742fbeeae85bb226bb50d869532a4957531b193c9f3a",
+      "bytes": 940497,
+      "author": "",
+      "encrypted": false,
+      "all_fonts_embedded": true
+    },
+    "SCONE_ICRA2027_Review_KO.pdf": {
+      "pages": 4,
+      "sha256": "23f3965d28a9fde7efd2b59be6f9235e80d4f3dabe2b7ceb0d6073cd2ae4fb45",
+      "bytes": 191519,
+      "author": "",
+      "encrypted": false,
+      "all_fonts_embedded": true
+    }
+  },
+  "figures": 7,
+  "tables": 3,
+  "bibliography_entries": 15,
+  "tests_passed": 279,
+  "confirmation_trials": 268,
+  "proposal_completed": 68,
+  "source_unchanged": true,
+  "visual_review": "All 8 English pages and all 4 Korean pages rendered and inspected; corrected chart legends, labels, table footnotes, paragraph flow and reference breaks. Video contact sheet and specification verified."
+}

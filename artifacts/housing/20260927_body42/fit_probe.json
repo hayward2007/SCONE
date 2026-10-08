@@ -1,0 +1,35 @@
+{
+  "volume": 1054.8021915576696,
+  "api": {
+    "createBox": "\nCreates a new temporary solid box BRepBody object.\nbox : The OrientedBoundingBox3D object that defines the position, orientation, and\nsize of the box to crate.\nReturns the newly created temporary BRepBody object or null in the case of failure.\n",
+    "createCylinderOrCone": "\nCreates a temporary solid cylinder or cone BRepBody object.\npointOne : A point at one end of the cylinder or cone.\npointOneRadius : The radius of the cylinder or cone at the point one end, in centimeters.\npointTwo : A point at the opposite end of the cylinder or cone.\npointTwoRadius : The radius of the cylinder or cone at the point two end, in centimeters.\nFor a cylinder the pointTwoRadius should be equal to the pointOneRadius.\nReturns the newly created temporary BRepBody object or null in the case of failure.\n",
+    "booleanOperation": "\nPerforms the specified Boolean operation between the two input bodies. The input bodies need\nnot be solid but can be faces that are combined or trimmed.\ntargetBody : The target body that will be modified as a result of the Boolean operation.\ntoolBody : The tool body that will be used to operate on the target body.\nbooleanType : The type of Boolean operation to perform.\nReturns true if the operation was successful. If successful, the target body is modified as a result of the\nBoolean operation. Because of this the targetBody must always be a temporary BRepBody. The tool body is not\nmodified. This is analogous to a machining operation where you have the target that is being machined and\nthe tool that removes material.\n"
+  },
+  "intersections": [
+    {
+      "path": "LEG 1:1",
+      "body": "본체1",
+      "ok": true,
+      "volume_cm3": 5.070415157390481
+    },
+    {
+      "path": "LEG 1(미러):1",
+      "body": "본체1",
+      "ok": true,
+      "volume_cm3": 5.070415170436482
+    },
+    {
+      "path": "LEG 1:5",
+      "body": "본체1",
+      "ok": true,
+      "volume_cm3": 5.070415156569371
+    },
+    {
+      "path": "LEG 1(미러):2",
+      "body": "본체1",
+      "ok": true,
+      "volume_cm3": 5.070415154455181
+    }
+  ],
+  "mount_edges": []
+}

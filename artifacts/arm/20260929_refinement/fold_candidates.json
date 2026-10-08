@@ -1,0 +1,1064 @@
+[
+  {
+    "angles": [
+      150,
+      325,
+      180,
+      90
+    ],
+    "box": [
+      [
+        73.28139764540975,
+        -42.0,
+        145.5
+      ],
+      [
+        266.6,
+        48.00000000000001,
+        292.21586200392824
+      ]
+    ],
+    "hits": [
+      [
+        3,
+        2,
+        "A3 forearm (PLA, 16x",
+        "A2 upper arm (PLA, 1",
+        6210.73
+      ],
+      [
+        3,
+        2,
+        "A3 forearm (PLA, 16x",
+        "J3 XM430-W350 (elbow",
+        4088.98
+      ],
+      [
+        3,
+        1,
+        "J4 XM430-W210 (wrist",
+        "J2 XM430-W350 (shoul",
+        19910.42
+      ],
+      [
+        3,
+        1,
+        "J4 XM430-W210 (wrist",
+        "J2 XM430-W350 (shoul",
+        234.74
+      ],
+      [
+        3,
+        2,
+        "J4 XM430-W210 (wrist",
+        "A2 upper arm (PLA, 1",
+        3885.9
+      ],
+      [
+        3,
+        1,
+        "J4 XM430-W210 (wrist",
+        "J2 XM430-W350 (shoul",
+        124.53
+      ],
+      [
+        4,
+        1,
+        "A4 wrist bracket (PL",
+        "J2 XM430-W350 (shoul",
+        100.09
+      ],
+      [
+        4,
+        2,
+        "A4 wrist bracket (PL",
+        "A2 upper arm (PLA, 1",
+        3245.12
+      ],
+      [
+        4,
+        3,
+        "A4 wrist bracket (PL",
+        "A3 forearm (PLA, 16x",
+        502.48
+      ],
+      [
+        4,
+        3,
+        "A4 wrist bracket (PL",
+        "J4 XM430-W210 (wrist",
+        2506.56
+      ],
+      [
+        4,
+        3,
+        "A4 wrist bracket (PL",
+        "J4 XM430-W210 (wrist",
+        14.1
+      ],
+      [
+        4,
+        2,
+        "J5 MX-28AT (wrist ro",
+        "A2 upper arm (PLA, 1",
+        421.15
+      ],
+      [
+        4,
+        3,
+        "J5 MX-28AT (wrist ro",
+        "A3 forearm (PLA, 16x",
+        452.46
+      ],
+      [
+        4,
+        3,
+        "J5 MX-28AT (wrist ro",
+        "J4 XM430-W210 (wrist",
+        1807.23
+      ]
+    ]
+  },
+  {
+    "angles": [
+      155,
+      315,
+      175,
+      90
+    ],
+    "box": [
+      [
+        58.140025327486896,
+        -42.0,
+        145.5
+      ],
+      [
+        266.6,
+        48.00000000000001,
+        285.10974844303666
+      ]
+    ],
+    "hits": [
+      [
+        3,
+        2,
+        "A3 forearm (PLA, 16x",
+        "A2 upper arm (PLA, 1",
+        2660.97
+      ],
+      [
+        3,
+        2,
+        "A3 forearm (PLA, 16x",
+        "J3 XM430-W350 (elbow",
+        2954.59
+      ],
+      [
+        3,
+        2,
+        "A3 forearm (PLA, 16x",
+        "J3 XM430-W350 (elbow",
+        3.44
+      ],
+      [
+        3,
+        1,
+        "J4 XM430-W210 (wrist",
+        "A1 turntable (PLA, 8",
+        2144.21
+      ],
+      [
+        3,
+        1,
+        "J4 XM430-W210 (wrist",
+        "J2 XM430-W350 (shoul",
+        5875.66
+      ],
+      [
+        3,
+        1,
+        "J4 XM430-W210 (wrist",
+        "J2 XM430-W350 (shoul",
+        114.84
+      ],
+      [
+        3,
+        2,
+        "J4 XM430-W210 (wrist",
+        "A2 upper arm (PLA, 1",
+        698.6
+      ],
+      [
+        3,
+        1,
+        "J4 XM430-W210 (wrist",
+        "J2 XM430-W350 (shoul",
+        1.62
+      ],
+      [
+        4,
+        1,
+        "A4 wrist bracket (PL",
+        "A1 turntable (PLA, 8",
+        37.91
+      ],
+      [
+        4,
+        3,
+        "A4 wrist bracket (PL",
+        "A3 forearm (PLA, 16x",
+        454.31
+      ],
+      [
+        4,
+        3,
+        "A4 wrist bracket (PL",
+        "J4 XM430-W210 (wrist",
+        2281.47
+      ],
+      [
+        4,
+        3,
+        "A4 wrist bracket (PL",
+        "J4 XM430-W210 (wrist",
+        11.02
+      ],
+      [
+        4,
+        3,
+        "J5 MX-28AT (wrist ro",
+        "A3 forearm (PLA, 16x",
+        188.57
+      ],
+      [
+        4,
+        3,
+        "J5 MX-28AT (wrist ro",
+        "J4 XM430-W210 (wrist",
+        1108.19
+      ],
+      [
+        5,
+        "external",
+        "A5 gripper frame (PL",
+        "H Carry handle (8x M3x12 into rail threads)/H hand",
+        220.13
+      ],
+      [
+        5,
+        "external",
+        "J6 XM430-W210 (gripp",
+        "H Carry handle (8x M3x12 into rail threads)/H hand",
+        331.53
+      ],
+      [
+        6,
+        "external",
+        "A6 moving jaw (PLA, ",
+        "H Carry handle (8x M3x12 into rail threads)/H hand",
+        2700.73
+      ]
+    ]
+  },
+  {
+    "angles": [
+      160,
+      310,
+      180,
+      90
+    ],
+    "box": [
+      [
+        50.77854900105677,
+        -42.0,
+        145.5
+      ],
+      [
+        266.6,
+        48.00000000000001,
+        277.5861190712718
+      ]
+    ],
+    "hits": [
+      [
+        3,
+        2,
+        "A3 forearm (PLA, 16x",
+        "A2 upper arm (PLA, 1",
+        1040.22
+      ],
+      [
+        3,
+        2,
+        "A3 forearm (PLA, 16x",
+        "J3 XM430-W350 (elbow",
+        2311.15
+      ],
+      [
+        3,
+        2,
+        "A3 forearm (PLA, 16x",
+        "J3 XM430-W350 (elbow",
+        14.1
+      ],
+      [
+        3,
+        1,
+        "J4 XM430-W210 (wrist",
+        "A1 turntable (PLA, 8",
+        2575.78
+      ],
+      [
+        3,
+        1,
+        "J4 XM430-W210 (wrist",
+        "J2 XM430-W350 (shoul",
+        197.4
+      ],
+      [
+        4,
+        1,
+        "A4 wrist bracket (PL",
+        "A1 turntable (PLA, 8",
+        7.84
+      ],
+      [
+        4,
+        3,
+        "A4 wrist bracket (PL",
+        "A3 forearm (PLA, 16x",
+        257.75
+      ],
+      [
+        4,
+        3,
+        "A4 wrist bracket (PL",
+        "J4 XM430-W210 (wrist",
+        1491.66
+      ],
+      [
+        4,
+        3,
+        "A4 wrist bracket (PL",
+        "J4 XM430-W210 (wrist",
+        1.01
+      ],
+      [
+        4,
+        3,
+        "J5 MX-28AT (wrist ro",
+        "A3 forearm (PLA, 16x",
+        9.43
+      ],
+      [
+        4,
+        3,
+        "J5 MX-28AT (wrist ro",
+        "J4 XM430-W210 (wrist",
+        161.0
+      ],
+      [
+        5,
+        "external",
+        "A5 gripper frame (PL",
+        "H Carry handle (8x M3x12 into rail threads)/H hand",
+        5031.58
+      ],
+      [
+        5,
+        "external",
+        "A5 fixed jaw pad (TP",
+        "H Carry handle (8x M3x12 into rail threads)/H hand",
+        1021.89
+      ],
+      [
+        5,
+        "external",
+        "J6 XM430-W210 (gripp",
+        "H Carry handle (8x M3x12 into rail threads)/H hand",
+        11838.87
+      ],
+      [
+        6,
+        "external",
+        "A6 moving jaw (PLA, ",
+        "H Carry handle (8x M3x12 into rail threads)/H hand",
+        6258.67
+      ],
+      [
+        6,
+        "external",
+        "A6 moving jaw pad (T",
+        "H Carry handle (8x M3x12 into rail threads)/H hand",
+        1044.73
+      ]
+    ]
+  },
+  {
+    "angles": [
+      145,
+      310,
+      180,
+      90
+    ],
+    "box": [
+      [
+        61.62720088577923,
+        -42.0,
+        145.5
+      ],
+      [
+        266.6,
+        48.00000000000001,
+        298.8503779389594
+      ]
+    ],
+    "hits": [
+      [
+        3,
+        2,
+        "A3 forearm (PLA, 16x",
+        "A2 upper arm (PLA, 1",
+        3674.56
+      ],
+      [
+        3,
+        2,
+        "A3 forearm (PLA, 16x",
+        "J3 XM430-W350 (elbow",
+        3307.6
+      ],
+      [
+        3,
+        1,
+        "J4 XM430-W210 (wrist",
+        "A1 turntable (PLA, 8",
+        574.03
+      ],
+      [
+        3,
+        1,
+        "J4 XM430-W210 (wrist",
+        "J2 XM430-W350 (shoul",
+        8179.94
+      ],
+      [
+        3,
+        1,
+        "J4 XM430-W210 (wrist",
+        "J2 XM430-W350 (shoul",
+        227.61
+      ],
+      [
+        3,
+        2,
+        "J4 XM430-W210 (wrist",
+        "A2 upper arm (PLA, 1",
+        1902.76
+      ],
+      [
+        3,
+        1,
+        "J4 XM430-W210 (wrist",
+        "J2 XM430-W350 (shoul",
+        62.24
+      ],
+      [
+        4,
+        2,
+        "A4 wrist bracket (PL",
+        "A2 upper arm (PLA, 1",
+        273.11
+      ],
+      [
+        4,
+        3,
+        "A4 wrist bracket (PL",
+        "A3 forearm (PLA, 16x",
+        257.75
+      ],
+      [
+        4,
+        3,
+        "A4 wrist bracket (PL",
+        "J4 XM430-W210 (wrist",
+        1491.66
+      ],
+      [
+        4,
+        3,
+        "A4 wrist bracket (PL",
+        "J4 XM430-W210 (wrist",
+        1.01
+      ],
+      [
+        4,
+        3,
+        "J5 MX-28AT (wrist ro",
+        "A3 forearm (PLA, 16x",
+        9.43
+      ],
+      [
+        4,
+        3,
+        "J5 MX-28AT (wrist ro",
+        "J4 XM430-W210 (wrist",
+        161.0
+      ],
+      [
+        5,
+        "external",
+        "A5 gripper frame (PL",
+        "H Carry handle (8x M3x12 into rail threads)/H hand",
+        390.78
+      ],
+      [
+        5,
+        "external",
+        "J6 XM430-W210 (gripp",
+        "H Carry handle (8x M3x12 into rail threads)/H hand",
+        175.43
+      ],
+      [
+        6,
+        "external",
+        "A6 moving jaw (PLA, ",
+        "H Carry handle (8x M3x12 into rail threads)/H hand",
+        3487.13
+      ]
+    ]
+  },
+  {
+    "angles": [
+      135,
+      295,
+      175,
+      90
+    ],
+    "box": [
+      [
+        50.46414910386982,
+        -42.0,
+        145.5
+      ],
+      [
+        266.6,
+        48.00000000000001,
+        310.50661966467317
+      ]
+    ],
+    "hits": [
+      [
+        3,
+        2,
+        "A3 forearm (PLA, 16x",
+        "A2 upper arm (PLA, 1",
+        2660.97
+      ],
+      [
+        3,
+        2,
+        "A3 forearm (PLA, 16x",
+        "J3 XM430-W350 (elbow",
+        2954.59
+      ],
+      [
+        3,
+        2,
+        "A3 forearm (PLA, 16x",
+        "J3 XM430-W350 (elbow",
+        3.44
+      ],
+      [
+        3,
+        1,
+        "J4 XM430-W210 (wrist",
+        "A1 turntable (PLA, 8",
+        131.12
+      ],
+      [
+        3,
+        1,
+        "J4 XM430-W210 (wrist",
+        "J2 XM430-W350 (shoul",
+        1242.27
+      ],
+      [
+        3,
+        1,
+        "J4 XM430-W210 (wrist",
+        "J2 XM430-W350 (shoul",
+        61.26
+      ],
+      [
+        3,
+        2,
+        "J4 XM430-W210 (wrist",
+        "A2 upper arm (PLA, 1",
+        698.6
+      ],
+      [
+        4,
+        3,
+        "A4 wrist bracket (PL",
+        "A3 forearm (PLA, 16x",
+        10.74
+      ],
+      [
+        4,
+        3,
+        "A4 wrist bracket (PL",
+        "J4 XM430-W210 (wrist",
+        337.13
+      ],
+      [
+        5,
+        "external",
+        "J6 XM430-W210 (gripp",
+        "H Carry handle (8x M3x12 into rail threads)/H hand",
+        7.47
+      ],
+      [
+        6,
+        "external",
+        "A6 moving jaw (PLA, ",
+        "H Carry handle (8x M3x12 into rail threads)/H hand",
+        41.78
+      ]
+    ]
+  },
+  {
+    "angles": [
+      150,
+      30,
+      145,
+      90
+    ],
+    "box": [
+      [
+        91.52535929843266,
+        -42.0,
+        145.5
+      ],
+      [
+        266.6,
+        48.00000000000001,
+        425.4137506894793
+      ]
+    ],
+    "hits": [
+      [
+        4,
+        3,
+        "A4 wrist bracket (PL",
+        "J4 XM430-W210 (wrist",
+        21.64
+      ]
+    ]
+  },
+  {
+    "angles": [
+      170,
+      30,
+      145,
+      90
+    ],
+    "box": [
+      [
+        80.8349478679334,
+        -42.0,
+        145.5
+      ],
+      [
+        266.6,
+        48.00000000000001,
+        396.042086679503
+      ]
+    ],
+    "hits": [
+      [
+        3,
+        2,
+        "A3 forearm (PLA, 16x",
+        "A2 upper arm (PLA, 1",
+        186.15
+      ],
+      [
+        3,
+        2,
+        "A3 forearm (PLA, 16x",
+        "J3 XM430-W350 (elbow",
+        1273.58
+      ],
+      [
+        3,
+        2,
+        "A3 forearm (PLA, 16x",
+        "J3 XM430-W350 (elbow",
+        11.02
+      ],
+      [
+        4,
+        3,
+        "A4 wrist bracket (PL",
+        "J4 XM430-W210 (wrist",
+        21.64
+      ]
+    ]
+  },
+  {
+    "angles": [
+      180,
+      40,
+      150,
+      90
+    ],
+    "box": [
+      [
+        65.10717661115001,
+        -42.0,
+        145.5
+      ],
+      [
+        266.6,
+        48.00000000000001,
+        383.26946915883065
+      ]
+    ],
+    "hits": [
+      [
+        3,
+        2,
+        "A3 forearm (PLA, 16x",
+        "A2 upper arm (PLA, 1",
+        186.15
+      ],
+      [
+        3,
+        2,
+        "A3 forearm (PLA, 16x",
+        "J3 XM430-W350 (elbow",
+        1273.58
+      ],
+      [
+        3,
+        2,
+        "A3 forearm (PLA, 16x",
+        "J3 XM430-W350 (elbow",
+        11.02
+      ]
+    ]
+  },
+  {
+    "angles": [
+      175,
+      35,
+      145,
+      0
+    ],
+    "box": [
+      [
+        83.0480141287484,
+        -42.0,
+        145.5
+      ],
+      [
+        266.6,
+        42.0,
+        391.7215763014568
+      ]
+    ],
+    "hits": [
+      [
+        3,
+        2,
+        "A3 forearm (PLA, 16x",
+        "A2 upper arm (PLA, 1",
+        186.15
+      ],
+      [
+        3,
+        2,
+        "A3 forearm (PLA, 16x",
+        "J3 XM430-W350 (elbow",
+        1273.58
+      ],
+      [
+        3,
+        2,
+        "A3 forearm (PLA, 16x",
+        "J3 XM430-W350 (elbow",
+        11.02
+      ]
+    ]
+  },
+  {
+    "angles": [
+      175,
+      35,
+      145,
+      180
+    ],
+    "box": [
+      [
+        81.90086125604634,
+        -42.0,
+        145.5
+      ],
+      [
+        266.6,
+        42.0,
+        384.2306702326057
+      ]
+    ],
+    "hits": [
+      [
+        3,
+        2,
+        "A3 forearm (PLA, 16x",
+        "A2 upper arm (PLA, 1",
+        186.15
+      ],
+      [
+        3,
+        2,
+        "A3 forearm (PLA, 16x",
+        "J3 XM430-W350 (elbow",
+        1273.58
+      ],
+      [
+        3,
+        2,
+        "A3 forearm (PLA, 16x",
+        "J3 XM430-W350 (elbow",
+        11.02
+      ]
+    ]
+  },
+  {
+    "angles": [
+      160,
+      305,
+      170,
+      90
+    ],
+    "box": [
+      [
+        42.84206848618566,
+        -42.0,
+        145.5
+      ],
+      [
+        266.6,
+        48.000000000000014,
+        277.5861190712718
+      ]
+    ],
+    "hits": [
+      [
+        3,
+        2,
+        "A3 forearm (PLA, 16x",
+        "A2 upper arm (PLA, 1",
+        417.33
+      ],
+      [
+        3,
+        2,
+        "A3 forearm (PLA, 16x",
+        "J3 XM430-W350 (elbow",
+        1834.77
+      ],
+      [
+        3,
+        2,
+        "A3 forearm (PLA, 16x",
+        "J3 XM430-W350 (elbow",
+        14.1
+      ],
+      [
+        3,
+        1,
+        "J4 XM430-W210 (wrist",
+        "A1 turntable (PLA, 8",
+        638.93
+      ],
+      [
+        4,
+        3,
+        "A4 wrist bracket (PL",
+        "A3 forearm (PLA, 16x",
+        391.43
+      ],
+      [
+        4,
+        3,
+        "A4 wrist bracket (PL",
+        "J4 XM430-W210 (wrist",
+        1940.79
+      ],
+      [
+        4,
+        3,
+        "A4 wrist bracket (PL",
+        "J4 XM430-W210 (wrist",
+        5.94
+      ],
+      [
+        4,
+        3,
+        "J5 MX-28AT (wrist ro",
+        "A3 forearm (PLA, 16x",
+        50.99
+      ],
+      [
+        4,
+        3,
+        "J5 MX-28AT (wrist ro",
+        "J4 XM430-W210 (wrist",
+        559.31
+      ],
+      [
+        5,
+        "external",
+        "A5 gripper frame (PL",
+        "H Carry handle (8x M3x12 into rail threads)/H hand",
+        1193.64
+      ],
+      [
+        5,
+        "external",
+        "A5 fixed jaw pad (TP",
+        "H Carry handle (8x M3x12 into rail threads)/H hand",
+        3.49
+      ],
+      [
+        5,
+        "external",
+        "J6 XM430-W210 (gripp",
+        "H Carry handle (8x M3x12 into rail threads)/H hand",
+        8213.87
+      ],
+      [
+        6,
+        "external",
+        "A6 moving jaw (PLA, ",
+        "H Carry handle (8x M3x12 into rail threads)/H hand",
+        5522.88
+      ],
+      [
+        6,
+        "external",
+        "A6 moving jaw pad (T",
+        "H Carry handle (8x M3x12 into rail threads)/H hand",
+        6.88
+      ]
+    ]
+  },
+  {
+    "angles": [
+      160,
+      305,
+      165,
+      0
+    ],
+    "box": [
+      [
+        47.08951609333237,
+        -42.0,
+        145.5
+      ],
+      [
+        266.6,
+        42.0,
+        277.5861190712718
+      ]
+    ],
+    "hits": [
+      [
+        3,
+        2,
+        "A3 forearm (PLA, 16x",
+        "A2 upper arm (PLA, 1",
+        417.33
+      ],
+      [
+        3,
+        2,
+        "A3 forearm (PLA, 16x",
+        "J3 XM430-W350 (elbow",
+        1834.77
+      ],
+      [
+        3,
+        2,
+        "A3 forearm (PLA, 16x",
+        "J3 XM430-W350 (elbow",
+        14.1
+      ],
+      [
+        3,
+        1,
+        "J4 XM430-W210 (wrist",
+        "A1 turntable (PLA, 8",
+        638.93
+      ],
+      [
+        4,
+        3,
+        "A4 wrist bracket (PL",
+        "A3 forearm (PLA, 16x",
+        454.31
+      ],
+      [
+        4,
+        3,
+        "A4 wrist bracket (PL",
+        "J4 XM430-W210 (wrist",
+        2281.47
+      ],
+      [
+        4,
+        3,
+        "A4 wrist bracket (PL",
+        "J4 XM430-W210 (wrist",
+        11.02
+      ],
+      [
+        4,
+        3,
+        "J5 MX-28AT (wrist ro",
+        "A3 forearm (PLA, 16x",
+        188.57
+      ],
+      [
+        4,
+        3,
+        "J5 MX-28AT (wrist ro",
+        "J4 XM430-W210 (wrist",
+        1108.2
+      ],
+      [
+        5,
+        "external",
+        "A5 gripper frame (PL",
+        "H Carry handle (8x M3x12 into rail threads)/H hand",
+        161.67
+      ],
+      [
+        5,
+        "external",
+        "J6 XM430-W210 (gripp",
+        "H Carry handle (8x M3x12 into rail threads)/H hand",
+        8414.68
+      ],
+      [
+        6,
+        "external",
+        "A6 moving jaw (PLA, ",
+        "H Carry handle (8x M3x12 into rail threads)/H hand",
+        725.62
+      ]
+    ]
+  }
+]

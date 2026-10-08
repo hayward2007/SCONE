@@ -1,0 +1,24 @@
+{
+  "name": "MARC-PARAM-D0 v3",
+  "id": "urn:adsk.wipprod:dm.lineage:m-tfDl7GQVSpPaaj3cYogw",
+  "creation_id": "28a25f2f-444b-4871-ac20-29ae09d54ba3",
+  "is_saved": true,
+  "is_modified": false,
+  "folder": "SCONE",
+  "exports": [
+    {
+      "format": "f3d",
+      "path": "/Users/hayward_kim/Developer/SCONE/artifacts/marc/20260909_125258_rev4-D0/cad/MARC-PARAM-D0.f3d",
+      "bytes": 7357335,
+      "sha256": "f85a94b65d0502b790d0402203b4acc77629f8f9e9246ae103083f079c258e06",
+      "scope": "F3D contains 42 solid instances including 14 hidden study solids; STEP exports 28 visible solid instances."
+    },
+    {
+      "format": "step",
+      "path": "/Users/hayward_kim/Developer/SCONE/artifacts/marc/20260909_125258_rev4-D0/cad/MARC-PARAM-D0.step",
+      "bytes": 7492936,
+      "sha256": "a28ad10aa73301067bcae8110dd1383b694603f142746791a070ca39a74b4ce5",
+      "scope": "F3D contains 42 solid instances including 14 hidden study solids; STEP exports 28 visible solid instances."
+    }
+  ]
+}

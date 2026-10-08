@@ -1,0 +1,8 @@
+{
+  "content": [
+    {
+      "text": "{\n    \"message\": \"{\\\"step_id\\\": \\\"B05-units\\\", \\\"status\\\": \\\"PASS\\\", \\\"raw_kg_cm2\\\": [1154.6300000000012, 1002.410000000001, 585.2800000000008, -64.95675176507748, -212.40000000000012, -169.92000000000024], \\\"expected_tensor_about_origin_kg_cm2\\\": [1154.63, 1002.4100000000001, 585.28, -64.95675176507717, -212.4, -169.92000000000002], \\\"max_error\\\": 1.1368683772161603e-12, \\\"mass_kg\\\": 7.080000000000004, \\\"expected_mass_kg\\\": 7.08, \\\"com_cm\\\": [3.9999999999999996, 5.000000000000003, 5.9999999999999964], \\\"convention\\\": \\\"XYZ values are signed tensor entries about component origin. Subtract the parallel-axis term and multiply all entries by 1e-4.\\\"}\\n\",\n    \"success\": true\n}",
+      "type": "text"
+    }
+  ]
+}

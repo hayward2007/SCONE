@@ -1,0 +1,12 @@
+{
+  "four_legs_MX_inward90_hip180_continuous_distal_spin": {
+    "wheel_width_mm": 20,
+    "radial_and_axial_allowance_mm": 2.1,
+    "hits": []
+  },
+  "exact_user_rear_pose_full_spin_vs_other_legs_in_saved_positions": [
+    "LEG 1:1+ARC:1/T01 TPU tyre 20mm",
+    "LEG 1:1+ARC:1/W01 PLA rim 18mm seat, original hub"
+  ],
+  "limits": "Analytic cylinders against 0.03mm native meshes; joint trajectories and arbitrary simultaneous leg combinations are not certified."
+}

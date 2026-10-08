@@ -1,0 +1,1685 @@
+{
+  "protected_occurrences": 172,
+  "added_occurrences": [
+    "E9 Rear vertical electronics carrier - additive only:1",
+    "E9 Rear vertical electronics carrier - additive only:1+P1:1",
+    "E9 Rear vertical electronics carrier - additive only:1+P2:1",
+    "E9 Rear vertical electronics carrier - additive only:1+P3:1",
+    "E9 Rear vertical electronics carrier - additive only:1+P4:1",
+    "E9 Rear vertical electronics carrier - additive only:1+R1 official ROBOTIS U2D2 + PHB:1",
+    "E9 Rear vertical electronics carrier - additive only:1+R2 power PCB envelope 70x50:1"
+  ],
+  "differences": [
+    [
+      "source/occurrences/LEG 1(미러):1+LINK(미러):1/transform/0",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+LINK(미러):1/transform/2",
+      0.98480775,
+      -0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+LINK(미러):1/transform/3",
+      20.20535561,
+      9.36687915,
+      10.83847646
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+LINK(미러):1/transform/8",
+      0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+LINK(미러):1/transform/10",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+LINK(미러):1/transform/11",
+      -9.66376455,
+      0.44697128,
+      10.11073583
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_IDLE(미러):1/transform/0",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_IDLE(미러):1/transform/1",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_IDLE(미러):1/transform/8",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_IDLE(미러):1/transform/9",
+      0.98480775,
+      -0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):1/transform/0",
+      0.98480775,
+      -0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):1/transform/2",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):1/transform/3",
+      19.86650027,
+      21.61087026,
+      1.7443699899999991
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):1/transform/8",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):1/transform/10",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):1/transform/11",
+      2.8288592,
+      2.95,
+      0.12114080000000005
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):2/transform/0",
+      0.98480775,
+      -0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):2/transform/2",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):2/transform/3",
+      22.03307733,
+      21.61087026,
+      0.42220707000000246
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):2/transform/8",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):2/transform/10",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):2/transform/11",
+      2.44683321,
+      0.75,
+      1.6968332099999999
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):3/transform/0",
+      0.98480775,
+      -0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):3/transform/2",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):3/transform/3",
+      19.17190756,
+      17.61087026,
+      1.5610373000000024
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):3/transform/8",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):3/transform/10",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):3/transform/11",
+      -1.11037181,
+      2.95,
+      4.06037181
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):4/transform/0",
+      0.98480775,
+      -0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):4/transform/2",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):4/transform/3",
+      21.33848462,
+      17.61087026,
+      3.7276143600000005
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):4/transform/8",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):4/transform/10",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):4/transform/11",
+      -1.49239781,
+      0.75,
+      2.24239781
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):5/transform/0",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):5/transform/2",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):5/transform/3",
+      22.03307733,
+      21.61087026,
+      0.42220707000000246
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):5/transform/8",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):5/transform/10",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):5/transform/11",
+      2.44683321,
+      0.75,
+      1.6968332099999999
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):6/transform/0",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):6/transform/2",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):6/transform/3",
+      19.86650027,
+      21.61087026,
+      1.7443699899999991
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):6/transform/8",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):6/transform/10",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):6/transform/11",
+      2.8288592,
+      2.95,
+      0.12114080000000005
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):7/transform/0",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):7/transform/2",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):7/transform/3",
+      21.33848462,
+      17.61087026,
+      3.7276143600000005
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):7/transform/8",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):7/transform/10",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):7/transform/11",
+      -1.49239781,
+      0.75,
+      2.24239781
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):8/transform/0",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):8/transform/2",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):8/transform/3",
+      19.17190756,
+      17.61087026,
+      1.5610373000000024
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):8/transform/8",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):8/transform/10",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_SPACER_RING(미러):8/transform/11",
+      -1.11037181,
+      2.95,
+      4.06037181
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_CVR_CABLE(미러):1/transform/0",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_CVR_CABLE(미러):1/transform/1",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_CVR_CABLE(미러):1/transform/8",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1+X-430_CVR_CABLE(미러):1/transform/9",
+      0.98480775,
+      -0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1/transform/0",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1/transform/1",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1/transform/8",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):1/transform/9",
+      0.98480775,
+      -0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_IDLE(미러):1/transform/0",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_IDLE(미러):1/transform/1",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_IDLE(미러):1/transform/3",
+      18.68368008,
+      8.56087026,
+      10.122809819999999
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_IDLE(미러):1/transform/8",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_IDLE(미러):1/transform/9",
+      -0.98480775,
+      -0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_IDLE(미러):1/transform/11",
+      -10.21389497,
+      1.85,
+      12.06389497
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):1/transform/0",
+      0.98480775,
+      -0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):1/transform/2",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):1/transform/3",
+      17.46147301,
+      7.76087026,
+      9.700602749999998
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):1/transform/8",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):1/transform/10",
+      0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):1/transform/11",
+      -10.81072818,
+      2.95,
+      13.760728180000001
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):2/transform/0",
+      0.98480775,
+      -0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):2/transform/2",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):2/transform/3",
+      19.62805007,
+      7.76087026,
+      11.86717981
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):2/transform/8",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):2/transform/10",
+      0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):2/transform/11",
+      -11.19275417,
+      0.75,
+      11.94275417
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):3/transform/0",
+      0.98480775,
+      -0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):3/transform/2",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):3/transform/3",
+      18.15606572,
+      11.76087026,
+      6.39519546
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):3/transform/8",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):3/transform/10",
+      0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):3/transform/11",
+      -6.87149717,
+      2.95,
+      9.82149717
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):4/transform/0",
+      0.98480775,
+      -0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):4/transform/2",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):4/transform/3",
+      20.32264278,
+      11.76087026,
+      8.561772519999998
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):4/transform/8",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):4/transform/10",
+      0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):4/transform/11",
+      -7.25352316,
+      0.75,
+      8.00352316
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):5/transform/0",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):5/transform/2",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):5/transform/3",
+      19.62805007,
+      7.76087026,
+      11.86717981
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):5/transform/8",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):5/transform/10",
+      0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):5/transform/11",
+      -11.19275417,
+      0.75,
+      11.94275417
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):6/transform/0",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):6/transform/2",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):6/transform/3",
+      17.46147301,
+      7.76087026,
+      9.700602749999998
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):6/transform/8",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):6/transform/10",
+      0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):6/transform/11",
+      -10.81072818,
+      2.95,
+      13.760728180000001
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):7/transform/0",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):7/transform/2",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):7/transform/3",
+      20.32264278,
+      11.76087026,
+      8.561772519999998
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):7/transform/8",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):7/transform/10",
+      0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):7/transform/11",
+      -7.25352316,
+      0.75,
+      8.00352316
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):8/transform/0",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):8/transform/2",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):8/transform/3",
+      18.15606572,
+      11.76087026,
+      6.39519546
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):8/transform/8",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):8/transform/10",
+      0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_SPACER_RING(미러):8/transform/11",
+      -6.87149717,
+      2.95,
+      9.82149717
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_CVR_CABLE(미러):1/transform/0",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_CVR_CABLE(미러):1/transform/1",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_CVR_CABLE(미러):1/transform/3",
+      18.68368008,
+      8.56087026,
+      10.122809819999999
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_CVR_CABLE(미러):1/transform/8",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_CVR_CABLE(미러):1/transform/9",
+      -0.98480775,
+      -0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2+X-430_CVR_CABLE(미러):1/transform/11",
+      -10.21389497,
+      1.85,
+      12.06389497
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2/transform/0",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2/transform/1",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2/transform/3",
+      18.68368008,
+      8.56087026,
+      10.122809819999999
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2/transform/8",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2/transform/9",
+      -0.98480775,
+      -0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+XM430(미러):2/transform/11",
+      -10.21389497,
+      1.85,
+      12.06389497
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+ARC(미러):1/transform/0",
+      -0.64278761,
+      1.0,
+      1.64278761
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+ARC(미러):1/transform/1",
+      0.76604444,
+      0.0,
+      0.76604444
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+ARC(미러):1/transform/3",
+      18.68368008,
+      8.56087026,
+      10.122809819999999
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+ARC(미러):1/transform/8",
+      -0.76604444,
+      -0.0,
+      0.76604444
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+ARC(미러):1/transform/9",
+      -0.64278761,
+      1.0,
+      1.64278761
+    ],
+    [
+      "source/occurrences/LEG 1(미러):1+ARC(미러):1/transform/11",
+      -10.21389497,
+      1.85,
+      12.06389497
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+LINK(미러):1/transform/0",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+LINK(미러):1/transform/2",
+      0.98480775,
+      -0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+LINK(미러):1/transform/3",
+      -4.79464439,
+      -15.63312085,
+      10.838476459999999
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+LINK(미러):1/transform/8",
+      0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+LINK(미러):1/transform/10",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+LINK(미러):1/transform/11",
+      -9.66376455,
+      0.44697128,
+      10.11073583
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_IDLE(미러):1/transform/0",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_IDLE(미러):1/transform/1",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_IDLE(미러):1/transform/8",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_IDLE(미러):1/transform/9",
+      0.98480775,
+      -0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):1/transform/0",
+      0.98480775,
+      -0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):1/transform/2",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):1/transform/3",
+      -5.13349973,
+      -3.38912974,
+      1.7443699899999996
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):1/transform/8",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):1/transform/10",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):1/transform/11",
+      2.8288592,
+      2.95,
+      0.12114080000000005
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):2/transform/0",
+      0.98480775,
+      -0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):2/transform/2",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):2/transform/3",
+      -2.96692267,
+      -3.38912974,
+      0.4222070699999998
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):2/transform/8",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):2/transform/10",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):2/transform/11",
+      2.44683321,
+      0.75,
+      1.6968332099999999
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):3/transform/0",
+      0.98480775,
+      -0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):3/transform/2",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):3/transform/3",
+      -5.82809244,
+      -7.38912974,
+      1.5610372999999997
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):3/transform/8",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):3/transform/10",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):3/transform/11",
+      -1.11037181,
+      2.95,
+      4.06037181
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):4/transform/0",
+      0.98480775,
+      -0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):4/transform/2",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):4/transform/3",
+      -3.66151538,
+      -7.38912974,
+      3.7276143599999996
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):4/transform/8",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):4/transform/10",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):4/transform/11",
+      -1.49239781,
+      0.75,
+      2.24239781
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):5/transform/0",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):5/transform/2",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):5/transform/3",
+      -2.96692267,
+      -3.38912974,
+      0.4222070699999998
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):5/transform/8",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):5/transform/10",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):5/transform/11",
+      2.44683321,
+      0.75,
+      1.6968332099999999
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):6/transform/0",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):6/transform/2",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):6/transform/3",
+      -5.13349973,
+      -3.38912974,
+      1.7443699899999996
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):6/transform/8",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):6/transform/10",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):6/transform/11",
+      2.8288592,
+      2.95,
+      0.12114080000000005
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):7/transform/0",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):7/transform/2",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):7/transform/3",
+      -3.66151538,
+      -7.38912974,
+      3.7276143599999996
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):7/transform/8",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):7/transform/10",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):7/transform/11",
+      -1.49239781,
+      0.75,
+      2.24239781
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):8/transform/0",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):8/transform/2",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):8/transform/3",
+      -5.82809244,
+      -7.38912974,
+      1.5610372999999997
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):8/transform/8",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):8/transform/10",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_SPACER_RING(미러):8/transform/11",
+      -1.11037181,
+      2.95,
+      4.06037181
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_CVR_CABLE(미러):1/transform/0",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_CVR_CABLE(미러):1/transform/1",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_CVR_CABLE(미러):1/transform/8",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1+X-430_CVR_CABLE(미러):1/transform/9",
+      0.98480775,
+      -0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1/transform/0",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1/transform/1",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1/transform/8",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):1/transform/9",
+      0.98480775,
+      -0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_IDLE(미러):1/transform/0",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_IDLE(미러):1/transform/1",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_IDLE(미러):1/transform/3",
+      -6.31631992,
+      -16.43912974,
+      10.122809819999999
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_IDLE(미러):1/transform/8",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_IDLE(미러):1/transform/9",
+      -0.98480775,
+      -0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_IDLE(미러):1/transform/11",
+      -10.21389497,
+      1.85,
+      12.06389497
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):1/transform/0",
+      0.98480775,
+      -0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):1/transform/2",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):1/transform/3",
+      -7.53852699,
+      -17.23912974,
+      9.700602749999998
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):1/transform/8",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):1/transform/10",
+      0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):1/transform/11",
+      -10.81072818,
+      2.95,
+      13.760728180000001
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):2/transform/0",
+      0.98480775,
+      -0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):2/transform/2",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):2/transform/3",
+      -5.37194993,
+      -17.23912974,
+      11.86717981
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):2/transform/8",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):2/transform/10",
+      0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):2/transform/11",
+      -11.19275417,
+      0.75,
+      11.94275417
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):3/transform/0",
+      0.98480775,
+      -0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):3/transform/2",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):3/transform/3",
+      -6.84393428,
+      -13.23912974,
+      6.395195459999999
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):3/transform/8",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):3/transform/10",
+      0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):3/transform/11",
+      -6.87149717,
+      2.95,
+      9.82149717
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):4/transform/0",
+      0.98480775,
+      -0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):4/transform/2",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):4/transform/3",
+      -4.67735722,
+      -13.23912974,
+      8.561772519999998
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):4/transform/8",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):4/transform/10",
+      0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):4/transform/11",
+      -7.25352316,
+      0.75,
+      8.00352316
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):5/transform/0",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):5/transform/2",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):5/transform/3",
+      -5.37194993,
+      -17.23912974,
+      11.86717981
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):5/transform/8",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):5/transform/10",
+      0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):5/transform/11",
+      -11.19275417,
+      0.75,
+      11.94275417
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):6/transform/0",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):6/transform/2",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):6/transform/3",
+      -7.53852699,
+      -17.23912974,
+      9.700602749999998
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):6/transform/8",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):6/transform/10",
+      0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):6/transform/11",
+      -10.81072818,
+      2.95,
+      13.760728180000001
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):7/transform/0",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):7/transform/2",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):7/transform/3",
+      -4.67735722,
+      -13.23912974,
+      8.561772519999998
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):7/transform/8",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):7/transform/10",
+      0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):7/transform/11",
+      -7.25352316,
+      0.75,
+      8.00352316
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):8/transform/0",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):8/transform/2",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):8/transform/3",
+      -6.84393428,
+      -13.23912974,
+      6.395195459999999
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):8/transform/8",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):8/transform/10",
+      0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_SPACER_RING(미러):8/transform/11",
+      -6.87149717,
+      2.95,
+      9.82149717
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_CVR_CABLE(미러):1/transform/0",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_CVR_CABLE(미러):1/transform/1",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_CVR_CABLE(미러):1/transform/3",
+      -6.31631992,
+      -16.43912974,
+      10.122809819999999
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_CVR_CABLE(미러):1/transform/8",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_CVR_CABLE(미러):1/transform/9",
+      -0.98480775,
+      -0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2+X-430_CVR_CABLE(미러):1/transform/11",
+      -10.21389497,
+      1.85,
+      12.06389497
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2/transform/0",
+      -0.98480775,
+      0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2/transform/1",
+      -0.17364818,
+      -1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2/transform/3",
+      -6.31631992,
+      -16.43912974,
+      10.122809819999999
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2/transform/8",
+      0.17364818,
+      1.0,
+      0.82635182
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2/transform/9",
+      -0.98480775,
+      -0.0,
+      0.98480775
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+XM430(미러):2/transform/11",
+      -10.21389497,
+      1.85,
+      12.06389497
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+ARC(미러):1/transform/0",
+      -0.64278761,
+      1.0,
+      1.64278761
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+ARC(미러):1/transform/1",
+      0.76604444,
+      0.0,
+      0.76604444
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+ARC(미러):1/transform/3",
+      -6.31631992,
+      -16.43912974,
+      10.122809819999999
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+ARC(미러):1/transform/8",
+      -0.76604444,
+      0.0,
+      0.76604444
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+ARC(미러):1/transform/9",
+      -0.64278761,
+      1.0,
+      1.64278761
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2+ARC(미러):1/transform/11",
+      -10.21389497,
+      1.85,
+      12.06389497
+    ]
+  ],
+  "numeric_rounding_only": [
+    [
+      "source/occurrences/LEG 1(미러):1/bodies/0/box/0/0",
+      1.0000000005838672e-07
+    ],
+    [
+      "source/occurrences/LEG 1(미러):2/bodies/0/box/0/0",
+      1.0000000005838672e-07
+    ],
+    [
+      "source/occurrences/ARM v3b L-link parallel (MX28 x2, W350 x2, W210 x2):1+ARM4 wrist + J5:1/bodies/1/box/1/1",
+      1.0000000005838672e-07
+    ]
+  ],
+  "source_geometry_transforms_visibility_material_appearance_unchanged": false
+}

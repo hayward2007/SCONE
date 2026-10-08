@@ -1,0 +1,143 @@
+{
+  "pose_source": "saved user_pose_before.json transforms applied explicitly to current component bodies",
+  "current_user_pose_hits": [],
+  "hardware_hits": [],
+  "printed_hits": [],
+  "user_pose_continuous_spin_hits": [],
+  "mirrored_user_pose_continuous_spin_hits": [],
+  "front_90_180_continuous_spin_hits": [],
+  "camera_assembly": {
+    "cover_removed": true,
+    "entry_lift_step_mm": 2,
+    "entry_hits": [],
+    "forward_slide_step_mm": 1,
+    "forward_slide_hits": [],
+    "driver_diameter_mm": 4,
+    "driver_shaft_hits": [],
+    "camera_shift_z_mm": -8,
+    "camera_forward_shift_mm": 42,
+    "insertion_translation_mm": 105,
+    "ffc_reserve_cover_overlap_mm3": 0.0
+  },
+  "part_topology": [
+    {
+      "name": "P04 PLA electronics tray:1",
+      "lumps": 1,
+      "volume_cm3": 20.994744632577586,
+      "bounds": [
+        [
+          31.724002,
+          -64.0,
+          36.3
+        ],
+        [
+          131.0,
+          64.0,
+          49.2
+        ]
+      ]
+    },
+    {
+      "name": "R01 Rear smooth PLA chassis:1",
+      "lumps": 1,
+      "volume_cm3": 111.52532523511582,
+      "bounds": [
+        [
+          -61.4,
+          -69.0,
+          -0.5
+        ],
+        [
+          83.0,
+          69.0,
+          36.3
+        ]
+      ]
+    },
+    {
+      "name": "R02 Front smooth PLA chassis:1",
+      "lumps": 1,
+      "volume_cm3": 176.5570078478347,
+      "bounds": [
+        [
+          65.15,
+          -77.0,
+          -0.5
+        ],
+        [
+          227.6,
+          77.0,
+          81.0
+        ]
+      ]
+    },
+    {
+      "name": "S01 Rear fairing lid:1",
+      "lumps": 1,
+      "volume_cm3": 119.63853341042329,
+      "bounds": [
+        [
+          -61.4,
+          -77.0,
+          33.8
+        ],
+        [
+          82.85,
+          77.0,
+          104.0
+        ]
+      ]
+    },
+    {
+      "name": "S02 Front camera fairing lid:1",
+      "lumps": 1,
+      "volume_cm3": 118.80570828362998,
+      "bounds": [
+        [
+          83.15,
+          -77.0,
+          33.8
+        ],
+        [
+          227.6,
+          77.0,
+          104.0
+        ]
+      ]
+    },
+    {
+      "name": "M01 Rear removable motor bridge:1",
+      "lumps": 1,
+      "volume_cm3": 8.563999751537388,
+      "bounds": [
+        [
+          -61.4,
+          -43.0,
+          29.0
+        ],
+        [
+          -21.891297,
+          43.0,
+          36.7
+        ]
+      ]
+    },
+    {
+      "name": "M02 Front removable motor bridge:1",
+      "lumps": 1,
+      "volume_cm3": 8.559351157740997,
+      "bounds": [
+        [
+          188.108703,
+          -43.0,
+          29.0
+        ],
+        [
+          227.6,
+          43.0,
+          36.7
+        ]
+      ]
+    }
+  ]
+}

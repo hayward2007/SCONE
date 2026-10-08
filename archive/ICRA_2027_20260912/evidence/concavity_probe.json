@@ -1,0 +1,13 @@
+{
+  "probe_radius_m": 0.001,
+  "probe_location_original_mesh_frame_m": [
+    0.124,
+    0.24349991,
+    -0.21650636
+  ],
+  "ncon": 1,
+  "contact_distances_m": [
+    -0.02299999588507832
+  ],
+  "interpretation": "A 1 mm sphere at the empty annular centre collides with the single tire mesh proxy. No geometry edits to source model."
+}

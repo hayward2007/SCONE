@@ -1,0 +1,47 @@
+{
+  "I01": {
+    "status": "BLOCKED",
+    "value": null,
+    "evidence": []
+  },
+  "I02": {
+    "status": "BLOCKED",
+    "value": null,
+    "evidence": []
+  },
+  "I03": {
+    "status": "BLOCKED",
+    "value": null,
+    "evidence": []
+  },
+  "I04": {
+    "status": "BLOCKED",
+    "value": null,
+    "evidence": []
+  },
+  "I05": {
+    "status": "BLOCKED",
+    "value": null,
+    "evidence": []
+  },
+  "I06": {
+    "status": "BLOCKED",
+    "value": null,
+    "evidence": []
+  },
+  "I07": {
+    "status": "BLOCKED",
+    "value": null,
+    "evidence": []
+  },
+  "I08": {
+    "status": "BLOCKED",
+    "value": null,
+    "evidence": []
+  },
+  "I09": {
+    "status": "BLOCKED",
+    "value": null,
+    "evidence": []
+  }
+}

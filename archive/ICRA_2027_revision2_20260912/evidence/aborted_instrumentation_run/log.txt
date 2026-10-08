@@ -1,0 +1,46 @@
+1/252 main U 0.116 completed=True
+concurrent.futures.process._RemoteTraceback: 
+"""
+Traceback (most recent call last):
+  File "/Users/hayward_kim/.pyenv/versions/3.12.13/lib/python3.12/concurrent/futures/process.py", line 264, in _process_worker
+    r = call_item.fn(*call_item.args, **call_item.kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hayward_kim/.pyenv/versions/3.12.13/lib/python3.12/concurrent/futures/process.py", line 213, in _process_chunk
+    return [fn(*args) for args in chunk]
+            ^^^^^^^^^
+  File "/private/tmp/scone-icra-rev2/frozen/benchmark/revision_study.py", line 63, in run_job
+    sample=gait.update(command,dt=.02,send=True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/scone-icra-rev2/frozen/src/locomotion/tripod_gait.py", line 554, in update
+    self.send(sample)
+  File "/private/tmp/scone-icra-rev2/frozen/src/locomotion/tripod_gait.py", line 528, in send
+    raise RuntimeError(
+RuntimeError: gait frame was not sent because IK failed for legs (1,)
+"""
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/private/tmp/scone-icra-rev2/frozen/benchmark/revision_study.py", line 102, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/private/tmp/scone-icra-rev2/frozen/benchmark/revision_study.py", line 95, in main
+    for i,(row,trace) in enumerate(pool.map(run_job,jobs)):
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hayward_kim/.pyenv/versions/3.12.13/lib/python3.12/concurrent/futures/process.py", line 636, in _chain_from_iterable_of_lists
+    for element in iterable:
+                   ^^^^^^^^
+  File "/Users/hayward_kim/.pyenv/versions/3.12.13/lib/python3.12/concurrent/futures/_base.py", line 619, in result_iterator
+    yield _result_or_cancel(fs.pop())
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hayward_kim/.pyenv/versions/3.12.13/lib/python3.12/concurrent/futures/_base.py", line 317, in _result_or_cancel
+    return fut.result(timeout)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/hayward_kim/.pyenv/versions/3.12.13/lib/python3.12/concurrent/futures/_base.py", line 456, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/hayward_kim/.pyenv/versions/3.12.13/lib/python3.12/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+RuntimeError: gait frame was not sent because IK failed for legs (1,)

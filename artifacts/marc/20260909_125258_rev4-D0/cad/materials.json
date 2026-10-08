@@ -1,0 +1,642 @@
+[
+  {
+    "name": "MARC_v4_PLA_D0",
+    "id": "PrismMaterial-022",
+    "properties": [
+      {
+        "id": "physmat_Comments",
+        "name": "주석",
+        "type": "adsk::core::StringProperty"
+      },
+      {
+        "id": "physmat_Cost",
+        "name": "비용",
+        "type": "adsk::core::StringProperty"
+      },
+      {
+        "id": "physmat_Keynote",
+        "name": "키노트",
+        "type": "adsk::core::StringProperty"
+      },
+      {
+        "id": "physmat_Keywords",
+        "name": "키워드",
+        "type": "adsk::core::StringProperty"
+      },
+      {
+        "id": "physmat_Label",
+        "name": "레이블",
+        "type": "adsk::core::StringProperty"
+      },
+      {
+        "id": "physmat_Manufacturer",
+        "name": "제조업체",
+        "type": "adsk::core::StringProperty"
+      },
+      {
+        "id": "physmat_Mark",
+        "name": "표식",
+        "type": "adsk::core::StringProperty"
+      },
+      {
+        "id": "physmat_Model",
+        "name": "모형",
+        "type": "adsk::core::StringProperty"
+      },
+      {
+        "id": "physmat_Type",
+        "name": "유형",
+        "type": "adsk::core::ChoiceProperty"
+      },
+      {
+        "id": "physmat_URL",
+        "name": "URL",
+        "type": "adsk::core::StringProperty"
+      },
+      {
+        "id": "physmat_class",
+        "name": "클래스",
+        "type": "adsk::core::StringProperty"
+      },
+      {
+        "id": "physmat_classification",
+        "name": "physmat_classification",
+        "type": "adsk::core::StringProperty"
+      },
+      {
+        "id": "common_Shared_Asset",
+        "name": "공유",
+        "type": "adsk::core::ChoiceProperty"
+      },
+      {
+        "id": "structural_Behavior",
+        "name": "동작",
+        "type": "adsk::core::ChoiceProperty"
+      },
+      {
+        "id": "structural_Damping_coefficient",
+        "name": "댐핑 계수",
+        "type": "adsk::core::FloatProperty",
+        "units": "Unitless",
+        "value": 0.0
+      },
+      {
+        "id": "structural_Density",
+        "name": "밀도",
+        "type": "adsk::core::FloatProperty",
+        "units": "KilogramPerCubicMeter",
+        "value": 1060.0
+      },
+      {
+        "id": "structural_ExternalMaterialID",
+        "name": "외부 재료 ID",
+        "type": "adsk::core::StringProperty"
+      },
+      {
+        "id": "structural_Minimum_tensile_strength",
+        "name": "인장 강도",
+        "type": "adsk::core::FloatProperty",
+        "units": "Kilopascal",
+        "value": 29600.0
+      },
+      {
+        "id": "structural_Minimum_yield_stress",
+        "name": "항복 강도",
+        "type": "adsk::core::FloatProperty",
+        "units": "Kilopascal",
+        "value": 20000.0
+      },
+      {
+        "id": "structural_Poisson_ratio",
+        "name": "프와송의 비",
+        "type": "adsk::core::FloatProperty",
+        "units": "Unitless",
+        "value": 0.38
+      },
+      {
+        "id": "structural_Poisson_ratio_12",
+        "name": "프와송의 비 12",
+        "type": "adsk::core::FloatProperty",
+        "units": "Unitless",
+        "value": 0.38
+      },
+      {
+        "id": "structural_Poisson_ratio_23",
+        "name": "프와송의 비 23",
+        "type": "adsk::core::FloatProperty",
+        "units": "Unitless",
+        "value": 0.38
+      },
+      {
+        "id": "structural_Poisson_ratio_X",
+        "name": "프와송의 비 X",
+        "type": "adsk::core::FloatProperty",
+        "units": "Unitless",
+        "value": 0.38
+      },
+      {
+        "id": "structural_Poisson_ratio_Y",
+        "name": "프와송의 비 Y",
+        "type": "adsk::core::FloatProperty",
+        "units": "Unitless",
+        "value": 0.38
+      },
+      {
+        "id": "structural_Poisson_ratio_Z",
+        "name": "프와송의 비 Z",
+        "type": "adsk::core::FloatProperty",
+        "units": "Unitless",
+        "value": 0.38
+      },
+      {
+        "id": "structural_Shear_modulus",
+        "name": "전단 계수",
+        "type": "adsk::core::FloatProperty",
+        "units": "Kilopascal",
+        "value": 805000.0
+      },
+      {
+        "id": "structural_Shear_modulus_12",
+        "name": "전단 계수 12",
+        "type": "adsk::core::FloatProperty",
+        "units": "Kilopascal",
+        "value": 805000.0
+      },
+      {
+        "id": "structural_Shear_modulus_X",
+        "name": "전단 계수 X",
+        "type": "adsk::core::FloatProperty",
+        "units": "Kilopascal",
+        "value": 805000.0
+      },
+      {
+        "id": "structural_Shear_modulus_Y",
+        "name": "전단 계수 Y",
+        "type": "adsk::core::FloatProperty",
+        "units": "Kilopascal",
+        "value": 805000.0
+      },
+      {
+        "id": "structural_Shear_modulus_Z",
+        "name": "전단 계수 Z",
+        "type": "adsk::core::FloatProperty",
+        "units": "Kilopascal",
+        "value": 805000.0
+      },
+      {
+        "id": "structural_Specific_heat",
+        "name": "비열",
+        "type": "adsk::core::FloatProperty",
+        "units": "JoulePerGramCelsius",
+        "value": 1.5
+      },
+      {
+        "id": "structural_Thermal_conductivity",
+        "name": "열 전도율",
+        "type": "adsk::core::FloatProperty",
+        "units": "WattPerMeterKelvin",
+        "value": 0.16
+      },
+      {
+        "id": "structural_Thermal_conductivity_X",
+        "name": "열 전도율 X",
+        "type": "adsk::core::FloatProperty",
+        "units": "WattPerMeterKelvin",
+        "value": 0.16
+      },
+      {
+        "id": "structural_Thermal_conductivity_Y",
+        "name": "열 전도율 Y",
+        "type": "adsk::core::FloatProperty",
+        "units": "WattPerMeterKelvin",
+        "value": 0.16
+      },
+      {
+        "id": "structural_Thermal_conductivity_Z",
+        "name": "열 전도율 Z",
+        "type": "adsk::core::FloatProperty",
+        "units": "WattPerMeterKelvin",
+        "value": 0.16
+      },
+      {
+        "id": "structural_Thermal_expansion_coefficient",
+        "name": "열팽창 계수",
+        "type": "adsk::core::FloatProperty",
+        "units": "MicrometerPerMeterCelsius",
+        "value": 85.7
+      },
+      {
+        "id": "structural_Thermal_expansion_coefficient_1",
+        "name": "열팽창 계수 1",
+        "type": "adsk::core::FloatProperty",
+        "units": "MicrometerPerMeterCelsius",
+        "value": 85.7
+      },
+      {
+        "id": "structural_Thermal_expansion_coefficient_2",
+        "name": "열팽창 계수 2",
+        "type": "adsk::core::FloatProperty",
+        "units": "MicrometerPerMeterCelsius",
+        "value": 85.7
+      },
+      {
+        "id": "structural_Thermal_expansion_coefficient_X",
+        "name": "열팽창 계수 X",
+        "type": "adsk::core::FloatProperty",
+        "units": "MicrometerPerMeterCelsius",
+        "value": 85.7
+      },
+      {
+        "id": "structural_Thermal_expansion_coefficient_Y",
+        "name": "열팽창 계수 Y",
+        "type": "adsk::core::FloatProperty",
+        "units": "MicrometerPerMeterCelsius",
+        "value": 85.7
+      },
+      {
+        "id": "structural_Thermal_expansion_coefficient_Z",
+        "name": "열팽창 계수 Z",
+        "type": "adsk::core::FloatProperty",
+        "units": "MicrometerPerMeterCelsius",
+        "value": 85.7
+      },
+      {
+        "id": "structural_Young_modulus",
+        "name": "탄성 계수",
+        "type": "adsk::core::FloatProperty",
+        "units": "Kilopascal",
+        "value": 2240000.0
+      },
+      {
+        "id": "structural_Young_modulus_1",
+        "name": "탄성 계수 1",
+        "type": "adsk::core::FloatProperty",
+        "units": "Kilopascal",
+        "value": 2240000.0
+      },
+      {
+        "id": "structural_Young_modulus_2",
+        "name": "탄성 계수 2",
+        "type": "adsk::core::FloatProperty",
+        "units": "Kilopascal",
+        "value": 2240000.0
+      },
+      {
+        "id": "structural_Young_modulus_X",
+        "name": "탄성 계수 X",
+        "type": "adsk::core::FloatProperty",
+        "units": "Kilopascal",
+        "value": 2240000.0
+      },
+      {
+        "id": "structural_Young_modulus_Y",
+        "name": "탄성 계수 Y",
+        "type": "adsk::core::FloatProperty",
+        "units": "Kilopascal",
+        "value": 2240000.0
+      },
+      {
+        "id": "structural_Young_modulus_Z",
+        "name": "탄성 계수 Z",
+        "type": "adsk::core::FloatProperty",
+        "units": "Kilopascal",
+        "value": 2240000.0
+      },
+      {
+        "id": "structural_source",
+        "name": "소스",
+        "type": "adsk::core::StringProperty"
+      },
+      {
+        "id": "structural_sourceURL",
+        "name": "소스 URL",
+        "type": "adsk::core::StringProperty"
+      },
+      {
+        "id": "structural_subclass",
+        "name": "하위 클래스",
+        "type": "adsk::core::StringProperty"
+      }
+    ]
+  },
+  {
+    "name": "MARC_v4_TPU_envelope_D0",
+    "id": "PrismMaterial-022",
+    "properties": [
+      {
+        "id": "physmat_Comments",
+        "name": "주석",
+        "type": "adsk::core::StringProperty"
+      },
+      {
+        "id": "physmat_Cost",
+        "name": "비용",
+        "type": "adsk::core::StringProperty"
+      },
+      {
+        "id": "physmat_Keynote",
+        "name": "키노트",
+        "type": "adsk::core::StringProperty"
+      },
+      {
+        "id": "physmat_Keywords",
+        "name": "키워드",
+        "type": "adsk::core::StringProperty"
+      },
+      {
+        "id": "physmat_Label",
+        "name": "레이블",
+        "type": "adsk::core::StringProperty"
+      },
+      {
+        "id": "physmat_Manufacturer",
+        "name": "제조업체",
+        "type": "adsk::core::StringProperty"
+      },
+      {
+        "id": "physmat_Mark",
+        "name": "표식",
+        "type": "adsk::core::StringProperty"
+      },
+      {
+        "id": "physmat_Model",
+        "name": "모형",
+        "type": "adsk::core::StringProperty"
+      },
+      {
+        "id": "physmat_Type",
+        "name": "유형",
+        "type": "adsk::core::ChoiceProperty"
+      },
+      {
+        "id": "physmat_URL",
+        "name": "URL",
+        "type": "adsk::core::StringProperty"
+      },
+      {
+        "id": "physmat_class",
+        "name": "클래스",
+        "type": "adsk::core::StringProperty"
+      },
+      {
+        "id": "physmat_classification",
+        "name": "physmat_classification",
+        "type": "adsk::core::StringProperty"
+      },
+      {
+        "id": "common_Shared_Asset",
+        "name": "공유",
+        "type": "adsk::core::ChoiceProperty"
+      },
+      {
+        "id": "structural_Behavior",
+        "name": "동작",
+        "type": "adsk::core::ChoiceProperty"
+      },
+      {
+        "id": "structural_Damping_coefficient",
+        "name": "댐핑 계수",
+        "type": "adsk::core::FloatProperty",
+        "units": "Unitless",
+        "value": 0.0
+      },
+      {
+        "id": "structural_Density",
+        "name": "밀도",
+        "type": "adsk::core::FloatProperty",
+        "units": "KilogramPerCubicMeter",
+        "value": 1060.0
+      },
+      {
+        "id": "structural_ExternalMaterialID",
+        "name": "외부 재료 ID",
+        "type": "adsk::core::StringProperty"
+      },
+      {
+        "id": "structural_Minimum_tensile_strength",
+        "name": "인장 강도",
+        "type": "adsk::core::FloatProperty",
+        "units": "Kilopascal",
+        "value": 29600.0
+      },
+      {
+        "id": "structural_Minimum_yield_stress",
+        "name": "항복 강도",
+        "type": "adsk::core::FloatProperty",
+        "units": "Kilopascal",
+        "value": 20000.0
+      },
+      {
+        "id": "structural_Poisson_ratio",
+        "name": "프와송의 비",
+        "type": "adsk::core::FloatProperty",
+        "units": "Unitless",
+        "value": 0.38
+      },
+      {
+        "id": "structural_Poisson_ratio_12",
+        "name": "프와송의 비 12",
+        "type": "adsk::core::FloatProperty",
+        "units": "Unitless",
+        "value": 0.38
+      },
+      {
+        "id": "structural_Poisson_ratio_23",
+        "name": "프와송의 비 23",
+        "type": "adsk::core::FloatProperty",
+        "units": "Unitless",
+        "value": 0.38
+      },
+      {
+        "id": "structural_Poisson_ratio_X",
+        "name": "프와송의 비 X",
+        "type": "adsk::core::FloatProperty",
+        "units": "Unitless",
+        "value": 0.38
+      },
+      {
+        "id": "structural_Poisson_ratio_Y",
+        "name": "프와송의 비 Y",
+        "type": "adsk::core::FloatProperty",
+        "units": "Unitless",
+        "value": 0.38
+      },
+      {
+        "id": "structural_Poisson_ratio_Z",
+        "name": "프와송의 비 Z",
+        "type": "adsk::core::FloatProperty",
+        "units": "Unitless",
+        "value": 0.38
+      },
+      {
+        "id": "structural_Shear_modulus",
+        "name": "전단 계수",
+        "type": "adsk::core::FloatProperty",
+        "units": "Kilopascal",
+        "value": 805000.0
+      },
+      {
+        "id": "structural_Shear_modulus_12",
+        "name": "전단 계수 12",
+        "type": "adsk::core::FloatProperty",
+        "units": "Kilopascal",
+        "value": 805000.0
+      },
+      {
+        "id": "structural_Shear_modulus_X",
+        "name": "전단 계수 X",
+        "type": "adsk::core::FloatProperty",
+        "units": "Kilopascal",
+        "value": 805000.0
+      },
+      {
+        "id": "structural_Shear_modulus_Y",
+        "name": "전단 계수 Y",
+        "type": "adsk::core::FloatProperty",
+        "units": "Kilopascal",
+        "value": 805000.0
+      },
+      {
+        "id": "structural_Shear_modulus_Z",
+        "name": "전단 계수 Z",
+        "type": "adsk::core::FloatProperty",
+        "units": "Kilopascal",
+        "value": 805000.0
+      },
+      {
+        "id": "structural_Specific_heat",
+        "name": "비열",
+        "type": "adsk::core::FloatProperty",
+        "units": "JoulePerGramCelsius",
+        "value": 1.5
+      },
+      {
+        "id": "structural_Thermal_conductivity",
+        "name": "열 전도율",
+        "type": "adsk::core::FloatProperty",
+        "units": "WattPerMeterKelvin",
+        "value": 0.16
+      },
+      {
+        "id": "structural_Thermal_conductivity_X",
+        "name": "열 전도율 X",
+        "type": "adsk::core::FloatProperty",
+        "units": "WattPerMeterKelvin",
+        "value": 0.16
+      },
+      {
+        "id": "structural_Thermal_conductivity_Y",
+        "name": "열 전도율 Y",
+        "type": "adsk::core::FloatProperty",
+        "units": "WattPerMeterKelvin",
+        "value": 0.16
+      },
+      {
+        "id": "structural_Thermal_conductivity_Z",
+        "name": "열 전도율 Z",
+        "type": "adsk::core::FloatProperty",
+        "units": "WattPerMeterKelvin",
+        "value": 0.16
+      },
+      {
+        "id": "structural_Thermal_expansion_coefficient",
+        "name": "열팽창 계수",
+        "type": "adsk::core::FloatProperty",
+        "units": "MicrometerPerMeterCelsius",
+        "value": 85.7
+      },
+      {
+        "id": "structural_Thermal_expansion_coefficient_1",
+        "name": "열팽창 계수 1",
+        "type": "adsk::core::FloatProperty",
+        "units": "MicrometerPerMeterCelsius",
+        "value": 85.7
+      },
+      {
+        "id": "structural_Thermal_expansion_coefficient_2",
+        "name": "열팽창 계수 2",
+        "type": "adsk::core::FloatProperty",
+        "units": "MicrometerPerMeterCelsius",
+        "value": 85.7
+      },
+      {
+        "id": "structural_Thermal_expansion_coefficient_X",
+        "name": "열팽창 계수 X",
+        "type": "adsk::core::FloatProperty",
+        "units": "MicrometerPerMeterCelsius",
+        "value": 85.7
+      },
+      {
+        "id": "structural_Thermal_expansion_coefficient_Y",
+        "name": "열팽창 계수 Y",
+        "type": "adsk::core::FloatProperty",
+        "units": "MicrometerPerMeterCelsius",
+        "value": 85.7
+      },
+      {
+        "id": "structural_Thermal_expansion_coefficient_Z",
+        "name": "열팽창 계수 Z",
+        "type": "adsk::core::FloatProperty",
+        "units": "MicrometerPerMeterCelsius",
+        "value": 85.7
+      },
+      {
+        "id": "structural_Young_modulus",
+        "name": "탄성 계수",
+        "type": "adsk::core::FloatProperty",
+        "units": "Kilopascal",
+        "value": 2240000.0
+      },
+      {
+        "id": "structural_Young_modulus_1",
+        "name": "탄성 계수 1",
+        "type": "adsk::core::FloatProperty",
+        "units": "Kilopascal",
+        "value": 2240000.0
+      },
+      {
+        "id": "structural_Young_modulus_2",
+        "name": "탄성 계수 2",
+        "type": "adsk::core::FloatProperty",
+        "units": "Kilopascal",
+        "value": 2240000.0
+      },
+      {
+        "id": "structural_Young_modulus_X",
+        "name": "탄성 계수 X",
+        "type": "adsk::core::FloatProperty",
+        "units": "Kilopascal",
+        "value": 2240000.0
+      },
+      {
+        "id": "structural_Young_modulus_Y",
+        "name": "탄성 계수 Y",
+        "type": "adsk::core::FloatProperty",
+        "units": "Kilopascal",
+        "value": 2240000.0
+      },
+      {
+        "id": "structural_Young_modulus_Z",
+        "name": "탄성 계수 Z",
+        "type": "adsk::core::FloatProperty",
+        "units": "Kilopascal",
+        "value": 2240000.0
+      },
+      {
+        "id": "structural_source",
+        "name": "소스",
+        "type": "adsk::core::StringProperty"
+      },
+      {
+        "id": "structural_sourceURL",
+        "name": "소스 URL",
+        "type": "adsk::core::StringProperty"
+      },
+      {
+        "id": "structural_subclass",
+        "name": "하위 클래스",
+        "type": "adsk::core::StringProperty"
+      }
+    ]
+  }
+]

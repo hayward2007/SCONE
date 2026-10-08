@@ -1,0 +1,212 @@
+{
+  "installation": {
+    "protected_unchanged": true,
+    "occurrence_count": 172,
+    "protected_body_count": 266,
+    "candidate_symmetric_difference_mm3": {
+      "L1 frame": 0,
+      "C1 USB cable guide": 0
+    },
+    "L1_removed_outside_four_feet_mm3": 0,
+    "warnings": [
+      {
+        "i": 41,
+        "name": "스케치4",
+        "health": 1,
+        "error": "대상 발생 변환 가져오기 실패<b>1 참조 실패</b><br/>대상 발생 변환 가져오기 실패프로젝트1스케치4"
+      }
+    ],
+    "timeline_count": 866,
+    "numeric_comparison_tolerance_cm": 2e-07
+  },
+  "clearances": {
+    "source": "MARC v4 Body v5 BOX v36",
+    "modified": false,
+    "interferences": [],
+    "bolt_checks": [
+      {
+        "xy_mm": [
+          -80,
+          -35
+        ],
+        "shank_mm3": 0,
+        "head_mm3": 0,
+        "driver_mm3": 0,
+        "retained_web_mm": 2,
+        "counterbore_depth_mm": 3
+      },
+      {
+        "xy_mm": [
+          -80,
+          35
+        ],
+        "shank_mm3": 0,
+        "head_mm3": 0,
+        "driver_mm3": 0,
+        "retained_web_mm": 2,
+        "counterbore_depth_mm": 3
+      },
+      {
+        "xy_mm": [
+          -20,
+          -35
+        ],
+        "shank_mm3": 0,
+        "head_mm3": 0,
+        "driver_mm3": 0,
+        "retained_web_mm": 2,
+        "counterbore_depth_mm": 3
+      },
+      {
+        "xy_mm": [
+          -20,
+          35
+        ],
+        "shank_mm3": 0,
+        "head_mm3": 0,
+        "driver_mm3": 0,
+        "retained_web_mm": 2,
+        "counterbore_depth_mm": 3
+      },
+      {
+        "xy_mm": [
+          80,
+          -35
+        ],
+        "shank_mm3": 0,
+        "head_mm3": 0,
+        "driver_mm3": 0,
+        "retained_web_mm": 2,
+        "counterbore_depth_mm": 3
+      },
+      {
+        "xy_mm": [
+          80,
+          35
+        ],
+        "shank_mm3": 0,
+        "head_mm3": 0,
+        "driver_mm3": 0,
+        "retained_web_mm": 2,
+        "counterbore_depth_mm": 3
+      }
+    ],
+    "cable_checks": [
+      {
+        "diameter_mm": 5,
+        "center_y_mm": -9,
+        "solid_overlap_mm3": 0
+      },
+      {
+        "diameter_mm": 5,
+        "center_y_mm": -3,
+        "solid_overlap_mm3": 0
+      },
+      {
+        "diameter_mm": 5,
+        "center_y_mm": 3,
+        "solid_overlap_mm3": 0
+      },
+      {
+        "diameter_mm": 5,
+        "center_y_mm": 9,
+        "solid_overlap_mm3": 0
+      }
+    ],
+    "protected_checks": {
+      "L1_removed_outside_feet_mm3": 0,
+      "L1_added_mm3": 0
+    },
+    "bodies": {
+      "L1 frame": {
+        "bounds_mm": [
+          [
+            -97.4,
+            -41.0,
+            145.5
+          ],
+          [
+            -6.0,
+            41.0,
+            185.0
+          ]
+        ],
+        "solid": true,
+        "lumps": 1,
+        "volume_mm3": 33376.43010522376
+      },
+      "C1 USB cable guide": {
+        "bounds_mm": [
+          [
+            -12.0,
+            -41.0,
+            145.5
+          ],
+          [
+            85.5,
+            41.0,
+            163.1
+          ]
+        ],
+        "solid": true,
+        "lumps": 1,
+        "volume_mm3": 9946.05194475496
+      }
+    }
+  },
+  "saved": {
+    "document": "MARC v4 Body v5 BOX v37",
+    "version": 37,
+    "modified": false,
+    "saved": true,
+    "after_save_differences": [],
+    "protected_body_count": 266,
+    "occurrences": 172,
+    "warnings": [
+      {
+        "i": 41,
+        "name": "스케치4",
+        "health": 1,
+        "error": "대상 발생 변환 가져오기 실패<b>1 참조 실패</b><br/>대상 발생 변환 가져오기 실패프로젝트1스케치4"
+      }
+    ]
+  },
+  "meshes": {
+    "C1_USB_guide_print.stl": {
+      "triangles": 5048,
+      "watertight_edge_incidence": true,
+      "nonmanifold_edges": 0,
+      "signed_volume_mm3": 9945.169790020847,
+      "bounds_mm": [
+        [
+          1.7763568394002505e-14,
+          -41.0,
+          0.0
+        ],
+        [
+          17.600000381469727,
+          41.0,
+          97.5
+        ]
+      ]
+    },
+    "L1_frame_print.stl": {
+      "triangles": 56308,
+      "watertight_edge_incidence": true,
+      "nonmanifold_edges": 0,
+      "signed_volume_mm3": 33376.61015760139,
+      "bounds_mm": [
+        [
+          1.7763568394002505e-14,
+          -41.0,
+          -0.0014481544494628906
+        ],
+        [
+          91.4000015258789,
+          41.0,
+          39.5
+        ]
+      ]
+    }
+  }
+}

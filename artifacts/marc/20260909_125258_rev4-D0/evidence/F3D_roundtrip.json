@@ -1,0 +1,58 @@
+{
+  "status": "PASS",
+  "method": "Fusion ImportManager.importToNewDocument on exported native archive; temporary document closed without saving",
+  "parameters": 48,
+  "native_revolute_joints": 12,
+  "solid_instances_including_study": 42,
+  "invalid_bodies": [],
+  "joint_axes": [
+    {
+      "name": "M01_FL_yaw",
+      "axis_dot_expected": 1.0
+    },
+    {
+      "name": "M02_FR_yaw",
+      "axis_dot_expected": 1.0
+    },
+    {
+      "name": "M03_RL_yaw",
+      "axis_dot_expected": 1.0
+    },
+    {
+      "name": "M04_RR_yaw",
+      "axis_dot_expected": 1.0
+    },
+    {
+      "name": "M05_FL_q1",
+      "axis_dot_expected": 0.9999999999999996
+    },
+    {
+      "name": "M06_FR_q1",
+      "axis_dot_expected": 1.0
+    },
+    {
+      "name": "M07_RL_q1",
+      "axis_dot_expected": 1.0
+    },
+    {
+      "name": "M08_RR_q1",
+      "axis_dot_expected": 1.0
+    },
+    {
+      "name": "M09_FL_q2",
+      "axis_dot_expected": 0.9999999999999996
+    },
+    {
+      "name": "M10_FR_q2",
+      "axis_dot_expected": 1.0
+    },
+    {
+      "name": "M11_RL_q2",
+      "axis_dot_expected": 1.0
+    },
+    {
+      "name": "M12_RR_q2",
+      "axis_dot_expected": 1.0
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+\subsection{Baseline Mechanism and Its Limitation}
+At the high command, B retains 99.95\% of U's mean speed and reduces the largest sector rate from 1516.8 to 536.4 degree/s (Table~\ref{tab:main}). U exceeds the 540 degree/s budget in every high-command trial; B has no violating frames. G rejects an IK target in all eight high-command trials, indicating that an excursion bound without next-window anticipation can leave an unreachable articulated residual. S and D reject targets in all main trials. These are failures of the specified restrictions and workspace, not universal results for those controller classes.
+
+P attains comparable speed with a smaller largest distal-target rate than B. B's 1405.5 degree/s distal peak, although lower than U's 3299.5, still exceeds the sector budget. B uses 94.2 J of absolute joint work and 0.509 m integrated slip, compared with N's 58.1 J and 0.290 m; higher speed alone is not an efficiency result. Overall, 193/268 trials complete and all 75 terminations are rejected IK targets. B completes 68/68 with no sector violations, including the command and parameter cases. The original 1/2/4 ms check changes paired B/N speed by at most 0.00083 m/s; the geometry change gives at most 0.0123 m/s. These local results do not establish general robustness.
+
+\input{joint_table.tex}
+\begin{figure*}[t]\centering\includegraphics[width=.97\textwidth]{joint_limits.pdf}
+\caption{High-command joint-limit comparisons. Speed markers and whiskers are four-phase means and ranges; tracking and goal-lag panels show worst observed values. H retimes the gait to issue every target; F keeps the original clock. H 0.5 belongs to the separately prescribed stricter-rate suite. All values include startup. The simple periodic P remains competitive.}
+\label{fig:joint}\end{figure*}
+
+\subsection{All-Joint Limits and Clock Choice}
+All 176 additional trials complete their prescribed horizons. Every one of the 128 bounded trials satisfies both the issued-target and inner-setpoint rate bounds to $10^{-8}$ degree/s numerical tolerance. This verifies the command construction across the tested trajectories. It does not constrain the actual joint response: across the bounded trials, the largest measured joint-rate-to-declared-limit ratio is 1.232.
+
+At the high command, B's mean speed changes from 0.289 m/s without the governor to 0.227 m/s with H at $\rho=0.8$ (Table~\ref{tab:joint}). The worst observed joint tracking RMS decreases from $19.59^\circ$ to $5.54^\circ$, while its gait clock advances at 55.2\% of wall time. With F at the same limits, B achieves 0.316 m/s and $6.96^\circ$ worst joint RMS, but the requested-to-issued goal lag reaches $49.4^\circ$. Thus rate limiting can alter both tracking and propulsion; it does not merely scale speed. F's higher speed is accompanied by a changed target path, not faithful execution of the original trajectory.
+
+
+
+P's high-command mean speed is slightly higher than B's at every bounded setting, including 0.228 m/s for H at $\rho=0.8$ and 0.317 m/s for F. Its maximum goal lag is smaller. At $\rho=0.5$, H yields U/B/P speeds of 0.136/0.145/0.146 m/s. At the low command with H at $\rho=0.8$, the corresponding means are 0.106/0.106/0.107 m/s; F gives approximately 0.155 m/s for all three. These observations provide no consistent transport advantage for B over the simple alternatives.
+
+\subsection{Transitions, Longer Runs, and Sensitivity}
+Both 24 s command sequences complete for every code and phase. On the forward/stop/reverse sequence, B's mean translational RMSE increases from 0.110 m/s without the governor to 0.133 m/s with H at $\rho=0.8$; P gives 0.111 and 0.133 m/s. On the yaw/curve sequence, bounded B has translational and yaw-rate RMSE of 0.088 m/s and 0.168 rad/s, versus P's 0.084 m/s and 0.168 rad/s. Completion therefore does not imply accurate command tracking.
+
+All twelve 60 s trials complete. At the high command, H at $\rho=0.8$ yields mean speeds of 0.226/0.216/0.216 m/s for U/B/P. Across bounded trials, loaded support falls to one leg and up to 10.55\% of physics samples have fewer than three loaded legs. The scheduled stance count is not a load guarantee.
+
+The constrained B/P timestep check changes paired net speed by up to 0.0111 m/s relative to 2 ms, larger than in the baseline study. This sensitivity prevents transferring the earlier numerical-stability claim to the governor unchanged. Across all 176 new trials, the root-origin velocity integral agrees with displacement speed within 0.000052 m/s. Independent B/P visual replays (Fig.~\ref{fig:replay}) reproduce their original records and are excluded from trial counts.

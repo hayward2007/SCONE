@@ -1,0 +1,40 @@
+[
+  {
+    "component": "LINK",
+    "original_volume_cm3": 38.52095579110644,
+    "new_volume_cm3": 36.94104477607911,
+    "reduction_pct": 4.101432538680905,
+    "lumps": 1,
+    "original_interface_bbox_mm": [
+      [
+        84.983703,
+        -135.540926,
+        -0.75
+      ],
+      [
+        208.733703,
+        -97.340926,
+        37.75
+      ]
+    ]
+  },
+  {
+    "component": "LINK(\ubbf8\ub7ec)",
+    "original_volume_cm3": 38.52095579110643,
+    "new_volume_cm3": 36.94104477607896,
+    "reduction_pct": 4.101432538681282,
+    "lumps": 1,
+    "original_interface_bbox_mm": [
+      [
+        84.983703,
+        97.540926,
+        -0.75
+      ],
+      [
+        208.733703,
+        135.740926,
+        37.75
+      ]
+    ]
+  }
+]

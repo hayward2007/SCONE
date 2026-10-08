@@ -1,0 +1,1 @@
+Posture and contact geometry in simple hybrid locomotion of an articulated arc-leg hexapod

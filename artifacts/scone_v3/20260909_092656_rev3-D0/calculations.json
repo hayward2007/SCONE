@@ -1,0 +1,72 @@
+{
+  "scope": "D0 mathematical regression only; not fabrication acceptance",
+  "document_sha256": "e8acb6aa97263f5a29e61ce416133aec96e0c6218980283d7bba60615ca48ae5",
+  "derived": {
+    "L_link_mm": 195.30717903683333,
+    "phi_off_deg": 13.770008814737375,
+    "beta_reference_deg": -50.40609023578876,
+    "q1_reference_deg": -64.17609905052613,
+    "q2_reference_deg": 64.17609905052613,
+    "arm_mm": 124.47748464411416,
+    "ground_z_mm": -273.0,
+    "axle_z_mm": -150.5,
+    "frame_y_mm": 425.0
+  },
+  "profile": {
+    "coarse": {
+      "heave_mm": 18.563552592480264,
+      "ideal_distance_integral_mm": 752.8086931007759
+    },
+    "fine": {
+      "heave_mm": 18.563552592480264,
+      "ideal_distance_integral_mm": 752.8095232252366
+    },
+    "tip_chord_mm": 86.1037722821452,
+    "min_PLA_outer_mm": 102.5,
+    "min_lip_inner_mm": 87.5
+  },
+  "D0_feet_mm": [
+    [
+      232.47748464411416,
+      -175.0,
+      -273.0
+    ],
+    [
+      -232.47748464411416,
+      -175.0,
+      -273.0
+    ],
+    [
+      257.47748464411416,
+      0.0,
+      -273.0
+    ],
+    [
+      -257.47748464411416,
+      0.0,
+      -273.0
+    ],
+    [
+      232.47748464411416,
+      175.0,
+      -273.0
+    ],
+    [
+      -232.47748464411416,
+      175.0,
+      -273.0
+    ]
+  ],
+  "rev2_reference_only": {
+    "normal_load_fractions": [
+      0.2627239413680782,
+      0.4745521172638436,
+      0.2627239413680782
+    ],
+    "intact_box_J_mm4": 97492.60588623851,
+    "intact_box_Z_mm3": 3797.1275243243253,
+    "intact_box_mass_g": 84.27182400000002,
+    "link_delta_3wi_mm": 1.0937552834701616
+  },
+  "regression_status": "PASS"
+}

@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "<string>", line 76, in <module>
+  File "<string>", line 69, in run
+AssertionError: [{'a': 'R01 Rear smooth PLA chassis:1', 'b': 'LEG 1:5', 'overlap_mm3': 195.08693468423212, 'bounds': [[-54.049893, -42.547812, 0.749998], [-29.732672, -32.182301, 1.900005]]}, {'a': 'R01 Rear smooth PLA chassis:1', 'b': 'LEG 1(미러):2', 'overlap_mm3': 195.08862733263885, 'bounds': [[-54.049896, 32.182301, 0.750002], [-29.732672, 42.547812, 1.900013]]}, {'a': 'R02 Front smooth PLA chassis:1', 'b': 'LEG 1:1', 'overlap_mm3': 192.44033503073072, 'bounds': [[195.950107, -42.511745, 0.749998], [220.267328, -32.182301, 1.900005]]}, {'a': 'R02 Front smooth PLA chassis:1', 'b': 'LEG 1(미러):1', 'overlap_mm3': 192.44202767913, 'bounds': [[195.950104, 32.182301, 0.750002], [220.267328, 42.511745, 1.900013]]}]

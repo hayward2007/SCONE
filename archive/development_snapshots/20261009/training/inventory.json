@@ -1,0 +1,394 @@
+{
+  "files": [
+    {
+      "path": "runs/failsafe_smoke/checkpoints/scone_walk_failsafe_2048_steps.zip",
+      "bytes": 765155,
+      "sha256": "7e5b043b40d5ec8f3b412515bbb41aec53cd260923dc227a09eaa9a62f464abf"
+    },
+    {
+      "path": "runs/failsafe_smoke/checkpoints/scone_walk_failsafe_4096_steps.zip",
+      "bytes": 2255701,
+      "sha256": "f11d31fa14c89befa668dd5ec3949c11b78815be565b575aec3b4fa49df3a2ac"
+    },
+    {
+      "path": "runs/failsafe_smoke/checkpoints/scone_walk_failsafe_6144_steps.zip",
+      "bytes": 2255960,
+      "sha256": "0b44a80f7cf041f3a12d8da4d190c2e93f7303925df50dbee0caa7ff5bbdea2f"
+    },
+    {
+      "path": "runs/failsafe_smoke/checkpoints/scone_walk_failsafe_8192_steps.zip",
+      "bytes": 2256222,
+      "sha256": "34b074aec478f4aa10d43e6cd5d239b42ada83d4dea4afbd591e3a16bac40def"
+    },
+    {
+      "path": "runs/failsafe_smoke/evaluation_history.jsonl",
+      "bytes": 297,
+      "sha256": "e8f8503348d31e7262f3ff68c864e72c046836838f9e99e997a2b69033bac9f0"
+    },
+    {
+      "path": "runs/failsafe_smoke/final_model.zip",
+      "bytes": 2256221,
+      "sha256": "e90a8ac146f81728a3f77a6a06d9e12e561bf66a50297294a407027bc2b4aa62"
+    },
+    {
+      "path": "runs/failsafe_smoke/graceful_stop.enabled",
+      "bytes": 1,
+      "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "path": "runs/failsafe_smoke/monitor.csv",
+      "bytes": 346,
+      "sha256": "f58536a6d93390161a7bb23c5f48ab01630f86ed0872b4476d11b2ab24e4ee9d"
+    },
+    {
+      "path": "runs/failsafe_smoke/resume.checkpoint",
+      "bytes": 15,
+      "sha256": "c6ca329c1ebf521ad586b3d1bff6f9d7df49c5af5f3d04bfb2da76e54781d79f"
+    },
+    {
+      "path": "runs/failsafe_smoke/scaffold_baseline.json",
+      "bytes": 6103,
+      "sha256": "39253058de6767478385c7ea3574524d094afc53de611d346ff36ada4651fdc7"
+    },
+    {
+      "path": "runs/remote_watch/scone_walk_1000000_steps.zip",
+      "bytes": 2101611,
+      "sha256": "033a8535d141a8003545ba28309ee6956dc3fde839966d9d1f158ee7e00a515e"
+    },
+    {
+      "path": "runs/remote_watch/scone_walk_100000_steps.zip",
+      "bytes": 2101609,
+      "sha256": "93ac6aee24624409677c0969f472754d41c7fba3069a81b277288b2cc716c05d"
+    },
+    {
+      "path": "runs/remote_watch/scone_walk_1020000_steps.zip",
+      "bytes": 2101611,
+      "sha256": "1709324e249a3fe8b7d9e0d90e4a1fa67a049b507051aca1dccad2f4d356268c"
+    },
+    {
+      "path": "runs/remote_watch/scone_walk_1040000_steps.zip",
+      "bytes": 2101611,
+      "sha256": "4beca7e330b02d0501b0602ec69b718045cd10d9485efc61904d36d8d4d3a446"
+    },
+    {
+      "path": "runs/remote_watch/scone_walk_1060000_steps.zip",
+      "bytes": 2101611,
+      "sha256": "5d4e6a6ef26419d49650376f1c18ac94662e9dbd39e110bf87d3f9f4e635b7ae"
+    },
+    {
+      "path": "runs/remote_watch/scone_walk_1080000_steps.zip",
+      "bytes": 2101611,
+      "sha256": "50f0d3f7789eee863f0f0c6ea04a7ee52eae6d6f884bc3e2608276da98465eaf"
+    },
+    {
+      "path": "runs/remote_watch/scone_walk_1100000_steps.zip",
+      "bytes": 2101611,
+      "sha256": "cbabf47b2a7db63bc2ed12ab419b0e3e7b2734484f9821823cfbef3f05ec5aa5"
+    },
+    {
+      "path": "runs/remote_watch/scone_walk_1120000_steps.zip",
+      "bytes": 2101611,
+      "sha256": "777cd12084fcf788e541254a28d6ecd320282e0dc261d2f4cac6cc62e1814ab3"
+    },
+    {
+      "path": "runs/remote_watch/scone_walk_1140000_steps.zip",
+      "bytes": 2101611,
+      "sha256": "5f53d2b450d1e34b0de6265e7a76613eae7ebd229de9ec666277f6a7aedd1807"
+    },
+    {
+      "path": "runs/remote_watch/scone_walk_1160000_steps.zip",
+      "bytes": 2101611,
+      "sha256": "1d01f6a660e28fe6aeb68ac73c028ac8b9b3a6cd3de0f72c154c9ff353dad005"
+    },
+    {
+      "path": "runs/remote_watch/scone_walk_1180000_steps.zip",
+      "bytes": 2101611,
+      "sha256": "fed544e171fe1a4516f3318c8185070839935ebc07b8fe1d2cd526836ddc2d47"
+    },
+    {
+      "path": "runs/remote_watch/scone_walk_1200000_steps.zip",
+      "bytes": 2101611,
+      "sha256": "64ee75a1f7a379450758414b516887c0cec712a6d18df442e5fba2305a7a7f89"
+    },
+    {
+      "path": "runs/remote_watch/scone_walk_120000_steps.zip",
+      "bytes": 2101609,
+      "sha256": "5b1518f36b4bfc290e4b595f30a101e2d94022a53cc3f3b81e46c414f00ac432"
+    },
+    {
+      "path": "runs/remote_watch/scone_walk_1220000_steps.zip",
+      "bytes": 2101611,
+      "sha256": "0494de10e76df0daaf3e9c87dc8fe5ad380edf6c5978cca1fea9d6d1f81f5ee1"
+    },
+    {
+      "path": "runs/remote_watch/scone_walk_1240000_steps.zip",
+      "bytes": 2101611,
+      "sha256": "99853c4e712e013bb397da2027a7134ae07068ba9820ef71c20f516d5df18616"
+    },
+    {
+      "path": "runs/remote_watch/scone_walk_1260000_steps.zip",
+      "bytes": 2101611,
+      "sha256": "c5c6a688fc4316dd908b99c17748e51f00eb73dd495f06ecb4f0c1d17d672c08"
+    },
+    {
+      "path": "runs/remote_watch/scone_walk_140000_steps.zip",
+      "bytes": 2101609,
+      "sha256": "bfdc54be2ffbe2b6c62c5b04611cfc25c01e54665214e802c9eb7eb9086645a6"
+    },
+    {
+      "path": "runs/remote_watch/scone_walk_160000_steps.zip",
+      "bytes": 2101609,
+      "sha256": "c844937e1f93cbe09431c31a89ec7d89b9ef5a8751f858912560c9923b79abb1"
+    },
+    {
+      "path": "runs/remote_watch/scone_walk_180000_steps.zip",
+      "bytes": 2101609,
+      "sha256": "88b6c349c3c2dbee918184d7b0ab0e5ec0ce32b380a5e8f5cebeb7c583138910"
+    },
+    {
+      "path": "runs/remote_watch/scone_walk_200000_steps.zip",
+      "bytes": 2101609,
+      "sha256": "e8253f4e81cf91152715595eb47b31860b7eff0683e092f57dd7820bc3ccf0b4"
+    },
+    {
+      "path": "runs/remote_watch/scone_walk_20000_steps.zip",
+      "bytes": 2097423,
+      "sha256": "50f8666e382f03c4ddd1195f69b355ebb14747cb322d70586d67bd836a38516a"
+    },
+    {
+      "path": "runs/remote_watch/scone_walk_220000_steps.zip",
+      "bytes": 2101609,
+      "sha256": "f476db8133bcf6b71b54d7142466a2e5fe68d1f41bf1caf1161fe4164d622a1b"
+    },
+    {
+      "path": "runs/remote_watch/scone_walk_240000_steps.zip",
+      "bytes": 2101609,
+      "sha256": "7753f86117632a3f7d74477e2de8faeb4b6ba60d5aee27e31e0bb5902564e9ae"
+    },
+    {
+      "path": "runs/remote_watch/scone_walk_300000_steps.zip",
+      "bytes": 2114015,
+      "sha256": "8636fd5414b710ba6e11278566cf6aa46be7b42c646356c83857183d5bc9f5df"
+    },
+    {
+      "path": "runs/remote_watch/scone_walk_400000_steps.zip",
+      "bytes": 2114005,
+      "sha256": "e2903a5eae7486d65284525c51ccdda54661fa6e64559e867292f1eda7a55656"
+    },
+    {
+      "path": "runs/remote_watch/scone_walk_40000_steps.zip",
+      "bytes": 2100039,
+      "sha256": "b77d9dda0723a4f569f302409c0e53c16b21112a46df1807334d6ab1a88c6f2a"
+    },
+    {
+      "path": "runs/remote_watch/scone_walk_500000_steps.zip",
+      "bytes": 2114016,
+      "sha256": "7dfe56d60d0029f065e5c9d2a18dd239449eb07d072b19060bd0cfb715c660cc"
+    },
+    {
+      "path": "runs/remote_watch/scone_walk_600000_steps.zip",
+      "bytes": 2114006,
+      "sha256": "99bfa8a2d4976df6f0a88f90925ce0f41fa0ec953d198978be918d00b6e54482"
+    },
+    {
+      "path": "runs/remote_watch/scone_walk_60000_steps.zip",
+      "bytes": 2101608,
+      "sha256": "8d553272e5df2dc342e83aa5f06eacf046673cef38a05ea2598c3d89d250c51c"
+    },
+    {
+      "path": "runs/remote_watch/scone_walk_700000_steps.zip",
+      "bytes": 2114017,
+      "sha256": "a2558987051d90a045196d247e33ca0474528cd2e92500fc86926e9f6ffb9ab7"
+    },
+    {
+      "path": "runs/remote_watch/scone_walk_80000_steps.zip",
+      "bytes": 2101608,
+      "sha256": "37cc63c9d56c07ce5f5ea59346825fad185fe4cca48f41eeacc0d3365d41298b"
+    },
+    {
+      "path": "runs/remote_watch/scone_walk_v2_33099669_steps.zip",
+      "bytes": 5038299,
+      "sha256": "9ec08ddcd233570d64f2be1f45f40d5297e89f594e694b21d94be6299376a25c"
+    },
+    {
+      "path": "runs/remote_watch/scone_walk_v3_2048_steps.zip",
+      "bytes": 2198976,
+      "sha256": "19b329462b1ea8799acfb9bf894cca7d71bd6baa6e4a49d6a8147e24e455c1fa"
+    },
+    {
+      "path": "runs/walk-v2_full_20260902_103338/checkpoints/scone_walk_v2_16199838_steps.zip",
+      "bytes": 5038298,
+      "sha256": "9dba201cc0798994943882fa3c750a70a3c4ff56e4a8c4bdfe800568e9402999"
+    },
+    {
+      "path": "runs/walk-v2_full_20260902_103338/checkpoints/scone_walk_v2_16299837_steps.zip",
+      "bytes": 5038299,
+      "sha256": "cec907bee0cd78d845737892210a8e383e12ebccf0e2b9ae2453c05a2897ffdd"
+    },
+    {
+      "path": "runs/walk-v2_full_20260902_103338/checkpoints/scone_walk_v2_32999670_steps.zip",
+      "bytes": 5038299,
+      "sha256": "fadf4cfec3d0771c1de1e906120931eb2a7942824b37529e591c713dd8b58b29"
+    },
+    {
+      "path": "runs/walk-v2_full_20260902_103338/checkpoints/scone_walk_v2_33099669_steps.zip",
+      "bytes": 5038299,
+      "sha256": "9ec08ddcd233570d64f2be1f45f40d5297e89f594e694b21d94be6299376a25c"
+    },
+    {
+      "path": "runs/walk-v2_full_20260902_103338/checkpoints/scone_walk_v2_35399646_steps.zip",
+      "bytes": 5038299,
+      "sha256": "93ad6461ccb0c677649478eb8cf4067d87a48414ea6aeac6e48992f6719de8aa"
+    },
+    {
+      "path": "runs/walk-v2_full_20260902_161722/checkpoints/scone_walk_v2_4299957_steps.zip",
+      "bytes": 5065642,
+      "sha256": "16130a44670d24b369b2e5a028c038923d24230eaad8faaf48b16ce325f5597a"
+    },
+    {
+      "path": "runs/walk-v2_full_20260902_161722/checkpoints/scone_walk_v2_4399956_steps.zip",
+      "bytes": 5065642,
+      "sha256": "e5cfbd41f801f1f0a57f17f444b4fc45affb02b01c660c2639b572352f31adbc"
+    },
+    {
+      "path": "runs/walk-v2_full_20260902_161722/checkpoints/scone_walk_v2_4499955_steps.zip",
+      "bytes": 5065642,
+      "sha256": "812cd40b732c209a583b1fa0ea9c6ff56716dcb5b8853bc669c69a49c4bb1f76"
+    },
+    {
+      "path": "runs/walk-v2_full_20260902_161722/checkpoints/scone_walk_v2_4599954_steps.zip",
+      "bytes": 5065642,
+      "sha256": "b408ca982ee5a5337230dd6684939c472ce1ab3f9c75ee74bb56ac8931b5f1ee"
+    },
+    {
+      "path": "runs/walk-v2_full_20260902_161722/checkpoints/scone_walk_v2_4699953_steps.zip",
+      "bytes": 5065642,
+      "sha256": "6fb3c19bf9e6ad8d9883d65dd88b304ecd110b8f44af28a6b8033d89c715ea2c"
+    },
+    {
+      "path": "runs/walk-v2_full_20260902_173610/checkpoints/scone_walk_v2_14299857_steps.zip",
+      "bytes": 5065651,
+      "sha256": "c7bdb9c2dfda6479ddb1b35b518427e9aace205844579b228030e5c81a9015ea"
+    },
+    {
+      "path": "runs/walk-v2_full_20260902_173610/checkpoints/scone_walk_v2_97099029_steps.zip",
+      "bytes": 5065654,
+      "sha256": "4385e26399d5a612f75e37aa607602093f1bba98c4d7974fe0dc4fd1379177d9"
+    },
+    {
+      "path": "runs/walk-v3_full_20260903_110950/checkpoints/scone_walk_v3_2099979_steps.zip",
+      "bytes": 2208321,
+      "sha256": "5f6cc62ed61240d43c95c12ac4e8f0532d78985b2e65e285898c10b602a8e735"
+    },
+    {
+      "path": "runs/walk-v3_full_20260903_110950/checkpoints/scone_walk_v3_2199978_steps.zip",
+      "bytes": 2208322,
+      "sha256": "971b8da6207c0ebe4a2d58ea8e80e2f84b176498df948ad9d33db879e9a40e0a"
+    },
+    {
+      "path": "runs/walk-v3_full_20260903_110950/checkpoints/scone_walk_v3_22199778_steps.zip",
+      "bytes": 2208332,
+      "sha256": "0220caf3bda898d4614f6f2690fa60e2237b0e4c5832087d12e9537977b4f9b5"
+    },
+    {
+      "path": "runs/walk-v3_full_20260903_110950/checkpoints/scone_walk_v3_35199648_steps.zip",
+      "bytes": 2208324,
+      "sha256": "c18dff8686b10d1baa031b3ec12e829c0954a854e89408461d53b203fab7e546"
+    },
+    {
+      "path": "runs/walk-v3_full_20260903_110950/checkpoints/scone_walk_v3_66399336_steps.zip",
+      "bytes": 2208324,
+      "sha256": "dc2c8a7fe6d7751d3323942ac4456386174b09055dd1ab492bbcce9ea1cd7548"
+    },
+    {
+      "path": "runs/walk-v3_full_20260903_110950/checkpoints/scone_walk_v3_7999920_steps.zip",
+      "bytes": 2208322,
+      "sha256": "a8188942cb5001f36f307289cee851a24c7765b2e89cd1be42c6bcb0f61c07e4"
+    },
+    {
+      "path": "runs/walk_easy_20260830_175540/checkpoints/scone_walk_6300000_steps.zip",
+      "bytes": 2114087,
+      "sha256": "d16563b1364a8b4a932037c7b3360ea736317c9539cd1fe91394bf70079045f9"
+    },
+    {
+      "path": "runs/walk_easy_20260830_175540/checkpoints/scone_walk_6400000_steps.zip",
+      "bytes": 2114087,
+      "sha256": "b88999d95f690c4662a6b7edb27aeb4033947bcd5eac8cfc166d178a1bdc7d72"
+    },
+    {
+      "path": "runs/walk_easy_20260830_175540/checkpoints/scone_walk_6600000_steps.zip",
+      "bytes": 2114087,
+      "sha256": "10dcab4f575abfde6d4697507078968cc1374372027ab80e3ab7165aa4b343e0"
+    },
+    {
+      "path": "runs/walk_full_20260830_213245/checkpoints/scone_walk_100000_steps.zip",
+      "bytes": 2114084,
+      "sha256": "45a8b6eee1e0ef34ba931f45370b377fe185e822b82532b8fefeca1776b933a6"
+    },
+    {
+      "path": "runs/walk_full_20260830_213245/checkpoints/scone_walk_500000_steps.zip",
+      "bytes": 2114085,
+      "sha256": "00f8f0ea3eb194dd31b3538f0be7844321fa9c7a975768d013668595249f1956"
+    },
+    {
+      "path": "runs/walk_full_algorithm/checkpoints/scone_walk_27799722_steps.zip",
+      "bytes": 2115954,
+      "sha256": "c92311fb9b53101266ec1254d21c8580784bed6ed9882b38fb415107c382f5a7"
+    },
+    {
+      "path": "runs/walk_full_algorithm/checkpoints/scone_walk_27899721_steps.zip",
+      "bytes": 2115962,
+      "sha256": "5875a281e9a91f3a9ff9b2a36ea3966bac4a373eadd220cd3c748c2ce2e23adc"
+    },
+    {
+      "path": "runs/walk_full_standard/checkpoints/scone_walk_12310928_steps.zip",
+      "bytes": 2114096,
+      "sha256": "0fafe884004385512a98803ff66a59462623c87c91b5460476b2b374df6170c1"
+    },
+    {
+      "path": "runs/walk_full_standard/checkpoints/scone_walk_15410928_steps.zip",
+      "bytes": 2114096,
+      "sha256": "8f52bc3c9074c8d40eb97fe3b067909e01a468255e76f5866ff3165fa900603d"
+    },
+    {
+      "path": "runs/walk_full_standard/checkpoints/scone_walk_22110928_steps.zip",
+      "bytes": 2114096,
+      "sha256": "221e2802200dba5fb26626999427c1775832bebad9df595838200c98b00178bf"
+    },
+    {
+      "path": "runs/walk_full_standard/checkpoints/scone_walk_300000_steps.zip",
+      "bytes": 2114077,
+      "sha256": "3da813462b53fffb689523ad17c5b80533a24627b62ee54930be731d0ad022fa"
+    },
+    {
+      "path": "runs/walk_full_standard/checkpoints/scone_walk_35410928_steps.zip",
+      "bytes": 2114096,
+      "sha256": "c8ba96b9f587f530776fe5ce28c448d72bbb8fc97f46d3cdec6fad5b5ced35c4"
+    },
+    {
+      "path": "runs/walk_full_standard/checkpoints/scone_walk_500000_steps.zip",
+      "bytes": 2114078,
+      "sha256": "66306d46b17cd04a0c34298be5ade6a9e8881ef25e0c66cca7285b643396b195"
+    },
+    {
+      "path": "runs/walk_full_standard/checkpoints/scone_walk_6100000_steps.zip",
+      "bytes": 2114080,
+      "sha256": "4149ab177c2c178a0fee87f7df94d35230364150966833e9fd8946f55f7b0d46"
+    },
+    {
+      "path": "runs/walk_full_standard/checkpoints/scone_walk_9800000_steps.zip",
+      "bytes": 2114080,
+      "sha256": "7aa4a76ee9f036331e1084d9652e7b4fa29fb09009dbdc661c9d16d0af3f6ad0"
+    },
+    {
+      "path": "runs/walk_full_standard/final_model.zip",
+      "bytes": 2114080,
+      "sha256": "e0184a5807341792e5f007c7394c2997dd3f275c95dd877b709226c4a8d67e7b"
+    }
+  ],
+  "excluded": [
+    "runs/.remote_jobs.json",
+    "*.part"
+  ],
+  "invalid_checkpoints": []
+}

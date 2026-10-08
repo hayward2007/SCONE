@@ -1,0 +1,37 @@
+{
+  "lift_collisions": [],
+  "driver_collisions": [],
+  "cable_collisions": [],
+  "envelope_collisions": [],
+  "assembly": "Remove the front lid with its attached arm as one unit, and remove the carry handle. Install P1 using four MX28 top screws and two shared Jetson top screws. Assemble boards and shelf on P2 outside the robot; lower cassette and secure its two vertical screws.",
+  "part_lumps": [
+    [
+      "P1 body-Jetson brace - 4x M2.5x8 plus 2x M3x12",
+      1
+    ],
+    [
+      "P2 lift-out PCB plate - 2x M2.5x8 captive nuts",
+      1
+    ],
+    [
+      "P3 PCB spacer 4.85mm 1",
+      1
+    ],
+    [
+      "P3 PCB spacer 4.85mm 2",
+      1
+    ],
+    [
+      "P3 PCB spacer 4.85mm 3",
+      1
+    ],
+    [
+      "P3 PCB spacer 4.85mm 4",
+      1
+    ],
+    [
+      "P4 U2D2 upward port shelf - 4x M2x5",
+      1
+    ]
+  ]
+}

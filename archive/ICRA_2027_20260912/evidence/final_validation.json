@@ -1,0 +1,37 @@
+{
+  "manuscript_pages": 8,
+  "review_pages": 9,
+  "bibliography_items": 15,
+  "figure_labels": [
+    "concept",
+    "platform",
+    "collision",
+    "results",
+    "replay",
+    "stairs"
+  ],
+  "new_phase_grid_trials": 80,
+  "supplemental_timestep_runs": 9,
+  "visual_replays_not_new_samples": 3,
+  "overfull_boxes": false,
+  "undefined_citations_or_references": false,
+  "source_files_changed_since_initial_manifest": [],
+  "local_identity_strings_in_english_text": false,
+  "visual_QA": "All eight English and nine Korean pages rendered and visually inspected; final DOI bibliography checked. Video title cards, archival sections, all simulation conditions and ending sampled for visual QA.",
+  "files": {
+    "output/pdf/SCONE_ICRA2027_Manuscript_EN.pdf": {
+      "bytes": 820926,
+      "sha256": "031e41000d5df1ad3da77d46c53218e18e4c53a9661f1b280594b0ac346c5cb3"
+    },
+    "output/pdf/SCONE_ICRA2027_Review_KO.pdf": {
+      "bytes": 2328848,
+      "sha256": "35f30c3673f2f2e6e136754e0a1e4f7cc7becc614b932891e3800eeee96acffb"
+    },
+    "media/companion_video.mp4": {
+      "bytes": 6185804,
+      "sha256": "3eba3ffd2d9afbad244ac22856d860fabdcd398508352aa231c311c39aeb86cc"
+    }
+  },
+  "english_fonts_all_embedded": true,
+  "video_compliance": "74 s, 1280x720, 25 fps progressive, 6185804 bytes; not uploaded to PaperPlaza"
+}

@@ -13,6 +13,7 @@ from .tripod_gait import (
     VelocityCommand,
 )
 from .scone_gait import SconeGait, SconeGaitConfig
+from .scone_gait_v2 import LegRole, SconeGaitV2, SconeGaitV2Config
 from .stair_geometry import (
     ArcWheelGeometry,
     SCONE_V2_ARC_WHEEL,
@@ -40,6 +41,9 @@ __all__ = [
     "PhoenixTripodGait",
     "SconeGait",
     "SconeGaitConfig",
+    "LegRole",
+    "SconeGaitV2",
+    "SconeGaitV2Config",
     "SCONE_V2_ARC_WHEEL",
     "SPORT",
     "STANDARD",

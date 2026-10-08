@@ -1,0 +1,13 @@
+{
+  "restored_parents": [
+    "LEG 1(미러):1+LINK(미러):1",
+    "LEG 1(미러):1+XM430(미러):1",
+    "LEG 1(미러):1+XM430(미러):2",
+    "LEG 1(미러):1+ARC(미러):1",
+    "LEG 1(미러):2+LINK(미러):1",
+    "LEG 1(미러):2+XM430(미러):1",
+    "LEG 1(미러):2+XM430(미러):2",
+    "LEG 1(미러):2+ARC(미러):1"
+  ],
+  "remaining_transform_differences": []
+}

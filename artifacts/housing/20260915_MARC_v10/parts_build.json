@@ -1,0 +1,546 @@
+{
+  "H01 Upper shell:1": {
+    "role": "manufactured",
+    "bodies": [
+      [
+        "PA12 cover",
+        136.7448065188952,
+        [
+          [
+            -24.0,
+            -77.035281,
+            33.8
+          ],
+          [
+            192.799819,
+            77.035281,
+            104.0
+          ]
+        ]
+      ]
+    ]
+  },
+  "H02 Aluminium backbone:1": {
+    "role": "manufactured",
+    "bodies": [
+      [
+        "2 mm plate with 12 x 8 x 1.5 mm closed beams",
+        88.88388574401054,
+        [
+          [
+            -59.691297,
+            -80.140926,
+            -10.0
+          ],
+          [
+            225.908703,
+            80.140926,
+            0.0
+          ]
+        ]
+      ]
+    ]
+  },
+  "H03 Removable Jetson carrier:1": {
+    "role": "manufactured",
+    "bodies": [
+      [
+        "Lift-out frame and provisional adjustable board supports",
+        14.076276105196541,
+        [
+          [
+            28.5,
+            -74.0,
+            3.5
+          ],
+          [
+            131.0,
+            74.0,
+            38.0
+          ]
+        ]
+      ]
+    ]
+  },
+  "H04 Raised PCB carrier:1": {
+    "role": "manufactured",
+    "bodies": [
+      [
+        "PCB slotted frame 70 x 90 mm reserved",
+        4.782399999999983,
+        [
+          [
+            109.0,
+            -47.0,
+            47.5
+          ],
+          [
+            184.0,
+            47.0,
+            49.5
+          ]
+        ]
+      ],
+      [
+        "M3 tubular pillar",
+        0.8902016943211664,
+        [
+          [
+            139.0,
+            -33.0,
+            3.5
+          ],
+          [
+            145.0,
+            -27.0,
+            47.5
+          ]
+        ]
+      ],
+      [
+        "M3 tubular pillar (1)",
+        0.8902016943211664,
+        [
+          [
+            139.0,
+            27.0,
+            3.5
+          ],
+          [
+            145.0,
+            33.0,
+            47.5
+          ]
+        ]
+      ],
+      [
+        "M3 tubular pillar (2)",
+        0.8902016943211655,
+        [
+          [
+            177.0,
+            -33.0,
+            3.5
+          ],
+          [
+            183.0,
+            -27.0,
+            47.5
+          ]
+        ]
+      ],
+      [
+        "M3 tubular pillar (3)",
+        0.8902016943211655,
+        [
+          [
+            177.0,
+            27.0,
+            3.5
+          ],
+          [
+            183.0,
+            33.0,
+            47.5
+          ]
+        ]
+      ]
+    ]
+  },
+  "H05 Battery retention and lid anchors:1": {
+    "role": "manufactured",
+    "bodies": [
+      [
+        "Battery end restraint",
+        6.364000000000005,
+        [
+          [
+            37.0,
+            -74.0,
+            4.0
+          ],
+          [
+            39.0,
+            74.0,
+            25.5
+          ]
+        ]
+      ],
+      [
+        "Battery end restraint (1)",
+        6.363999999999977,
+        [
+          [
+            127.0,
+            -74.0,
+            4.0
+          ],
+          [
+            129.0,
+            74.0,
+            25.5
+          ]
+        ]
+      ],
+      [
+        "Removable central battery strap bridge",
+        1.080000000000001,
+        [
+          [
+            38.0,
+            -3.0,
+            26.5
+          ],
+          [
+            128.0,
+            3.0,
+            28.5
+          ]
+        ]
+      ],
+      [
+        "Side-access M3 lid anchor - insert drill to supplier",
+        2.2794513322353858,
+        [
+          [
+            6.0,
+            -37.0,
+            3.5
+          ],
+          [
+            14.0,
+            -29.0,
+            40.0
+          ]
+        ]
+      ],
+      [
+        "Side-access M3 lid anchor - insert drill to supplier (1)",
+        2.2794513322353858,
+        [
+          [
+            6.0,
+            29.0,
+            3.5
+          ],
+          [
+            14.0,
+            37.0,
+            40.0
+          ]
+        ]
+      ],
+      [
+        "Side-access M3 lid anchor - insert drill to supplier (2)",
+        2.2794513322353778,
+        [
+          [
+            164.0,
+            -37.0,
+            3.5
+          ],
+          [
+            172.0,
+            -29.0,
+            40.0
+          ]
+        ]
+      ],
+      [
+        "Side-access M3 lid anchor - insert drill to supplier (3)",
+        2.2794513322353778,
+        [
+          [
+            164.0,
+            29.0,
+            3.5
+          ],
+          [
+            172.0,
+            37.0,
+            40.0
+          ]
+        ]
+      ]
+    ]
+  },
+  "R01 Orin Nano RESERVED 79x100x50:1": {
+    "role": "reference",
+    "bodies": [
+      [
+        "R01 Orin Nano RESERVED 79x100x50",
+        395.0000000000001,
+        [
+          [
+            29.0,
+            -50.0,
+            38.0
+          ],
+          [
+            108.0,
+            50.0,
+            88.0
+          ]
+        ]
+      ]
+    ]
+  },
+  "R02 Additional PCB RESERVED 70x90x22:1": {
+    "role": "reference",
+    "bodies": [
+      [
+        "R02 Additional PCB RESERVED 70x90x22",
+        138.6,
+        [
+          [
+            111.0,
+            -45.0,
+            50.0
+          ],
+          [
+            181.0,
+            45.0,
+            72.0
+          ]
+        ]
+      ]
+    ]
+  },
+  "R03 Power and interface RESERVED:1": {
+    "role": "reference",
+    "bodies": [
+      [
+        "R03 Power and interface RESERVED",
+        32.032000000000004,
+        [
+          [
+            0.0,
+            -28.0,
+            7.0
+          ],
+          [
+            26.0,
+            28.0,
+            29.0
+          ]
+        ]
+      ]
+    ]
+  },
+  "R04 Rear connector service space:1": {
+    "role": "reference",
+    "bodies": [
+      [
+        "R04 Rear connector service space",
+        64.38,
+        [
+          [
+            0.0,
+            -30.0,
+            38.0
+          ],
+          [
+            29.0,
+            30.0,
+            75.0
+          ]
+        ]
+      ]
+    ]
+  },
+  "R05 LiDAR T-mini Plus provisional:1": {
+    "role": "reference",
+    "bodies": [
+      [
+        "Sensor base",
+        8.939760000000021,
+        [
+          [
+            33.7,
+            -19.3,
+            112.0
+          ],
+          [
+            72.3,
+            19.3,
+            118.0
+          ]
+        ]
+      ],
+      [
+        "Scanner housing",
+        32.64891054624637,
+        [
+          [
+            33.7,
+            -19.3,
+            118.0
+          ],
+          [
+            72.3,
+            19.3,
+            145.9
+          ]
+        ]
+      ]
+    ]
+  },
+  "R06 Stereo camera provisional:1": {
+    "role": "reference",
+    "bodies": [
+      [
+        "85.2 mm stereo board",
+        4.089600000000058,
+        [
+          [
+            163.0,
+            -42.6,
+            76.0
+          ],
+          [
+            165.0,
+            42.6,
+            100.0
+          ]
+        ]
+      ]
+    ]
+  },
+  "R06 Lens -1:1": {
+    "role": "reference",
+    "bodies": [
+      [
+        "Lens barrel",
+        3.3866368805696565,
+        [
+          [
+            165.0,
+            -37.0,
+            81.0
+          ],
+          [
+            187.0,
+            -23.0,
+            95.0
+          ]
+        ]
+      ]
+    ]
+  },
+  "R06 Glass -1:1": {
+    "role": "reference",
+    "bodies": [
+      [
+        "Lens front",
+        0.028509953331329694,
+        [
+          [
+            187.0,
+            -35.5,
+            82.5
+          ],
+          [
+            187.3,
+            -24.5,
+            93.5
+          ]
+        ]
+      ]
+    ]
+  },
+  "R06 Lens 1:1": {
+    "role": "reference",
+    "bodies": [
+      [
+        "Lens barrel",
+        3.3866368805696565,
+        [
+          [
+            165.0,
+            23.0,
+            81.0
+          ],
+          [
+            187.0,
+            37.0,
+            95.0
+          ]
+        ]
+      ]
+    ]
+  },
+  "R06 Glass 1:1": {
+    "role": "reference",
+    "bodies": [
+      [
+        "Lens front",
+        0.028509953331329694,
+        [
+          [
+            187.0,
+            24.5,
+            82.5
+          ],
+          [
+            187.3,
+            35.5,
+            93.5
+          ]
+        ]
+      ]
+    ]
+  },
+  "H06 Sensor mounts:1": {
+    "role": "manufactured",
+    "bodies": [
+      [
+        "Lidar adapter - hole pattern provisional",
+        13.314320993326355,
+        [
+          [
+            29.0,
+            -24.0,
+            104.0
+          ],
+          [
+            77.0,
+            24.0,
+            112.0
+          ]
+        ]
+      ],
+      [
+        "Camera riser with mounting slot",
+        1.769745136840866,
+        [
+          [
+            157.0,
+            -43.0,
+            49.5
+          ],
+          [
+            163.0,
+            -37.0,
+            100.0
+          ]
+        ]
+      ],
+      [
+        "Camera riser with mounting slot (1)",
+        1.769745136840866,
+        [
+          [
+            157.0,
+            37.0,
+            49.5
+          ],
+          [
+            163.0,
+            43.0,
+            100.0
+          ]
+        ]
+      ]
+    ]
+  }
+}

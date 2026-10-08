@@ -1,0 +1,44 @@
+diff --git a/src/SCONE.py b/src/SCONE.py
+index 9eb9de9..49466b6 100644
+--- a/src/SCONE.py
++++ b/src/SCONE.py
+@@ -39,9 +39,12 @@ class SCONE :
+             DRIVE = 2;
+             CLIMB = 3;
+ 
+-        def __init__(self) :
++        def __init__(self, controller=None) :
+             self.status = self.__Status.INITIALIZING;
+-            self.controller = Controller();
++            # Real hardware by default; pass a MuJoCoController (or anything
++            # else implementing the same Controller API) to drive this exact
++            # CLI against a simulation instead, unchanged otherwise.
++            self.controller = controller if controller is not None else Controller();
+             self.__cli();
+         
+         def __del__(self) :
+@@ -113,6 +116,7 @@ class SCONE :
+                     self.__remote();
+                 elif task == "Change Mode" :
+                     self.__change_mode();
++                    self.__start_position();
+                 elif task == "Actuator Settings" :
+                     self.__actuator_settings();
+                 elif task == "System Settings" :
+@@ -212,7 +216,7 @@ class SCONE :
+                 self.mode = self.__Mode.SPORT;
+                 self.operate = SCONE.Sport(self.controller);
+             
+-            print("[SCONE] Mode".ljust(35, " ") + f"[SET] {str(mode)}".ljust(35, " "));
++            print("[SCONE] Mode".ljust(35, " ") + f"[SET] {str(self.mode)}".ljust(35, " "));
+             self.__set_operating_mode(self.__Operating_Mode.WALK);
+             self.__set_status(self.__Status.WALKING_STANCE);
+ 
+@@ -301,5 +305,5 @@ class SCONE :
+             self.controller = controller;
+             self.mode = Walk(self, is_initial = True);
+ 
+-    def __init__(self) :
+-        self.Cli();
++    def __init__(self, controller=None) :
++        self.Cli(controller);

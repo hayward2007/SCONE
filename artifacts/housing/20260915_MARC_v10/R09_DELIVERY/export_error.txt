@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "<string>", line 64, in <module>
+  File "<string>", line 52, in run
+AssertionError

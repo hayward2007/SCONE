@@ -1,0 +1,41 @@
+{
+  "parts": [
+    {
+      "part": "M01 Rear removable motor bridge",
+      "lumps": 1,
+      "bounds": [
+        [
+          -61.4,
+          -43.0,
+          33.3
+        ],
+        [
+          -21.891297,
+          43.0,
+          36.7
+        ]
+      ],
+      "volume_cm3": 7.583637926471228
+    },
+    {
+      "part": "M02 Front removable motor bridge",
+      "lumps": 1,
+      "bounds": [
+        [
+          188.108703,
+          -43.0,
+          33.3
+        ],
+        [
+          227.6,
+          43.0,
+          36.7
+        ]
+      ],
+      "volume_cm3": 7.5791286687268045
+    }
+  ],
+  "motor_mount_centers_unchanged": true,
+  "example_bridge_screws": "4x M3x8, example insert OD4.6 L5 in lower cradles; 16 existing MX top M2 clearances preserved",
+  "tray_lumps": 1
+}

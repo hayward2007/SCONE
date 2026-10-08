@@ -1,0 +1,19 @@
+{
+  "checked_on": "2026-09-12",
+  "official_call": "https://2027.ieee-icra.org/contribute/call-for-icra-2027-papers-now-accepting-submissions/",
+  "official_announcement": "https://2027.ieee-icra.org/announcements/call-for-technical-papers/",
+  "reviewer_rules": "https://www.ieee-ras.org/conferences-workshops/fully-sponsored/icra/information-for-icra-reviewers/",
+  "double_anonymous": "https://www.ieee-ras.org/publications/rules-for-the-double-anonymous-review-process/",
+  "ai_policy": "https://www.ieee-ras.org/publications/guidelines-for-generative-ai-usage/",
+  "collision_docs": "https://mujoco.readthedocs.io/en/stable/computation/index.html",
+  "deadline_verbatim": "September 15, 2026 (23:59 PST)",
+  "paperplaza_account_checked": false,
+  "paper_submitted": false,
+  "max_pages_including_references": 8,
+  "video_limits": {
+    "megabytes": 20,
+    "seconds": 180,
+    "min_height_px": 480,
+    "min_fps": 20
+  }
+}

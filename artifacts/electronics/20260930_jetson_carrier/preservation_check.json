@@ -1,0 +1,232 @@
+{
+  "document": "MARC v4 Body v5 BOX v22",
+  "protected_occurrences": 163,
+  "unchanged": true,
+  "differences": [],
+  "warnings": [
+    {
+      "i": 41,
+      "name": "스케치4",
+      "health": 1,
+      "error": "대상 발생 변환 가져오기 실패<b>1 참조 실패</b><br/>대상 발생 변환 가져오기 실패프로젝트1스케치4"
+    }
+  ],
+  "new_bodies": [
+    {
+      "component": "E10 Jetson rear electronics brace:1+P1:1",
+      "name": "P1 body-Jetson brace - 4x M2.5x8 plus 2x M3x12",
+      "solid": true,
+      "lumps": 1
+    },
+    {
+      "component": "E10 Jetson rear electronics brace:1+P2:1",
+      "name": "P2 lift-out PCB plate - 2x M2.5x8 captive nuts",
+      "solid": true,
+      "lumps": 1
+    },
+    {
+      "component": "E10 Jetson rear electronics brace:1+P3:1",
+      "name": "P3 PCB spacer 4.85mm 1",
+      "solid": true,
+      "lumps": 1
+    },
+    {
+      "component": "E10 Jetson rear electronics brace:1+P3:1",
+      "name": "P3 PCB spacer 4.85mm 2",
+      "solid": true,
+      "lumps": 1
+    },
+    {
+      "component": "E10 Jetson rear electronics brace:1+P3:1",
+      "name": "P3 PCB spacer 4.85mm 3",
+      "solid": true,
+      "lumps": 1
+    },
+    {
+      "component": "E10 Jetson rear electronics brace:1+P3:1",
+      "name": "P3 PCB spacer 4.85mm 4",
+      "solid": true,
+      "lumps": 1
+    },
+    {
+      "component": "E10 Jetson rear electronics brace:1+P4:1",
+      "name": "P4 U2D2 upward port shelf - 4x M2x5",
+      "solid": true,
+      "lumps": 1
+    },
+    {
+      "component": "E10 Jetson rear electronics brace:1+R3 Power PCB 70x50 mechanical reference:1",
+      "name": "REF power PCB 70x50x1.6 - mechanical envelope",
+      "solid": true,
+      "lumps": 1
+    },
+    {
+      "component": "E10 Jetson rear electronics brace:1+R1 PHB power terminals upward:1",
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+CUI_PJ-102A-95_1:1",
+      "solid": true,
+      "lumps": 1
+    },
+    {
+      "component": "E10 Jetson rear electronics brace:1+R1 PHB power terminals upward:1",
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+SCREW_TERMINAL_BLOCK_3_5MM_-101:1",
+      "solid": true,
+      "lumps": 1
+    },
+    {
+      "component": "E10 Jetson rear electronics brace:1+R1 PHB power terminals upward:1",
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+MBRS340FSCT-ND_1:1",
+      "solid": true,
+      "lumps": 1
+    },
+    {
+      "component": "E10 Jetson rear electronics brace:1+R1 PHB power terminals upward:1",
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+JST_B4B_EH_A_1:1",
+      "solid": true,
+      "lumps": 1
+    },
+    {
+      "component": "E10 Jetson rear electronics brace:1+R1 PHB power terminals upward:1",
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+SCREW_TERMINAL_BLOCK_3_5MM_-119:1",
+      "solid": true,
+      "lumps": 1
+    },
+    {
+      "component": "E10 Jetson rear electronics brace:1+R1 PHB power terminals upward:1",
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+CUI_PJ-102A-127_1:1",
+      "solid": true,
+      "lumps": 1
+    },
+    {
+      "component": "E10 Jetson rear electronics brace:1+R1 PHB power terminals upward:1",
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+CUI_PJ-102A-133_1:1",
+      "solid": true,
+      "lumps": 1
+    },
+    {
+      "component": "E10 Jetson rear electronics brace:1+R1 PHB power terminals upward:1",
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+EDGED7B6KTYP_1:1",
+      "solid": true,
+      "lumps": 1
+    },
+    {
+      "component": "E10 Jetson rear electronics brace:1+R1 PHB power terminals upward:1",
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+SCREW_TERMINAL_BLOCK_3_5MM_-145:1",
+      "solid": true,
+      "lumps": 1
+    },
+    {
+      "component": "E10 Jetson rear electronics brace:1+R1 PHB power terminals upward:1",
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+SCREW_TERMINAL_BLOCK_3_5MM_-151:1",
+      "solid": true,
+      "lumps": 1
+    },
+    {
+      "component": "E10 Jetson rear electronics brace:1+R1 PHB power terminals upward:1",
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+SCREW_TERMINAL_BLOCK_3_5MM_-157:1",
+      "solid": true,
+      "lumps": 1
+    },
+    {
+      "component": "E10 Jetson rear electronics brace:1+R1 PHB power terminals upward:1",
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+CUI_PJ-102A-163_1:1",
+      "solid": true,
+      "lumps": 1
+    },
+    {
+      "component": "E10 Jetson rear electronics brace:1+R1 PHB power terminals upward:1",
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+SCREW_TERMINAL_BLOCK_3_5MM_-169:1",
+      "solid": true,
+      "lumps": 1
+    },
+    {
+      "component": "E10 Jetson rear electronics brace:1+R1 PHB power terminals upward:1",
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+PART_1_1:1",
+      "solid": true,
+      "lumps": 1
+    },
+    {
+      "component": "E10 Jetson rear electronics brace:1+R1 PHB power terminals upward:1",
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+JST_B3B_EH_A_1:1",
+      "solid": true,
+      "lumps": 1
+    },
+    {
+      "component": "E10 Jetson rear electronics brace:1+R1 PHB power terminals upward:1",
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+039281023_1:1",
+      "solid": true,
+      "lumps": 1
+    },
+    {
+      "component": "E10 Jetson rear electronics brace:1+R1 PHB power terminals upward:1",
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+CP_ELEC_8X10_1:1",
+      "solid": true,
+      "lumps": 1
+    },
+    {
+      "component": "E10 Jetson rear electronics brace:1+R1 PHB power terminals upward:1",
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+SCREW_TERMINAL_BLOCK_3_5MM_-205:1",
+      "solid": true,
+      "lumps": 1
+    },
+    {
+      "component": "E10 Jetson rear electronics brace:1+R1 PHB power terminals upward:1",
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+JST_B4B_EH_A_1:2",
+      "solid": true,
+      "lumps": 1
+    },
+    {
+      "component": "E10 Jetson rear electronics brace:1+R1 PHB power terminals upward:1",
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+JST_B3B_EH_A_1:2",
+      "solid": true,
+      "lumps": 1
+    },
+    {
+      "component": "E10 Jetson rear electronics brace:1+R1 PHB power terminals upward:1",
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+JST_B4B_EH_A_1:3",
+      "solid": true,
+      "lumps": 1
+    },
+    {
+      "component": "E10 Jetson rear electronics brace:1+R1 PHB power terminals upward:1",
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+JST_B3B_EH_A_1:3",
+      "solid": true,
+      "lumps": 1
+    },
+    {
+      "component": "E10 Jetson rear electronics brace:1+R2 U2D2 communication ports upward:1",
+      "name": "ROBOTIS U2D2 U2D2_CASE_B_DUMMY:1",
+      "solid": true,
+      "lumps": 1
+    },
+    {
+      "component": "E10 Jetson rear electronics brace:1+R2 U2D2 communication ports upward:1",
+      "name": "ROBOTIS U2D2 U2D2_CASE_T_DUMMY:1",
+      "solid": true,
+      "lumps": 1
+    },
+    {
+      "component": "E10 Jetson rear electronics brace:1+R2 U2D2 communication ports upward:1",
+      "name": "ROBOTIS U2D2 USB-C_DUMMY:1",
+      "solid": true,
+      "lumps": 1
+    },
+    {
+      "component": "E10 Jetson rear electronics brace:1+R2 U2D2 communication ports upward:1",
+      "name": "ROBOTIS U2D2 UART_4P:1",
+      "solid": true,
+      "lumps": 1
+    },
+    {
+      "component": "E10 Jetson rear electronics brace:1+R2 U2D2 communication ports upward:1",
+      "name": "ROBOTIS U2D2 TTL_3P:1",
+      "solid": true,
+      "lumps": 1
+    },
+    {
+      "component": "E10 Jetson rear electronics brace:1+R2 U2D2 communication ports upward:1",
+      "name": "ROBOTIS U2D2 RS-485_4P:1",
+      "solid": true,
+      "lumps": 1
+    }
+  ]
+}

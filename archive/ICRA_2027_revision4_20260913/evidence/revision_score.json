@@ -1,0 +1,50 @@
+{
+  "type": "internal mock assessment, not official score or acceptance probability",
+  "previous": 64,
+  "current": 68,
+  "rubric": [
+    {
+      "criterion": "originality",
+      "weight": 25,
+      "before": 12,
+      "after": 12
+    },
+    {
+      "criterion": "significance",
+      "weight": 20,
+      "before": 12,
+      "after": 12
+    },
+    {
+      "criterion": "technical_validity",
+      "weight": 20,
+      "before": 16,
+      "after": 17
+    },
+    {
+      "criterion": "evidence",
+      "weight": 20,
+      "before": 11,
+      "after": 14
+    },
+    {
+      "criterion": "presentation",
+      "weight": 10,
+      "before": 9,
+      "after": 9
+    },
+    {
+      "criterion": "reproducibility",
+      "weight": 5,
+      "before": 4,
+      "after": 4
+    }
+  ],
+  "recommendation": "C (3.0), Low Borderline",
+  "probability": "not calibrated; no numerical estimate",
+  "remaining": [
+    "closest prior work equation-level comparison",
+    "need for adaptive scheduling over periodic baseline",
+    "loaded actuator and matched hardware validation"
+  ]
+}

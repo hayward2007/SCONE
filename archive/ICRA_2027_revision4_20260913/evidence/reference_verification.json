@@ -1,0 +1,24 @@
+{
+  "accessed": "2026-09-13",
+  "new_reference": {
+    "title": "Rolling with Planar Parametric Curves for Real-time Robot Locomotion Algorithms",
+    "authors": [
+      "Adwait Mane",
+      "Christian Hubicki"
+    ],
+    "doi": "10.1109/ICRA57147.2024.10610524",
+    "pages": "11356--11362",
+    "metadata_source": "https://api.crossref.org/works/10.1109/ICRA57147.2024.10610524",
+    "fulltext": "https://static1.squarespace.com/static/5c7b4b45a9ab95423630034b/t/6723f16180eff15cf14418b7/1730408802833/2024.05%2BMane%2BHubicki%2BICRA%2BRolling.pdf",
+    "checked_passages": [
+      "Abstract: smooth planar no-slip single-point rolling",
+      "Section II: constraints and augmented dynamics",
+      "Conclusion: simulation OSC validation"
+    ],
+    "scope": "Relevant rolling-model comparison, not the closest stride-level allocator; no external performance comparison implemented."
+  },
+  "unresolved_reference": {
+    "doi": "10.1115/1.4070596",
+    "status": "Metadata and author-lab listing verified in earlier revision; full text unavailable. No claim of absent constraints."
+  }
+}

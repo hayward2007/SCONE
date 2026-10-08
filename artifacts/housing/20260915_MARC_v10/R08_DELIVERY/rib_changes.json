@@ -1,0 +1,36 @@
+[
+  {
+    "part": "S01 Rear fairing lid:1",
+    "before_cm3": 99.6224136975856,
+    "after_cm3": 99.33246955964292,
+    "fillet": {
+      "candidates": 2,
+      "radius_mm": 1.0,
+      "applied": true
+    }
+  },
+  {
+    "part": "S02 Front camera fairing lid:1",
+    "before_cm3": 121.63158796117894,
+    "after_cm3": 118.80570828362998,
+    "fillet": {
+      "candidates": 2,
+      "radius_mm": 1.0,
+      "applied": true
+    }
+  },
+  {
+    "part": "M01 Rear removable motor bridge:1",
+    "before_cm3": 7.583637926471228,
+    "after_cm3": 8.563999751537388,
+    "rib_thickness_mm": 2,
+    "rib_depth_mm": 4.3
+  },
+  {
+    "part": "M02 Front removable motor bridge:1",
+    "before_cm3": 7.5791286687268045,
+    "after_cm3": 8.559351157740997,
+    "rib_thickness_mm": 2,
+    "rib_depth_mm": 4.3
+  }
+]

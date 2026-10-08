@@ -1,0 +1,16 @@
+{
+  "status": "FAIL",
+  "stage": "D0",
+  "axis": "Spin component local Z through axle",
+  "value_kgm2": 0.00223103366377805,
+  "limit_kgm2": 0.0022,
+  "excess_percent": 1.4106210808204622,
+  "included": [
+    "sector_PLA",
+    "tire_TPU"
+  ],
+  "excluded": [
+    "unresolved horn, shaft, bearing and final fastening"
+  ],
+  "method": "Native component inertia at CoM plus parallel-axis translation; installed API tensor convention independently verified"
+}

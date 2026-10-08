@@ -1,0 +1,16 @@
+[
+  {
+    "source": "archive/videos/SCONEv2.mp4",
+    "every_frame_compared_in_order": true,
+    "frames": 957,
+    "full_duration_preserved": true,
+    "ssim_against_scaled_original": 0.991391
+  },
+  {
+    "source": "archive/videos/SCONEv2_stairs.mp4",
+    "every_frame_compared_in_order": true,
+    "frames": 1131,
+    "full_duration_preserved": true,
+    "ssim_against_scaled_original": 0.989648
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "motor": "LEG 1:1",
+    "error": "'NoneType' object has no attribute 'count'"
+  },
+  {
+    "motor": "LEG 1(\ubbf8\ub7ec):1",
+    "error": "'NoneType' object has no attribute 'count'"
+  },
+  {
+    "motor": "LEG 1:5",
+    "error": "'NoneType' object has no attribute 'count'"
+  },
+  {
+    "motor": "LEG 1(\ubbf8\ub7ec):2",
+    "error": "'NoneType' object has no attribute 'count'"
+  }
+]

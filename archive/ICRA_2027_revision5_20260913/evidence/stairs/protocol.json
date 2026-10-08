@@ -1,0 +1,1049 @@
+{
+  "schema": 1,
+  "pilot": false,
+  "jobs": [
+    {
+      "id": 0,
+      "suite": "factorial",
+      "h": 0.1,
+      "d": 0.25,
+      "pose": 0,
+      "geometry": "decomposed-arc",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 1,
+      "suite": "factorial",
+      "h": 0.1,
+      "d": 0.25,
+      "pose": 0,
+      "geometry": "decomposed-arc",
+      "control": "neutral",
+      "dt": 0.002
+    },
+    {
+      "id": 2,
+      "suite": "factorial",
+      "h": 0.1,
+      "d": 0.25,
+      "pose": 0,
+      "geometry": "closed-wheel",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 3,
+      "suite": "factorial",
+      "h": 0.1,
+      "d": 0.25,
+      "pose": 0,
+      "geometry": "closed-wheel",
+      "control": "neutral",
+      "dt": 0.002
+    },
+    {
+      "id": 4,
+      "suite": "lookup",
+      "h": 0.1,
+      "d": 0.25,
+      "pose": 0,
+      "geometry": "decomposed-arc",
+      "control": "lookup",
+      "dt": 0.002
+    },
+    {
+      "id": 5,
+      "suite": "factorial",
+      "h": 0.1,
+      "d": 0.25,
+      "pose": 1,
+      "geometry": "decomposed-arc",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 6,
+      "suite": "factorial",
+      "h": 0.1,
+      "d": 0.25,
+      "pose": 1,
+      "geometry": "decomposed-arc",
+      "control": "neutral",
+      "dt": 0.002
+    },
+    {
+      "id": 7,
+      "suite": "factorial",
+      "h": 0.1,
+      "d": 0.25,
+      "pose": 1,
+      "geometry": "closed-wheel",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 8,
+      "suite": "factorial",
+      "h": 0.1,
+      "d": 0.25,
+      "pose": 1,
+      "geometry": "closed-wheel",
+      "control": "neutral",
+      "dt": 0.002
+    },
+    {
+      "id": 9,
+      "suite": "lookup",
+      "h": 0.1,
+      "d": 0.25,
+      "pose": 1,
+      "geometry": "decomposed-arc",
+      "control": "lookup",
+      "dt": 0.002
+    },
+    {
+      "id": 10,
+      "suite": "factorial",
+      "h": 0.1,
+      "d": 0.25,
+      "pose": 2,
+      "geometry": "decomposed-arc",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 11,
+      "suite": "factorial",
+      "h": 0.1,
+      "d": 0.25,
+      "pose": 2,
+      "geometry": "decomposed-arc",
+      "control": "neutral",
+      "dt": 0.002
+    },
+    {
+      "id": 12,
+      "suite": "factorial",
+      "h": 0.1,
+      "d": 0.25,
+      "pose": 2,
+      "geometry": "closed-wheel",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 13,
+      "suite": "factorial",
+      "h": 0.1,
+      "d": 0.25,
+      "pose": 2,
+      "geometry": "closed-wheel",
+      "control": "neutral",
+      "dt": 0.002
+    },
+    {
+      "id": 14,
+      "suite": "lookup",
+      "h": 0.1,
+      "d": 0.25,
+      "pose": 2,
+      "geometry": "decomposed-arc",
+      "control": "lookup",
+      "dt": 0.002
+    },
+    {
+      "id": 15,
+      "suite": "factorial",
+      "h": 0.1,
+      "d": 0.35,
+      "pose": 0,
+      "geometry": "decomposed-arc",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 16,
+      "suite": "factorial",
+      "h": 0.1,
+      "d": 0.35,
+      "pose": 0,
+      "geometry": "decomposed-arc",
+      "control": "neutral",
+      "dt": 0.002
+    },
+    {
+      "id": 17,
+      "suite": "factorial",
+      "h": 0.1,
+      "d": 0.35,
+      "pose": 0,
+      "geometry": "closed-wheel",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 18,
+      "suite": "factorial",
+      "h": 0.1,
+      "d": 0.35,
+      "pose": 0,
+      "geometry": "closed-wheel",
+      "control": "neutral",
+      "dt": 0.002
+    },
+    {
+      "id": 19,
+      "suite": "lookup",
+      "h": 0.1,
+      "d": 0.35,
+      "pose": 0,
+      "geometry": "decomposed-arc",
+      "control": "lookup",
+      "dt": 0.002
+    },
+    {
+      "id": 20,
+      "suite": "factorial",
+      "h": 0.1,
+      "d": 0.35,
+      "pose": 1,
+      "geometry": "decomposed-arc",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 21,
+      "suite": "factorial",
+      "h": 0.1,
+      "d": 0.35,
+      "pose": 1,
+      "geometry": "decomposed-arc",
+      "control": "neutral",
+      "dt": 0.002
+    },
+    {
+      "id": 22,
+      "suite": "factorial",
+      "h": 0.1,
+      "d": 0.35,
+      "pose": 1,
+      "geometry": "closed-wheel",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 23,
+      "suite": "factorial",
+      "h": 0.1,
+      "d": 0.35,
+      "pose": 1,
+      "geometry": "closed-wheel",
+      "control": "neutral",
+      "dt": 0.002
+    },
+    {
+      "id": 24,
+      "suite": "lookup",
+      "h": 0.1,
+      "d": 0.35,
+      "pose": 1,
+      "geometry": "decomposed-arc",
+      "control": "lookup",
+      "dt": 0.002
+    },
+    {
+      "id": 25,
+      "suite": "factorial",
+      "h": 0.1,
+      "d": 0.35,
+      "pose": 2,
+      "geometry": "decomposed-arc",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 26,
+      "suite": "factorial",
+      "h": 0.1,
+      "d": 0.35,
+      "pose": 2,
+      "geometry": "decomposed-arc",
+      "control": "neutral",
+      "dt": 0.002
+    },
+    {
+      "id": 27,
+      "suite": "factorial",
+      "h": 0.1,
+      "d": 0.35,
+      "pose": 2,
+      "geometry": "closed-wheel",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 28,
+      "suite": "factorial",
+      "h": 0.1,
+      "d": 0.35,
+      "pose": 2,
+      "geometry": "closed-wheel",
+      "control": "neutral",
+      "dt": 0.002
+    },
+    {
+      "id": 29,
+      "suite": "lookup",
+      "h": 0.1,
+      "d": 0.35,
+      "pose": 2,
+      "geometry": "decomposed-arc",
+      "control": "lookup",
+      "dt": 0.002
+    },
+    {
+      "id": 30,
+      "suite": "factorial",
+      "h": 0.15,
+      "d": 0.25,
+      "pose": 0,
+      "geometry": "decomposed-arc",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 31,
+      "suite": "factorial",
+      "h": 0.15,
+      "d": 0.25,
+      "pose": 0,
+      "geometry": "decomposed-arc",
+      "control": "neutral",
+      "dt": 0.002
+    },
+    {
+      "id": 32,
+      "suite": "factorial",
+      "h": 0.15,
+      "d": 0.25,
+      "pose": 0,
+      "geometry": "closed-wheel",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 33,
+      "suite": "factorial",
+      "h": 0.15,
+      "d": 0.25,
+      "pose": 0,
+      "geometry": "closed-wheel",
+      "control": "neutral",
+      "dt": 0.002
+    },
+    {
+      "id": 34,
+      "suite": "lookup",
+      "h": 0.15,
+      "d": 0.25,
+      "pose": 0,
+      "geometry": "decomposed-arc",
+      "control": "lookup",
+      "dt": 0.002
+    },
+    {
+      "id": 35,
+      "suite": "factorial",
+      "h": 0.15,
+      "d": 0.25,
+      "pose": 1,
+      "geometry": "decomposed-arc",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 36,
+      "suite": "factorial",
+      "h": 0.15,
+      "d": 0.25,
+      "pose": 1,
+      "geometry": "decomposed-arc",
+      "control": "neutral",
+      "dt": 0.002
+    },
+    {
+      "id": 37,
+      "suite": "factorial",
+      "h": 0.15,
+      "d": 0.25,
+      "pose": 1,
+      "geometry": "closed-wheel",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 38,
+      "suite": "factorial",
+      "h": 0.15,
+      "d": 0.25,
+      "pose": 1,
+      "geometry": "closed-wheel",
+      "control": "neutral",
+      "dt": 0.002
+    },
+    {
+      "id": 39,
+      "suite": "lookup",
+      "h": 0.15,
+      "d": 0.25,
+      "pose": 1,
+      "geometry": "decomposed-arc",
+      "control": "lookup",
+      "dt": 0.002
+    },
+    {
+      "id": 40,
+      "suite": "factorial",
+      "h": 0.15,
+      "d": 0.25,
+      "pose": 2,
+      "geometry": "decomposed-arc",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 41,
+      "suite": "factorial",
+      "h": 0.15,
+      "d": 0.25,
+      "pose": 2,
+      "geometry": "decomposed-arc",
+      "control": "neutral",
+      "dt": 0.002
+    },
+    {
+      "id": 42,
+      "suite": "factorial",
+      "h": 0.15,
+      "d": 0.25,
+      "pose": 2,
+      "geometry": "closed-wheel",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 43,
+      "suite": "factorial",
+      "h": 0.15,
+      "d": 0.25,
+      "pose": 2,
+      "geometry": "closed-wheel",
+      "control": "neutral",
+      "dt": 0.002
+    },
+    {
+      "id": 44,
+      "suite": "lookup",
+      "h": 0.15,
+      "d": 0.25,
+      "pose": 2,
+      "geometry": "decomposed-arc",
+      "control": "lookup",
+      "dt": 0.002
+    },
+    {
+      "id": 45,
+      "suite": "factorial",
+      "h": 0.15,
+      "d": 0.35,
+      "pose": 0,
+      "geometry": "decomposed-arc",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 46,
+      "suite": "factorial",
+      "h": 0.15,
+      "d": 0.35,
+      "pose": 0,
+      "geometry": "decomposed-arc",
+      "control": "neutral",
+      "dt": 0.002
+    },
+    {
+      "id": 47,
+      "suite": "factorial",
+      "h": 0.15,
+      "d": 0.35,
+      "pose": 0,
+      "geometry": "closed-wheel",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 48,
+      "suite": "factorial",
+      "h": 0.15,
+      "d": 0.35,
+      "pose": 0,
+      "geometry": "closed-wheel",
+      "control": "neutral",
+      "dt": 0.002
+    },
+    {
+      "id": 49,
+      "suite": "lookup",
+      "h": 0.15,
+      "d": 0.35,
+      "pose": 0,
+      "geometry": "decomposed-arc",
+      "control": "lookup",
+      "dt": 0.002
+    },
+    {
+      "id": 50,
+      "suite": "factorial",
+      "h": 0.15,
+      "d": 0.35,
+      "pose": 1,
+      "geometry": "decomposed-arc",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 51,
+      "suite": "factorial",
+      "h": 0.15,
+      "d": 0.35,
+      "pose": 1,
+      "geometry": "decomposed-arc",
+      "control": "neutral",
+      "dt": 0.002
+    },
+    {
+      "id": 52,
+      "suite": "factorial",
+      "h": 0.15,
+      "d": 0.35,
+      "pose": 1,
+      "geometry": "closed-wheel",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 53,
+      "suite": "factorial",
+      "h": 0.15,
+      "d": 0.35,
+      "pose": 1,
+      "geometry": "closed-wheel",
+      "control": "neutral",
+      "dt": 0.002
+    },
+    {
+      "id": 54,
+      "suite": "lookup",
+      "h": 0.15,
+      "d": 0.35,
+      "pose": 1,
+      "geometry": "decomposed-arc",
+      "control": "lookup",
+      "dt": 0.002
+    },
+    {
+      "id": 55,
+      "suite": "factorial",
+      "h": 0.15,
+      "d": 0.35,
+      "pose": 2,
+      "geometry": "decomposed-arc",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 56,
+      "suite": "factorial",
+      "h": 0.15,
+      "d": 0.35,
+      "pose": 2,
+      "geometry": "decomposed-arc",
+      "control": "neutral",
+      "dt": 0.002
+    },
+    {
+      "id": 57,
+      "suite": "factorial",
+      "h": 0.15,
+      "d": 0.35,
+      "pose": 2,
+      "geometry": "closed-wheel",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 58,
+      "suite": "factorial",
+      "h": 0.15,
+      "d": 0.35,
+      "pose": 2,
+      "geometry": "closed-wheel",
+      "control": "neutral",
+      "dt": 0.002
+    },
+    {
+      "id": 59,
+      "suite": "lookup",
+      "h": 0.15,
+      "d": 0.35,
+      "pose": 2,
+      "geometry": "decomposed-arc",
+      "control": "lookup",
+      "dt": 0.002
+    },
+    {
+      "id": 60,
+      "suite": "factorial",
+      "h": 0.2,
+      "d": 0.25,
+      "pose": 0,
+      "geometry": "decomposed-arc",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 61,
+      "suite": "factorial",
+      "h": 0.2,
+      "d": 0.25,
+      "pose": 0,
+      "geometry": "decomposed-arc",
+      "control": "neutral",
+      "dt": 0.002
+    },
+    {
+      "id": 62,
+      "suite": "factorial",
+      "h": 0.2,
+      "d": 0.25,
+      "pose": 0,
+      "geometry": "closed-wheel",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 63,
+      "suite": "factorial",
+      "h": 0.2,
+      "d": 0.25,
+      "pose": 0,
+      "geometry": "closed-wheel",
+      "control": "neutral",
+      "dt": 0.002
+    },
+    {
+      "id": 64,
+      "suite": "lookup",
+      "h": 0.2,
+      "d": 0.25,
+      "pose": 0,
+      "geometry": "decomposed-arc",
+      "control": "lookup",
+      "dt": 0.002
+    },
+    {
+      "id": 65,
+      "suite": "factorial",
+      "h": 0.2,
+      "d": 0.25,
+      "pose": 1,
+      "geometry": "decomposed-arc",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 66,
+      "suite": "factorial",
+      "h": 0.2,
+      "d": 0.25,
+      "pose": 1,
+      "geometry": "decomposed-arc",
+      "control": "neutral",
+      "dt": 0.002
+    },
+    {
+      "id": 67,
+      "suite": "factorial",
+      "h": 0.2,
+      "d": 0.25,
+      "pose": 1,
+      "geometry": "closed-wheel",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 68,
+      "suite": "factorial",
+      "h": 0.2,
+      "d": 0.25,
+      "pose": 1,
+      "geometry": "closed-wheel",
+      "control": "neutral",
+      "dt": 0.002
+    },
+    {
+      "id": 69,
+      "suite": "lookup",
+      "h": 0.2,
+      "d": 0.25,
+      "pose": 1,
+      "geometry": "decomposed-arc",
+      "control": "lookup",
+      "dt": 0.002
+    },
+    {
+      "id": 70,
+      "suite": "factorial",
+      "h": 0.2,
+      "d": 0.25,
+      "pose": 2,
+      "geometry": "decomposed-arc",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 71,
+      "suite": "factorial",
+      "h": 0.2,
+      "d": 0.25,
+      "pose": 2,
+      "geometry": "decomposed-arc",
+      "control": "neutral",
+      "dt": 0.002
+    },
+    {
+      "id": 72,
+      "suite": "factorial",
+      "h": 0.2,
+      "d": 0.25,
+      "pose": 2,
+      "geometry": "closed-wheel",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 73,
+      "suite": "factorial",
+      "h": 0.2,
+      "d": 0.25,
+      "pose": 2,
+      "geometry": "closed-wheel",
+      "control": "neutral",
+      "dt": 0.002
+    },
+    {
+      "id": 74,
+      "suite": "lookup",
+      "h": 0.2,
+      "d": 0.25,
+      "pose": 2,
+      "geometry": "decomposed-arc",
+      "control": "lookup",
+      "dt": 0.002
+    },
+    {
+      "id": 75,
+      "suite": "factorial",
+      "h": 0.2,
+      "d": 0.35,
+      "pose": 0,
+      "geometry": "decomposed-arc",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 76,
+      "suite": "factorial",
+      "h": 0.2,
+      "d": 0.35,
+      "pose": 0,
+      "geometry": "decomposed-arc",
+      "control": "neutral",
+      "dt": 0.002
+    },
+    {
+      "id": 77,
+      "suite": "factorial",
+      "h": 0.2,
+      "d": 0.35,
+      "pose": 0,
+      "geometry": "closed-wheel",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 78,
+      "suite": "factorial",
+      "h": 0.2,
+      "d": 0.35,
+      "pose": 0,
+      "geometry": "closed-wheel",
+      "control": "neutral",
+      "dt": 0.002
+    },
+    {
+      "id": 79,
+      "suite": "lookup",
+      "h": 0.2,
+      "d": 0.35,
+      "pose": 0,
+      "geometry": "decomposed-arc",
+      "control": "lookup",
+      "dt": 0.002
+    },
+    {
+      "id": 80,
+      "suite": "factorial",
+      "h": 0.2,
+      "d": 0.35,
+      "pose": 1,
+      "geometry": "decomposed-arc",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 81,
+      "suite": "factorial",
+      "h": 0.2,
+      "d": 0.35,
+      "pose": 1,
+      "geometry": "decomposed-arc",
+      "control": "neutral",
+      "dt": 0.002
+    },
+    {
+      "id": 82,
+      "suite": "factorial",
+      "h": 0.2,
+      "d": 0.35,
+      "pose": 1,
+      "geometry": "closed-wheel",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 83,
+      "suite": "factorial",
+      "h": 0.2,
+      "d": 0.35,
+      "pose": 1,
+      "geometry": "closed-wheel",
+      "control": "neutral",
+      "dt": 0.002
+    },
+    {
+      "id": 84,
+      "suite": "lookup",
+      "h": 0.2,
+      "d": 0.35,
+      "pose": 1,
+      "geometry": "decomposed-arc",
+      "control": "lookup",
+      "dt": 0.002
+    },
+    {
+      "id": 85,
+      "suite": "factorial",
+      "h": 0.2,
+      "d": 0.35,
+      "pose": 2,
+      "geometry": "decomposed-arc",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 86,
+      "suite": "factorial",
+      "h": 0.2,
+      "d": 0.35,
+      "pose": 2,
+      "geometry": "decomposed-arc",
+      "control": "neutral",
+      "dt": 0.002
+    },
+    {
+      "id": 87,
+      "suite": "factorial",
+      "h": 0.2,
+      "d": 0.35,
+      "pose": 2,
+      "geometry": "closed-wheel",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 88,
+      "suite": "factorial",
+      "h": 0.2,
+      "d": 0.35,
+      "pose": 2,
+      "geometry": "closed-wheel",
+      "control": "neutral",
+      "dt": 0.002
+    },
+    {
+      "id": 89,
+      "suite": "lookup",
+      "h": 0.2,
+      "d": 0.35,
+      "pose": 2,
+      "geometry": "decomposed-arc",
+      "control": "lookup",
+      "dt": 0.002
+    },
+    {
+      "id": 90,
+      "suite": "timestep",
+      "h": 0.1,
+      "d": 0.35,
+      "pose": 0,
+      "geometry": "decomposed-arc",
+      "control": "fixed",
+      "dt": 0.001
+    },
+    {
+      "id": 91,
+      "suite": "timestep",
+      "h": 0.1,
+      "d": 0.35,
+      "pose": 0,
+      "geometry": "decomposed-arc",
+      "control": "fixed",
+      "dt": 0.004
+    },
+    {
+      "id": 92,
+      "suite": "timestep",
+      "h": 0.1,
+      "d": 0.35,
+      "pose": 0,
+      "geometry": "closed-wheel",
+      "control": "fixed",
+      "dt": 0.001
+    },
+    {
+      "id": 93,
+      "suite": "timestep",
+      "h": 0.1,
+      "d": 0.35,
+      "pose": 0,
+      "geometry": "closed-wheel",
+      "control": "fixed",
+      "dt": 0.004
+    },
+    {
+      "id": 94,
+      "suite": "timestep",
+      "h": 0.15,
+      "d": 0.35,
+      "pose": 0,
+      "geometry": "decomposed-arc",
+      "control": "fixed",
+      "dt": 0.001
+    },
+    {
+      "id": 95,
+      "suite": "timestep",
+      "h": 0.15,
+      "d": 0.35,
+      "pose": 0,
+      "geometry": "decomposed-arc",
+      "control": "fixed",
+      "dt": 0.004
+    },
+    {
+      "id": 96,
+      "suite": "timestep",
+      "h": 0.15,
+      "d": 0.35,
+      "pose": 0,
+      "geometry": "closed-wheel",
+      "control": "fixed",
+      "dt": 0.001
+    },
+    {
+      "id": 97,
+      "suite": "timestep",
+      "h": 0.15,
+      "d": 0.35,
+      "pose": 0,
+      "geometry": "closed-wheel",
+      "control": "fixed",
+      "dt": 0.004
+    },
+    {
+      "id": 98,
+      "suite": "timestep",
+      "h": 0.2,
+      "d": 0.35,
+      "pose": 0,
+      "geometry": "decomposed-arc",
+      "control": "fixed",
+      "dt": 0.001
+    },
+    {
+      "id": 99,
+      "suite": "timestep",
+      "h": 0.2,
+      "d": 0.35,
+      "pose": 0,
+      "geometry": "decomposed-arc",
+      "control": "fixed",
+      "dt": 0.004
+    },
+    {
+      "id": 100,
+      "suite": "timestep",
+      "h": 0.2,
+      "d": 0.35,
+      "pose": 0,
+      "geometry": "closed-wheel",
+      "control": "fixed",
+      "dt": 0.001
+    },
+    {
+      "id": 101,
+      "suite": "timestep",
+      "h": 0.2,
+      "d": 0.35,
+      "pose": 0,
+      "geometry": "closed-wheel",
+      "control": "fixed",
+      "dt": 0.004
+    }
+  ],
+  "poses_dy_m_yaw_deg": [
+    [
+      0.0,
+      0.0
+    ],
+    [
+      -0.03,
+      3.0
+    ],
+    [
+      0.03,
+      -3.0
+    ]
+  ],
+  "physics": {
+    "model_sha256": "9a45b402e66944df600387cffa68d7b15b612956810eee4b0f0726fe9255b701",
+    "mujoco_version": "3.10.0"
+  },
+  "git_revision": "14d677ab07969898ee3bee69214a30fac16be6f6",
+  "git_dirty": false,
+  "development": "195 deg, 90 deg, 200 velocity units selected using 12 earlier nominal exploratory runs; frozen grid is sensitivity evidence.",
+  "endpoint": "All six tire centers beyond last riser plus radius, >=3 distinct tire bodies >1 N on top-height contacts; upright >=0.5. Stop phase. Within 2 s achieve 0.5 s of same support with root speed <0.05 m/s and angular speed <0.2 rad/s, sampled at 50 Hz. Tilt below 0.5 at any physics step terminates ascent/hold.",
+  "timing": "20 s ascent plus up to 2 s halt; separately include scripted side-pose acquisition and 4+4 s brace/phase acquisition. Initial pose offsets applied before these 8 s; zero initial velocity."
+}

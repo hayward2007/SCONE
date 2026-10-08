@@ -1,0 +1,219 @@
+{
+  "basis": "Explicit saved user pose matrices, independent FCL test against final Fusion housing mesh",
+  "rear_yaw_world_deg": [
+    0,
+    92
+  ],
+  "yaw_step_deg": 1,
+  "hip_world_deg": -0.14356,
+  "sides": [
+    -1,
+    1
+  ],
+  "continuous_distal_spin_at_each_yaw_sample": true,
+  "envelope_allowance_mm": 2.1,
+  "hits": [],
+  "minimum_clearances_at_exact_user_pose_mm": [
+    [
+      "R01 Rear smooth PLA chassis:1",
+      5.721336611888082
+    ],
+    [
+      "R03 Smooth PLA sensor cover:1",
+      5.725270621355869
+    ],
+    [
+      "P04 PLA electronics tray:1",
+      9.321280488155663
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.29:1/\ubcf8\uccb41",
+      13.060341847041862
+    ],
+    [
+      "V03 Custom battery pack 78x94x28:1/V03 Custom battery pack 78x94x28",
+      15.272475981609293
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.6:1/\ubcf8\uccb41",
+      15.506005560225006
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.21:1/\ubcf8\uccb41",
+      18.778579556607102
+    ],
+    [
+      "R02 Front smooth PLA chassis:1",
+      23.766280978584128
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.7:1/\ubcf8\uccb41",
+      24.597068684207294
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.19:1/\ubcf8\uccb41",
+      30.671632518938743
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.22:1/\ubcf8\uccb41",
+      34.30612764975534
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.8:1/\ubcf8\uccb41",
+      40.107674577093505
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.22:2/\ubcf8\uccb41",
+      41.60500967130276
+    ],
+    [
+      "V06 U2D2 48x18x14_9:1/V06 U2D2 48x18x14_9",
+      43.428498863130116
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.1:1/\ubcf8\uccb41",
+      45.944860427622295
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.15:2/\ubcf8\uccb41",
+      47.14282148369053
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.3:1/\ubcf8\uccb41",
+      54.85890648880004
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.33:1/\ubcf8\uccb41",
+      55.72680259560322
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.2:1/\ubcf8\uccb41",
+      58.79292530080059
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.37:1/\ubcf8\uccb41",
+      62.25430573998125
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.15:1/\ubcf8\uccb41",
+      63.87067385129237
+    ],
+    [
+      "V07 T-mini Plus 38_6x38_6x33_9:1/V07 T-mini Plus 38_6x38_6x33_9",
+      63.890017222607405
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.35:1/\ubcf8\uccb41",
+      64.9433054783496
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.18:1/\ubcf8\uccb41",
+      69.3007320724654
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.4:1/\ubcf8\uccb41",
+      73.14846472349834
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.5:1/\ubcf8\uccb41",
+      73.82616493466143
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.34:1/\ubcf8\uccb41",
+      75.11084490026926
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.12:1/\ubcf8\uccb41",
+      76.04530604582285
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.11:1/\ubcf8\uccb41",
+      83.16745308766029
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.30:1/\ubcf8\uccb41",
+      88.18782996680203
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.17:1/\ubcf8\uccb41",
+      91.83658878824428
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.32:1/\ubcf8\uccb41",
+      92.19653315125795
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.28:1/\ubcf8\uccb41",
+      95.011086392449
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.34:2/\ubcf8\uccb41",
+      99.11435757588913
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.38:1/\ubcf8\uccb41",
+      99.11459668664803
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.20:1/\ubcf8\uccb41",
+      99.60378022199093
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.9:1/\ubcf8\uccb42",
+      102.9811393000271
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.13:2/\ubcf8\uccb41",
+      105.01177254352366
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.10:1/\ubcf8\uccb41",
+      105.12889491066706
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.31:1/\ubcf8\uccb41",
+      106.32277059757558
+    ],
+    [
+      "V04 Custom PCB 70x60:1/\ubcf8\uccb42",
+      109.98246650707577
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.9:1/\ubcf8\uccb41",
+      110.15710139228133
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.24:1/\ubcf8\uccb41",
+      111.58529477276937
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.13:1/\ubcf8\uccb41",
+      111.84598665413131
+    ],
+    [
+      "V05 PCB component allowance:1/\ubcf8\uccb42",
+      112.1081787808815
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.25:1/\ubcf8\uccb41",
+      114.07626276637217
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.24:2/\ubcf8\uccb41",
+      119.32628630199582
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.25:2/\ubcf8\uccb41",
+      121.60313743392692
+    ],
+    [
+      "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.39:1/\ubcf8\uccb41",
+      122.44793673390826
+    ],
+    [
+      "V02 Waveshare official camera:1+0619:1/\ubcf8\uccb41",
+      128.13451664816364
+    ]
+  ],
+  "limits": "Yaw path sampled at 1deg; arbitrary hip motion, all simultaneous legs and structural deflection not certified"
+}

@@ -1,0 +1,334 @@
+{
+  "document_sha256": "3f129dbbf8bb31f3cba3e3a3431a3558a3cc7f7ca9dbad55b351475836253cd3",
+  "scope": "D0 mathematical regression for the 4-leg platform; not fabrication acceptance",
+  "derived": {
+    "L_link_mm": 195.30717903683333,
+    "phi_off_deg": 13.770008814737375,
+    "beta_reference_deg": -50.40609023578876,
+    "q1_reference_deg": -64.17609905052613,
+    "q2_reference_deg": 64.17609905052613,
+    "arm_mm": 124.47748464411416,
+    "ground_z_mm": -273.0,
+    "axle_z_mm": -150.5,
+    "frame_y_mm": 350.0,
+    "wheelbase_mm": 464.9549692882283,
+    "track_mm": 320.0
+  },
+  "profile": {
+    "coarse": {
+      "heave_mm": 18.563552592480264,
+      "h_max_mm": 122.50000000000003,
+      "h_min_mm": 103.93644740751976,
+      "ideal_distance_integral_mm": 752.8086931007759
+    },
+    "fine": {
+      "heave_mm": 18.563552592480264,
+      "h_max_mm": 122.50000000000003,
+      "h_min_mm": 103.93644740751976,
+      "ideal_distance_integral_mm": 752.8095232252366
+    },
+    "tip_chord_mm": 86.1037722821452,
+    "arc_only_distance_mm": 481.0563750809371,
+    "distance_per_rev_mm": 752.8095232252366,
+    "tip_pivot_share_pct": 11.437657153067578,
+    "lobe_roll_mm": 185.64937586215433
+  },
+  "loads_N": {
+    "4pt": 8.865787500000001,
+    "3pt": 11.821050000000001,
+    "trot2": 17.731575000000003
+  },
+  "torque_factor": 2.0,
+  "postures": [
+    {
+      "beta_deg": -80.0,
+      "q1_deg": -93.77000881473738,
+      "H_mm": 296.84002413441686,
+      "arm_mm": 33.91473572501502,
+      "wheelbase_mm": 283.82947145003004,
+      "foot_x_mm": 141.91473572501502,
+      "ground_z_mm": -314.84002413441686,
+      "tau_3pt_Nm": 0.8018155734843777,
+      "tau_4pt_Nm": 0.6013616801132834,
+      "tau_trot_Nm": 1.2027233602265668,
+      "front_rear_gap_mm": 38.82947145003004,
+      "pct_3pt": 19.556477402057993,
+      "pct_4pt": 14.667358051543498,
+      "pct_trot": 29.334716103086997
+    },
+    {
+      "beta_deg": -70.0,
+      "q1_deg": -83.77000881473738,
+      "H_mm": 288.0287149274245,
+      "arm_mm": 66.7989893667098,
+      "wheelbase_mm": 349.5979787334196,
+      "foot_x_mm": 174.7989893667098,
+      "ground_z_mm": -306.0287149274245,
+      "tau_3pt_Nm": 1.57926838650669,
+      "tau_4pt_Nm": 1.1844512898800177,
+      "tau_trot_Nm": 2.3689025797600354,
+      "front_rear_gap_mm": 104.59797873341961,
+      "pct_3pt": 38.518741134309515,
+      "pct_4pt": 28.88905585073214,
+      "pct_trot": 57.77811170146428
+    },
+    {
+      "beta_deg": -60.0,
+      "q1_deg": -73.77000881473737,
+      "H_mm": 273.64097858737324,
+      "arm_mm": 97.6535895184167,
+      "wheelbase_mm": 411.3071790368334,
+      "foot_x_mm": 205.6535895184167,
+      "ground_z_mm": -291.64097858737324,
+      "tau_3pt_Nm": 2.3087359287533595,
+      "tau_4pt_Nm": 1.7315519465650198,
+      "tau_trot_Nm": 3.4631038931300395,
+      "front_rear_gap_mm": 166.30717903683342,
+      "pct_3pt": 56.31063240861853,
+      "pct_4pt": 42.2329743064639,
+      "pct_trot": 84.4659486129278
+    },
+    {
+      "beta_deg": -50.40609023578876,
+      "q1_deg": -64.17609905052613,
+      "H_mm": 255.0,
+      "arm_mm": 124.47748464411416,
+      "wheelbase_mm": 464.9549692882283,
+      "foot_x_mm": 232.47748464411416,
+      "ground_z_mm": -273.0,
+      "tau_3pt_Nm": 2.9429091397046117,
+      "tau_4pt_Nm": 2.2071818547784585,
+      "tau_trot_Nm": 4.414363709556917,
+      "front_rear_gap_mm": 219.9549692882283,
+      "pct_3pt": 71.7782717001125,
+      "pct_4pt": 53.83370377508436,
+      "pct_trot": 107.66740755016872
+    },
+    {
+      "beta_deg": -40.0,
+      "q1_deg": -53.77000881473737,
+      "H_mm": 230.04103476770706,
+      "arm_mm": 149.61397920240952,
+      "wheelbase_mm": 515.227958404819,
+      "foot_x_mm": 257.6139792024095,
+      "ground_z_mm": -248.04103476770706,
+      "tau_3pt_Nm": 3.5371886577012863,
+      "tau_4pt_Nm": 2.6528914932759653,
+      "tau_trot_Nm": 5.305782986551931,
+      "front_rear_gap_mm": 270.227958404819,
+      "pct_3pt": 86.27289409027529,
+      "pct_4pt": 64.70467056770647,
+      "pct_trot": 129.40934113541294
+    },
+    {
+      "beta_deg": -25.0,
+      "q1_deg": -38.77000881473737,
+      "H_mm": 187.04038051002607,
+      "arm_mm": 177.0084172252432,
+      "wheelbase_mm": 570.0168344504864,
+      "foot_x_mm": 285.0084172252432,
+      "ground_z_mm": -205.04038051002607,
+      "tau_3pt_Nm": 4.184850700880923,
+      "tau_4pt_Nm": 3.138638025660692,
+      "tau_trot_Nm": 6.277276051321384,
+      "front_rear_gap_mm": 325.0168344504864,
+      "pct_3pt": 102.06952928977861,
+      "pct_4pt": 76.55214696733395,
+      "pct_trot": 153.1042939346679
+    }
+  ],
+  "strides": [
+    {
+      "beta_deg": -50.40609,
+      "dx_dbeta_mm_per_rad": 150.49999948773902,
+      "stride_mm": 78.80161545932475
+    },
+    {
+      "beta_deg": -70.0,
+      "dx_dbeta_mm_per_rad": 183.52871492742452,
+      "stride_mm": 96.0954104231287
+    },
+    {
+      "beta_deg": -80.0,
+      "dx_dbeta_mm_per_rad": 192.34002413441686,
+      "stride_mm": 100.70900113532791
+    }
+  ],
+  "roll_speed_max_m_s": 0.9660550961037562,
+  "sector_section": {
+    "I_mm4": 7256.0,
+    "Z_mm3": 725.6,
+    "moment_arm_mm": 100.5,
+    "cantilever_mm": 90.5,
+    "sigma_5W_MPa": 8.18643553610805,
+    "SF_5W": 5.863357720009592,
+    "deflection_3W_mm": 0.3773588498314434
+  },
+  "support": {
+    "feet_mm": {
+      "FL": [
+        232.47748464411416,
+        160.0
+      ],
+      "FR": [
+        232.47748464411416,
+        -160.0
+      ],
+      "RL": [
+        -232.47748464411416,
+        160.0
+      ],
+      "RR": [
+        -232.47748464411416,
+        -160.0
+      ]
+    },
+    "margin_4pt_mm": 160.0,
+    "margin_3pt_mm": {
+      "FL": 0.0,
+      "FR": 0.0,
+      "RL": 0.0,
+      "RR": 0.0
+    },
+    "com_height_mm": 285.0,
+    "tipover_roll_deg": 29.310007070916125,
+    "tipover_pitch_deg": 39.20448565482873,
+    "body_roll_for_80mm_deg": 15.679524122419252,
+    "same_side_yaw_limit_deg": 64,
+    "crawl_with_yaw": {
+      "FL": {
+        "legs": [
+          "FR",
+          "RR",
+          "RL"
+        ],
+        "yaw_deg": [
+          45,
+          30,
+          -60
+        ],
+        "margin_mm": 110.96778306177828
+      },
+      "FR": {
+        "legs": [
+          "FL",
+          "RR",
+          "RL"
+        ],
+        "yaw_deg": [
+          -45,
+          60,
+          -60
+        ],
+        "margin_mm": 110.96778306177829
+      },
+      "RL": {
+        "legs": [
+          "FL",
+          "FR",
+          "RR"
+        ],
+        "yaw_deg": [
+          60,
+          -60,
+          -45
+        ],
+        "margin_mm": 110.96778306177829
+      },
+      "RR": {
+        "legs": [
+          "FL",
+          "FR",
+          "RL"
+        ],
+        "yaw_deg": [
+          30,
+          -60,
+          45
+        ],
+        "margin_mm": 110.96778306177828
+      }
+    }
+  },
+  "rolling_phase": [
+    {
+      "name": "all in phase",
+      "offsets_deg": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "heave_mm": 18.56355259248025,
+      "pitch_abs_max_deg": 0.0,
+      "roll_abs_max_deg": 0.0,
+      "contacts_min": 4,
+      "contacts_max": 4
+    },
+    {
+      "name": "front pair / rear pair 180",
+      "offsets_deg": [
+        0,
+        0,
+        180,
+        180
+      ],
+      "heave_mm": 9.281776296240139,
+      "pitch_abs_max_deg": 2.2863474477490695,
+      "roll_abs_max_deg": 2.8018954169298725e-15,
+      "contacts_min": 4,
+      "contacts_max": 4
+    },
+    {
+      "name": "left pair / right pair 180",
+      "offsets_deg": [
+        0,
+        180,
+        0,
+        180
+      ],
+      "heave_mm": 9.281776296240139,
+      "pitch_abs_max_deg": 2.6267769533717554e-15,
+      "roll_abs_max_deg": 3.320070306515967,
+      "contacts_min": 4,
+      "contacts_max": 4
+    },
+    {
+      "name": "diagonal pairs 180",
+      "offsets_deg": [
+        0,
+        180,
+        180,
+        0
+      ],
+      "heave_mm": 4.263256414560601e-14,
+      "pitch_abs_max_deg": 2.286347447749068,
+      "roll_abs_max_deg": 3.320070306515967,
+      "contacts_min": 3,
+      "contacts_max": 4
+    },
+    {
+      "name": "90 deg spacing",
+      "offsets_deg": [
+        0,
+        90,
+        180,
+        270
+      ],
+      "heave_mm": 2.158824050201787,
+      "pitch_abs_max_deg": 2.286347447749068,
+      "roll_abs_max_deg": 3.320070306515967,
+      "contacts_min": 3,
+      "contacts_max": 4
+    }
+  ],
+  "stair_hook_torque_Nm": 1.4480786250000002,
+  "stair_hook_pct_W210": 48.26928750000001,
+  "steer": {
+    "trail_mm": 182.47748464411416,
+    "tau_loaded_Nm": 2.157075469852306,
+    "tau_swing_Nm": 0.32356132047784586,
+    "MX28_stall_Nm": 2.5
+  },
+  "regression_status": "PASS"
+}

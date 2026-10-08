@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "files": {
+    "benchmark/leg_usage.py": true,
+    "docs/29-two-leg-sector-drive.md": true,
+    "docs/30-scone-v3-design-plan.md": true,
+    "docs/reviews/2026-09-09-scone-v3-rev3-verification.md": true,
+    "tests/test_scone_gait_v2.py": true,
+    "tools/fmcp.py": true,
+    "tools/leg_torque.py": true,
+    "tools/mass_budget.py": true,
+    "tools/sector_geom.py": true,
+    "tools/sector_mass.py": true,
+    "tools/sector_struct.py": true,
+    "tools/v3/fusion_rpc.py": true,
+    "tools/v3/prepare_run.py": true,
+    "src/locomotion/scone_gait_v2.py": true
+  }
+}

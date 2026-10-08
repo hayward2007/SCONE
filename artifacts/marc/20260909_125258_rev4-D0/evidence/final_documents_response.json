@@ -1,0 +1,8 @@
+{
+  "content": [
+    {
+      "text": "{\n    \"message\": \"2 open document(s)\",\n    \"results\": [\n        {\n            \"id\": \"urn:adsk.wipprod:dm.lineage:vd7Hw97LTV2sotGZG1GZsw\",\n            \"isModified\": false,\n            \"isReadOnly\": false,\n            \"isSaved\": true,\n            \"name\": \"SCONEv3 v8\",\n            \"parentFolder\": \"SCONE\",\n            \"parentProject\": \"SCONE\",\n            \"parentProjectId\": \"a.YnVzaW5lc3M6bmF2ZXI4NTI4NyMyMDI1MDYxNzk0MDQ4NTI4MQ\"\n        },\n        {\n            \"id\": \"urn:adsk.wipprod:dm.lineage:m-tfDl7GQVSpPaaj3cYogw\",\n            \"isActive\": true,\n            \"isModified\": false,\n            \"isReadOnly\": false,\n            \"isSaved\": true,\n            \"name\": \"MARC-PARAM-D0 v3\",\n            \"parentFolder\": \"SCONE\",\n            \"parentProject\": \"SCONE\",\n            \"parentProjectId\": \"a.YnVzaW5lc3M6bmF2ZXI4NTI4NyMyMDI1MDYxNzk0MDQ4NTI4MQ\"\n        }\n    ],\n    \"success\": true\n}",
+      "type": "text"
+    }
+  ]
+}

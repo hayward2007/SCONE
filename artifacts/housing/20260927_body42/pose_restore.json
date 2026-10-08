@@ -1,0 +1,16 @@
+{
+  "changed": [
+    "LEG 1:1+FR07:1",
+    "LEG 1:1+LINK:1",
+    "LEG 1:1+XM430:2",
+    "LEG 1:1+XM430:1",
+    "LEG 1:1+ARC:1",
+    "LEG 1:5+FR07:1",
+    "LEG 1:5+LINK:1",
+    "LEG 1:5+XM430:2",
+    "LEG 1:5+XM430:1",
+    "LEG 1:5+ARC:1"
+  ],
+  "remaining_changes": [],
+  "source_volume": 1054.8021915576696
+}

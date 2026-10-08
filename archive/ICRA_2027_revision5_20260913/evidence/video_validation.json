@@ -1,0 +1,75 @@
+{
+  "size_bytes": 5441604,
+  "duration_s": 91.84,
+  "width": 1280,
+  "height": 720,
+  "fps": "25/1",
+  "scan": "progressive",
+  "segments": [
+    {
+      "source": "intro",
+      "duration_s": 5,
+      "kind": "explanation"
+    },
+    {
+      "source": "archive/videos/SCONEv2_stairs.mp4",
+      "source_start_s": 4,
+      "requested_duration_s": 8,
+      "label": "PHYSICAL ARCHIVE | earlier controller | no synchronized trial logs | 1x"
+    },
+    {
+      "source": "archive/ICRA_2027_revision4_20260913/media/joint_P.mp4",
+      "source_start_s": 0,
+      "requested_duration_s": null,
+      "label": null
+    },
+    {
+      "source": "separate",
+      "duration_s": 5,
+      "kind": "explanation"
+    },
+    {
+      "source": "archive/ICRA_2027_revision5_20260913/media/stair_45.mp4",
+      "source_start_s": 0,
+      "requested_duration_s": null,
+      "label": null
+    },
+    {
+      "source": "archive/ICRA_2027_revision5_20260913/media/stair_47.mp4",
+      "source_start_s": 0,
+      "requested_duration_s": null,
+      "label": null
+    },
+    {
+      "source": "archive/ICRA_2027_revision5_20260913/media/stair_75.mp4",
+      "source_start_s": 0,
+      "requested_duration_s": null,
+      "label": null
+    },
+    {
+      "source": "limits",
+      "duration_s": 8,
+      "kind": "explanation"
+    }
+  ],
+  "replay_checks": [
+    {
+      "id": 45,
+      "max_error": 0.0,
+      "excluded_from_trial_count": true,
+      "git_dirty": false
+    },
+    {
+      "id": 47,
+      "max_error": 0.0,
+      "excluded_from_trial_count": true,
+      "git_dirty": false
+    },
+    {
+      "id": 75,
+      "max_error": 0.0,
+      "excluded_from_trial_count": true,
+      "git_dirty": false
+    }
+  ]
+}

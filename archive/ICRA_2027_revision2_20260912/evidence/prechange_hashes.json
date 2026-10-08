@@ -1,0 +1,8 @@
+{
+  "src/locomotion/scone_gait_v2.py": "cf3869aeb8c3011815ddc80980c335bb1c956c6f365b040092638178e610e0f0",
+  "src/locomotion/__init__.py": "2f3a2da46f7263f45d67332c8b5fd1d64bc9b2cadbe6d8fd9252a5f214e1927e",
+  "benchmark/controllers.py": "0a4d206fd207369a9b7d8c623aecace540880a2eb5248a01f85f5bd47b9ffdaf",
+  "benchmark/model_variants.py": "9a40d46ff4e3f0a7939fabfe2e2255455a6a07bc24300d53244b561510b5104a",
+  "benchmark/common.py": "0e319da139c2bbf44f6ab41d4bf54bcce90a4bcb1e0204a654bdb79e9888e3be",
+  "tests/test_scone_gait_v2.py": "3dec1ac3091ff63fdcc63732fb426af8c140f60d840d0d2a1b9a7c7494c67cd4"
+}

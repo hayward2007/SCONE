@@ -1,0 +1,395 @@
+{
+  "step_id": "G02-CAD",
+  "status": "PASS",
+  "reference_transforms": [
+    {
+      "instance_id": "FL_YAW",
+      "max_matrix_error": 1.7763568394002505e-15
+    },
+    {
+      "instance_id": "FL_LINK",
+      "max_matrix_error": 5.329070518200751e-15
+    },
+    {
+      "instance_id": "FL_SPIN",
+      "max_matrix_error": 8.881784197001252e-15
+    },
+    {
+      "instance_id": "FR_YAW",
+      "max_matrix_error": 8.881784197001252e-16
+    },
+    {
+      "instance_id": "FR_LINK",
+      "max_matrix_error": 1.7763568394002505e-15
+    },
+    {
+      "instance_id": "FR_SPIN",
+      "max_matrix_error": 8.881784197001252e-15
+    },
+    {
+      "instance_id": "RL_YAW",
+      "max_matrix_error": 8.881784197001252e-16
+    },
+    {
+      "instance_id": "RL_LINK",
+      "max_matrix_error": 1.7763568394002505e-15
+    },
+    {
+      "instance_id": "RL_SPIN",
+      "max_matrix_error": 1.4210854715202004e-14
+    },
+    {
+      "instance_id": "RR_YAW",
+      "max_matrix_error": 1.7763568394002505e-15
+    },
+    {
+      "instance_id": "RR_LINK",
+      "max_matrix_error": 3.552713678800501e-15
+    },
+    {
+      "instance_id": "RR_SPIN",
+      "max_matrix_error": 1.0658141036401503e-14
+    }
+  ],
+  "positive_direction_checks": [
+    {
+      "joint_id": "M01",
+      "increment_deg": 1,
+      "origin_error_mm": 3.552713678800501e-14,
+      "basis_dot_min": 0.9999999999999997,
+      "axis_vector_api": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "status": "PASS",
+      "affected_chain": [
+        {
+          "instance_id": "FL_YAW",
+          "origin_error_mm": 3.552713678800501e-14,
+          "basis_dot_min": 0.9999999999999997
+        },
+        {
+          "instance_id": "FL_LINK",
+          "origin_error_mm": 4.14807550937127e-14,
+          "basis_dot_min": 0.9999999999999996
+        },
+        {
+          "instance_id": "FL_SPIN",
+          "origin_error_mm": 2.4868995751603507e-13,
+          "basis_dot_min": 0.9999999999999996
+        }
+      ]
+    },
+    {
+      "joint_id": "M02",
+      "increment_deg": 1,
+      "origin_error_mm": 1.7763568394002505e-14,
+      "basis_dot_min": 1.0,
+      "axis_vector_api": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "status": "PASS",
+      "affected_chain": [
+        {
+          "instance_id": "FR_YAW",
+          "origin_error_mm": 1.7763568394002505e-14,
+          "basis_dot_min": 1.0
+        },
+        {
+          "instance_id": "FR_LINK",
+          "origin_error_mm": 7.32410687763558e-14,
+          "basis_dot_min": 1.0
+        },
+        {
+          "instance_id": "FR_SPIN",
+          "origin_error_mm": 3.045817500343561e-13,
+          "basis_dot_min": 1.0
+        }
+      ]
+    },
+    {
+      "joint_id": "M03",
+      "increment_deg": 1,
+      "origin_error_mm": 0.0,
+      "basis_dot_min": 1.0,
+      "axis_vector_api": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "status": "PASS",
+      "affected_chain": [
+        {
+          "instance_id": "RL_YAW",
+          "origin_error_mm": 0.0,
+          "basis_dot_min": 1.0
+        },
+        {
+          "instance_id": "RL_LINK",
+          "origin_error_mm": 9.057678187205882e-14,
+          "basis_dot_min": 1.0
+        },
+        {
+          "instance_id": "RL_SPIN",
+          "origin_error_mm": 3.2171190647067566e-13,
+          "basis_dot_min": 1.0
+        }
+      ]
+    },
+    {
+      "joint_id": "M04",
+      "increment_deg": 1,
+      "origin_error_mm": 0.0,
+      "basis_dot_min": 1.0,
+      "axis_vector_api": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "status": "PASS",
+      "affected_chain": [
+        {
+          "instance_id": "RR_YAW",
+          "origin_error_mm": 0.0,
+          "basis_dot_min": 1.0
+        },
+        {
+          "instance_id": "RR_LINK",
+          "origin_error_mm": 1.0950198975068616e-13,
+          "basis_dot_min": 1.0
+        },
+        {
+          "instance_id": "RR_SPIN",
+          "origin_error_mm": 3.197442310920451e-13,
+          "basis_dot_min": 1.0
+        }
+      ]
+    },
+    {
+      "joint_id": "M05",
+      "increment_deg": 1,
+      "origin_error_mm": 3.923660740106592e-14,
+      "basis_dot_min": 0.9999999999999991,
+      "axis_vector_api": [
+        8.922115367098994e-18,
+        -0.9999999999999996,
+        4.9034706353468784e-18
+      ],
+      "status": "PASS",
+      "affected_chain": [
+        {
+          "instance_id": "FL_LINK",
+          "origin_error_mm": 3.923660740106592e-14,
+          "basis_dot_min": 0.9999999999999991
+        },
+        {
+          "instance_id": "FL_SPIN",
+          "origin_error_mm": 3.9441522601134903e-13,
+          "basis_dot_min": 0.9999999999999991
+        }
+      ]
+    },
+    {
+      "joint_id": "M06",
+      "increment_deg": 1,
+      "origin_error_mm": 9.046955311296225e-14,
+      "basis_dot_min": 1.0,
+      "axis_vector_api": [
+        3.207317652110635e-50,
+        -1.0,
+        4.8140915956648125e-35
+      ],
+      "status": "PASS",
+      "affected_chain": [
+        {
+          "instance_id": "FR_LINK",
+          "origin_error_mm": 9.046955311296225e-14,
+          "basis_dot_min": 1.0
+        },
+        {
+          "instance_id": "FR_SPIN",
+          "origin_error_mm": 4.05460987825042e-13,
+          "basis_dot_min": 1.0
+        }
+      ]
+    },
+    {
+      "joint_id": "M07",
+      "increment_deg": 1,
+      "origin_error_mm": 3.972054645195637e-14,
+      "basis_dot_min": 1.0,
+      "axis_vector_api": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "status": "PASS",
+      "affected_chain": [
+        {
+          "instance_id": "RL_LINK",
+          "origin_error_mm": 3.972054645195637e-14,
+          "basis_dot_min": 1.0
+        },
+        {
+          "instance_id": "RL_SPIN",
+          "origin_error_mm": 3.162713435991701e-13,
+          "basis_dot_min": 1.0
+        }
+      ]
+    },
+    {
+      "joint_id": "M08",
+      "increment_deg": 1,
+      "origin_error_mm": 1.0439380816556895e-13,
+      "basis_dot_min": 1.0,
+      "axis_vector_api": [
+        -3.207317652110635e-50,
+        1.0,
+        4.8140915956648125e-35
+      ],
+      "status": "PASS",
+      "affected_chain": [
+        {
+          "instance_id": "RR_LINK",
+          "origin_error_mm": 1.0439380816556895e-13,
+          "basis_dot_min": 1.0
+        },
+        {
+          "instance_id": "RR_SPIN",
+          "origin_error_mm": 3.8999023388619757e-13,
+          "basis_dot_min": 1.0
+        }
+      ]
+    },
+    {
+      "joint_id": "M09",
+      "increment_deg": 1,
+      "origin_error_mm": 1.475552811121985e-13,
+      "basis_dot_min": 0.9999999999999991,
+      "axis_vector_api": [
+        1.16720794532447e-18,
+        -0.9999999999999996,
+        5.038833047906255e-18
+      ],
+      "status": "PASS",
+      "affected_chain": [
+        {
+          "instance_id": "FL_SPIN",
+          "origin_error_mm": 1.475552811121985e-13,
+          "basis_dot_min": 0.9999999999999991
+        }
+      ]
+    },
+    {
+      "joint_id": "M10",
+      "increment_deg": 1,
+      "origin_error_mm": 8.702335715267317e-14,
+      "basis_dot_min": 1.0,
+      "axis_vector_api": [
+        3.4683902052827086e-18,
+        -1.0,
+        -6.054097622959718e-20
+      ],
+      "status": "PASS",
+      "affected_chain": [
+        {
+          "instance_id": "FR_SPIN",
+          "origin_error_mm": 8.702335715267317e-14,
+          "basis_dot_min": 1.0
+        }
+      ]
+    },
+    {
+      "joint_id": "M11",
+      "increment_deg": 1,
+      "origin_error_mm": 2.161031364628563e-13,
+      "basis_dot_min": 1.0,
+      "axis_vector_api": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "status": "PASS",
+      "affected_chain": [
+        {
+          "instance_id": "RL_SPIN",
+          "origin_error_mm": 2.161031364628563e-13,
+          "basis_dot_min": 1.0
+        }
+      ]
+    },
+    {
+      "joint_id": "M12",
+      "increment_deg": 1,
+      "origin_error_mm": 5.0242958677880804e-14,
+      "basis_dot_min": 1.0,
+      "axis_vector_api": [
+        -3.4683902052827086e-18,
+        1.0,
+        -6.054097622959718e-20
+      ],
+      "status": "PASS",
+      "affected_chain": [
+        {
+          "instance_id": "RR_SPIN",
+          "origin_error_mm": 5.0242958677880804e-14,
+          "basis_dot_min": 1.0
+        }
+      ]
+    }
+  ],
+  "restored_transforms": [
+    {
+      "instance_id": "FL_YAW",
+      "max_matrix_error": 1.7763568394002505e-15
+    },
+    {
+      "instance_id": "FL_LINK",
+      "max_matrix_error": 3.552713678800501e-15
+    },
+    {
+      "instance_id": "FL_SPIN",
+      "max_matrix_error": 1.7763568394002505e-14
+    },
+    {
+      "instance_id": "FR_YAW",
+      "max_matrix_error": 8.881784197001252e-16
+    },
+    {
+      "instance_id": "FR_LINK",
+      "max_matrix_error": 1.7763568394002505e-15
+    },
+    {
+      "instance_id": "FR_SPIN",
+      "max_matrix_error": 5.551115123125783e-17
+    },
+    {
+      "instance_id": "RL_YAW",
+      "max_matrix_error": 8.881784197001252e-16
+    },
+    {
+      "instance_id": "RL_LINK",
+      "max_matrix_error": 7.105427357601002e-15
+    },
+    {
+      "instance_id": "RL_SPIN",
+      "max_matrix_error": 7.105427357601002e-15
+    },
+    {
+      "instance_id": "RR_YAW",
+      "max_matrix_error": 8.881784197001252e-16
+    },
+    {
+      "instance_id": "RR_LINK",
+      "max_matrix_error": 8.881784197001252e-15
+    },
+    {
+      "instance_id": "RR_SPIN",
+      "max_matrix_error": 7.105427357601002e-15
+    }
+  ],
+  "hardware_status": "BLOCKED"
+}

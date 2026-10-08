@@ -1,0 +1,98 @@
+[
+  {
+    "file": "L11.step",
+    "solids": 1,
+    "expected_solids": 1,
+    "valid": true
+  },
+  {
+    "file": "L12.step",
+    "solids": 1,
+    "expected_solids": 1,
+    "valid": true
+  },
+  {
+    "file": "L21.step",
+    "solids": 1,
+    "expected_solids": 1,
+    "valid": true
+  },
+  {
+    "file": "L22.step",
+    "solids": 1,
+    "expected_solids": 1,
+    "valid": true
+  },
+  {
+    "file": "M01.step",
+    "solids": 1,
+    "expected_solids": 1,
+    "valid": true
+  },
+  {
+    "file": "M02.step",
+    "solids": 1,
+    "expected_solids": 1,
+    "valid": true
+  },
+  {
+    "file": "P04.step",
+    "solids": 1,
+    "expected_solids": 1,
+    "valid": true
+  },
+  {
+    "file": "R01.step",
+    "solids": 1,
+    "expected_solids": 1,
+    "valid": true
+  },
+  {
+    "file": "R02.step",
+    "solids": 1,
+    "expected_solids": 1,
+    "valid": true
+  },
+  {
+    "file": "S01.step",
+    "solids": 1,
+    "expected_solids": 1,
+    "valid": true
+  },
+  {
+    "file": "S02.step",
+    "solids": 1,
+    "expected_solids": 1,
+    "valid": true
+  },
+  {
+    "file": "T01.step",
+    "solids": 1,
+    "expected_solids": 1,
+    "valid": true
+  },
+  {
+    "file": "T11.step",
+    "solids": 1,
+    "expected_solids": 1,
+    "valid": true
+  },
+  {
+    "file": "W01.step",
+    "solids": 1,
+    "expected_solids": 1,
+    "valid": true
+  },
+  {
+    "file": "W11.step",
+    "solids": 1,
+    "expected_solids": 1,
+    "valid": true
+  },
+  {
+    "file": "printed_parts_assembly.step",
+    "solids": 23,
+    "expected_solids": 23,
+    "valid": true
+  }
+]

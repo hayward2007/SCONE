@@ -1,0 +1,50 @@
+{
+  "source_file_id": "urn:adsk.wipprod:dm.lineage:0Md4qyXWTSOKnK28RDCuVw",
+  "assembled_file_id": "/Users/hayward_kim/Library/Application Support/Autodesk/Autodesk Fusion 360/FUVPJW8Y5NMK/W.login/F/_MARC Housing PLA R09 Assembled.6e0c1eca-08c4-4328-8782-8aa49b37a461.f3d",
+  "changes": [
+    {
+      "part": "S01 Rear fairing lid:1",
+      "previous_transform": [
+        0.9999999999999998,
+        -3.3306690738754726e-16,
+        -5.302840330996775e-16,
+        -20.47487140948945,
+        -1.1102230246251535e-16,
+        1.0000000000000007,
+        -3.454753018722448e-16,
+        2.2997243835644987,
+        -4.163336342344336e-16,
+        -1.6653345369377353e-16,
+        0.9999999999999997,
+        8.983781947701633,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    {
+      "part": "S02 Front camera fairing lid:1",
+      "previous_transform": [
+        0.9999999999999992,
+        4.440892098500623e-16,
+        4.7201325121253977e-17,
+        14.585709909320649,
+        1.1102230246251557e-16,
+        0.9999999999999992,
+        -1.2824431404375312e-16,
+        -9.055558799820599,
+        3.3306690738754696e-16,
+        5.55111512312579e-17,
+        1.0000000000000004,
+        4.38233265741545,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    }
+  ],
+  "protected_original_untouched": true,
+  "FR07_untouched": true
+}

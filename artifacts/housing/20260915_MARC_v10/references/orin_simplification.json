@@ -1,0 +1,5 @@
+{
+  "original_solids": 1393,
+  "retained_solids": 39,
+  "criterion": "Retain all solids with any dimension >8 mm, and all solids establishing overall extent. Vendor geometry not scaled. Small passives omitted only in mounting reference."
+}

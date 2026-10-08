@@ -1,0 +1,8 @@
+{
+  "content": [
+    {
+      "text": "{\n    \"message\": \"{\\\"status\\\": \\\"PASS\\\", \\\"visible_solid_instances\\\": 28, \\\"invalid_bodies\\\": [], \\\"study_geometry_included\\\": false, \\\"expected_visible_count\\\": 28, \\\"method\\\": \\\"Fusion STEP import to a new unsaved document; native model retains the hidden 14 study solids separately\\\"}\\n\",\n    \"success\": true\n}",
+      "type": "text"
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+{
+  "reason": "Distance-only bounded allocator completed all low-command main trials but rejected IK in all eight high-command main trials. The constant-rate next-window lookahead schedules reindexing before budget exhaustion. G retains the failed distance-only mechanism as an explicit ablation. Controller parameters and all 252 original job settings are retained; 16 G trials are added. This is development followed by a frozen confirmation, not a held-out test.",
+  "frozen_revision": "2267f3a48b9ad2ee0221abe128729936dcad7bad"
+}

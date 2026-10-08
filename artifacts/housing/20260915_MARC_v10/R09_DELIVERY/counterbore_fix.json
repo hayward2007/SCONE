@@ -1,0 +1,14 @@
+{
+  "centers_mm": [
+    [
+      180,
+      -25
+    ],
+    [
+      180,
+      25
+    ]
+  ],
+  "removed_cm3": 0.003198085084648028,
+  "reason": "Obsolete hole closure overlapped nearby functional lid-head reserve; recut original clearance."
+}

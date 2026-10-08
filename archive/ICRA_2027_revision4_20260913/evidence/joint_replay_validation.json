@@ -1,0 +1,16 @@
+[
+  {
+    "trial_id": 54,
+    "code": "B",
+    "max_scalar_error": 0,
+    "speed_mps": 0.2143927116576406,
+    "excluded_from_trial_count": true
+  },
+  {
+    "trial_id": 58,
+    "code": "P",
+    "max_scalar_error": 0,
+    "speed_mps": 0.21604838224303655,
+    "excluded_from_trial_count": true
+  }
+]

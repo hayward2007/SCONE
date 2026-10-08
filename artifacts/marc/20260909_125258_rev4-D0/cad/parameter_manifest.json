@@ -1,0 +1,386 @@
+[
+  {
+    "path": "geometry.R_tread_mm",
+    "name": "geometry_R_tread_mm",
+    "unit": "mm",
+    "expression": "122.5 mm",
+    "value_internal": 12.25,
+    "input": 122.5
+  },
+  {
+    "path": "geometry.t_tire_mm",
+    "name": "geometry_t_tire_mm",
+    "unit": "mm",
+    "expression": "10.0 mm",
+    "value_internal": 1.0,
+    "input": 10.0
+  },
+  {
+    "path": "geometry.b_sector_mm",
+    "name": "geometry_b_sector_mm",
+    "unit": "mm",
+    "expression": "20.0 mm",
+    "value_internal": 2.0,
+    "input": 20.0
+  },
+  {
+    "path": "geometry.th_tread_deg",
+    "name": "geometry_th_tread_deg",
+    "unit": "deg",
+    "expression": "225.0 deg",
+    "value_internal": 3.9269908169872414,
+    "input": 225.0
+  },
+  {
+    "path": "geometry.d_lobe_deg",
+    "name": "geometry_d_lobe_deg",
+    "unit": "deg",
+    "expression": "45.0 deg",
+    "value_internal": 0.7853981633974483,
+    "input": 45.0
+  },
+  {
+    "path": "geometry.r_lobe_tip_mm",
+    "name": "geometry_r_lobe_tip_mm",
+    "unit": "mm",
+    "expression": "112.5 mm",
+    "value_internal": 11.25,
+    "input": 112.5
+  },
+  {
+    "path": "geometry.profile_step_deg",
+    "name": "geometry_profile_step_deg",
+    "unit": "deg",
+    "expression": "0.5 deg",
+    "value_internal": 0.008726646259971648,
+    "input": 0.5
+  },
+  {
+    "path": "geometry.nose_fillet_mm",
+    "name": "geometry_nose_fillet_mm",
+    "unit": "mm",
+    "expression": "0.0 mm",
+    "value_internal": 0.0,
+    "input": 0.0
+  },
+  {
+    "path": "geometry.t_rim_mm",
+    "name": "geometry_t_rim_mm",
+    "unit": "mm",
+    "expression": "3.0 mm",
+    "value_internal": 0.30000000000000004,
+    "input": 3.0
+  },
+  {
+    "path": "geometry.t_lip_mm",
+    "name": "geometry_t_lip_mm",
+    "unit": "mm",
+    "expression": "3.0 mm",
+    "value_internal": 0.30000000000000004,
+    "input": 3.0
+  },
+  {
+    "path": "geometry.h_lip_mm",
+    "name": "geometry_h_lip_mm",
+    "unit": "mm",
+    "expression": "12.0 mm",
+    "value_internal": 1.2000000000000002,
+    "input": 12.0
+  },
+  {
+    "path": "geometry.t_web_mm",
+    "name": "geometry_t_web_mm",
+    "unit": "mm",
+    "expression": "2.0 mm",
+    "value_internal": 0.2,
+    "input": 2.0
+  },
+  {
+    "path": "geometry.r_hub_mm",
+    "name": "geometry_r_hub_mm",
+    "unit": "mm",
+    "expression": "22.0 mm",
+    "value_internal": 2.2,
+    "input": 22.0
+  },
+  {
+    "path": "geometry.hub_boss_h_mm",
+    "name": "geometry_hub_boss_h_mm",
+    "unit": "mm",
+    "expression": "10.0 mm",
+    "value_internal": 1.0,
+    "input": 10.0
+  },
+  {
+    "path": "geometry.t_rib_mm",
+    "name": "geometry_t_rib_mm",
+    "unit": "mm",
+    "expression": "2.0 mm",
+    "value_internal": 0.2,
+    "input": 2.0
+  },
+  {
+    "path": "geometry.web_pocket_fraction",
+    "name": "geometry_web_pocket_fraction",
+    "unit": "",
+    "expression": "0.0",
+    "value_internal": 0.0,
+    "input": 0.0
+  },
+  {
+    "path": "geometry.link_hole_fraction",
+    "name": "geometry_link_hole_fraction",
+    "unit": "",
+    "expression": "0.0",
+    "value_internal": 0.0,
+    "input": 0.0
+  },
+  {
+    "path": "leg.steer_axis_x_mm",
+    "name": "leg_steer_axis_x_mm",
+    "unit": "mm",
+    "expression": "50.0 mm",
+    "value_internal": 5.0,
+    "input": 50.0
+  },
+  {
+    "path": "leg.steer_axis_z_mm",
+    "name": "leg_steer_axis_z_mm",
+    "unit": "mm",
+    "expression": "20.5 mm",
+    "value_internal": 2.0500000000000003,
+    "input": 20.5
+  },
+  {
+    "path": "leg.stage1_axis_x_mm",
+    "name": "leg_stage1_axis_x_mm",
+    "unit": "mm",
+    "expression": "108.0 mm",
+    "value_internal": 10.8,
+    "input": 108.0
+  },
+  {
+    "path": "leg.stage1_axis_z_mm",
+    "name": "leg_stage1_axis_z_mm",
+    "unit": "mm",
+    "expression": "0.0 mm",
+    "value_internal": 0.0,
+    "input": 0.0
+  },
+  {
+    "path": "leg.link_a_mm",
+    "name": "leg_link_a_mm",
+    "unit": "mm",
+    "expression": "90.0 mm",
+    "value_internal": 9.0,
+    "input": 90.0
+  },
+  {
+    "path": "leg.link_b_mm",
+    "name": "leg_link_b_mm",
+    "unit": "mm",
+    "expression": "110.0 mm",
+    "value_internal": 11.0,
+    "input": 110.0
+  },
+  {
+    "path": "leg.gamma_crank_deg",
+    "name": "leg_gamma_crank_deg",
+    "unit": "deg",
+    "expression": "25.0 deg",
+    "value_internal": 0.4363323129985824,
+    "input": 25.0
+  },
+  {
+    "path": "leg.H_reference_mm",
+    "name": "leg_H_reference_mm",
+    "unit": "mm",
+    "expression": "255.0 mm",
+    "value_internal": 25.5,
+    "input": 255.0
+  },
+  {
+    "path": "leg.alpha_abs_reference_deg",
+    "name": "leg_alpha_abs_reference_deg",
+    "unit": "deg",
+    "expression": "0.0 deg",
+    "value_internal": 0.0,
+    "input": 0.0
+  },
+  {
+    "path": "leg.box_w_mm",
+    "name": "leg_box_w_mm",
+    "unit": "mm",
+    "expression": "34.0 mm",
+    "value_internal": 3.4000000000000004,
+    "input": 34.0
+  },
+  {
+    "path": "leg.box_h_mm",
+    "name": "leg_box_h_mm",
+    "unit": "mm",
+    "expression": "37.0 mm",
+    "value_internal": 3.7,
+    "input": 37.0
+  },
+  {
+    "path": "leg.wall_link_mm",
+    "name": "leg_wall_link_mm",
+    "unit": "mm",
+    "expression": "2.8 mm",
+    "value_internal": 0.27999999999999997,
+    "input": 2.8
+  },
+  {
+    "path": "leg.wall_yoke_mm",
+    "name": "leg_wall_yoke_mm",
+    "unit": "mm",
+    "expression": "3.5 mm",
+    "value_internal": 0.35000000000000003,
+    "input": 3.5
+  },
+  {
+    "path": "leg.clevis_gap_mm",
+    "name": "leg_clevis_gap_mm",
+    "unit": "mm",
+    "expression": "2.0 mm",
+    "value_internal": 0.2,
+    "input": 2.0
+  },
+  {
+    "path": "leg.clevis_arm_t_mm",
+    "name": "leg_clevis_arm_t_mm",
+    "unit": "mm",
+    "expression": "5.0 mm",
+    "value_internal": 0.5,
+    "input": 5.0
+  },
+  {
+    "path": "body.track_half_y_mm",
+    "name": "body_track_half_y_mm",
+    "unit": "mm",
+    "expression": "160.0 mm",
+    "value_internal": 16.0,
+    "input": 160.0
+  },
+  {
+    "path": "body.hip_motor_center_x_mm",
+    "name": "body_hip_motor_center_x_mm",
+    "unit": "mm",
+    "expression": "36.7 mm",
+    "value_internal": 3.6700000000000004,
+    "input": 36.7
+  },
+  {
+    "path": "body.hip_motor_center_z_mm",
+    "name": "body_hip_motor_center_z_mm",
+    "unit": "mm",
+    "expression": "3.3 mm",
+    "value_internal": 0.33,
+    "input": 3.3
+  },
+  {
+    "path": "body.frame_x_mm",
+    "name": "body_frame_x_mm",
+    "unit": "mm",
+    "expression": "130.0 mm",
+    "value_internal": 13.0,
+    "input": 130.0
+  },
+  {
+    "path": "body.frame_end_allowance_mm",
+    "name": "body_frame_end_allowance_mm",
+    "unit": "mm",
+    "expression": "30.0 mm",
+    "value_internal": 3.0,
+    "input": 30.0
+  },
+  {
+    "path": "body.frame_bottom_z_mm",
+    "name": "body_frame_bottom_z_mm",
+    "unit": "mm",
+    "expression": "-18.0 mm",
+    "value_internal": -1.8,
+    "input": -18.0
+  },
+  {
+    "path": "body.frame_beam_w_mm",
+    "name": "body_frame_beam_w_mm",
+    "unit": "mm",
+    "expression": "12.0 mm",
+    "value_internal": 1.2000000000000002,
+    "input": 12.0
+  },
+  {
+    "path": "body.frame_beam_h_mm",
+    "name": "body_frame_beam_h_mm",
+    "unit": "mm",
+    "expression": "10.0 mm",
+    "value_internal": 1.0,
+    "input": 10.0
+  },
+  {
+    "path": "body.frame_beam_wall_mm",
+    "name": "body_frame_beam_wall_mm",
+    "unit": "mm",
+    "expression": "2.4 mm",
+    "value_internal": 0.24,
+    "input": 2.4
+  },
+  {
+    "path": "body.frame_plate_bottom_z_mm",
+    "name": "body_frame_plate_bottom_z_mm",
+    "unit": "mm",
+    "expression": "-15.0 mm",
+    "value_internal": -1.5,
+    "input": -15.0
+  },
+  {
+    "path": "body.frame_plate_t_mm",
+    "name": "body_frame_plate_t_mm",
+    "unit": "mm",
+    "expression": "2.0 mm",
+    "value_internal": 0.2,
+    "input": 2.0
+  },
+  {
+    "path": "body.cross_rib_t_mm",
+    "name": "body_cross_rib_t_mm",
+    "unit": "mm",
+    "expression": "2.4 mm",
+    "value_internal": 0.24,
+    "input": 2.4
+  },
+  {
+    "path": "body.deck_bottom_z_mm",
+    "name": "body_deck_bottom_z_mm",
+    "unit": "mm",
+    "expression": "28.0 mm",
+    "value_internal": 2.8000000000000003,
+    "input": 28.0
+  },
+  {
+    "path": "body.deck_t_mm",
+    "name": "body_deck_t_mm",
+    "unit": "mm",
+    "expression": "2.0 mm",
+    "value_internal": 0.2,
+    "input": 2.0
+  },
+  {
+    "path": "body.com_z_candidate_mm",
+    "name": "body_com_z_candidate_mm",
+    "unit": "mm",
+    "expression": "12.0 mm",
+    "value_internal": 1.2000000000000002,
+    "input": 12.0
+  },
+  {
+    "path": "body.camera_pitch_down_deg",
+    "name": "body_camera_pitch_down_deg",
+    "unit": "deg",
+    "expression": "30.0 deg",
+    "value_internal": 0.5235987755982988,
+    "input": 30.0
+  }
+]

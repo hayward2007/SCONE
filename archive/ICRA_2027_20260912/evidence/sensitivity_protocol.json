@@ -1,0 +1,28 @@
+{
+  "purpose": "post-review numerical sensitivity and visual replay; not held-out evaluation",
+  "dt_s": [
+    0.001,
+    0.002,
+    0.004
+  ],
+  "conditions": {
+    "no_roll": [],
+    "pair_12": [
+      1,
+      2
+    ],
+    "corners": null
+  },
+  "phase": 0,
+  "vx": 0.45,
+  "settle_s": 1,
+  "measure_s": 8,
+  "control_dt_s": 0.02,
+  "video": {
+    "width": 1280,
+    "height": 720,
+    "fps": 25,
+    "speed": 1
+  },
+  "source_manifest": "audit_protocol.json"
+}

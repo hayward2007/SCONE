@@ -1,0 +1,8 @@
+{
+  "before_cm3": 99.22801478278821,
+  "after_cm3": 119.63853341042329,
+  "roof_z_mm": 104,
+  "nominal_roof_thickness_mm": 2.8,
+  "high_side_panels_mm": 2.2,
+  "repair": "Restored outer upper skin unintentionally clipped by neck core mask above z56"
+}

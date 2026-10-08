@@ -1,0 +1,7 @@
+{
+  "status": "geometry applied",
+  "pad_contact_planes_unchanged": true,
+  "pads": "3.2mm keyed TPU, 1.6mm deep D4.2 counterbores, M2x5 low-head candidate",
+  "J6_counterbore": "D5.4 x 2.6 deep; 3.4 residual",
+  "camera": "existing placeholder retained; 28x28 pattern; cover D4.2 x2.2 CB; M2x16 candidate"
+}

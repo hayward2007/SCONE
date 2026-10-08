@@ -1,0 +1,55 @@
+{
+  "underside_lid_screw_xy_mm": [
+    [
+      -14,
+      -25
+    ],
+    [
+      -14,
+      25
+    ],
+    [
+      70,
+      -69
+    ],
+    [
+      70,
+      69
+    ],
+    [
+      97,
+      -69
+    ],
+    [
+      97,
+      69
+    ],
+    [
+      180,
+      -25
+    ],
+    [
+      180,
+      25
+    ]
+  ],
+  "example_lid_screw": "M3x35 with example M3 insert OD4.6 L5 / pilot4.0",
+  "lid_split_mm": [
+    82.85,
+    83.15
+  ],
+  "motor_connector_window_mm": [
+    24,
+    13
+  ],
+  "floor_feedthrough_mm": [
+    14,
+    10
+  ],
+  "tray_flat_loom_channels_mm": [
+    8,
+    1
+  ],
+  "ttl_confirmed": true,
+  "source_motor_centers_changed": false
+}

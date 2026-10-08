@@ -1,0 +1,27 @@
+{
+  "method": "Temporary geometry only; 3-axis reconstruction from CAD joint pivots; original and copy joint definitions never edited",
+  "sample_units": "degrees; yaw signed outward by side; pitch and spin about world +Y before yaw",
+  "tested": 348,
+  "baseline_colliding": 38,
+  "baseline_free": 310,
+  "added_collision_poses": [
+    {
+      "leg": "LEG 1:1",
+      "yaw": 15,
+      "pitch": 30,
+      "spin": 200,
+      "family": "extended_pitch",
+      "housing": "H01 Upper shell:1/PA12 cover",
+      "leg_body": "LEG 1:1+LINK:1/본체2",
+      "intersection_mm3": 43.289224071898886
+    }
+  ],
+  "unresolved": [],
+  "source_pose_intersections": [],
+  "families": {
+    "operating_candidate": 300,
+    "extended_yaw": 24,
+    "extended_pitch": 24
+  },
+  "added_body_count": 35
+}

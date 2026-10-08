@@ -1,0 +1,214 @@
+[
+  {
+    "pose": "fold_205",
+    "angles": [
+      205,
+      90,
+      200,
+      0,
+      0
+    ],
+    "box_mm": [
+      [
+        0.9043180185142496,
+        -42.0,
+        145.5
+      ],
+      [
+        266.6,
+        42.0,
+        295.71435644333707
+      ]
+    ],
+    "interferences": [],
+    "inherited_motor_cover_overlaps": [
+      [
+        1,
+        1,
+        "J2 XM430-W350 (shoulder) cable cover",
+        "J2 XM430-W350 (shoulder)",
+        1.8493
+      ],
+      [
+        2,
+        2,
+        "J3 XM430-W350 (elbow) cable cover",
+        "J3 XM430-W350 (elbow)",
+        1.8493
+      ],
+      [
+        3,
+        3,
+        "J4 XM430-W210 (wrist pitch) cable cover",
+        "J4 XM430-W210 (wrist pitch)",
+        1.8493
+      ],
+      [
+        5,
+        5,
+        "J6 XM430-W210 (gripper) cable cover",
+        "J6 XM430-W210 (gripper)",
+        1.8493
+      ]
+    ]
+  },
+  {
+    "pose": "fold_206",
+    "angles": [
+      206,
+      90,
+      200,
+      0,
+      0
+    ],
+    "box_mm": [
+      [
+        1.5805546848877405,
+        -42.0,
+        145.5
+      ],
+      [
+        266.6,
+        42.0,
+        294.29659678898304
+      ]
+    ],
+    "interferences": [],
+    "inherited_motor_cover_overlaps": [
+      [
+        1,
+        1,
+        "J2 XM430-W350 (shoulder) cable cover",
+        "J2 XM430-W350 (shoulder)",
+        1.8493
+      ],
+      [
+        2,
+        2,
+        "J3 XM430-W350 (elbow) cable cover",
+        "J3 XM430-W350 (elbow)",
+        1.8493
+      ],
+      [
+        3,
+        3,
+        "J4 XM430-W210 (wrist pitch) cable cover",
+        "J4 XM430-W210 (wrist pitch)",
+        1.8493
+      ],
+      [
+        5,
+        5,
+        "J6 XM430-W210 (gripper) cable cover",
+        "J6 XM430-W210 (gripper)",
+        1.8493
+      ]
+    ]
+  },
+  {
+    "pose": "fold_207",
+    "angles": [
+      207,
+      90,
+      200,
+      0,
+      0
+    ],
+    "box_mm": [
+      [
+        2.2814316748596397,
+        -42.0,
+        145.5
+      ],
+      [
+        266.6,
+        42.0,
+        292.8908550234408
+      ]
+    ],
+    "interferences": [],
+    "inherited_motor_cover_overlaps": [
+      [
+        1,
+        1,
+        "J2 XM430-W350 (shoulder) cable cover",
+        "J2 XM430-W350 (shoulder)",
+        1.8493
+      ],
+      [
+        2,
+        2,
+        "J3 XM430-W350 (elbow) cable cover",
+        "J3 XM430-W350 (elbow)",
+        1.8493
+      ],
+      [
+        3,
+        3,
+        "J4 XM430-W210 (wrist pitch) cable cover",
+        "J4 XM430-W210 (wrist pitch)",
+        1.8493
+      ],
+      [
+        5,
+        5,
+        "J6 XM430-W210 (gripper) cable cover",
+        "J6 XM430-W210 (gripper)",
+        1.8493
+      ]
+    ]
+  },
+  {
+    "pose": "fold_208",
+    "angles": [
+      208,
+      90,
+      200,
+      0,
+      0
+    ],
+    "box_mm": [
+      [
+        3.0067354945093427,
+        -42.0,
+        145.5
+      ],
+      [
+        266.6,
+        42.0,
+        291.4975593492698
+      ]
+    ],
+    "interferences": [],
+    "inherited_motor_cover_overlaps": [
+      [
+        1,
+        1,
+        "J2 XM430-W350 (shoulder) cable cover",
+        "J2 XM430-W350 (shoulder)",
+        1.8493
+      ],
+      [
+        2,
+        2,
+        "J3 XM430-W350 (elbow) cable cover",
+        "J3 XM430-W350 (elbow)",
+        1.8493
+      ],
+      [
+        3,
+        3,
+        "J4 XM430-W210 (wrist pitch) cable cover",
+        "J4 XM430-W210 (wrist pitch)",
+        1.8493
+      ],
+      [
+        5,
+        5,
+        "J6 XM430-W210 (gripper) cable cover",
+        "J6 XM430-W210 (gripper)",
+        1.8493
+      ]
+    ]
+  }
+]

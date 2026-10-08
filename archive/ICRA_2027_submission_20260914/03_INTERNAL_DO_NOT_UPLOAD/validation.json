@@ -1,0 +1,73 @@
+{
+  "checked_at_utc": "2026-09-19T15:46:02.941300+00:00",
+  "status": "LOCAL_FILE_CHECKS_PASS",
+  "files": [
+    {
+      "file": "01_UPLOAD/SCONE_ICRA2027_Paper.pdf",
+      "source": "/Users/hayward_kim/Developer/SCONE/archive/ICRA_2027_revision5_20260913/output/pdf/SCONE_ICRA2027_Manuscript_EN.pdf",
+      "bytes": 462375,
+      "sha256": "c82a1da950bd0c160c0cf1e0922ee899db300dbd3b3b07be63f37fd8de4c2720",
+      "identical_to_source": true
+    },
+    {
+      "file": "01_UPLOAD/SCONE_ICRA2027_Video.mp4",
+      "source": "/Users/hayward_kim/Developer/SCONE/archive/ICRA_2027_video_revision2_20260920/SCONE_ICRA2027_Video.mp4",
+      "bytes": 17461862,
+      "sha256": "02f1df0ca4a0660b9d6f05f2cbf9e47b66c554341ff776dec67bb8194bc6dc7c",
+      "identical_to_source": true
+    }
+  ],
+  "pdf": {
+    "pages": 6,
+    "all_pages_us_letter": true,
+    "fonts_embedded": true,
+    "type3_fonts": 0,
+    "encrypted": false,
+    "annotations": 0,
+    "bookmarks": 0,
+    "author_metadata": "",
+    "embedded_attachments": false,
+    "ai_disclosure_present": true,
+    "searchable": true,
+    "pdf_version": "%PDF-1.5"
+  },
+  "video": {
+    "duration_s": 96.433333,
+    "bytes": 17461862,
+    "width": 1280,
+    "height": 720,
+    "fps": 30,
+    "codec": "h264",
+    "scan_type": "progressive",
+    "audio_streams": 0,
+    "decode_errors": false,
+    "physical_coverage": [
+      {
+        "source": "archive/videos/SCONEv2.mp4",
+        "every_frame_compared_in_order": true,
+        "frames": 957,
+        "full_duration_preserved": true,
+        "ssim_against_scaled_original": 0.991391
+      },
+      {
+        "source": "archive/videos/SCONEv2_stairs.mp4",
+        "every_frame_compared_in_order": true,
+        "frames": 1131,
+        "full_duration_preserved": true,
+        "ssim_against_scaled_original": 0.989648
+      }
+    ],
+    "edit_manifest": "/Users/hayward_kim/Developer/SCONE/archive/ICRA_2027_video_revision2_20260920/edit_manifest.json"
+  },
+  "form": {
+    "abstract_matches_source": true,
+    "title_matches_pdf_ignoring_case": true,
+    "abstract_words": 190,
+    "abstract_characters": 1310,
+    "authors_complete": false,
+    "authors_complete_note": "Refers only to the original local worksheet, not the already submitted portal record."
+  },
+  "visual_review": "PDF unchanged. Video revision 2: all six segments visually inspected; complete decoded v2 frame sequences compared with originals.",
+  "online_pdf_test": "NOT_PERFORMED",
+  "external_submission": "Paper acknowledgement was inspected in the prior conversation: paper 2764, status Received. This video edit was not uploaded."
+}

@@ -1,0 +1,12 @@
+{
+  "step_id": "B04",
+  "status": "PASS",
+  "frame_mm": [
+    130.0,
+    350.0
+  ],
+  "frame_bodies": 2,
+  "crank_solid": true,
+  "crank_volume_cm3": 73.24800000000005,
+  "interfaces": "BLOCKED: motor, yoke overlap, fork/link overlap and deck supports unresolved"
+}

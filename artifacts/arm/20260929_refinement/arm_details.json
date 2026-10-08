@@ -1,0 +1,649 @@
+[
+  {
+    "component": "ARM1 turntable + J2",
+    "bodies": [
+      {
+        "name": "A1 turntable (PLA, 8x M2x6 horn, 4x M2.5x6 cheeks)",
+        "box": [
+          [
+            -24.0,
+            -24.0,
+            0.0
+          ],
+          [
+            24.0,
+            24.0,
+            17.0
+          ]
+        ],
+        "volume": 11.705699151738333,
+        "solid": true,
+        "faces": 42,
+        "appearance": "R4 matte yellow",
+        "token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZgn3btbUTLnmd2GDbqK355bw2UIWRgrGZQkqipUmqkYGhrnmacYquiaFRqm6iZYqhblpSkqV5UnKKkbFpClgt0AwGNAC2z0ABbB3IeiNzExMjSwDBsvjdiwAAAA=="
+      },
+      {
+        "name": "J2 XM430-W350 (shoulder)",
+        "box": [
+          [
+            -14.25,
+            -19.0,
+            6.0
+          ],
+          [
+            14.25,
+            23.4,
+            52.5
+          ]
+        ],
+        "volume": 43.323567779490155,
+        "solid": true,
+        "faces": 230,
+        "appearance": "알루미늄 - 피막 처리 광택(회색)",
+        "token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZgn3btbUTLnmd2GDbqK355bw2UIWRgrGZQkqipUmqkYGhrnmacYquiaFRqm6iZYqhblpSkqV5UnKKkbFpClgt0AwGNAC2z0ABbB3IeiNzExNjUwCrz1XNiwAAAA=="
+      },
+      {
+        "name": "J2 XM430-W350 (shoulder) cable cover",
+        "box": [
+          [
+            -14.25,
+            -17.0,
+            20.35
+          ],
+          [
+            14.25,
+            -8.2,
+            33.15
+          ]
+        ],
+        "volume": 0.48514263857195666,
+        "solid": true,
+        "faces": 100,
+        "appearance": "알루미늄 - 피막 처리 광택(회색)",
+        "token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZgn3btbUTLnmd2GDbqK355bw2UIWRgrGZQkqipUmqkYGhrnmacYquiaFRqm6iZYqhblpSkqV5UnKKkbFpClgt0AwGNAC2z0ABbB3IeiNzExMTAwDjrX7yiwAAAA=="
+      }
+    ],
+    "features": [
+      {
+        "name": "ARM1 turntable + J2 (TBRM)",
+        "type": "adsk::fusion::BaseFeature"
+      }
+    ],
+    "joints": []
+  },
+  {
+    "component": "ARM3 forearm + J4",
+    "bodies": [
+      {
+        "name": "A3 forearm (PLA, 16x M2x4 horn, 4x M2.5x10)",
+        "box": [
+          [
+            -13.5,
+            -23.0,
+            -14.0
+          ],
+          [
+            64.0,
+            23.0,
+            14.0
+          ]
+        ],
+        "volume": 23.0936764148221,
+        "solid": true,
+        "faces": 92,
+        "appearance": "R4 matte yellow",
+        "token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZgn3btbUTLnmd2GDbqK355bw2UIWRgrGZQlpamplxqmWSrkmSWYquiVmaha6lsaG5brJpmqmZSapBokWyJVgt0AwGNAC2z0ABbB3IeiNzEzNjcwAVLa7ciwAAAA=="
+      },
+      {
+        "name": "J4 XM430-W210 (wrist pitch)",
+        "box": [
+          [
+            54.75,
+            -19.0,
+            -14.25
+          ],
+          [
+            101.25,
+            23.4,
+            14.25
+          ]
+        ],
+        "volume": 43.32356777949014,
+        "solid": true,
+        "faces": 230,
+        "appearance": "알루미늄 - 피막 처리 광택(회색)",
+        "token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZgn3btbUTLnmd2GDbqK355bw2UIWRgrGZQlpamplxqmWSrkmSWYquiVmaha6lsaG5brJpmqmZSapBokWyJVgt0AwGNAC2z0ABbB3IeiNzEzMTYwDLf4KUiwAAAA=="
+      },
+      {
+        "name": "J4 XM430-W210 (wrist pitch) cable cover",
+        "box": [
+          [
+            69.1,
+            -17.0,
+            -14.25
+          ],
+          [
+            81.9,
+            -8.2,
+            14.25
+          ]
+        ],
+        "volume": 0.4851426385719451,
+        "solid": true,
+        "faces": 100,
+        "appearance": "알루미늄 - 피막 처리 광택(회색)",
+        "token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZgn3btbUTLnmd2GDbqK355bw2UIWRgrGZQlpamplxqmWSrkmSWYquiVmaha6lsaG5brJpmqmZSapBokWyJVgt0AwGNAC2z0ABbB3IeiNzEzMTCwBDplADiwAAAA=="
+      }
+    ],
+    "features": [
+      {
+        "name": "ARM3 forearm + J4 (TBRM)",
+        "type": "adsk::fusion::BaseFeature"
+      }
+    ],
+    "joints": []
+  },
+  {
+    "component": "ARM 5DOF + gripper (MX28 x2, W350 x2, W210 x2)",
+    "bodies": [],
+    "features": [],
+    "joints": [
+      {
+        "name": "J1 base yaw",
+        "a": "ARM0 base + J1:1",
+        "b": "ARM1 turntable + J2:1",
+        "angle": 0.0,
+        "axis": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "limits": [
+          0.0,
+          0.0,
+          false,
+          false
+        ],
+        "geometry": [
+          22.8,
+          0.0,
+          18.800000000000004
+        ]
+      },
+      {
+        "name": "J2 shoulder",
+        "a": "ARM1 turntable + J2:1",
+        "b": "ARM2 upper arm + J3:1",
+        "angle": 0.0,
+        "axis": [
+          0.0,
+          -0.9999999999999998,
+          -1.1555579666323415e-32
+        ],
+        "limits": [
+          0.0,
+          0.0,
+          false,
+          false
+        ],
+        "geometry": [
+          22.8,
+          -1.69,
+          23.025000000000002
+        ]
+      },
+      {
+        "name": "J3 elbow",
+        "a": "ARM2 upper arm + J3:1",
+        "b": "ARM3 forearm + J4:1",
+        "angle": 0.17453292519943295,
+        "axis": [
+          0.0,
+          -0.9999999999999998,
+          -1.1555579666323415e-32
+        ],
+        "limits": [
+          0.0,
+          0.0,
+          false,
+          false
+        ],
+        "geometry": [
+          24.671205217359834,
+          -1.69,
+          31.82832840660425
+        ]
+      },
+      {
+        "name": "J4 wrist pitch",
+        "a": "ARM3 forearm + J4:1",
+        "b": "ARM4 wrist + J5:1",
+        "angle": -0.17453292519943295,
+        "axis": [
+          0.0,
+          -0.9999999999999998,
+          7.703719777548943e-34
+        ],
+        "limits": [
+          0.0,
+          0.0,
+          false,
+          false
+        ],
+        "geometry": [
+          16.161538036965972,
+          -1.6899999999999997,
+          34.758441796718635
+        ]
+      },
+      {
+        "name": "J5 wrist roll",
+        "a": "ARM4 wrist + J5:1",
+        "b": "ARM5 gripper frame + J6 + camera:1",
+        "angle": 1.5707963267948966,
+        "axis": [
+          0.034899496702501205,
+          5.551115123125794e-17,
+          0.999390827019095
+        ],
+        "limits": [
+          0.0,
+          0.0,
+          false,
+          false
+        ],
+        "geometry": [
+          15.93643628323485,
+          -2.220446049250299e-16,
+          28.312370962445506
+        ]
+      },
+      {
+        "name": "J6 gripper",
+        "a": "ARM5 gripper frame + J6 + camera:1",
+        "b": "ARM6 moving jaw:1",
+        "angle": 0.0,
+        "axis": [
+          -1.8348203716248163e-16,
+          0.9999999999999987,
+          -7.330608479741151e-17
+        ],
+        "limits": [
+          0.0,
+          0.0,
+          false,
+          false
+        ],
+        "geometry": [
+          14.263249529511477,
+          1.6900000000000002,
+          26.244504649753935
+        ]
+      }
+    ]
+  },
+  {
+    "component": "ARM0 base + J1",
+    "bodies": [
+      {
+        "name": "A0 base (PLA, 6x M2.5x6 to J1, 4x M3x12 to rails)",
+        "box": [
+          [
+            217.5,
+            -42.0,
+            145.5
+          ],
+          [
+            264.0,
+            42.0,
+            157.5
+          ]
+        ],
+        "volume": 19.635405250121895,
+        "solid": true,
+        "faces": 47,
+        "appearance": "R4 matte yellow",
+        "token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZgn3btbUTLnmd2GDbqK355bw2UIWRgrGZQqqJoVmikYGxboq5kaWuiYmFoW6ipWmSbqKFpYm5oYWFkYVFClgt0AwGNAC2z0ABbB3IeiNzE2NjAwD3k3A0iwAAAA=="
+      },
+      {
+        "name": "J1 MX-28AT (base yaw)",
+        "box": [
+          [
+            216.0,
+            -17.8,
+            149.25
+          ],
+          [
+            266.6,
+            17.8,
+            194.35
+          ]
+        ],
+        "volume": 43.9903760673358,
+        "solid": true,
+        "faces": 341,
+        "appearance": "알루미늄 - 피막 처리 광택(회색)",
+        "token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZgn3btbUTLnmd2GDbqK355bw2UIWRgrGZQqqJoVmikYGxboq5kaWuiYmFoW6ipWmSbqKFpYm5oYWFkYVFClgt0AwGNAC2z0ABbB3IeiNzE2NjMwDCNhPdiwAAAA=="
+      }
+    ],
+    "features": [
+      {
+        "name": "ARM0 base + J1 (TBRM)",
+        "type": "adsk::fusion::BaseFeature"
+      },
+      {
+        "name": "A0 J1 bottom pocket enlarge (TBRM)",
+        "type": "adsk::fusion::BaseFeature"
+      },
+      {
+        "name": "A0 J1 bottom pocket enlarge",
+        "type": "adsk::fusion::CombineFeature"
+      }
+    ],
+    "joints": []
+  },
+  {
+    "component": "ARM2 upper arm + J3",
+    "bodies": [
+      {
+        "name": "A2 upper arm (PLA, 16x M2x4 horn, 4x M2.5x10)",
+        "box": [
+          [
+            -13.5,
+            -23.0,
+            -14.0
+          ],
+          [
+            64.0,
+            23.0,
+            14.0
+          ]
+        ],
+        "volume": 23.0936764148221,
+        "solid": true,
+        "faces": 92,
+        "appearance": "R4 matte yellow",
+        "token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZgn3btbUTLnmd2GDbqK355bw2UIWRgrGZgmGSgYFxmpGlbqqRpYmuiblJsq6lSZqFbpq5cXJScrKlRZKZMVgt0AwGNAC2z0ABbB3IeiNzE1NjYwA+t2TeiwAAAA=="
+      },
+      {
+        "name": "J3 XM430-W350 (elbow)",
+        "box": [
+          [
+            54.75,
+            -19.0,
+            -14.25
+          ],
+          [
+            101.25,
+            23.4,
+            14.25
+          ]
+        ],
+        "volume": 43.32356777949014,
+        "solid": true,
+        "faces": 230,
+        "appearance": "알루미늄 - 피막 처리 광택(회색)",
+        "token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZgn3btbUTLnmd2GDbqK355bw2UIWRgrGZgmGSgYFxmpGlbqqRpYmuiblJsq6lSZqFbpq5cXJScrKlRZKZMVgt0AwGNAC2z0ABbB3IeiNzE1NjSwAgXrE+iwAAAA=="
+      },
+      {
+        "name": "J3 XM430-W350 (elbow) cable cover",
+        "box": [
+          [
+            69.1,
+            -17.0,
+            -14.25
+          ],
+          [
+            81.9,
+            -8.2,
+            14.25
+          ]
+        ],
+        "volume": 0.4851426385719451,
+        "solid": true,
+        "faces": 100,
+        "appearance": "알루미늄 - 피막 처리 광택(회색)",
+        "token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZgn3btbUTLnmd2GDbqK355bw2UIWRgrGZgmGSgYFxmpGlbqqRpYmuiblJsq6lSZqFbpq5cXJScrKlRZKZMVgt0AwGNAC2z0ABbB3IeiNzE1MTEwBatEEPiwAAAA=="
+      }
+    ],
+    "features": [
+      {
+        "name": "ARM2 upper arm + J3 (TBRM)",
+        "type": "adsk::fusion::BaseFeature"
+      }
+    ],
+    "joints": []
+  },
+  {
+    "component": "ARM4 wrist + J5",
+    "bodies": [
+      {
+        "name": "A4 wrist bracket (PLA, 16x M2x4 horn, 6x M2.5x6 to J5)",
+        "box": [
+          [
+            -13.5,
+            -39.0,
+            -19.5
+          ],
+          [
+            30.0,
+            23.0,
+            19.5
+          ]
+        ],
+        "volume": 16.214003315743938,
+        "solid": true,
+        "faces": 89,
+        "appearance": "R4 matte yellow",
+        "token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZgn3btbUTLnmd2GDbqK355bw2UIWRgrGZgpFhanKScUqKrpFZSpKuiWmqpW6SOZAwNrdMM021MDRKNkkGqwWawYAGwPYZKICtA1lvZG5ibmwGAJka8yuLAAAA"
+      },
+      {
+        "name": "J5 MX-28AT (wrist roll)",
+        "box": [
+          [
+            25.75,
+            -38.6,
+            -17.8
+          ],
+          [
+            70.85,
+            12.0,
+            17.8
+          ]
+        ],
+        "volume": 43.99037606761524,
+        "solid": true,
+        "faces": 341,
+        "appearance": "알루미늄 - 피막 처리 광택(회색)",
+        "token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZgn3btbUTLnmd2GDbqK355bw2UIWRgrGZgpFhanKScUqKrpFZSpKuiWmqpW6SOZAwNrdMM021MDRKNkkGqwWawYAGwPYZKICtA1lvZG5ibmIEAEdI32OLAAAA"
+      }
+    ],
+    "features": [
+      {
+        "name": "ARM4 wrist + J5 (TBRM)",
+        "type": "adsk::fusion::BaseFeature"
+      },
+      {
+        "name": "A4 J5 bottom pocket enlarge (TBRM)",
+        "type": "adsk::fusion::BaseFeature"
+      },
+      {
+        "name": "A4 J5 bottom pocket enlarge",
+        "type": "adsk::fusion::CombineFeature"
+      }
+    ],
+    "joints": []
+  },
+  {
+    "component": "ARM6 moving jaw",
+    "bodies": [
+      {
+        "name": "A6 moving jaw (PLA, 16x M2x4 horn)",
+        "box": [
+          [
+            -13.5,
+            -23.0,
+            -18.0
+          ],
+          [
+            64.75,
+            23.0,
+            13.5
+          ]
+        ],
+        "volume": 19.56126370023997,
+        "solid": true,
+        "faces": 70,
+        "appearance": "R4 matte yellow",
+        "token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZgn3btbUTLnmd2GDbqK355bw2UIWRgrGZglFKmrmpkUGabqqphZGuSZJhoq6FuUmKbppZaqKJYaKJpXGqJVgt0AwGNAC2z0ABbB3IeiNzE0szAwDsIzDpiwAAAA=="
+      },
+      {
+        "name": "A6 moving jaw pad (TPU)",
+        "box": [
+          [
+            34.75,
+            -12.0,
+            -20.0
+          ],
+          [
+            64.75,
+            12.0,
+            -18.0
+          ]
+        ],
+        "volume": 1.44,
+        "solid": true,
+        "faces": 6,
+        "appearance": "ABS(흰색)",
+        "token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZgn3btbUTLnmd2GDbqK355bw2UIWRgrGZglFKmrmpkUGabqqphZGuSZJhoq6FuUmKbppZaqKJYaKJpXGqJVgt0AwGNAC2z0ABbB3IeiNzE0szMwDZhlMAiwAAAA=="
+      }
+    ],
+    "features": [
+      {
+        "name": "ARM6 moving jaw (TBRM)",
+        "type": "adsk::fusion::BaseFeature"
+      },
+      {
+        "name": "A6 finger 0.5 gap to jaw base (TBRM)",
+        "type": "adsk::fusion::BaseFeature"
+      },
+      {
+        "name": "A6 finger 0.5 gap to jaw base",
+        "type": "adsk::fusion::CombineFeature"
+      }
+    ],
+    "joints": []
+  },
+  {
+    "component": "ARM5 gripper frame + J6 + camera",
+    "bodies": [
+      {
+        "name": "A5 gripper frame (PLA, 8x M2x6 horn, 4x M2.5x8 to J6, 4x M2x8 camera)",
+        "box": [
+          [
+            0.0,
+            -17.5,
+            -48.0
+          ],
+          [
+            85.0,
+            17.5,
+            28.0
+          ]
+        ],
+        "volume": 29.397880381302336,
+        "solid": true,
+        "faces": 74,
+        "appearance": "R4 matte yellow",
+        "token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZgn3btbUTLnmd2GDbqK355bw2UIWRgrGZgpG5kZG5pbmBrmWSYZquSYplkq5FSmKqbqploqGpkUGqpXGaMVgt0AwGNAC2z0ABbB3IeiNzEwsTUwB2N9qfiwAAAA=="
+      },
+      {
+        "name": "A5 fixed jaw pad (TPU)",
+        "box": [
+          [
+            55.0,
+            -12.0,
+            -6.0
+          ],
+          [
+            85.0,
+            12.0,
+            -4.0
+          ]
+        ],
+        "volume": 1.44,
+        "solid": true,
+        "faces": 6,
+        "appearance": "ABS(흰색)",
+        "token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZgn3btbUTLnmd2GDbqK355bw2UIWRgrGZgpG5kZG5pbmBrmWSYZquSYplkq5FSmKqbqploqGpkUGqpXGaMVgt0AwGNAC2z0ABbB3IeiNzEwtTQwAuwqyBiwAAAA=="
+      },
+      {
+        "name": "CAM USB camera 32x32 (placeholder)",
+        "box": [
+          [
+            41.9,
+            -16.0,
+            -46.0
+          ],
+          [
+            59.5,
+            16.0,
+            -14.0
+          ]
+        ],
+        "volume": 4.101408640414506,
+        "solid": true,
+        "faces": 8,
+        "appearance": "알루미늄 - 피막 처리 광택(회색)",
+        "token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZgn3btbUTLnmd2GDbqK355bw2UIWRgrGZgpG5kZG5pbmBrmWSYZquSYplkq5FSmKqbqploqGpkUGqpXGaMVgt0AwGNAC2z0ABbB3IeiNzEwtTMwCNV8gfiwAAAA=="
+      },
+      {
+        "name": "J6 XM430-W210 (gripper)",
+        "box": [
+          [
+            6.0,
+            -19.0,
+            -19.25
+          ],
+          [
+            34.5,
+            23.4,
+            27.25
+          ]
+        ],
+        "volume": 43.32356777949015,
+        "solid": true,
+        "faces": 230,
+        "appearance": "알루미늄 - 피막 처리 광택(회색)",
+        "token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZgn3btbUTLnmd2GDbqK355bw2UIWRgrGZgpG5kZG5pbmBrmWSYZquSYplkq5FSmKqbqploqGpkUGqpXGaMVgt0AwGNAC2z0ABbB3IeiNzEwszQwDtkYGqiwAAAA=="
+      },
+      {
+        "name": "J6 XM430-W210 (gripper) cable cover",
+        "box": [
+          [
+            6.0,
+            -17.0,
+            -4.9
+          ],
+          [
+            34.5,
+            -8.2,
+            7.9
+          ]
+        ],
+        "volume": 0.48514263857195095,
+        "solid": true,
+        "faces": 100,
+        "appearance": "알루미늄 - 피막 처리 광택(회색)",
+        "token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZgn3btbUTLnmd2GDbqK355bw2UIWRgrGZgpG5kZG5pbmBrmWSYZquSYplkq5FSmKqbqploqGpkUGqpXGaMVgt0AwGNAC2z0ABbB3IeiNzEwszMwBOBOU0iwAAAA=="
+      }
+    ],
+    "features": [
+      {
+        "name": "ARM5 gripper frame + J6 + camera (TBRM)",
+        "type": "adsk::fusion::BaseFeature"
+      }
+    ],
+    "joints": []
+  }
+]

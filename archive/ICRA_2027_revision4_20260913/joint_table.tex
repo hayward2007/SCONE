@@ -1,0 +1,24 @@
+\begin{table*}[t]\centering\small
+\caption{All-joint limit study at a 0.45 m/s command: four phases, 20 s per trial}
+\label{tab:joint}\begin{tabular}{ccccccc}\toprule
+ & & Speed (m/s) & $e_v$ (m/s) & Joint RMS ($^\circ$) & Goal lag ($^\circ$) & Clock fraction\\
+Clock & Code & Mean [min, max] & Mean & Worst observed & Maximum & Mean\\\midrule
+Unlimited & U & 0.287 [0.283, 0.291] & 0.188 & 19.38 & 0.0 & 1.000\\
+Unlimited & B & 0.289 [0.285, 0.291] & 0.186 & 19.59 & 0.0 & 1.000\\
+Unlimited & P & 0.289 [0.286, 0.291] & 0.186 & 19.45 & 0.0 & 1.000\\
+\midrule
+H, $\rho=1.0$ & U & 0.220 [0.218, 0.222] & 0.239 & 7.44 & 45.7 & 0.602\\
+H, $\rho=1.0$ & B & 0.223 [0.219, 0.226] & 0.236 & 7.36 & 28.7 & 0.604\\
+H, $\rho=1.0$ & P & 0.224 [0.220, 0.228] & 0.234 & 7.37 & 19.5 & 0.607\\
+\midrule
+H, $\rho=0.8$ & U & 0.231 [0.218, 0.244] & 0.232 & 5.58 & 47.5 & 0.566\\
+H, $\rho=0.8$ & B & 0.227 [0.211, 0.241] & 0.235 & 5.54 & 30.0 & 0.552\\
+H, $\rho=0.8$ & P & 0.228 [0.213, 0.242] & 0.234 & 5.56 & 20.8 & 0.555\\
+\midrule
+F, $\rho=0.8$ & U & 0.320 [0.315, 0.323] & 0.169 & 6.62 & 64.8 & 1.000\\
+F, $\rho=0.8$ & B & 0.316 [0.309, 0.321] & 0.173 & 6.96 & 49.4 & 1.000\\
+F, $\rho=0.8$ & P & 0.317 [0.309, 0.324] & 0.171 & 6.96 & 33.8 & 1.000\\
+\bottomrule
+\end{tabular}
+\par\vspace{5pt}\noindent\parbox{.96\textwidth}{\footnotesize All entries complete 4/4 trials. H holds the gait clock until each goal is issued; F keeps the original gait clock. Joint RMS is the maximum, over trials and joints, of issued-target tracking RMS. Goal lag is requested minus issued target. Clock fraction is gait time divided by wall time. $\rho$ scales the joint-group no-load speeds; it is not a hardware confidence bound.}
+\end{table*}

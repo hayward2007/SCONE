@@ -1,0 +1,8 @@
+{
+  "content": [
+    {
+      "text": "{\n    \"message\": \"{\\\"step_id\\\": \\\"B06\\\", \\\"status\\\": \\\"PASS\\\", \\\"legs\\\": 4, \\\"native_revolute_joints\\\": 12, \\\"motor_geometry\\\": \\\"MISSING: coordinate markers only\\\", \\\"reference_angles_rad\\\": {\\\"yaw\\\": 0, \\\"q1\\\": -1.1200842295176878, \\\"q2\\\": 1.1200842295176878}, \\\"sign_validation\\\": \\\"NOT_RUN\\\"}\\n\",\n    \"success\": true\n}",
+      "type": "text"
+    }
+  ]
+}

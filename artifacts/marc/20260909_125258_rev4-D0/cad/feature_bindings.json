@@ -1,0 +1,107 @@
+{
+  "bindings": [
+    {
+      "feature": "Crank_outer_closed_section",
+      "role": "AlongDistance",
+      "expression": "leg_box_w_mm",
+      "value_internal": 3.4000000000000004
+    },
+    {
+      "feature": "Crank_hollow_open_only_at_ends",
+      "role": "AlongDistance",
+      "expression": "leg_box_w_mm - 2 * leg_wall_link_mm",
+      "value_internal": 2.8400000000000003
+    },
+    {
+      "feature": "Rim",
+      "role": "AlongDistance",
+      "expression": "geometry_b_sector_mm",
+      "value_internal": 2.0
+    },
+    {
+      "feature": "Lip_minus",
+      "role": "ProfileOffset",
+      "expression": "( -1 ) * ( geometry_b_sector_mm - geometry_t_lip_mm ) / 2",
+      "value_internal": -0.85
+    },
+    {
+      "feature": "Lip_minus",
+      "role": "AlongDistance",
+      "expression": "geometry_t_lip_mm",
+      "value_internal": 0.30000000000000004
+    },
+    {
+      "feature": "Lip_plus",
+      "role": "ProfileOffset",
+      "expression": "1 * ( geometry_b_sector_mm - geometry_t_lip_mm ) / 2",
+      "value_internal": 0.85
+    },
+    {
+      "feature": "Lip_plus",
+      "role": "AlongDistance",
+      "expression": "geometry_t_lip_mm",
+      "value_internal": 0.30000000000000004
+    },
+    {
+      "feature": "Web",
+      "role": "AlongDistance",
+      "expression": "geometry_t_web_mm",
+      "value_internal": 0.2
+    },
+    {
+      "feature": "Hub_no_interface",
+      "role": "AlongDistance",
+      "expression": "geometry_hub_boss_h_mm",
+      "value_internal": 1.0
+    },
+    {
+      "feature": "Rib_-150",
+      "role": "AlongDistance",
+      "expression": "geometry_b_sector_mm - 2 * geometry_t_lip_mm",
+      "value_internal": 1.4
+    },
+    {
+      "feature": "Rib_-100",
+      "role": "AlongDistance",
+      "expression": "geometry_b_sector_mm - 2 * geometry_t_lip_mm",
+      "value_internal": 1.4
+    },
+    {
+      "feature": "Rib_-50",
+      "role": "AlongDistance",
+      "expression": "geometry_b_sector_mm - 2 * geometry_t_lip_mm",
+      "value_internal": 1.4
+    },
+    {
+      "feature": "Rib_0",
+      "role": "AlongDistance",
+      "expression": "geometry_b_sector_mm - 2 * geometry_t_lip_mm",
+      "value_internal": 1.4
+    },
+    {
+      "feature": "Rib_50",
+      "role": "AlongDistance",
+      "expression": "geometry_b_sector_mm - 2 * geometry_t_lip_mm",
+      "value_internal": 1.4
+    },
+    {
+      "feature": "Rib_100",
+      "role": "AlongDistance",
+      "expression": "geometry_b_sector_mm - 2 * geometry_t_lip_mm",
+      "value_internal": 1.4
+    },
+    {
+      "feature": "Rib_150",
+      "role": "AlongDistance",
+      "expression": "geometry_b_sector_mm - 2 * geometry_t_lip_mm",
+      "value_internal": 1.4
+    },
+    {
+      "feature": "TPU_effective_envelope",
+      "role": "AlongDistance",
+      "expression": "geometry_b_sector_mm",
+      "value_internal": 2.0
+    }
+  ],
+  "limitation": "Polyline coordinates, planar crank shape, frame base features and assembly transforms are rebuilt from source-locked params. Only the listed extrusion widths and lip offsets update associatively."
+}

@@ -1,0 +1,187 @@
+{
+  "G00": {
+    "check_id": "G00",
+    "status": "PASS",
+    "model_stage": "D0",
+    "input_sha256": "9016f7ae0c61b47d2dc5956501b72e76cb43e6b856222ea5a5a4c550a5e09977",
+    "source_sha256": "3f129dbbf8bb31f3cba3e3a3431a3558a3cc7f7ca9dbad55b351475836253cd3",
+    "method_version": "marc-D0-initial-1",
+    "reason": "Source snapshot, 48 parameter key/unit/value comparisons and protected files verified",
+    "evidence": [
+      "evidence/G00_parameter_match.json",
+      "evidence/protected_files_check.json"
+    ],
+    "blocking_inputs": []
+  },
+  "G01": {
+    "check_id": "G01",
+    "status": "PASS",
+    "model_stage": "D0",
+    "input_sha256": "9016f7ae0c61b47d2dc5956501b72e76cb43e6b856222ea5a5a4c550a5e09977",
+    "source_sha256": "3f129dbbf8bb31f3cba3e3a3431a3558a3cc7f7ca9dbad55b351475836253cd3",
+    "method_version": "marc-D0-initial-1",
+    "reason": "Polyline convergence and two valid sector/tire solids",
+    "evidence": [
+      "evidence/B01_profile.json",
+      "evidence/B03_sector.json"
+    ],
+    "blocking_inputs": []
+  },
+  "G02": {
+    "check_id": "G02",
+    "status": "BLOCKED",
+    "model_stage": "D0",
+    "input_sha256": "9016f7ae0c61b47d2dc5956501b72e76cb43e6b856222ea5a5a4c550a5e09977",
+    "source_sha256": "3f129dbbf8bb31f3cba3e3a3431a3558a3cc7f7ca9dbad55b351475836253cd3",
+    "method_version": "marc-D0-initial-1",
+    "reason": "CAD passes 12/12 positive increments including affected chains; hardware mapping missing",
+    "evidence": [
+      "evidence/G02_kinematics.json"
+    ],
+    "blocking_inputs": [
+      "I01"
+    ],
+    "subchecks": {
+      "CAD": "PASS",
+      "hardware": "BLOCKED"
+    }
+  },
+  "G03": {
+    "check_id": "G03",
+    "status": "FAIL",
+    "model_stage": "D0",
+    "input_sha256": "9016f7ae0c61b47d2dc5956501b72e76cb43e6b856222ea5a5a4c550a5e09977",
+    "source_sha256": "3f129dbbf8bb31f3cba3e3a3431a3558a3cc7f7ca9dbad55b351475836253cd3",
+    "method_version": "marc-D0-initial-1",
+    "reason": "24 P00 intersections; 4 solid and 20 envelope pairs. Motor and fork detailed coverage incomplete. Paths not run",
+    "evidence": [
+      "evidence/G03_P00_intersections.json"
+    ],
+    "blocking_inputs": [
+      "I02",
+      "I03",
+      "I05",
+      "I08"
+    ]
+  },
+  "G04": {
+    "check_id": "G04",
+    "status": "BLOCKED",
+    "model_stage": "D0",
+    "input_sha256": "9016f7ae0c61b47d2dc5956501b72e76cb43e6b856222ea5a5a4c550a5e09977",
+    "source_sha256": "3f129dbbf8bb31f3cba3e3a3431a3558a3cc7f7ca9dbad55b351475836253cd3",
+    "method_version": "marc-D0-initial-1",
+    "reason": "Actual torque/current/thermal limits and valid contact paths missing",
+    "evidence": [
+      "calculations.json"
+    ],
+    "blocking_inputs": [
+      "I07",
+      "I09"
+    ]
+  },
+  "G05": {
+    "check_id": "G05",
+    "status": "FAIL",
+    "model_stage": "D0",
+    "input_sha256": "9016f7ae0c61b47d2dc5956501b72e76cb43e6b856222ea5a5a4c550a5e09977",
+    "source_sha256": "3f129dbbf8bb31f3cba3e3a3431a3558a3cc7f7ca9dbad55b351475836253cd3",
+    "method_version": "marc-D0-initial-1",
+    "reason": "Spin inertia exceeds candidate limit by 1.4106%; complete mass/CoM remain blocked",
+    "evidence": [
+      "parts_manifest.json",
+      "evidence/G05_spin_inertia.json"
+    ],
+    "blocking_inputs": [
+      "I02",
+      "I03",
+      "I05",
+      "I06",
+      "I08"
+    ],
+    "subchecks": {
+      "inertia_units": "PASS",
+      "spin_axis_inertia": "FAIL",
+      "complete_BOM": "BLOCKED"
+    }
+  },
+  "G06": {
+    "check_id": "G06",
+    "status": "BLOCKED",
+    "model_stage": "D0",
+    "input_sha256": "9016f7ae0c61b47d2dc5956501b72e76cb43e6b856222ea5a5a4c550a5e09977",
+    "source_sha256": "3f129dbbf8bb31f3cba3e3a3431a3558a3cc7f7ca9dbad55b351475836253cd3",
+    "method_version": "marc-D0-initial-1",
+    "reason": "D0 solid placeholders and preliminary material values; no assembly or structural acceptance",
+    "evidence": [],
+    "blocking_inputs": [
+      "I02",
+      "I03",
+      "I04"
+    ]
+  },
+  "G07": {
+    "check_id": "G07",
+    "status": "BLOCKED",
+    "model_stage": "D0",
+    "input_sha256": "9016f7ae0c61b47d2dc5956501b72e76cb43e6b856222ea5a5a4c550a5e09977",
+    "source_sha256": "3f129dbbf8bb31f3cba3e3a3431a3558a3cc7f7ca9dbad55b351475836253cd3",
+    "method_version": "marc-D0-initial-1",
+    "reason": "Only payload and reserved-space layout; plug/cable/door paths not verified",
+    "evidence": [],
+    "blocking_inputs": [
+      "I05",
+      "I08"
+    ]
+  },
+  "G08": {
+    "check_id": "G08",
+    "status": "BLOCKED",
+    "model_stage": "D0",
+    "input_sha256": "9016f7ae0c61b47d2dc5956501b72e76cb43e6b856222ea5a5a4c550a5e09977",
+    "source_sha256": "3f129dbbf8bb31f3cba3e3a3431a3558a3cc7f7ca9dbad55b351475836253cd3",
+    "method_version": "marc-D0-initial-1",
+    "reason": "Power design and tests absent",
+    "evidence": [],
+    "blocking_inputs": [
+      "I06",
+      "I07"
+    ]
+  },
+  "G09": {
+    "check_id": "G09",
+    "status": "BLOCKED",
+    "model_stage": "D0",
+    "input_sha256": "9016f7ae0c61b47d2dc5956501b72e76cb43e6b856222ea5a5a4c550a5e09977",
+    "source_sha256": "3f129dbbf8bb31f3cba3e3a3431a3558a3cc7f7ca9dbad55b351475836253cd3",
+    "method_version": "marc-D0-initial-1",
+    "reason": "Sensor envelopes only; optical and front-leg occlusion performance not measured",
+    "evidence": [],
+    "blocking_inputs": [
+      "I05",
+      "I09"
+    ]
+  },
+  "G10": {
+    "check_id": "G10",
+    "status": "NOT_RUN",
+    "model_stage": "D0",
+    "input_sha256": "9016f7ae0c61b47d2dc5956501b72e76cb43e6b856222ea5a5a4c550a5e09977",
+    "source_sha256": "3f129dbbf8bb31f3cba3e3a3431a3558a3cc7f7ca9dbad55b351475836253cd3",
+    "method_version": "marc-D0-initial-1",
+    "reason": "Native F3D and STEP are CAD exports; no MuJoCo asset or dynamics verification",
+    "evidence": [],
+    "blocking_inputs": []
+  },
+  "G11": {
+    "check_id": "G11",
+    "status": "NOT_RUN",
+    "model_stage": "D0",
+    "input_sha256": "9016f7ae0c61b47d2dc5956501b72e76cb43e6b856222ea5a5a4c550a5e09977",
+    "source_sha256": "3f129dbbf8bb31f3cba3e3a3431a3558a3cc7f7ca9dbad55b351475836253cd3",
+    "method_version": "marc-D0-initial-1",
+    "reason": "Pose/trajectory generator not implemented; no operational motion permission",
+    "evidence": [],
+    "blocking_inputs": []
+  }
+}

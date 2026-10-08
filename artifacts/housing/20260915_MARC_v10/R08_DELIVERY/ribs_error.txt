@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "<string>", line 33, in <module>
+  File "<string>", line 16, in run
+AttributeError: 'BRepEdge' object has no attribute 'vertices'

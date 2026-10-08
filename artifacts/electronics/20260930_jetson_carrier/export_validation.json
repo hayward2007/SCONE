@@ -1,0 +1,152 @@
+{
+  "passed": true,
+  "parts": [
+    {
+      "file": "P1_1.stl",
+      "triangles": 3516,
+      "finite": true,
+      "boundary_or_nonmanifold_edges": 0,
+      "degenerate_triangles": 0,
+      "bbox_mm": [
+        [
+          104.0999984741211,
+          5.400000095367432,
+          38.70000076293945
+        ],
+        [
+          239.0,
+          39.79999923706055,
+          136.5
+        ]
+      ],
+      "bbox_max_error_mm": 1.5258789005656581e-06,
+      "volume_mm3": 20715.4613891829
+    },
+    {
+      "file": "P2_1.stl",
+      "triangles": 6060,
+      "finite": true,
+      "boundary_or_nonmanifold_edges": 0,
+      "degenerate_triangles": 0,
+      "bbox_mm": [
+        [
+          103.55000305175781,
+          19.5,
+          45.5
+        ],
+        [
+          240.0,
+          34.0,
+          134.5
+        ]
+      ],
+      "bbox_max_error_mm": 3.051757815342171e-06,
+      "volume_mm3": 27790.822862252127
+    },
+    {
+      "file": "P3_1.stl",
+      "triangles": 2034,
+      "finite": true,
+      "boundary_or_nonmanifold_edges": 0,
+      "degenerate_triangles": 0,
+      "bbox_mm": [
+        [
+          162.6999969482422,
+          23.5,
+          53.20014572143555
+        ],
+        [
+          170.3000030517578,
+          28.350000381469727,
+          60.79985427856445
+        ]
+      ],
+      "bbox_max_error_mm": 0.00014572143554403283,
+      "volume_mm3": 175.97030681348787
+    },
+    {
+      "file": "P3_2.stl",
+      "triangles": 2034,
+      "finite": true,
+      "boundary_or_nonmanifold_edges": 0,
+      "degenerate_triangles": 0,
+      "bbox_mm": [
+        [
+          162.6999969482422,
+          23.5,
+          95.20014953613281
+        ],
+        [
+          170.3000030517578,
+          28.350000381469727,
+          102.79985046386719
+        ]
+      ],
+      "bbox_max_error_mm": 0.00014953613280965783,
+      "volume_mm3": 175.9702856907028
+    },
+    {
+      "file": "P3_3.stl",
+      "triangles": 2034,
+      "finite": true,
+      "boundary_or_nonmanifold_edges": 0,
+      "degenerate_triangles": 0,
+      "bbox_mm": [
+        [
+          224.6999969482422,
+          23.5,
+          53.20014572143555
+        ],
+        [
+          232.3000030517578,
+          28.350000381469727,
+          60.79985427856445
+        ]
+      ],
+      "bbox_max_error_mm": 0.00014572143554403283,
+      "volume_mm3": 175.9703068135093
+    },
+    {
+      "file": "P3_4.stl",
+      "triangles": 2034,
+      "finite": true,
+      "boundary_or_nonmanifold_edges": 0,
+      "degenerate_triangles": 0,
+      "bbox_mm": [
+        [
+          224.6999969482422,
+          23.5,
+          95.20014953613281
+        ],
+        [
+          232.3000030517578,
+          28.350000381469727,
+          102.79985046386719
+        ]
+      ],
+      "bbox_max_error_mm": 0.00014953613280965783,
+      "volume_mm3": 175.97028569071207
+    },
+    {
+      "file": "P4_1.stl",
+      "triangles": 3164,
+      "finite": true,
+      "boundary_or_nonmanifold_edges": 0,
+      "degenerate_triangles": 0,
+      "bbox_mm": [
+        [
+          164.0,
+          23.5,
+          104.5
+        ],
+        [
+          231.0,
+          44.5,
+          114.0
+        ]
+      ],
+      "bbox_max_error_mm": 0.0,
+      "volume_mm3": 5014.057239158185
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "fusion": {
+    "name": "MARC Housing PLA R09 Assembled v3",
+    "id": "urn:adsk.wipprod:dm.lineage:Yj_zVXEXSSK0CEeVPW2RIQ",
+    "protected_source_id": "urn:adsk.wipprod:dm.lineage:VUu_hd0ATYKQ4csy_mW31g"
+  },
+  "changes": [
+    {
+      "part": "R01",
+      "before_faces": 493,
+      "after_faces": 389,
+      "before_cm3": 111.52532523511582,
+      "after_cm3": 110.85298673061493
+    },
+    {
+      "part": "R02",
+      "before_faces": 723,
+      "after_faces": 592,
+      "before_cm3": 176.5570078478347,
+      "after_cm3": 175.90846479965847
+    },
+    {
+      "part": "S01",
+      "before_faces": 400,
+      "after_faces": 266,
+      "before_cm3": 119.63853341042329,
+      "after_cm3": 118.21398155266206
+    },
+    {
+      "part": "S02",
+      "before_faces": 365,
+      "after_faces": 269,
+      "before_cm3": 118.80570828362998,
+      "after_cm3": 116.89485975545404
+    }
+  ],
+  "cad_validation": "PASS",
+  "physical_validation": "not performed",
+  "tool_access_checks": 118,
+  "print_types": 15,
+  "printed_pieces": 23,
+  "minimum_user_pose_body_clearance_mm": 4.426089115779324,
+  "known_inter_leg_conflicts": [
+    "LEG 1:1+ARC:1/T01 TPU tyre 20mm",
+    "LEG 1:1+ARC:1/W01 PLA rim 18mm seat, original hub"
+  ],
+  "FR07_and_all_legs_unchanged": true
+}

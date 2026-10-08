@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import xml.etree.ElementTree as ET
 from functools import lru_cache
 from pathlib import Path
@@ -17,7 +18,7 @@ from src.simulation.core.model import (
 )
 
 
-CONTACT_GEOMETRIES = ("open-arc", "closed-wheel")
+CONTACT_GEOMETRIES = ("open-arc", "closed-wheel", "decomposed-arc")
 TIRE_GEOM_NAMES = tuple(f"TIRE_{leg}_geom" for leg in range(1, 7))
 
 # The exported TIRE mesh is 44 mm wide along its axis. MuJoCo recenters mesh
@@ -64,9 +65,39 @@ def transform_for_contact_geometry(
         return None
     if geometry == "closed-wheel":
         return replace_open_arcs_with_closed_wheels
+    if geometry == "decomposed-arc":
+        return replace_tire_collisions_with_decomposition
     raise ValueError(
         f"unknown contact geometry {geometry!r}; choose from {CONTACT_GEOMETRIES}"
     )
+
+
+def replace_tire_collisions_with_decomposition(root: ET.Element) -> None:
+    """Use precomputed 2 mm CoACD pieces, retaining the original visual mesh.
+
+    Vertices are in tire-body coordinates. Explicit body inertia is unchanged.
+    The approximation is rigid and does not model TPU deformation.
+    """
+    payload = json.loads((Path(__file__).parent / 'assets/tire_coacd_2mm.json').read_text())
+    asset = root.find('asset')
+    if asset is None:
+        raise ValueError('model requires an asset section')
+    for part, data in enumerate(payload['parts']):
+        ET.SubElement(asset, 'mesh', name=f'tire_contact_piece_{part}',
+                      vertex=' '.join(f'{x:.10g}' for p in data['vertices'] for x in p),
+                      face=' '.join(str(x) for f in data['faces'] for x in f))
+    parents = {child: parent for parent in root.iter() for child in parent}
+    for geom in _find_tire_geoms(root):
+        attrs = dict(geom.attrib)
+        geom.set('contype', '0')
+        geom.set('conaffinity', '0')
+        for key in ('pos', 'quat', 'euler', 'axisangle', 'xyaxes', 'zaxis', 'size', 'material'):
+            attrs.pop(key, None)
+        attrs.update(type='mesh', rgba='0 0 0 0', density='0')
+        for part in range(len(payload['parts'])):
+            ET.SubElement(parents[geom], 'geom', **dict(
+                attrs, name=f"{geom.get('name')}_piece_{part}",
+                mesh=f'tire_contact_piece_{part}'))
 
 
 def transform_for_variant(

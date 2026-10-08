@@ -1,0 +1,7 @@
+{
+  "source_snapshot": "source_snapshot.tar.gz",
+  "scope": "input .py/.xml/.stl/.toml files recorded in audit_protocol plus launch/requirements",
+  "source_matches_end_of_run": true,
+  "runner_sha256": "4ed9562a6675206346c5440611313bae9a58d227e88c9b5c1af9d55a1c53ff52",
+  "evidence_level": "development audit; not clean release or held-out evaluation"
+}

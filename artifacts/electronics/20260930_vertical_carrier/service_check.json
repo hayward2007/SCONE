@@ -1,0 +1,51 @@
+{
+  "cassette_lift_collisions": [],
+  "base_driver_collisions": [],
+  "envelope_collisions": [],
+  "lid_lidar_and_carry_handle_removed_for_service": true,
+  "module_lift_samples_mm": [
+    0,
+    5,
+    10,
+    20,
+    30,
+    40,
+    50,
+    60
+  ],
+  "frame_single_solid": true,
+  "part_lumps": [
+    [
+      "P3 removable top clamp -90.25 - M2x8",
+      1
+    ],
+    [
+      "P3 removable top clamp -24.25 - M2x8",
+      1
+    ],
+    [
+      "P1 frame - 4x M2.5x10 to existing M6R holes",
+      1
+    ],
+    [
+      "P2 slide-out U2D2 PHB cassette - captive M3 nuts",
+      1
+    ],
+    [
+      "P4 power PCB spacer 6mm 1",
+      1
+    ],
+    [
+      "P4 power PCB spacer 6mm 2",
+      1
+    ],
+    [
+      "P4 power PCB spacer 6mm 3",
+      1
+    ],
+    [
+      "P4 power PCB spacer 6mm 4",
+      1
+    ]
+  ]
+}

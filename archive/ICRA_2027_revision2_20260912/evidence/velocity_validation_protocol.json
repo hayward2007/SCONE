@@ -1,0 +1,290 @@
+{
+  "jobs": [
+    {
+      "id": 0,
+      "suite": "main",
+      "code": "U",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 1,
+      "suite": "main",
+      "code": "B",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 3,
+      "suite": "main",
+      "code": "N",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 56,
+      "suite": "main",
+      "code": "U",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 57,
+      "suite": "main",
+      "code": "B",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 59,
+      "suite": "main",
+      "code": "N",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 112,
+      "suite": "domain",
+      "code": "B",
+      "command": [
+        0.3,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 113,
+      "suite": "domain",
+      "code": "N",
+      "command": [
+        0.3,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 124,
+      "suite": "domain",
+      "code": "B",
+      "command": [
+        -0.18,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 125,
+      "suite": "domain",
+      "code": "N",
+      "command": [
+        -0.18,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 136,
+      "suite": "domain",
+      "code": "B",
+      "command": [
+        0,
+        0.12,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 137,
+      "suite": "domain",
+      "code": "N",
+      "command": [
+        0,
+        0.12,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 148,
+      "suite": "domain",
+      "code": "B",
+      "command": [
+        0,
+        -0.12,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 149,
+      "suite": "domain",
+      "code": "N",
+      "command": [
+        0,
+        -0.12,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 160,
+      "suite": "domain",
+      "code": "B",
+      "command": [
+        0,
+        0,
+        0.45
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 161,
+      "suite": "domain",
+      "code": "N",
+      "command": [
+        0,
+        0,
+        0.45
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 172,
+      "suite": "domain",
+      "code": "B",
+      "command": [
+        0,
+        0,
+        -0.45
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 173,
+      "suite": "domain",
+      "code": "N",
+      "command": [
+        0,
+        0,
+        -0.45
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 184,
+      "suite": "domain",
+      "code": "B",
+      "command": [
+        0.18,
+        0,
+        0.35
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 185,
+      "suite": "domain",
+      "code": "N",
+      "command": [
+        0.18,
+        0,
+        0.35
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    }
+  ],
+  "script_sha256": "f606299ffcf0b16784e60b46d34731ad9fc547055b4484554528f6409de08155",
+  "source": {
+    "git_revision": "2267f3a48b9ad2ee0221abe128729936dcad7bad",
+    "git_dirty": false
+  },
+  "purpose": "Compare the velocity of the root origin with displacement of that same origin; retain body-object velocity as a different-point diagnostic."
+}

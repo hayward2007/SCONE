@@ -1,0 +1,10 @@
+{
+  "yaw_step_deg": 1,
+  "yaw_range_deg": [
+    0,
+    92
+  ],
+  "hip_deg": -0.14356,
+  "method": "FCL meshes 0.03mm; includes surface contact, native volume witness required",
+  "hits": []
+}

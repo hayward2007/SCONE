@@ -1,0 +1,1099 @@
+[
+  {
+    "name": "V01 NVIDIA official mechanical model",
+    "bodies": 40,
+    "bounds": [
+      [
+        [
+          9.2,
+          16.5,
+          6.74
+        ],
+        [
+          78.8,
+          61.5,
+          12.34
+        ]
+      ],
+      [
+        [
+          19.769047,
+          23.980143,
+          2.082469
+        ],
+        [
+          68.230953,
+          58.639857,
+          8.03
+        ]
+      ],
+      [
+        [
+          15.1,
+          22.51,
+          11.866
+        ],
+        [
+          72.9,
+          61.51,
+          29.866
+        ]
+      ],
+      [
+        [
+          20.774008,
+          18.976896,
+          15.866
+        ],
+        [
+          67.072783,
+          64.914546,
+          26.366
+        ]
+      ],
+      [
+        [
+          19.642567,
+          17.619059,
+          21.116
+        ],
+        [
+          68.42026,
+          66.397625,
+          29.366
+        ]
+      ],
+      [
+        [
+          -4.0,
+          -17.0,
+          0.0
+        ],
+        [
+          96.0,
+          62.0,
+          1.57
+        ]
+      ],
+      [
+        [
+          89.46,
+          3.6,
+          -1.43
+        ],
+        [
+          94.54,
+          54.4,
+          10.17
+        ]
+      ],
+      [
+        [
+          5.25,
+          11.5,
+          1.1962
+        ],
+        [
+          82.75,
+          37.35,
+          10.8462
+        ]
+      ],
+      [
+        [
+          -0.3,
+          -6.5,
+          5.17
+        ],
+        [
+          1.0,
+          -6.0,
+          5.67
+        ]
+      ],
+      [
+        [
+          -2.5,
+          -18.5,
+          -1.93
+        ],
+        [
+          7.58,
+          -4.0,
+          12.57
+        ]
+      ],
+      [
+        [
+          -1.45,
+          -17.25,
+          -1.93
+        ],
+        [
+          5.45,
+          -6.55,
+          6.458738
+        ]
+      ],
+      [
+        [
+          9.81,
+          -18.724907,
+          -0.3538
+        ],
+        [
+          27.71,
+          -3.825,
+          8.3062
+        ]
+      ],
+      [
+        [
+          39.121,
+          27.75,
+          -4.2762
+        ],
+        [
+          48.221,
+          49.65,
+          0.5238
+        ]
+      ],
+      [
+        [
+          -2.1,
+          27.75,
+          -4.2762
+        ],
+        [
+          7.2,
+          49.65,
+          0.523802
+        ]
+      ],
+      [
+        [
+          30.125,
+          -18.65,
+          -0.8038
+        ],
+        [
+          47.075,
+          0.05,
+          18.1362
+        ]
+      ],
+      [
+        [
+          16.47,
+          51.43,
+          -1.43
+        ],
+        [
+          46.95,
+          61.75,
+          4.07
+        ]
+      ],
+      [
+        [
+          60.832,
+          47.852,
+          1.57
+        ],
+        [
+          80.085,
+          50.341,
+          1.645
+        ]
+      ],
+      [
+        [
+          64.85,
+          -18.75,
+          -2.230003
+        ],
+        [
+          81.05,
+          2.85,
+          15.219985
+        ]
+      ],
+      [
+        [
+          13.232,
+          23.97,
+          -0.15
+        ],
+        [
+          18.232,
+          41.97,
+          0.0
+        ]
+      ],
+      [
+        [
+          82.935,
+          -18.567,
+          -0.2538
+        ],
+        [
+          93.015,
+          -7.767,
+          4.9312
+        ]
+      ],
+      [
+        [
+          75.988,
+          6.478,
+          1.6462
+        ],
+        [
+          84.612,
+          10.778,
+          4.7462
+        ]
+      ],
+      [
+        [
+          -3.621,
+          8.15,
+          1.6462
+        ],
+        [
+          1.679,
+          24.85,
+          2.8462
+        ]
+      ],
+      [
+        [
+          -2.471,
+          8.4,
+          1.6662
+        ],
+        [
+          -1.321,
+          24.6,
+          2.7862
+        ]
+      ],
+      [
+        [
+          16.125,
+          29.625,
+          1.6462
+        ],
+        [
+          26.625,
+          40.125,
+          2.5462
+        ]
+      ],
+      [
+        [
+          -5.5,
+          -18.5,
+          -4.9
+        ],
+        [
+          97.5,
+          72.0,
+          1.6
+        ]
+      ],
+      [
+        [
+          2.3,
+          27.705072,
+          -3.3562
+        ],
+        [
+          32.29994,
+          49.705028,
+          -2.5562
+        ]
+      ],
+      [
+        [
+          7.622545,
+          34.692371,
+          -4.4562
+        ],
+        [
+          15.222545,
+          45.29237,
+          -3.3562
+        ]
+      ],
+      [
+        [
+          15.358615,
+          31.395674,
+          -4.7562
+        ],
+        [
+          29.558617,
+          49.595673,
+          -3.3562
+        ]
+      ],
+      [
+        [
+          43.421,
+          27.675,
+          -4.8062
+        ],
+        [
+          73.421,
+          49.675,
+          -2.5462
+        ]
+      ],
+      [
+        [
+          48.1,
+          59.6,
+          -2.9
+        ],
+        [
+          96.1,
+          70.6,
+          -2.1
+        ]
+      ],
+      [
+        [
+          41.835,
+          47.135344,
+          -4.268859
+        ],
+        [
+          92.397411,
+          65.065,
+          -3.138741
+        ]
+      ],
+      [
+        [
+          18.127,
+          42.15883,
+          -4.5188
+        ],
+        [
+          92.190877,
+          66.255,
+          -3.3888
+        ]
+      ],
+      [
+        [
+          -3.9,
+          59.603,
+          -2.9
+        ],
+        [
+          44.1,
+          70.603,
+          -2.1
+        ]
+      ],
+      [
+        [
+          -1.374916,
+          60.760236,
+          -2.95
+        ],
+        [
+          12.921728,
+          62.030998,
+          -2.9
+        ]
+      ],
+      [
+        [
+          -2.1,
+          4.55,
+          -4.2762
+        ],
+        [
+          7.2,
+          26.45,
+          0.523802
+        ]
+      ],
+      [
+        [
+          47.125,
+          -18.65,
+          -0.8038
+        ],
+        [
+          64.075,
+          0.05,
+          18.1362
+        ]
+      ],
+      [
+        [
+          66.988,
+          6.478,
+          1.6462
+        ],
+        [
+          75.612,
+          10.778,
+          4.7462
+        ]
+      ],
+      [
+        [
+          -3.621,
+          33.15,
+          1.6462
+        ],
+        [
+          1.679,
+          49.85,
+          2.8462
+        ]
+      ],
+      [
+        [
+          -2.471,
+          33.4,
+          1.6662
+        ],
+        [
+          -1.321,
+          49.6,
+          2.7862
+        ]
+      ],
+      [
+        [
+          -3.903,
+          59.6,
+          -2.9
+        ],
+        [
+          44.097,
+          70.6,
+          -2.1
+        ]
+      ]
+    ],
+    "cylinders": []
+  },
+  {
+    "name": "V02 Waveshare official camera",
+    "bodies": 1,
+    "bounds": [
+      [
+        [
+          -42.6,
+          -12.0,
+          -16.010155
+        ],
+        [
+          42.6,
+          12.0,
+          1.05
+        ]
+      ]
+    ],
+    "cylinders": [
+      {
+        "radius_mm": 1.15,
+        "origin": [
+          10.5,
+          -9.95,
+          -17.836183
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "radius_mm": 1.15,
+        "origin": [
+          10.5,
+          3.5,
+          -17.836183
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "radius_mm": 1.15,
+        "origin": [
+          40.6,
+          3.5,
+          -17.836183
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "radius_mm": 1.15,
+        "origin": [
+          40.6,
+          -9.95,
+          -17.836183
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "radius_mm": 1.15,
+        "origin": [
+          -40.6,
+          -9.95,
+          -17.836183
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          -1.0
+        ]
+      },
+      {
+        "radius_mm": 1.15,
+        "origin": [
+          -40.6,
+          3.5,
+          -17.836183
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          -1.0
+        ]
+      },
+      {
+        "radius_mm": 1.15,
+        "origin": [
+          -10.5,
+          3.5,
+          -17.836183
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          -1.0
+        ]
+      },
+      {
+        "radius_mm": 1.15,
+        "origin": [
+          -10.5,
+          -9.95,
+          -17.836183
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          -1.0
+        ]
+      },
+      {
+        "radius_mm": 0.7500000000000001,
+        "origin": [
+          -21.3,
+          -3.65,
+          -17.836183
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          -1.0
+        ]
+      },
+      {
+        "radius_mm": 2.15,
+        "origin": [
+          -38.8,
+          -3.65,
+          -4.204334
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "radius_mm": 2.15,
+        "origin": [
+          -21.3,
+          -3.65,
+          -0.426807
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          -1.0
+        ]
+      },
+      {
+        "radius_mm": 7.000000000000001,
+        "origin": [
+          -30.05,
+          -3.65,
+          -0.55
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          -1.0
+        ]
+      },
+      {
+        "radius_mm": 7.000000000000001,
+        "origin": [
+          -30.05,
+          -3.65,
+          -0.55
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          -1.0
+        ]
+      },
+      {
+        "radius_mm": 5.8,
+        "origin": [
+          -30.05,
+          -3.65,
+          -12.575
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "radius_mm": 0.7500000000000001,
+        "origin": [
+          -38.8,
+          -3.65,
+          -17.836183
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          -1.0
+        ]
+      },
+      {
+        "radius_mm": 0.7500000000000001,
+        "origin": [
+          21.3,
+          -3.65,
+          -17.836183
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          -1.0
+        ]
+      },
+      {
+        "radius_mm": 2.15,
+        "origin": [
+          38.8,
+          -3.65,
+          -4.204334
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          -1.0
+        ]
+      },
+      {
+        "radius_mm": 2.15,
+        "origin": [
+          21.3,
+          -3.65,
+          -0.426807
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "radius_mm": 7.000000000000001,
+        "origin": [
+          30.05,
+          -3.65,
+          -0.55
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "radius_mm": 7.000000000000001,
+        "origin": [
+          30.05,
+          -3.65,
+          -0.55
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "radius_mm": 5.8,
+        "origin": [
+          30.05,
+          -3.65,
+          -12.575
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          -1.0
+        ]
+      },
+      {
+        "radius_mm": 0.7500000000000001,
+        "origin": [
+          38.8,
+          -3.65,
+          -17.836183
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          -1.0
+        ]
+      }
+    ]
+  },
+  {
+    "material_properties": [
+      {
+        "id": "physmat_Comments",
+        "name": "\uc8fc\uc11d",
+        "value": "",
+        "unit": "ERROR:'StringProperty' object has no attribute 'units'"
+      },
+      {
+        "id": "physmat_Cost",
+        "name": "\ube44\uc6a9",
+        "value": "",
+        "unit": "ERROR:'StringProperty' object has no attribute 'units'"
+      },
+      {
+        "id": "physmat_Keynote",
+        "name": "\ud0a4\ub178\ud2b8",
+        "value": "",
+        "unit": "ERROR:'StringProperty' object has no attribute 'units'"
+      },
+      {
+        "id": "physmat_Keywords",
+        "name": "\ud0a4\uc6cc\ub4dc",
+        "value": "",
+        "unit": "ERROR:'StringProperty' object has no attribute 'units'"
+      },
+      {
+        "id": "physmat_Label",
+        "name": "\ub808\uc774\ube14",
+        "value": "",
+        "unit": "ERROR:'StringProperty' object has no attribute 'units'"
+      },
+      {
+        "id": "physmat_Manufacturer",
+        "name": "\uc81c\uc870\uc5c5\uccb4",
+        "value": "",
+        "unit": "ERROR:'StringProperty' object has no attribute 'units'"
+      },
+      {
+        "id": "physmat_Mark",
+        "name": "\ud45c\uc2dd",
+        "value": "",
+        "unit": "ERROR:'StringProperty' object has no attribute 'units'"
+      },
+      {
+        "id": "physmat_Model",
+        "name": "\ubaa8\ud615",
+        "value": "",
+        "unit": "ERROR:'StringProperty' object has no attribute 'units'"
+      },
+      {
+        "id": "physmat_Type",
+        "name": "\uc720\ud615",
+        "value": "physmat_plastic",
+        "unit": "ERROR:'ChoiceProperty' object has no attribute 'units'"
+      },
+      {
+        "id": "physmat_URL",
+        "name": "URL",
+        "value": "",
+        "unit": "ERROR:'StringProperty' object has no attribute 'units'"
+      },
+      {
+        "id": "physmat_class",
+        "name": "\ud074\ub798\uc2a4",
+        "value": "",
+        "unit": "ERROR:'StringProperty' object has no attribute 'units'"
+      },
+      {
+        "id": "physmat_classification",
+        "name": "physmat_classification",
+        "value": "Autodesk.Material Classifications.Plastic.Thermoplastics",
+        "unit": "ERROR:'StringProperty' object has no attribute 'units'"
+      },
+      {
+        "id": "common_Shared_Asset",
+        "name": "\uacf5\uc720",
+        "value": "common_shared",
+        "unit": "ERROR:'ChoiceProperty' object has no attribute 'units'"
+      },
+      {
+        "id": "structural_Behavior",
+        "name": "\ub3d9\uc791",
+        "value": "structural_isotropic",
+        "unit": "ERROR:'ChoiceProperty' object has no attribute 'units'"
+      },
+      {
+        "id": "structural_Damping_coefficient",
+        "name": "\ub310\ud551 \uacc4\uc218",
+        "value": 0.0,
+        "unit": "Unitless"
+      },
+      {
+        "id": "structural_Density",
+        "name": "\ubc00\ub3c4",
+        "value": 1060.0,
+        "unit": "KilogramPerCubicMeter"
+      },
+      {
+        "id": "structural_ExternalMaterialID",
+        "name": "\uc678\ubd80 \uc7ac\ub8cc ID",
+        "value": "2:MATERIAL:MI_InventorSustainability:85087E0D-D221-475D-ABB3-22B9D6A96369:82BEAFC6-1AC0-4E4C-BDA9-C5733B45AE03:0",
+        "unit": "ERROR:'StringProperty' object has no attribute 'units'"
+      },
+      {
+        "id": "structural_Minimum_tensile_strength",
+        "name": "\uc778\uc7a5 \uac15\ub3c4",
+        "value": 29600.0,
+        "unit": "Kilopascal"
+      },
+      {
+        "id": "structural_Minimum_yield_stress",
+        "name": "\ud56d\ubcf5 \uac15\ub3c4",
+        "value": 20000.0,
+        "unit": "Kilopascal"
+      },
+      {
+        "id": "structural_Poisson_ratio",
+        "name": "\ud504\uc640\uc1a1\uc758 \ube44",
+        "value": 0.38,
+        "unit": "Unitless"
+      },
+      {
+        "id": "structural_Poisson_ratio_12",
+        "name": "\ud504\uc640\uc1a1\uc758 \ube44 12",
+        "value": 0.38,
+        "unit": "Unitless"
+      },
+      {
+        "id": "structural_Poisson_ratio_23",
+        "name": "\ud504\uc640\uc1a1\uc758 \ube44 23",
+        "value": 0.38,
+        "unit": "Unitless"
+      },
+      {
+        "id": "structural_Poisson_ratio_X",
+        "name": "\ud504\uc640\uc1a1\uc758 \ube44 X",
+        "value": 0.38,
+        "unit": "Unitless"
+      },
+      {
+        "id": "structural_Poisson_ratio_Y",
+        "name": "\ud504\uc640\uc1a1\uc758 \ube44 Y",
+        "value": 0.38,
+        "unit": "Unitless"
+      },
+      {
+        "id": "structural_Poisson_ratio_Z",
+        "name": "\ud504\uc640\uc1a1\uc758 \ube44 Z",
+        "value": 0.38,
+        "unit": "Unitless"
+      },
+      {
+        "id": "structural_Shear_modulus",
+        "name": "\uc804\ub2e8 \uacc4\uc218",
+        "value": 805000.0,
+        "unit": "Kilopascal"
+      },
+      {
+        "id": "structural_Shear_modulus_12",
+        "name": "\uc804\ub2e8 \uacc4\uc218 12",
+        "value": 805000.0,
+        "unit": "Kilopascal"
+      },
+      {
+        "id": "structural_Shear_modulus_X",
+        "name": "\uc804\ub2e8 \uacc4\uc218 X",
+        "value": 805000.0,
+        "unit": "Kilopascal"
+      },
+      {
+        "id": "structural_Shear_modulus_Y",
+        "name": "\uc804\ub2e8 \uacc4\uc218 Y",
+        "value": 805000.0,
+        "unit": "Kilopascal"
+      },
+      {
+        "id": "structural_Shear_modulus_Z",
+        "name": "\uc804\ub2e8 \uacc4\uc218 Z",
+        "value": 805000.0,
+        "unit": "Kilopascal"
+      },
+      {
+        "id": "structural_Specific_heat",
+        "name": "\ube44\uc5f4",
+        "value": 1.5,
+        "unit": "JoulePerGramCelsius"
+      },
+      {
+        "id": "structural_Thermal_conductivity",
+        "name": "\uc5f4 \uc804\ub3c4\uc728",
+        "value": 0.16,
+        "unit": "WattPerMeterKelvin"
+      },
+      {
+        "id": "structural_Thermal_conductivity_X",
+        "name": "\uc5f4 \uc804\ub3c4\uc728 X",
+        "value": 0.16,
+        "unit": "WattPerMeterKelvin"
+      },
+      {
+        "id": "structural_Thermal_conductivity_Y",
+        "name": "\uc5f4 \uc804\ub3c4\uc728 Y",
+        "value": 0.16,
+        "unit": "WattPerMeterKelvin"
+      },
+      {
+        "id": "structural_Thermal_conductivity_Z",
+        "name": "\uc5f4 \uc804\ub3c4\uc728 Z",
+        "value": 0.16,
+        "unit": "WattPerMeterKelvin"
+      },
+      {
+        "id": "structural_Thermal_expansion_coefficient",
+        "name": "\uc5f4\ud33d\ucc3d \uacc4\uc218",
+        "value": 85.7,
+        "unit": "MicrometerPerMeterCelsius"
+      },
+      {
+        "id": "structural_Thermal_expansion_coefficient_1",
+        "name": "\uc5f4\ud33d\ucc3d \uacc4\uc218 1",
+        "value": 85.7,
+        "unit": "MicrometerPerMeterCelsius"
+      },
+      {
+        "id": "structural_Thermal_expansion_coefficient_2",
+        "name": "\uc5f4\ud33d\ucc3d \uacc4\uc218 2",
+        "value": 85.7,
+        "unit": "MicrometerPerMeterCelsius"
+      },
+      {
+        "id": "structural_Thermal_expansion_coefficient_X",
+        "name": "\uc5f4\ud33d\ucc3d \uacc4\uc218 X",
+        "value": 85.7,
+        "unit": "MicrometerPerMeterCelsius"
+      },
+      {
+        "id": "structural_Thermal_expansion_coefficient_Y",
+        "name": "\uc5f4\ud33d\ucc3d \uacc4\uc218 Y",
+        "value": 85.7,
+        "unit": "MicrometerPerMeterCelsius"
+      },
+      {
+        "id": "structural_Thermal_expansion_coefficient_Z",
+        "name": "\uc5f4\ud33d\ucc3d \uacc4\uc218 Z",
+        "value": 85.7,
+        "unit": "MicrometerPerMeterCelsius"
+      },
+      {
+        "id": "structural_Young_modulus",
+        "name": "\ud0c4\uc131 \uacc4\uc218",
+        "value": 2240000.0,
+        "unit": "Kilopascal"
+      },
+      {
+        "id": "structural_Young_modulus_1",
+        "name": "\ud0c4\uc131 \uacc4\uc218 1",
+        "value": 2240000.0,
+        "unit": "Kilopascal"
+      },
+      {
+        "id": "structural_Young_modulus_2",
+        "name": "\ud0c4\uc131 \uacc4\uc218 2",
+        "value": 2240000.0,
+        "unit": "Kilopascal"
+      },
+      {
+        "id": "structural_Young_modulus_X",
+        "name": "\ud0c4\uc131 \uacc4\uc218 X",
+        "value": 2240000.0,
+        "unit": "Kilopascal"
+      },
+      {
+        "id": "structural_Young_modulus_Y",
+        "name": "\ud0c4\uc131 \uacc4\uc218 Y",
+        "value": 2240000.0,
+        "unit": "Kilopascal"
+      },
+      {
+        "id": "structural_Young_modulus_Z",
+        "name": "\ud0c4\uc131 \uacc4\uc218 Z",
+        "value": 2240000.0,
+        "unit": "Kilopascal"
+      },
+      {
+        "id": "structural_source",
+        "name": "\uc18c\uc2a4",
+        "value": "Autodesk",
+        "unit": "ERROR:'StringProperty' object has no attribute 'units'"
+      },
+      {
+        "id": "structural_sourceURL",
+        "name": "\uc18c\uc2a4 URL",
+        "value": "",
+        "unit": "ERROR:'StringProperty' object has no attribute 'units'"
+      },
+      {
+        "id": "structural_subclass",
+        "name": "\ud558\uc704 \ud074\ub798\uc2a4",
+        "value": "Thermoplastic",
+        "unit": "ERROR:'StringProperty' object has no attribute 'units'"
+      }
+    ]
+  }
+]

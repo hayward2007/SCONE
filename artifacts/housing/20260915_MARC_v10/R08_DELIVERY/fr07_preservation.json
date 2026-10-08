@@ -1,0 +1,32 @@
+[
+  {
+    "part": "LEG 1:1+FR07:1",
+    "body_count_equal": true,
+    "differences": []
+  },
+  {
+    "part": "LEG 1(\ubbf8\ub7ec):1+FR07(\ubbf8\ub7ec):1",
+    "body_count_equal": true,
+    "differences": []
+  },
+  {
+    "part": "LEG 1:5+FR07:1",
+    "body_count_equal": true,
+    "differences": [
+      "\ubcf8\uccb41",
+      "\ubcf8\uccb42",
+      "\ubcf8\uccb43",
+      "\ubcf8\uccb44",
+      "\ubcf8\uccb45",
+      "\ubcf8\uccb46",
+      "\ubcf8\uccb47",
+      "\ubcf8\uccb48",
+      "\ubcf8\uccb49"
+    ]
+  },
+  {
+    "part": "LEG 1(\ubbf8\ub7ec):2+FR07(\ubbf8\ub7ec):1",
+    "body_count_equal": true,
+    "differences": []
+  }
+]

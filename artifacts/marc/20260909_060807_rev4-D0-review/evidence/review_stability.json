@@ -1,0 +1,93 @@
+{
+ "measured": {
+  "mass_kg_lower_bound": 3.115469,
+  "com_mm": [
+   0.6741,
+   8.9232,
+   -65.0755
+  ],
+  "com_height_above_ground_mm": 207.924
+ },
+ "doc_assumption": {
+  "com_z_candidate_mm": 12.0,
+  "com_height_mm": 285.0,
+  "tipover_roll_deg": 29.310007,
+  "tipover_pitch_deg": 39.204486,
+  "margin_4pt_mm": 160.0,
+  "margin_3pt_yaw_mm": 110.968
+ },
+ "tipover": {
+  "roll_deg_min": 36.002,
+  "roll_deg_max": 39.091,
+  "pitch_deg_min": 48.108,
+  "pitch_deg_max": 48.273
+ },
+ "margin_4pt_mm": 151.0768,
+ "margin_3pt_fixed_yaw_mm": {
+  "FL": -7.7327,
+  "FR": 6.9684,
+  "RL": -6.9684,
+  "RR": 7.7327
+ },
+ "margin_3pt_yaw_replaced_mm": {
+  "FL": {
+   "legs": [
+    "FR",
+    "RR",
+    "RL"
+   ],
+   "yaw_deg": [
+    45,
+    15,
+    -60
+   ],
+   "margin_mm": 104.4379
+  },
+  "FR": {
+   "legs": [
+    "FL",
+    "RR",
+    "RL"
+   ],
+   "yaw_deg": [
+    -45,
+    60,
+    -60
+   ],
+   "margin_mm": 116.5044
+  },
+  "RL": {
+   "legs": [
+    "FL",
+    "FR",
+    "RR"
+   ],
+   "yaw_deg": [
+    60,
+    -60,
+    -45
+   ],
+   "margin_mm": 105.4312
+  },
+  "RR": {
+   "legs": [
+    "FL",
+    "FR",
+    "RL"
+   ],
+   "yaw_deg": [
+    40,
+    -60,
+    45
+   ],
+   "margin_mm": 117.4977
+  }
+ },
+ "worst_3pt_yaw_replaced_mm": 104.4379,
+ "target_static_margin_mm": 80.0,
+ "verdict": {
+  "margin_4pt_pass": true,
+  "margin_3pt_pass": true,
+  "note": "CoM from the measured CAD subtotal; missing parts (SPDB, forks, horns, bearings, fasteners, wiring) are not included"
+ }
+}

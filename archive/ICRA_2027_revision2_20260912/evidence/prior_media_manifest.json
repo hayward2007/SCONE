@@ -1,0 +1,121 @@
+{
+  "reviewed_at": "2026-09-12",
+  "sources": [
+    {
+      "path": "archive/videos/SCONEv2.mp4",
+      "sha256": "649d2b194d4a8c80c5859c96b015b84f3af6dd4b57fadd2a2974cb790235ed19",
+      "duration_s": 31.9,
+      "video": [
+        {
+          "width": 1280,
+          "height": 720,
+          "r_frame_rate": "30/1",
+          "field_order": "progressive"
+        }
+      ]
+    },
+    {
+      "path": "archive/videos/SCONEv1.mp4",
+      "sha256": "ebc3be31d76d5d6072f31a109db82c30d09937b4f0df8da3eef3a415409b3e9b",
+      "duration_s": 12.8128,
+      "video": [
+        {
+          "width": 1920,
+          "height": 1080,
+          "r_frame_rate": "30000/1001",
+          "field_order": "progressive"
+        }
+      ]
+    },
+    {
+      "path": "archive/videos/SCONEv2_stairs.mp4",
+      "sha256": "7b5af1ec88c7031bbfb90ada5d21d45106052ec53dbd2f6efbbb31474ca3d88a",
+      "duration_s": 37.7,
+      "video": [
+        {
+          "width": 1080,
+          "height": 1920,
+          "r_frame_rate": "30/1",
+          "field_order": "progressive"
+        }
+      ]
+    },
+    {
+      "path": "archive/papers/대한민국_한국디지털미디어고등학교_김형석_논문.pdf",
+      "sha256": "5c78c5a05bc7fcd31fcbf14c15e1a267594fd68c34401ec3f4e245b5c4687222"
+    },
+    {
+      "path": "archive/papers/Eco-friendly deliver SCONE Paper.pdf",
+      "sha256": "92c4a046fca556a355aa168ed009aca33a674ddd90c922dc177c03aa5cc07873"
+    },
+    {
+      "path": "archive/assets/SCONEv2 Arc-Shaped Wheel.pdf",
+      "sha256": "e502997e25c587fc30c9f493666ac370f60faff058b8be7883c9a2b53f6b0917"
+    },
+    {
+      "path": "archive/assets/Eco-friendly deliver SCONE Quad Chart.png",
+      "sha256": "3c0f0804ccc7558034c2999907148fba821e395d79d676e51f90190682c9bd24"
+    },
+    {
+      "path": "archive/assets/Eco-friendly deliver SCONE Poster.jpg",
+      "sha256": "8d54f7a9530ca47cfecf2da5dc5ec13c17f1281b8301495ee55bda0852a42df7"
+    }
+  ],
+  "extractions": [
+    {
+      "source": "archive/videos/SCONEv2.mp4",
+      "time_s": 3,
+      "output": "figures/archive_SCONEv2_03.png",
+      "operation": "ffmpeg direct decoded frame; no retouching"
+    },
+    {
+      "source": "archive/videos/SCONEv2.mp4",
+      "time_s": 18,
+      "output": "figures/archive_SCONEv2_18.png",
+      "operation": "ffmpeg direct decoded frame; no retouching"
+    },
+    {
+      "source": "archive/videos/SCONEv2_stairs.mp4",
+      "time_s": 18,
+      "output": "figures/archive_SCONEv2_stairs_18.png",
+      "operation": "ffmpeg direct decoded frame; no retouching"
+    },
+    {
+      "source": "archive/videos/SCONEv2_stairs.mp4",
+      "time_s": 24,
+      "output": "figures/archive_SCONEv2_stairs_24.png",
+      "operation": "ffmpeg direct decoded frame; no retouching"
+    },
+    {
+      "source": "archive/videos/SCONEv2_stairs.mp4",
+      "time_s": 30,
+      "output": "figures/archive_SCONEv2_stairs_30.png",
+      "operation": "ffmpeg direct decoded frame; no retouching"
+    },
+    {
+      "source": "archive/videos/SCONEv2_stairs.mp4",
+      "time_s": 36,
+      "output": "figures/archive_SCONEv2_stairs_36.png",
+      "operation": "ffmpeg direct decoded frame; no retouching"
+    },
+    {
+      "source": "archive/videos/SCONEv1.mp4",
+      "time_s": 6,
+      "output": "figures/archive_SCONEv1_06.png",
+      "operation": "ffmpeg direct decoded frame; no retouching"
+    },
+    {
+      "source": "archive/assets/SCONEv2 Arc-Shaped Wheel.pdf",
+      "page": 1,
+      "render_width_px": 1800,
+      "crop_xyxy_px": [
+        520,
+        195,
+        930,
+        710
+      ],
+      "output": "figures/archive_arc_detail.png",
+      "operation": "isometric detail crop; title block and dimensions outside crop"
+    }
+  ]
+}

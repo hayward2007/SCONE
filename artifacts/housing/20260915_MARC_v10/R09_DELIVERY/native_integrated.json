@@ -1,0 +1,73 @@
+{
+  "parts": [
+    {
+      "part": "S01",
+      "before_cm3": 119.63853341042329,
+      "after_cm3": 118.23131769628458
+    },
+    {
+      "part": "S02",
+      "before_cm3": 118.80570828362998,
+      "after_cm3": 116.9121957990834
+    },
+    {
+      "part": "R01",
+      "before_cm3": 111.52532523511582,
+      "after_cm3": 110.52665444162142,
+      "obsolete_holes_filled": [],
+      "reopened_strain_relief_slot_centers": [
+        [
+          0,
+          -19
+        ],
+        [
+          0,
+          19
+        ]
+      ]
+    },
+    {
+      "part": "R02",
+      "before_cm3": 176.5570078478347,
+      "after_cm3": 175.59215402368946,
+      "obsolete_holes_filled": [
+        [
+          142,
+          -30
+        ],
+        [
+          142,
+          30
+        ],
+        [
+          168,
+          -32
+        ],
+        [
+          168,
+          32
+        ],
+        [
+          180,
+          -30
+        ],
+        [
+          180,
+          30
+        ]
+      ],
+      "reopened_strain_relief_slot_centers": [
+        [
+          158,
+          -19
+        ],
+        [
+          158,
+          19
+        ]
+      ]
+    }
+  ],
+  "FR07_unchanged": true,
+  "status": "Geometry integrated; motion, tool access and exports still require revalidation"
+}

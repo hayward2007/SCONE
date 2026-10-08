@@ -1,0 +1,101 @@
+{
+  "source_name": "MARC v11",
+  "source_is_modified": false,
+  "source_id_same": true,
+  "source_timeline_unchanged": true,
+  "source_components_joints_unchanged": true,
+  "source_parameters_unchanged": true,
+  "source_root_bodies_unchanged": true,
+  "source_occurrences_unchanged": true,
+  "source_exact_comparison_differences": [],
+  "copy_ARC_preservation": [
+    {
+      "occurrence": "LEG 1:1+ARC:1",
+      "shape_unchanged": true
+    },
+    {
+      "occurrence": "LEG 1(\ubbf8\ub7ec):1+ARC(\ubbf8\ub7ec):1",
+      "shape_unchanged": true
+    },
+    {
+      "occurrence": "LEG 1:5+ARC:1",
+      "shape_unchanged": true
+    },
+    {
+      "occurrence": "LEG 1(\ubbf8\ub7ec):2+ARC(\ubbf8\ub7ec):1",
+      "shape_unchanged": true
+    }
+  ],
+  "joint_health": [
+    {
+      "component": "LEG 1(\ubbf8\ub7ec)",
+      "joint": "\ud68c\uc804 1",
+      "health": 0
+    },
+    {
+      "component": "LEG 1(\ubbf8\ub7ec)",
+      "joint": "\uac15\uccb4 2",
+      "health": 0
+    },
+    {
+      "component": "LEG 1(\ubbf8\ub7ec)",
+      "joint": "\uac15\uccb4 3",
+      "health": 0
+    },
+    {
+      "component": "LEG 1(\ubbf8\ub7ec)",
+      "joint": "\ud68c\uc804 4",
+      "health": 0
+    },
+    {
+      "component": "LEG 1(\ubbf8\ub7ec)",
+      "joint": "\ud68c\uc804 5",
+      "health": 0
+    },
+    {
+      "component": "MARC Housing PLA R03 v1",
+      "joint": "\uac15\uccb4 5",
+      "health": 0
+    },
+    {
+      "component": "MARC Housing PLA R03 v1",
+      "joint": "\uac15\uccb4 6",
+      "health": 0
+    },
+    {
+      "component": "MARC Housing PLA R03 v1",
+      "joint": "\ud68c\uc804 7",
+      "health": 0
+    },
+    {
+      "component": "MARC Housing PLA R03 v1",
+      "joint": "\ud68c\uc804 8",
+      "health": 0
+    },
+    {
+      "component": "MARC Housing PLA R03 v1",
+      "joint": "\ud68c\uc804 14",
+      "health": 0
+    },
+    {
+      "component": "MARC Housing PLA R03 v1",
+      "joint": "\uac15\uccb4 15",
+      "health": 0
+    },
+    {
+      "component": "MARC Housing PLA R03 v1",
+      "joint": "\uac15\uccb4 16",
+      "health": 0
+    },
+    {
+      "component": "MARC Housing PLA R03 v1",
+      "joint": "\uac15\uccb4 17",
+      "health": 0
+    },
+    {
+      "component": "MARC Housing PLA R03 v1",
+      "joint": "\uac15\uccb4 18",
+      "health": 0
+    }
+  ]
+}

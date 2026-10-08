@@ -1,0 +1,679 @@
+{
+  "n": 176,
+  "completed": 176,
+  "bounded_n": 128,
+  "issued_violations": 0,
+  "max_inner_limit_excess_dps": 1.1368683772161603e-13,
+  "max_actual_rate_over_declared_ratio": 1.2324467332086235,
+  "max_root_velocity_check_error_mps": 5.1024585472791983e-05,
+  "minimum_loaded_legs": 1,
+  "max_fraction_below_three_loaded": 0.1055,
+  "raw_sha256": "571b3eb9c81925e81343360e0f80fa336d7fe587601faf399b251808ebdedbb9",
+  "main": {
+    "0.18": {
+      "unlimited": {
+        "U": {
+          "n": 4,
+          "complete": 4,
+          "speed_mean": 0.11592189882521273,
+          "speed_range": [
+            0.11520440840950388,
+            0.11668406986887613
+          ],
+          "velocity_rmse_mean": 0.07518154922571188,
+          "yaw_rmse_mean": 0.04411124617201182,
+          "worst_joint_rms_max": 10.59126413574996,
+          "requested_goal_lag_max": 0.0,
+          "planner_time_fraction_mean": 1.0000000000000102
+        },
+        "B": {
+          "n": 4,
+          "complete": 4,
+          "speed_mean": 0.11592189882521273,
+          "speed_range": [
+            0.11520440840950388,
+            0.11668406986887613
+          ],
+          "velocity_rmse_mean": 0.07518154922571188,
+          "yaw_rmse_mean": 0.04411124617201182,
+          "worst_joint_rms_max": 10.59126413574996,
+          "requested_goal_lag_max": 0.0,
+          "planner_time_fraction_mean": 1.0000000000000102
+        },
+        "P": {
+          "n": 4,
+          "complete": 4,
+          "speed_mean": 0.11533799441318004,
+          "speed_range": [
+            0.11492364761700889,
+            0.11586407754145109
+          ],
+          "velocity_rmse_mean": 0.07558057416064767,
+          "yaw_rmse_mean": 0.05058728306603107,
+          "worst_joint_rms_max": 10.669621253972483,
+          "requested_goal_lag_max": 0.0,
+          "planner_time_fraction_mean": 1.0000000000000102
+        }
+      },
+      "H1": {
+        "U": {
+          "n": 4,
+          "complete": 4,
+          "speed_mean": 0.11253290067049002,
+          "speed_range": [
+            0.11126354649119706,
+            0.11341897213916483
+          ],
+          "velocity_rmse_mean": 0.0771951153290535,
+          "yaw_rmse_mean": 0.05988750154063354,
+          "worst_joint_rms_max": 6.132882021488236,
+          "requested_goal_lag_max": 33.92578125,
+          "planner_time_fraction_mean": 0.874500000000009
+        },
+        "B": {
+          "n": 4,
+          "complete": 4,
+          "speed_mean": 0.11253290067049002,
+          "speed_range": [
+            0.11126354649119706,
+            0.11341897213916483
+          ],
+          "velocity_rmse_mean": 0.0771951153290535,
+          "yaw_rmse_mean": 0.05988750154063354,
+          "worst_joint_rms_max": 6.132882021488236,
+          "requested_goal_lag_max": 33.92578125,
+          "planner_time_fraction_mean": 0.874500000000009
+        },
+        "P": {
+          "n": 4,
+          "complete": 4,
+          "speed_mean": 0.11317498652308683,
+          "speed_range": [
+            0.11193772003949279,
+            0.11404447283869357
+          ],
+          "velocity_rmse_mean": 0.07560870441796373,
+          "yaw_rmse_mean": 0.05843048441498059,
+          "worst_joint_rms_max": 6.180751837987223,
+          "requested_goal_lag_max": 19.3359375,
+          "planner_time_fraction_mean": 0.8840000000000092
+        }
+      },
+      "H08": {
+        "U": {
+          "n": 4,
+          "complete": 4,
+          "speed_mean": 0.10596819215880632,
+          "speed_range": [
+            0.10308176553292644,
+            0.10847055326181222
+          ],
+          "velocity_rmse_mean": 0.08151214882763529,
+          "yaw_rmse_mean": 0.052302312044796725,
+          "worst_joint_rms_max": 4.049849722654389,
+          "requested_goal_lag_max": 35.244140625,
+          "planner_time_fraction_mean": 0.6617500000000068
+        },
+        "B": {
+          "n": 4,
+          "complete": 4,
+          "speed_mean": 0.10596819215880632,
+          "speed_range": [
+            0.10308176553292644,
+            0.10847055326181222
+          ],
+          "velocity_rmse_mean": 0.08151214882763529,
+          "yaw_rmse_mean": 0.052302312044796725,
+          "worst_joint_rms_max": 4.049849722654389,
+          "requested_goal_lag_max": 35.244140625,
+          "planner_time_fraction_mean": 0.6617500000000068
+        },
+        "P": {
+          "n": 4,
+          "complete": 4,
+          "speed_mean": 0.1066099623276606,
+          "speed_range": [
+            0.10362421396273287,
+            0.10895980809913465
+          ],
+          "velocity_rmse_mean": 0.08006512030276411,
+          "yaw_rmse_mean": 0.05026844979621333,
+          "worst_joint_rms_max": 4.1117206405592786,
+          "requested_goal_lag_max": 20.654296875,
+          "planner_time_fraction_mean": 0.6665000000000068
+        }
+      },
+      "F08": {
+        "U": {
+          "n": 4,
+          "complete": 4,
+          "speed_mean": 0.1549401731566498,
+          "speed_range": [
+            0.15290455183404658,
+            0.1582807685339083
+          ],
+          "velocity_rmse_mean": 0.046948618398109425,
+          "yaw_rmse_mean": 0.07350195052235492,
+          "worst_joint_rms_max": 6.02618357841325,
+          "requested_goal_lag_max": 35.244140625,
+          "planner_time_fraction_mean": 1.0000000000000102
+        },
+        "B": {
+          "n": 4,
+          "complete": 4,
+          "speed_mean": 0.1549401731566498,
+          "speed_range": [
+            0.15290455183404658,
+            0.1582807685339083
+          ],
+          "velocity_rmse_mean": 0.046948618398109425,
+          "yaw_rmse_mean": 0.07350195052235492,
+          "worst_joint_rms_max": 6.02618357841325,
+          "requested_goal_lag_max": 35.244140625,
+          "planner_time_fraction_mean": 1.0000000000000102
+        },
+        "P": {
+          "n": 4,
+          "complete": 4,
+          "speed_mean": 0.15519097481948785,
+          "speed_range": [
+            0.15314925903221993,
+            0.1583550683838633
+          ],
+          "velocity_rmse_mean": 0.04463470797773805,
+          "yaw_rmse_mean": 0.07007912436297702,
+          "worst_joint_rms_max": 6.026799533919259,
+          "requested_goal_lag_max": 20.654296875,
+          "planner_time_fraction_mean": 1.0000000000000102
+        }
+      }
+    },
+    "0.45": {
+      "unlimited": {
+        "U": {
+          "n": 4,
+          "complete": 4,
+          "speed_mean": 0.28723068911747723,
+          "speed_range": [
+            0.2827505064498592,
+            0.29072932688379843
+          ],
+          "velocity_rmse_mean": 0.18798575020694688,
+          "yaw_rmse_mean": 0.11200872915927766,
+          "worst_joint_rms_max": 19.378069868862028,
+          "requested_goal_lag_max": 0.0,
+          "planner_time_fraction_mean": 1.0000000000000102
+        },
+        "B": {
+          "n": 4,
+          "complete": 4,
+          "speed_mean": 0.2889520210247819,
+          "speed_range": [
+            0.28488180248548844,
+            0.2907473883632818
+          ],
+          "velocity_rmse_mean": 0.18623973119654583,
+          "yaw_rmse_mean": 0.11516980744163002,
+          "worst_joint_rms_max": 19.590097273234953,
+          "requested_goal_lag_max": 0.0,
+          "planner_time_fraction_mean": 1.0000000000000102
+        },
+        "P": {
+          "n": 4,
+          "complete": 4,
+          "speed_mean": 0.28889345940020295,
+          "speed_range": [
+            0.2855224522463405,
+            0.29065333993866255
+          ],
+          "velocity_rmse_mean": 0.18592445149263606,
+          "yaw_rmse_mean": 0.11410865900146801,
+          "worst_joint_rms_max": 19.446611232424903,
+          "requested_goal_lag_max": 0.0,
+          "planner_time_fraction_mean": 1.0000000000000102
+        }
+      },
+      "H1": {
+        "U": {
+          "n": 4,
+          "complete": 4,
+          "speed_mean": 0.2204355639999096,
+          "speed_range": [
+            0.21788822158234739,
+            0.22222974870917153
+          ],
+          "velocity_rmse_mean": 0.2388882190242731,
+          "yaw_rmse_mean": 0.08119963417348218,
+          "worst_joint_rms_max": 7.441715983492821,
+          "requested_goal_lag_max": 45.703125,
+          "planner_time_fraction_mean": 0.6015000000000063
+        },
+        "B": {
+          "n": 4,
+          "complete": 4,
+          "speed_mean": 0.22276323558966485,
+          "speed_range": [
+            0.21949002834589657,
+            0.22606323012675783
+          ],
+          "velocity_rmse_mean": 0.235588700897158,
+          "yaw_rmse_mean": 0.07456605211152749,
+          "worst_joint_rms_max": 7.36123609022339,
+          "requested_goal_lag_max": 28.65234375,
+          "planner_time_fraction_mean": 0.6040000000000062
+        },
+        "P": {
+          "n": 4,
+          "complete": 4,
+          "speed_mean": 0.2236589817660284,
+          "speed_range": [
+            0.21964083205343204,
+            0.22794508250178383
+          ],
+          "velocity_rmse_mean": 0.23440691784792717,
+          "yaw_rmse_mean": 0.07433092624432441,
+          "worst_joint_rms_max": 7.372240951384137,
+          "requested_goal_lag_max": 19.51171875,
+          "planner_time_fraction_mean": 0.6065000000000063
+        }
+      },
+      "H08": {
+        "U": {
+          "n": 4,
+          "complete": 4,
+          "speed_mean": 0.23117797733722711,
+          "speed_range": [
+            0.2180344508331817,
+            0.24410777424816651
+          ],
+          "velocity_rmse_mean": 0.23219133216030396,
+          "yaw_rmse_mean": 0.09165741947782403,
+          "worst_joint_rms_max": 5.575664847484529,
+          "requested_goal_lag_max": 47.548828125,
+          "planner_time_fraction_mean": 0.5657500000000059
+        },
+        "B": {
+          "n": 4,
+          "complete": 4,
+          "speed_mean": 0.2270390134913948,
+          "speed_range": [
+            0.21131809734474113,
+            0.24122414625233599
+          ],
+          "velocity_rmse_mean": 0.23504887974754674,
+          "yaw_rmse_mean": 0.07852622486488467,
+          "worst_joint_rms_max": 5.5410573991396,
+          "requested_goal_lag_max": 29.970703125,
+          "planner_time_fraction_mean": 0.5522500000000057
+        },
+        "P": {
+          "n": 4,
+          "complete": 4,
+          "speed_mean": 0.22826031169867203,
+          "speed_range": [
+            0.2134842505017595,
+            0.24175618920192657
+          ],
+          "velocity_rmse_mean": 0.23357593135647425,
+          "yaw_rmse_mean": 0.07811214870029115,
+          "worst_joint_rms_max": 5.558028368395,
+          "requested_goal_lag_max": 20.830078125,
+          "planner_time_fraction_mean": 0.5550000000000057
+        }
+      },
+      "F08": {
+        "U": {
+          "n": 4,
+          "complete": 4,
+          "speed_mean": 0.3198361869762717,
+          "speed_range": [
+            0.31540659493007145,
+            0.3230554219479095
+          ],
+          "velocity_rmse_mean": 0.16923726673171574,
+          "yaw_rmse_mean": 0.13625568816377703,
+          "worst_joint_rms_max": 6.620166219066188,
+          "requested_goal_lag_max": 64.775390625,
+          "planner_time_fraction_mean": 1.0000000000000102
+        },
+        "B": {
+          "n": 4,
+          "complete": 4,
+          "speed_mean": 0.3156488879328223,
+          "speed_range": [
+            0.3093189296613593,
+            0.32091524657187526
+          ],
+          "velocity_rmse_mean": 0.17287028918152797,
+          "yaw_rmse_mean": 0.13218605078184117,
+          "worst_joint_rms_max": 6.9570591811281,
+          "requested_goal_lag_max": 49.39453125,
+          "planner_time_fraction_mean": 1.0000000000000102
+        },
+        "P": {
+          "n": 4,
+          "complete": 4,
+          "speed_mean": 0.3171453305488896,
+          "speed_range": [
+            0.30933085304427227,
+            0.3241246520628431
+          ],
+          "velocity_rmse_mean": 0.17098853845824424,
+          "yaw_rmse_mean": 0.1264962451334563,
+          "worst_joint_rms_max": 6.959067281791672,
+          "requested_goal_lag_max": 33.837890625,
+          "planner_time_fraction_mean": 1.0000000000000102
+        }
+      }
+    }
+  },
+  "transition": {
+    "0_unlimited": {
+      "U": {
+        "n": 4,
+        "complete": 4,
+        "speed_mean": 0.0744350571399157,
+        "speed_range": [
+          0.07423340078493425,
+          0.07462712202586916
+        ],
+        "velocity_rmse_mean": 0.11036136485652928,
+        "yaw_rmse_mean": 0.0594466459869608,
+        "worst_joint_rms_max": 11.992488809992986,
+        "requested_goal_lag_max": 0.0,
+        "planner_time_fraction_mean": 1.000000000000101
+      },
+      "B": {
+        "n": 4,
+        "complete": 4,
+        "speed_mean": 0.07454630931183188,
+        "speed_range": [
+          0.07425649091776873,
+          0.07494895519871843
+        ],
+        "velocity_rmse_mean": 0.10983996456132451,
+        "yaw_rmse_mean": 0.06000542376148308,
+        "worst_joint_rms_max": 12.055869099568378,
+        "requested_goal_lag_max": 0.0,
+        "planner_time_fraction_mean": 1.000000000000101
+      },
+      "P": {
+        "n": 4,
+        "complete": 4,
+        "speed_mean": 0.07411869300952749,
+        "speed_range": [
+          0.0737667875062691,
+          0.07461092916475116
+        ],
+        "velocity_rmse_mean": 0.11076133612775207,
+        "yaw_rmse_mean": 0.06432556129575144,
+        "worst_joint_rms_max": 12.099202782894244,
+        "requested_goal_lag_max": 0.0,
+        "planner_time_fraction_mean": 1.000000000000101
+      }
+    },
+    "0_governed": {
+      "U": {
+        "n": 4,
+        "complete": 4,
+        "speed_mean": 0.06100111336794317,
+        "speed_range": [
+          0.057389635719611996,
+          0.06408688866387643
+        ],
+        "velocity_rmse_mean": 0.13006514420675291,
+        "yaw_rmse_mean": 0.056485406927267126,
+        "worst_joint_rms_max": 3.740627548846586,
+        "requested_goal_lag_max": 35.244140625,
+        "planner_time_fraction_mean": 0.7143750000000721
+      },
+      "B": {
+        "n": 4,
+        "complete": 4,
+        "speed_mean": 0.059367831791453635,
+        "speed_range": [
+          0.05539252517323247,
+          0.06311050795245791
+        ],
+        "velocity_rmse_mean": 0.13307467893031502,
+        "yaw_rmse_mean": 0.05507587300687247,
+        "worst_joint_rms_max": 3.719131604179248,
+        "requested_goal_lag_max": 35.244140625,
+        "planner_time_fraction_mean": 0.7114583333334051
+      },
+      "P": {
+        "n": 4,
+        "complete": 4,
+        "speed_mean": 0.05919296263827407,
+        "speed_range": [
+          0.05521216540435344,
+          0.06260373345110513
+        ],
+        "velocity_rmse_mean": 0.13324510030930448,
+        "yaw_rmse_mean": 0.053686349025545615,
+        "worst_joint_rms_max": 3.7039449361439747,
+        "requested_goal_lag_max": 26.103515625,
+        "planner_time_fraction_mean": 0.7089583333334051
+      }
+    },
+    "1_unlimited": {
+      "U": {
+        "n": 4,
+        "complete": 4,
+        "speed_mean": 0.006258339718841146,
+        "speed_range": [
+          0.0031368969816186637,
+          0.009126715335526135
+        ],
+        "velocity_rmse_mean": 0.08391642071618428,
+        "yaw_rmse_mean": 0.1699986078033012,
+        "worst_joint_rms_max": 10.898465583017458,
+        "requested_goal_lag_max": 0.0,
+        "planner_time_fraction_mean": 1.000000000000101
+      },
+      "B": {
+        "n": 4,
+        "complete": 4,
+        "speed_mean": 0.006238286529089533,
+        "speed_range": [
+          0.0031368969816186637,
+          0.009153989324862733
+        ],
+        "velocity_rmse_mean": 0.08407871194439978,
+        "yaw_rmse_mean": 0.16983785637947288,
+        "worst_joint_rms_max": 10.89133291418468,
+        "requested_goal_lag_max": 0.0,
+        "planner_time_fraction_mean": 1.000000000000101
+      },
+      "P": {
+        "n": 4,
+        "complete": 4,
+        "speed_mean": 0.0076602808191221965,
+        "speed_range": [
+          0.006667532814421679,
+          0.009295364156735483
+        ],
+        "velocity_rmse_mean": 0.0800928856182445,
+        "yaw_rmse_mean": 0.17162548716961346,
+        "worst_joint_rms_max": 10.444168943353176,
+        "requested_goal_lag_max": 0.0,
+        "planner_time_fraction_mean": 1.000000000000101
+      }
+    },
+    "1_governed": {
+      "U": {
+        "n": 4,
+        "complete": 4,
+        "speed_mean": 0.003504687893190443,
+        "speed_range": [
+          0.0002242555348317461,
+          0.006917263018285586
+        ],
+        "velocity_rmse_mean": 0.08771662385745439,
+        "yaw_rmse_mean": 0.16935136750923838,
+        "worst_joint_rms_max": 4.067729738594583,
+        "requested_goal_lag_max": 36.298828125,
+        "planner_time_fraction_mean": 0.6710416666667344
+      },
+      "B": {
+        "n": 4,
+        "complete": 4,
+        "speed_mean": 0.002792040007909133,
+        "speed_range": [
+          -0.002360125748630236,
+          0.006783623812704188
+        ],
+        "velocity_rmse_mean": 0.08752950433589685,
+        "yaw_rmse_mean": 0.16840043583283187,
+        "worst_joint_rms_max": 4.0658832748517915,
+        "requested_goal_lag_max": 36.298828125,
+        "planner_time_fraction_mean": 0.6718750000000678
+      },
+      "P": {
+        "n": 4,
+        "complete": 4,
+        "speed_mean": 0.0042674103013135385,
+        "speed_range": [
+          0.0021306026723390864,
+          0.00680184456123166
+        ],
+        "velocity_rmse_mean": 0.08380561801394695,
+        "yaw_rmse_mean": 0.16789819216633894,
+        "worst_joint_rms_max": 3.998691169053984,
+        "requested_goal_lag_max": 20.654296875,
+        "planner_time_fraction_mean": 0.6793750000000685
+      }
+    }
+  },
+  "long": {
+    "0.18_U": {
+      "n": 2,
+      "complete": 2,
+      "speed_mean": 0.10938954971395232,
+      "speed_range": [
+        0.10890398303531591,
+        0.1098751163925887
+      ],
+      "velocity_rmse_mean": 0.0766221728594535,
+      "yaw_rmse_mean": 0.05152932857078285,
+      "worst_joint_rms_max": 4.067979636804783,
+      "requested_goal_lag_max": 35.244140625,
+      "planner_time_fraction_mean": 0.6734999999996929
+    },
+    "0.18_B": {
+      "n": 2,
+      "complete": 2,
+      "speed_mean": 0.10938954971395232,
+      "speed_range": [
+        0.10890398303531591,
+        0.1098751163925887
+      ],
+      "velocity_rmse_mean": 0.0766221728594535,
+      "yaw_rmse_mean": 0.05152932857078285,
+      "worst_joint_rms_max": 4.067979636804783,
+      "requested_goal_lag_max": 35.244140625,
+      "planner_time_fraction_mean": 0.6734999999996929
+    },
+    "0.18_P": {
+      "n": 2,
+      "complete": 2,
+      "speed_mean": 0.1096544642896554,
+      "speed_range": [
+        0.10918176152377722,
+        0.11012716705553359
+      ],
+      "velocity_rmse_mean": 0.07605825488548511,
+      "yaw_rmse_mean": 0.05019165868374388,
+      "worst_joint_rms_max": 4.1005760096309825,
+      "requested_goal_lag_max": 3.1640625,
+      "planner_time_fraction_mean": 0.6756666666663586
+    },
+    "0.45_U": {
+      "n": 2,
+      "complete": 2,
+      "speed_mean": 0.22557406795163548,
+      "speed_range": [
+        0.2240398056062262,
+        0.22710833029704477
+      ],
+      "velocity_rmse_mean": 0.23445611404281547,
+      "yaw_rmse_mean": 0.08888818065540144,
+      "worst_joint_rms_max": 5.51725391223042,
+      "requested_goal_lag_max": 47.548828125,
+      "planner_time_fraction_mean": 0.54799999999975
+    },
+    "0.45_B": {
+      "n": 2,
+      "complete": 2,
+      "speed_mean": 0.21557385542894436,
+      "speed_range": [
+        0.2142081649579565,
+        0.2169395458999322
+      ],
+      "velocity_rmse_mean": 0.24338926593892243,
+      "yaw_rmse_mean": 0.0790333085512206,
+      "worst_joint_rms_max": 5.405719839271748,
+      "requested_goal_lag_max": 29.970703125,
+      "planner_time_fraction_mean": 0.5258333333330936
+    },
+    "0.45_P": {
+      "n": 2,
+      "complete": 2,
+      "speed_mean": 0.2162554023163849,
+      "speed_range": [
+        0.2149265338089946,
+        0.2175842708237752
+      ],
+      "velocity_rmse_mean": 0.24264928669937577,
+      "yaw_rmse_mean": 0.07877290323098037,
+      "worst_joint_rms_max": 5.403145884310337,
+      "requested_goal_lag_max": 17.138671875,
+      "planner_time_fraction_mean": 0.5271666666664263
+    }
+  },
+  "strict": {
+    "U": {
+      "n": 4,
+      "complete": 4,
+      "speed_mean": 0.13621693279357966,
+      "speed_range": [
+        0.13343773189266026,
+        0.1387211042342686
+      ],
+      "velocity_rmse_mean": 0.3182096472248334,
+      "yaw_rmse_mean": 0.07437962854120526,
+      "worst_joint_rms_max": 3.4094794446604473,
+      "requested_goal_lag_max": 50.361328125,
+      "planner_time_fraction_mean": 0.3480000000000036
+    },
+    "B": {
+      "n": 4,
+      "complete": 4,
+      "speed_mean": 0.1449029379034118,
+      "speed_range": [
+        0.14228418072137478,
+        0.14692157476519047
+      ],
+      "velocity_rmse_mean": 0.30873471398932195,
+      "yaw_rmse_mean": 0.06233564390775628,
+      "worst_joint_rms_max": 3.552796093212331,
+      "requested_goal_lag_max": 31.9921875,
+      "planner_time_fraction_mean": 0.3597500000000037
+    },
+    "P": {
+      "n": 4,
+      "complete": 4,
+      "speed_mean": 0.1462365883848786,
+      "speed_range": [
+        0.14411623992763714,
+        0.14761516018049867
+      ],
+      "velocity_rmse_mean": 0.3071966668519617,
+      "yaw_rmse_mean": 0.06226170259659158,
+      "worst_joint_rms_max": 3.530065279123648,
+      "requested_goal_lag_max": 22.8515625,
+      "planner_time_fraction_mean": 0.36225000000000374
+    }
+  },
+  "timestep_max_paired_speed_change_mps": 0.011062447777976048
+}

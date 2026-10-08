@@ -1,0 +1,42 @@
+{
+  "parts": [
+    {
+      "part": "S01",
+      "old_faces": 398,
+      "new_faces": 264,
+      "old_cm3": 119.63853902980875,
+      "new_cm3": 118.23131769627079
+    },
+    {
+      "part": "S02",
+      "old_faces": 365,
+      "new_faces": 267,
+      "old_cm3": 118.80565035345607,
+      "new_cm3": 116.91219579904978
+    }
+  ],
+  "roof_vent_area_mm2": {
+    "before": 1050,
+    "after": 1050
+  },
+  "side_vent_area_mm2": {
+    "before": 546,
+    "after": 636
+  },
+  "roof_vent_count": {
+    "before": 7,
+    "after": 3
+  },
+  "side_vent_count": {
+    "before": 14,
+    "after": 4
+  },
+  "unchanged": [
+    "fore-aft 289mm",
+    "lid and sensor screw axes",
+    "camera placement",
+    "motor bridges",
+    "20mm tire swept clearance",
+    "FR07"
+  ]
+}

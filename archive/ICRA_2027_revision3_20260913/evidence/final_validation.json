@@ -1,0 +1,35 @@
+{
+  "pdfs": {
+    "SCONE_ICRA2027_Manuscript_EN.pdf": {
+      "pages": 8,
+      "bytes": 653754,
+      "sha256": "1a4051e77c958e93c64a44aa8bcbe6eba6f20ae77d43ecb645400657ade37118",
+      "all_fonts_embedded": true,
+      "type3_fonts": false,
+      "anonymous_author_metadata": true
+    },
+    "SCONE_ICRA2027_Review_KO.pdf": {
+      "pages": 4,
+      "bytes": 141868,
+      "sha256": "b277a272a96b7d864f59a2cac007051874003d4d6dfb5c6d67cd4ce0d7101ec8",
+      "all_fonts_embedded": true,
+      "type3_fonts": false,
+      "anonymous_author_metadata": true
+    }
+  },
+  "score": {
+    "type": "internal rubric; not official points or probability",
+    "before": 58,
+    "after": 64,
+    "official_scale_mock_recommendation": "C / 3.0 Low Borderline"
+  },
+  "new_simulation_trials": 0,
+  "reanalyzed_trials": 268,
+  "raw_results_unchanged": true,
+  "previous_packet_unchanged": true,
+  "no_overfull_boxes_or_unresolved_references": true,
+  "figures": 7,
+  "tables": 3,
+  "cited_references": 15,
+  "visual_review": "All 8 English and 4 Korean pages inspected. Overview label overlap and conclusion orphan corrected. Final references balanced."
+}

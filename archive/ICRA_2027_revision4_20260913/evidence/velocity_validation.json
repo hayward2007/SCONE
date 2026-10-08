@@ -1,0 +1,286 @@
+{
+  "trials": [
+    {
+      "id": 0,
+      "code": "U",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "completed": true,
+      "displacement_speed": 0.11617711405825618,
+      "object_velocity_integral": 0.11510083892122008,
+      "root_origin_velocity_integral": 0.11621538137148457,
+      "root_origin_difference": 3.826731322839616e-05
+    },
+    {
+      "id": 1,
+      "code": "B",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "completed": true,
+      "displacement_speed": 0.11617711405825618,
+      "object_velocity_integral": 0.11510083892122008,
+      "root_origin_velocity_integral": 0.11621538137148457,
+      "root_origin_difference": 3.826731322839616e-05
+    },
+    {
+      "id": 3,
+      "code": "N",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "completed": true,
+      "displacement_speed": 0.09503781034595554,
+      "object_velocity_integral": 0.09433522438626876,
+      "root_origin_velocity_integral": 0.09507575106276397,
+      "root_origin_difference": 3.794071680843225e-05
+    },
+    {
+      "id": 56,
+      "code": "U",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "completed": true,
+      "displacement_speed": 0.2828809779511111,
+      "object_velocity_integral": 0.28277903759661005,
+      "root_origin_velocity_integral": 0.28297371004750044,
+      "root_origin_difference": 9.273209638932522e-05
+    },
+    {
+      "id": 57,
+      "code": "B",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "completed": true,
+      "displacement_speed": 0.28192784693951,
+      "object_velocity_integral": 0.2828556821689597,
+      "root_origin_velocity_integral": 0.2820210833385499,
+      "root_origin_difference": 9.323639903990877e-05
+    },
+    {
+      "id": 59,
+      "code": "N",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "completed": true,
+      "displacement_speed": 0.12453965443129189,
+      "object_velocity_integral": 0.12365425030739907,
+      "root_origin_velocity_integral": 0.12459037212732459,
+      "root_origin_difference": 5.071769603269549e-05
+    },
+    {
+      "id": 112,
+      "code": "B",
+      "command": [
+        0.3,
+        0,
+        0
+      ],
+      "completed": true,
+      "displacement_speed": 0.19223717674302424,
+      "object_velocity_integral": 0.19241051133690584,
+      "root_origin_velocity_integral": 0.19229907327123094,
+      "root_origin_difference": 6.189652820670632e-05
+    },
+    {
+      "id": 113,
+      "code": "N",
+      "command": [
+        0.3,
+        0,
+        0
+      ],
+      "completed": true,
+      "displacement_speed": 0.14084036070829223,
+      "object_velocity_integral": 0.1395934940564431,
+      "root_origin_velocity_integral": 0.14090865466702368,
+      "root_origin_difference": 6.829395873145239e-05
+    },
+    {
+      "id": 124,
+      "code": "B",
+      "command": [
+        -0.18,
+        0,
+        0
+      ],
+      "completed": true,
+      "displacement_speed": -0.11681785741848648,
+      "object_velocity_integral": -0.11580349198546097,
+      "root_origin_velocity_integral": -0.11685513032091818,
+      "root_origin_difference": -3.727290243170367e-05
+    },
+    {
+      "id": 125,
+      "code": "N",
+      "command": [
+        -0.18,
+        0,
+        0
+      ],
+      "completed": true,
+      "displacement_speed": -0.09381483708676658,
+      "object_velocity_integral": -0.09336288088185292,
+      "root_origin_velocity_integral": -0.0938526261128062,
+      "root_origin_difference": -3.7789026039625195e-05
+    },
+    {
+      "id": 136,
+      "code": "B",
+      "command": [
+        0,
+        0.12,
+        0
+      ],
+      "completed": true,
+      "displacement_speed": 0.00022741409605557712,
+      "object_velocity_integral": 0.00022769496540841566,
+      "root_origin_velocity_integral": 0.00022790999944267339,
+      "root_origin_difference": 4.959033870962639e-07
+    },
+    {
+      "id": 137,
+      "code": "N",
+      "command": [
+        0,
+        0.12,
+        0
+      ],
+      "completed": true,
+      "displacement_speed": 0.0006722057349326197,
+      "object_velocity_integral": 0.0006133654077871843,
+      "root_origin_velocity_integral": 0.0006725558173568751,
+      "root_origin_difference": 3.5008242425544484e-07
+    },
+    {
+      "id": 148,
+      "code": "B",
+      "command": [
+        0,
+        -0.12,
+        0
+      ],
+      "completed": true,
+      "displacement_speed": -0.00010249225860175262,
+      "object_velocity_integral": -0.00017088864646210513,
+      "root_origin_velocity_integral": -0.0001038082471703752,
+      "root_origin_difference": -1.315988568622575e-06
+    },
+    {
+      "id": 149,
+      "code": "N",
+      "command": [
+        0,
+        -0.12,
+        0
+      ],
+      "completed": true,
+      "displacement_speed": 0.0006036119852116665,
+      "object_velocity_integral": 0.0005170959454095829,
+      "root_origin_velocity_integral": 0.0006033633251263906,
+      "root_origin_difference": -2.4866008527582844e-07
+    },
+    {
+      "id": 160,
+      "code": "B",
+      "command": [
+        0,
+        0,
+        0.45
+      ],
+      "completed": true,
+      "displacement_speed": 0.005578793271969778,
+      "object_velocity_integral": 0.0004537016198236824,
+      "root_origin_velocity_integral": 0.005589757880464621,
+      "root_origin_difference": 1.0964608494843514e-05
+    },
+    {
+      "id": 161,
+      "code": "N",
+      "command": [
+        0,
+        0,
+        0.45
+      ],
+      "completed": true,
+      "displacement_speed": 0.005578793271969778,
+      "object_velocity_integral": 0.0004537016198236824,
+      "root_origin_velocity_integral": 0.005589757880464621,
+      "root_origin_difference": 1.0964608494843514e-05
+    },
+    {
+      "id": 172,
+      "code": "B",
+      "command": [
+        0,
+        0,
+        -0.45
+      ],
+      "completed": true,
+      "displacement_speed": 0.028959336307229595,
+      "object_velocity_integral": -0.00018064675359868404,
+      "root_origin_velocity_integral": 0.02896929811129746,
+      "root_origin_difference": 9.961804067863678e-06
+    },
+    {
+      "id": 173,
+      "code": "N",
+      "command": [
+        0,
+        0,
+        -0.45
+      ],
+      "completed": true,
+      "displacement_speed": 0.028959336307229595,
+      "object_velocity_integral": -0.00018064675359868404,
+      "root_origin_velocity_integral": 0.02896929811129746,
+      "root_origin_difference": 9.961804067863678e-06
+    },
+    {
+      "id": 184,
+      "code": "B",
+      "command": [
+        0.18,
+        0,
+        0.35
+      ],
+      "completed": true,
+      "displacement_speed": 0.08405008201983037,
+      "object_velocity_integral": 0.08110864970939465,
+      "root_origin_velocity_integral": 0.0840618012923274,
+      "root_origin_difference": 1.1719272497032196e-05
+    },
+    {
+      "id": 185,
+      "code": "N",
+      "command": [
+        0.18,
+        0,
+        0.35
+      ],
+      "completed": true,
+      "displacement_speed": 0.0757904665610659,
+      "object_velocity_integral": 0.0764518135647194,
+      "root_origin_velocity_integral": 0.07580619547954189,
+      "root_origin_difference": 1.5728918475982345e-05
+    }
+  ],
+  "count": 20,
+  "maximum_origin_difference_mps": 9.323639903990877e-05
+}

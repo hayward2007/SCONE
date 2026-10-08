@@ -1,0 +1,8 @@
+{
+  "content": [
+    {
+      "text": "{\n    \"message\": \"{\\\"step_id\\\": \\\"B03\\\", \\\"status\\\": \\\"PASS\\\", \\\"profile_vertices\\\": 631, \\\"bodies\\\": [{\\\"name\\\": \\\"PLA_sector_D0_SOLID_HUB\\\", \\\"solid\\\": true, \\\"volume_cm3\\\": 154.567454079749, \\\"mass_kg\\\": 0.1823895958141038, \\\"density_kg_m3\\\": 1180.0}, {\\\"name\\\": \\\"TPU_tire_D0_EFFECTIVE_ENVELOPE\\\", \\\"solid\\\": true, \\\"volume_cm3\\\": 127.62558166372027, \\\"mass_kg\\\": 0.0630470373418778, \\\"density_kg_m3\\\": 494.0}]}\\n\",\n    \"success\": true\n}",
+      "type": "text"
+    }
+  ]
+}

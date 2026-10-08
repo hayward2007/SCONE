@@ -1,0 +1,10 @@
+{
+  "document": "MARC v4 Body v5 BOX v36",
+  "save_requested": true,
+  "export_files": [
+    "C1_USB_guide_print.stl",
+    "L1_frame_print.stl",
+    "C1_L1_assembly_coordinates.step",
+    "MARC_C1_L1_updated.f3d"
+  ]
+}

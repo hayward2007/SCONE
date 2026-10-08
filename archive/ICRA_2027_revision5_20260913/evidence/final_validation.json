@@ -1,0 +1,33 @@
+{
+  "pdfs": [
+    {
+      "name": "SCONE_ICRA2027_Manuscript_EN.pdf",
+      "pages": 6,
+      "bytes": 462375,
+      "sha256": "c82a1da950bd0c160c0cf1e0922ee899db300dbd3b3b07be63f37fd8de4c2720",
+      "fonts_embedded": true,
+      "page_bounds_ok": true
+    },
+    {
+      "name": "SCONE_ICRA2027_Review_KO.pdf",
+      "pages": 4,
+      "bytes": 210372,
+      "sha256": "2a709cf7a1d0e558248ce8fea7a2b8bc1ba0a0d63fb81bbed44b9a25a1535004",
+      "fonts_embedded": true,
+      "page_bounds_ok": true
+    }
+  ],
+  "stairs_planned_and_recorded": 102,
+  "flat_retained_trials": 176,
+  "stairs_raw_sha256": "6665c86f675c2feb723b0f882b4ddc50c2ea857d2772f6e83c5ac8a957aa2275",
+  "tests": 287,
+  "figures": 6,
+  "tables": 3,
+  "cited_references": 15,
+  "video": {
+    "bytes": 5441604,
+    "duration_s": 91.84
+  },
+  "template_unchanged": true,
+  "source_revision": "14d677ab07969898ee3bee69214a30fac16be6f6"
+}

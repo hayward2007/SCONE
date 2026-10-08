@@ -1,0 +1,218 @@
+[
+  {
+    "joint_id": "M01",
+    "expected_axis": [
+      0,
+      0,
+      1
+    ],
+    "geometry_axis": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "native_axis": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  {
+    "joint_id": "M02",
+    "expected_axis": [
+      0,
+      0,
+      1
+    ],
+    "geometry_axis": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "native_axis": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  {
+    "joint_id": "M03",
+    "expected_axis": [
+      0,
+      0,
+      1
+    ],
+    "geometry_axis": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "native_axis": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  {
+    "joint_id": "M04",
+    "expected_axis": [
+      0,
+      0,
+      1
+    ],
+    "geometry_axis": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "native_axis": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  {
+    "joint_id": "M05",
+    "expected_axis": [
+      0,
+      -1,
+      0
+    ],
+    "geometry_axis": [
+      0.0,
+      -1.0,
+      0.0
+    ],
+    "native_axis": [
+      0.0,
+      -0.9999999999999999,
+      1.0141053741021861e-19
+    ]
+  },
+  {
+    "joint_id": "M06",
+    "expected_axis": [
+      0,
+      -1,
+      0
+    ],
+    "geometry_axis": [
+      0.0,
+      -1.0,
+      0.0
+    ],
+    "native_axis": [
+      0.0,
+      -1.0,
+      0.0
+    ]
+  },
+  {
+    "joint_id": "M07",
+    "expected_axis": [
+      0,
+      1,
+      0
+    ],
+    "geometry_axis": [
+      0.0,
+      1.0,
+      0.0
+    ],
+    "native_axis": [
+      0.0,
+      1.0,
+      0.0
+    ]
+  },
+  {
+    "joint_id": "M08",
+    "expected_axis": [
+      0,
+      1,
+      0
+    ],
+    "geometry_axis": [
+      0.0,
+      1.0,
+      0.0
+    ],
+    "native_axis": [
+      0.0,
+      1.0,
+      0.0
+    ]
+  },
+  {
+    "joint_id": "M09",
+    "expected_axis": [
+      0,
+      -1,
+      0
+    ],
+    "geometry_axis": [
+      0.0,
+      -1.0,
+      0.0
+    ],
+    "native_axis": [
+      -6.592424995850183e-18,
+      -0.9999999999999997,
+      -1.1732902622300816e-18
+    ]
+  },
+  {
+    "joint_id": "M10",
+    "expected_axis": [
+      0,
+      -1,
+      0
+    ],
+    "geometry_axis": [
+      0.0,
+      -1.0,
+      0.0
+    ],
+    "native_axis": [
+      3.469446951953614e-18,
+      -1.0,
+      -2.729240592501991e-19
+    ]
+  },
+  {
+    "joint_id": "M11",
+    "expected_axis": [
+      0,
+      1,
+      0
+    ],
+    "geometry_axis": [
+      0.0,
+      1.0,
+      0.0
+    ],
+    "native_axis": [
+      0.0,
+      1.0,
+      0.0
+    ]
+  },
+  {
+    "joint_id": "M12",
+    "expected_axis": [
+      0,
+      1,
+      0
+    ],
+    "geometry_axis": [
+      0.0,
+      1.0,
+      0.0
+    ],
+    "native_axis": [
+      -3.469446951953614e-18,
+      1.0,
+      -2.729240592501991e-19
+    ]
+  }
+]

@@ -1,0 +1,17 @@
+{
+  "parts": 24,
+  "threshold_m": 0.002,
+  "axis_probe_original": {
+    "contact_count": 1,
+    "minimum_distance_m": -0.022999994090102616
+  },
+  "axis_probe_decomposed": {
+    "contact_count": 0,
+    "minimum_distance_m": null
+  },
+  "mass_identical": true,
+  "inertia_identical": true,
+  "max_planar_support_function_change_m": 3.547626967470574e-06,
+  "parts_total_volume_m3": 0.00020788476499900309,
+  "original_mesh_volume_m3": 0.00020231096148120662
+}

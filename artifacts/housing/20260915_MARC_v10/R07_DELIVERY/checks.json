@@ -1,0 +1,168 @@
+{
+  "pose_source": "saved user_pose_before.json transforms applied explicitly to current component bodies",
+  "current_user_pose_hits": [
+    {
+      "a": "LEG 1:1/\ubcf8\uccb41",
+      "b": "R02 Front smooth PLA chassis:1",
+      "overlap_mm3": null,
+      "kernel_error": "3 : ASM_BAD_CONTAINMENT -   \ud615\uc0c1\uc744 \uacb0\ud569\ud558\ub294 \uc911\uc5d0 \ubb38\uc81c\uac00 \ubc1c\uc0dd\ud588\uc2b5\ub2c8\ub2e4.\n    \uc811\ud569/\uc808\ub2e8/\uad50\ucc28\ub97c \uc2dc\ub3c4\ud558\ub294 \uacbd\uc6b0 \ubcf8\uccb4\uc5d0 \uba85\ud655\ud558\uac8c \uacb9\uce58\ub294 \ubd80\ubd84\uc774 \uc788\ub294\uc9c0 \ud655\uc778\ud558\uc2ed\uc2dc\uc624(\uba74\uacfc \ubaa8\uc11c\ub9ac\uac00 \uac70\uc758 \uc77c\uce58\ud558\ub294 \uc704\uce58\uc5d0\uc11c \ubb38\uc81c\uac00 \ubc1c\uc0dd\ud560 \uc218 \uc788\uc74c)."
+    },
+    {
+      "a": "LEG 1(\ubbf8\ub7ec):1/\ubcf8\uccb41",
+      "b": "R02 Front smooth PLA chassis:1",
+      "overlap_mm3": null,
+      "kernel_error": "3 : ASM_BAD_CONTAINMENT -   \ud615\uc0c1\uc744 \uacb0\ud569\ud558\ub294 \uc911\uc5d0 \ubb38\uc81c\uac00 \ubc1c\uc0dd\ud588\uc2b5\ub2c8\ub2e4.\n    \uc811\ud569/\uc808\ub2e8/\uad50\ucc28\ub97c \uc2dc\ub3c4\ud558\ub294 \uacbd\uc6b0 \ubcf8\uccb4\uc5d0 \uba85\ud655\ud558\uac8c \uacb9\uce58\ub294 \ubd80\ubd84\uc774 \uc788\ub294\uc9c0 \ud655\uc778\ud558\uc2ed\uc2dc\uc624(\uba74\uacfc \ubaa8\uc11c\ub9ac\uac00 \uac70\uc758 \uc77c\uce58\ud558\ub294 \uc704\uce58\uc5d0\uc11c \ubb38\uc81c\uac00 \ubc1c\uc0dd\ud560 \uc218 \uc788\uc74c)."
+    },
+    {
+      "a": "LEG 1:5/\ubcf8\uccb41",
+      "b": "R01 Rear smooth PLA chassis:1",
+      "overlap_mm3": null,
+      "kernel_error": "3 : ASM_BAD_CONTAINMENT -   \ud615\uc0c1\uc744 \uacb0\ud569\ud558\ub294 \uc911\uc5d0 \ubb38\uc81c\uac00 \ubc1c\uc0dd\ud588\uc2b5\ub2c8\ub2e4.\n    \uc811\ud569/\uc808\ub2e8/\uad50\ucc28\ub97c \uc2dc\ub3c4\ud558\ub294 \uacbd\uc6b0 \ubcf8\uccb4\uc5d0 \uba85\ud655\ud558\uac8c \uacb9\uce58\ub294 \ubd80\ubd84\uc774 \uc788\ub294\uc9c0 \ud655\uc778\ud558\uc2ed\uc2dc\uc624(\uba74\uacfc \ubaa8\uc11c\ub9ac\uac00 \uac70\uc758 \uc77c\uce58\ud558\ub294 \uc704\uce58\uc5d0\uc11c \ubb38\uc81c\uac00 \ubc1c\uc0dd\ud560 \uc218 \uc788\uc74c)."
+    },
+    {
+      "a": "LEG 1(\ubbf8\ub7ec):2/\ubcf8\uccb41",
+      "b": "R01 Rear smooth PLA chassis:1",
+      "overlap_mm3": null,
+      "kernel_error": "3 : ASM_BAD_CONTAINMENT -   \ud615\uc0c1\uc744 \uacb0\ud569\ud558\ub294 \uc911\uc5d0 \ubb38\uc81c\uac00 \ubc1c\uc0dd\ud588\uc2b5\ub2c8\ub2e4.\n    \uc811\ud569/\uc808\ub2e8/\uad50\ucc28\ub97c \uc2dc\ub3c4\ud558\ub294 \uacbd\uc6b0 \ubcf8\uccb4\uc5d0 \uba85\ud655\ud558\uac8c \uacb9\uce58\ub294 \ubd80\ubd84\uc774 \uc788\ub294\uc9c0 \ud655\uc778\ud558\uc2ed\uc2dc\uc624(\uba74\uacfc \ubaa8\uc11c\ub9ac\uac00 \uac70\uc758 \uc77c\uce58\ud558\ub294 \uc704\uce58\uc5d0\uc11c \ubb38\uc81c\uac00 \ubc1c\uc0dd\ud560 \uc218 \uc788\uc74c)."
+    }
+  ],
+  "hardware_hits": [],
+  "printed_hits": [],
+  "user_pose_continuous_spin_hits": [],
+  "mirrored_user_pose_continuous_spin_hits": [],
+  "front_90_180_continuous_spin_hits": [],
+  "camera_assembly": {
+    "cover_removed": true,
+    "entry_lift_step_mm": 2,
+    "entry_hits": [],
+    "forward_slide_step_mm": 1,
+    "forward_slide_hits": [],
+    "driver_diameter_mm": 4,
+    "driver_shaft_hits": [],
+    "camera_shift_z_mm": -8,
+    "camera_forward_shift_mm": 42,
+    "insertion_translation_mm": 105,
+    "ffc_reserve_cover_overlap_mm3": 0.0
+  },
+  "part_topology": [
+    {
+      "name": "P04 PLA electronics tray:1",
+      "lumps": 1,
+      "volume_cm3": 21.99831594419119,
+      "bounds": [
+        [
+          33.0,
+          -64.0,
+          36.3
+        ],
+        [
+          131.0,
+          64.0,
+          49.2
+        ]
+      ]
+    },
+    {
+      "name": "R01 Rear smooth PLA chassis:1",
+      "lumps": 1,
+      "volume_cm3": 117.16010332464519,
+      "bounds": [
+        [
+          -61.4,
+          -77.0,
+          -0.5
+        ],
+        [
+          83.0,
+          77.0,
+          36.0
+        ]
+      ]
+    },
+    {
+      "name": "R02 Front smooth PLA chassis:1",
+      "lumps": 1,
+      "volume_cm3": 173.03488577686457,
+      "bounds": [
+        [
+          65.15,
+          -77.0,
+          -0.5
+        ],
+        [
+          227.6,
+          77.0,
+          81.0
+        ]
+      ]
+    },
+    {
+      "name": "S01 Rear fairing lid:1",
+      "lumps": 1,
+      "volume_cm3": 122.0500733514762,
+      "bounds": [
+        [
+          -61.4,
+          -77.0,
+          33.8
+        ],
+        [
+          82.85,
+          77.0,
+          104.0
+        ]
+      ]
+    },
+    {
+      "name": "S02 Front camera fairing lid:1",
+      "lumps": 1,
+      "volume_cm3": 121.63158796117894,
+      "bounds": [
+        [
+          83.15,
+          -77.0,
+          33.8
+        ],
+        [
+          227.6,
+          77.0,
+          104.0
+        ]
+      ]
+    },
+    {
+      "name": "M01 Rear removable motor bridge:1",
+      "lumps": 1,
+      "volume_cm3": 7.583637926471228,
+      "bounds": [
+        [
+          -61.4,
+          -43.0,
+          33.3
+        ],
+        [
+          -21.891297,
+          43.0,
+          36.7
+        ]
+      ]
+    },
+    {
+      "name": "M02 Front removable motor bridge:1",
+      "lumps": 1,
+      "volume_cm3": 7.5791286687268045,
+      "bounds": [
+        [
+          188.108703,
+          -43.0,
+          33.3
+        ],
+        [
+          227.6,
+          43.0,
+          36.7
+        ]
+      ]
+    }
+  ]
+}

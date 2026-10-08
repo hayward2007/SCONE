@@ -1,0 +1,12 @@
+[
+  {
+    "part": "S01 Rear fairing lid:1",
+    "corner_edges": 2,
+    "radius_mm": 1
+  },
+  {
+    "part": "S02 Front camera fairing lid:1",
+    "corner_edges": 2,
+    "radius_mm": 1
+  }
+]

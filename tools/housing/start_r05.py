@@ -1,0 +1,10 @@
+exec(open('/Users/hayward_kim/Developer/SCONE/tools/housing/common.py',encoding='utf-8').read())
+DEST=OUT/'R05_DELIVERY';DEST.mkdir(exist_ok=True)
+def run():
+ app,doc,d=guard();assert doc.name.startswith('MARC Housing PLA R04')
+ d.exportManager.execute(d.exportManager.createFusionArchiveExportOptions(str(DEST/'R04_before_full_fairing.f3d')))
+ for name in ['source_before.json','user_pose_before.json']:(DEST/name).write_bytes((OUT/'R04_DELIVERY'/name).read_bytes())
+ doc.saveAs('MARC Housing PLA R05',doc.dataFile.parentFolder,'3pin TTL harness, concealed chassis fasteners and continuous printable fairing','')
+ (DEST/'starting_state.json').write_text(json.dumps(snapshot(doc),ensure_ascii=True));print('R05 STARTED',doc.name)
+try:run()
+except:(DEST/'start_error.txt').write_text(traceback.format_exc(),encoding='utf-8');print(traceback.format_exc())

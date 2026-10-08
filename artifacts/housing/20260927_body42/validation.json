@@ -1,0 +1,146 @@
+{
+  "solid": true,
+  "lumps": 1,
+  "volume_cm3": 1023.9649220526221,
+  "source_volume_cm3": 1054.8021915576696,
+  "bounds_mm": [
+    [
+      -126.95260380581519,
+      -86.32894736413616,
+      -46.5
+    ],
+    [
+      293.170008915372,
+      86.32894736413616,
+      153.5
+    ]
+  ],
+  "mount_checks": [
+    {
+      "x": -50.39129744522157,
+      "y": -29.340925828965737,
+      "web_fill_ratio": 0.9999999999999997,
+      "head_and_driver_obstruction_cm3": 0.0,
+      "through_obstruction_cm3": 0.0
+    },
+    {
+      "x": -56.89129744522113,
+      "y": -35.64092582896612,
+      "web_fill_ratio": 1.0000000000000002,
+      "head_and_driver_obstruction_cm3": 0.0,
+      "through_obstruction_cm3": 0.0
+    },
+    {
+      "x": -26.891297445221447,
+      "y": 35.64092582896434,
+      "web_fill_ratio": 0.9999999999999974,
+      "head_and_driver_obstruction_cm3": 0.0,
+      "through_obstruction_cm3": 0.0
+    },
+    {
+      "x": -26.891297445221447,
+      "y": -35.64092582896434,
+      "web_fill_ratio": 0.9999999999999974,
+      "head_and_driver_obstruction_cm3": 0.0,
+      "through_obstruction_cm3": 0.0
+    },
+    {
+      "x": 223.10870255477855,
+      "y": 35.64092582896434,
+      "web_fill_ratio": 0.9999999999999973,
+      "head_and_driver_obstruction_cm3": 0.0,
+      "through_obstruction_cm3": 0.0
+    },
+    {
+      "x": 199.60870255477843,
+      "y": -29.340925828965737,
+      "web_fill_ratio": 1.0000000000000007,
+      "head_and_driver_obstruction_cm3": 0.0,
+      "through_obstruction_cm3": 0.0
+    },
+    {
+      "x": 193.10870255477886,
+      "y": -35.64092582896612,
+      "web_fill_ratio": 1.0000000000000007,
+      "head_and_driver_obstruction_cm3": 0.0,
+      "through_obstruction_cm3": 0.0
+    },
+    {
+      "x": 216.60870255477823,
+      "y": -29.340925828964735,
+      "web_fill_ratio": 0.9999999999999988,
+      "head_and_driver_obstruction_cm3": 0.0,
+      "through_obstruction_cm3": 0.0
+    },
+    {
+      "x": 223.10870255477855,
+      "y": -35.64092582896434,
+      "web_fill_ratio": 0.9999999999999973,
+      "head_and_driver_obstruction_cm3": 0.0,
+      "through_obstruction_cm3": 0.0
+    },
+    {
+      "x": 216.60870255477823,
+      "y": 29.340925828964735,
+      "web_fill_ratio": 0.9999999999999988,
+      "head_and_driver_obstruction_cm3": 0.0,
+      "through_obstruction_cm3": 0.0
+    },
+    {
+      "x": 193.10870255477886,
+      "y": 35.64092582896612,
+      "web_fill_ratio": 1.0000000000000007,
+      "head_and_driver_obstruction_cm3": 0.0,
+      "through_obstruction_cm3": 0.0
+    },
+    {
+      "x": 199.60870255477843,
+      "y": 29.340925828965737,
+      "web_fill_ratio": 1.0000000000000007,
+      "head_and_driver_obstruction_cm3": 0.0,
+      "through_obstruction_cm3": 0.0
+    },
+    {
+      "x": -33.39129744522175,
+      "y": 29.340925828964735,
+      "web_fill_ratio": 0.9999999999999983,
+      "head_and_driver_obstruction_cm3": 0.0,
+      "through_obstruction_cm3": 0.0
+    },
+    {
+      "x": -56.89129744522113,
+      "y": 35.64092582896612,
+      "web_fill_ratio": 1.0000000000000002,
+      "head_and_driver_obstruction_cm3": 0.0,
+      "through_obstruction_cm3": 0.0
+    },
+    {
+      "x": -33.39129744522175,
+      "y": -29.340925828964735,
+      "web_fill_ratio": 0.9999999999999983,
+      "head_and_driver_obstruction_cm3": 0.0,
+      "through_obstruction_cm3": 0.0
+    },
+    {
+      "x": -50.39129744522157,
+      "y": 29.340925828965737,
+      "web_fill_ratio": 0.9999999999999997,
+      "head_and_driver_obstruction_cm3": 0.0,
+      "through_obstruction_cm3": 0.0
+    }
+  ],
+  "checked_leg_solids": 104,
+  "static_collisions": [],
+  "transform_changes": [],
+  "added_material_cm3": 10.521533259397719,
+  "removed_material_cm3": 41.353780358297804,
+  "original_cavity_cm3": 7495.2262707744685,
+  "retained_original_cavity_lower_bound_percent": 99.85962354064715,
+  "new_feature_health": [
+    {
+      "name": "Body42 completed geometry - M2.5 5mm seat 3.5mm web",
+      "health": 0,
+      "message": ""
+    }
+  ]
+}

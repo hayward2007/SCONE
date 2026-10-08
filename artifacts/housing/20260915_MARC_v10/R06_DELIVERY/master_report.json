@@ -1,0 +1,6 @@
+{
+  "outer_mm3": 2705568.7541666683,
+  "shell_mm3": 297626.4229872889,
+  "wall_mm": 2.8,
+  "style": "Explicit planar facets; 3D constant wall inset; shared upper/lower surface"
+}

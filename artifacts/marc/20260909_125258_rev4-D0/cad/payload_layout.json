@@ -1,0 +1,115 @@
+[
+  {
+    "part_id": "battery",
+    "position_mm": [
+      0,
+      95,
+      3
+    ],
+    "size_mm": [
+      43.1,
+      91.6,
+      23.6
+    ],
+    "origin": "center",
+    "mass_kg": 0.204,
+    "geometry_status": "ENVELOPE",
+    "inertia_com_local_kgm2": null,
+    "com_local_m": null
+  },
+  {
+    "part_id": "U2D2",
+    "position_mm": [
+      0,
+      -60,
+      3
+    ],
+    "size_mm": [
+      48,
+      18,
+      14.9
+    ],
+    "origin": "center",
+    "mass_kg": 0.009,
+    "geometry_status": "ENVELOPE",
+    "inertia_com_local_kgm2": null,
+    "com_local_m": null
+  },
+  {
+    "part_id": "SPDB",
+    "position_mm": [
+      0,
+      -100,
+      32
+    ],
+    "size_mm": [
+      70,
+      90,
+      22
+    ],
+    "origin": "base",
+    "mass_kg": null,
+    "geometry_status": "ENVELOPE",
+    "inertia_com_local_kgm2": null,
+    "com_local_m": null
+  },
+  {
+    "part_id": "Jetson",
+    "position_mm": [
+      0,
+      68,
+      32
+    ],
+    "size_mm": [
+      100,
+      80,
+      29
+    ],
+    "origin": "base",
+    "mass_kg": 0.145,
+    "geometry_status": "ENVELOPE",
+    "inertia_com_local_kgm2": null,
+    "com_local_m": null
+  },
+  {
+    "part_id": "lidar",
+    "position_mm": [
+      0,
+      -20,
+      70
+    ],
+    "size_mm": [
+      38.6,
+      38.6,
+      33.9
+    ],
+    "origin": "base",
+    "mass_kg": 0.045,
+    "geometry_status": "ENVELOPE",
+    "inertia_com_local_kgm2": null,
+    "com_local_m": null
+  },
+  {
+    "part_id": "stereo",
+    "position_mm": [
+      70,
+      0,
+      70
+    ],
+    "size_width_height_depth_mm": [
+      85.2,
+      24,
+      20.3
+    ],
+    "origin": "optical",
+    "axis": [
+      0.8660254037844386,
+      0,
+      -0.5
+    ],
+    "mass_kg": 0.03,
+    "geometry_status": "ENVELOPE",
+    "inertia_com_local_kgm2": null,
+    "com_local_m": null
+  }
+]

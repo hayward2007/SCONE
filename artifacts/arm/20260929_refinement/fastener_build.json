@@ -1,0 +1,27 @@
+[
+  {
+    "part": "A0",
+    "fastening": "4x M3 D6.2 counterbores, 3.2 deep, residual2.9",
+    "volume_cm3": 19.971925967536258
+  },
+  {
+    "part": "A1",
+    "fastening": "4x M2.5 D5.4 counterbores, 2.6 deep, residual2.9",
+    "volume_cm3": 11.92403059056748
+  },
+  {
+    "part": "A2",
+    "fastening": "4x M2.5 D5.4 counterbores, 2.6 deep, residual3.2 to existing relief",
+    "volume_cm3": 23.24652288645034
+  },
+  {
+    "part": "A3",
+    "fastening": "4x M2.5 D5.4 counterbores, 2.6 deep, residual3.2 to existing relief",
+    "volume_cm3": 23.24652288645034
+  },
+  {
+    "part": "A4",
+    "fastening": "6x M2.5 D5.4 counterbores deepened to2.6, residual3.4",
+    "volume_cm3": 16.176002611006112
+  }
+]

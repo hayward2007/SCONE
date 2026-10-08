@@ -1,0 +1,194 @@
+{
+  "G00": {
+    "check_id": "G00",
+    "status": "PASS",
+    "model_stage": "D0",
+    "source_sha256": "10619ca22b5c01b95cff03629dca21a1f95c3ebb80732f2f39442ac0e21d3c15",
+    "method_version": "marc-D0-review-1",
+    "reason": "48 parameters still match; two values intentionally changed by this review (com_z_candidate_mm, drive_efficiency renamed to external_loss_factor). Embedded reference script re-extracted and run: exit 0",
+    "evidence": [
+      "evidence/review_stability.json"
+    ],
+    "blocking_inputs": []
+  },
+  "G01": {
+    "check_id": "G01",
+    "status": "PASS",
+    "model_stage": "D0",
+    "source_sha256": "10619ca22b5c01b95cff03629dca21a1f95c3ebb80732f2f39442ac0e21d3c15",
+    "method_version": "marc-D0-review-1",
+    "reason": "Profile untouched. heave 18.563553 mm and tip chord 86.103772 mm reproduce",
+    "evidence": [
+      "evidence/review_stability.json"
+    ],
+    "blocking_inputs": []
+  },
+  "G02": {
+    "check_id": "G02",
+    "status": "BLOCKED",
+    "model_stage": "D0",
+    "source_sha256": "10619ca22b5c01b95cff03629dca21a1f95c3ebb80732f2f39442ac0e21d3c15",
+    "method_version": "marc-D0-review-1",
+    "reason": "CAD kinematics verified by the previous run (12/12 positive increments). This review added joint limits and re-verified the 12 motor axes land exactly on the joint axes. Hardware ID/sign mapping still missing",
+    "evidence": [
+      "evidence/motor_import.json"
+    ],
+    "blocking_inputs": [
+      "I01"
+    ],
+    "subchecks": {
+      "CAD": "PASS",
+      "joint_limits": "PASS",
+      "hardware": "BLOCKED"
+    }
+  },
+  "G03": {
+    "check_id": "G03",
+    "status": "FAIL",
+    "model_stage": "D0",
+    "source_sha256": "10619ca22b5c01b95cff03629dca21a1f95c3ebb80732f2f39442ac0e21d3c15",
+    "method_version": "marc-D0-review-1",
+    "reason": "BRep intersections reduced 24 -> 16 by the clevis cut; link-sector and link-tire are now 0. All 16 remaining are D0 envelope nesting at joints (frame-yoke1, yoke1-yoke2, yoke1-link, yoke2-link). 24 additional motor-inside-envelope overlaps are now measured, not absent. P01-P06 paths still not run",
+    "evidence": [
+      "evidence/review_interference.json"
+    ],
+    "blocking_inputs": [
+      "I02",
+      "I03",
+      "I05",
+      "I08"
+    ],
+    "subchecks": {
+      "leg_to_leg": "PASS",
+      "link_vs_sector": "PASS",
+      "joint_envelopes": "FAIL",
+      "motor_pockets": "FAIL",
+      "paths": "NOT_RUN"
+    }
+  },
+  "G04": {
+    "check_id": "G04",
+    "status": "BLOCKED",
+    "model_stage": "D0",
+    "source_sha256": "10619ca22b5c01b95cff03629dca21a1f95c3ebb80732f2f39442ac0e21d3c15",
+    "method_version": "marc-D0-review-1",
+    "reason": "Static margins recomputed with the measured CoM: 4-point 151.08 mm, 3-point with yaw re-placement worst 104.44 mm, both above the 80 mm target. Torque/current/thermal limits still missing",
+    "evidence": [
+      "evidence/review_stability.json"
+    ],
+    "blocking_inputs": [
+      "I07",
+      "I09"
+    ],
+    "subchecks": {
+      "static_margin": "PASS",
+      "drive_limits": "BLOCKED"
+    }
+  },
+  "G05": {
+    "check_id": "G05",
+    "status": "FAIL",
+    "model_stage": "D0",
+    "source_sha256": "10619ca22b5c01b95cff03629dca21a1f95c3ebb80732f2f39442ac0e21d3c15",
+    "method_version": "marc-D0-review-1",
+    "reason": "Mass bookkeeping is now consistent: Fusion root mass 3115.469 g equals the explicit subtotal, no default-steel bodies remain. Still short of a complete BOM (SPDB, forks, horns, bearings, fasteners, wiring) and the spin-axis inertia still exceeds the candidate limit by 1.41%",
+    "evidence": [
+      "evidence/motor_import.json",
+      "evidence/review_stability.json"
+    ],
+    "blocking_inputs": [
+      "I02",
+      "I03",
+      "I05",
+      "I06",
+      "I08"
+    ],
+    "subchecks": {
+      "material_assignment": "PASS",
+      "root_vs_manifest": "PASS",
+      "spin_axis_inertia": "FAIL",
+      "complete_BOM": "BLOCKED"
+    }
+  },
+  "G06": {
+    "check_id": "G06",
+    "status": "BLOCKED",
+    "model_stage": "D0",
+    "source_sha256": "10619ca22b5c01b95cff03629dca21a1f95c3ebb80732f2f39442ac0e21d3c15",
+    "method_version": "marc-D0-review-1",
+    "reason": "D0 placeholders and preliminary material values; no structural acceptance. Yoke envelopes proven undersized for their actuators",
+    "evidence": [
+      "evidence/review_interference.json"
+    ],
+    "blocking_inputs": [
+      "I02",
+      "I03",
+      "I04"
+    ]
+  },
+  "G07": {
+    "check_id": "G07",
+    "status": "BLOCKED",
+    "model_stage": "D0",
+    "source_sha256": "10619ca22b5c01b95cff03629dca21a1f95c3ebb80732f2f39442ac0e21d3c15",
+    "method_version": "marc-D0-review-1",
+    "reason": "Payload layout only; plug/cable/door paths not verified",
+    "evidence": [],
+    "blocking_inputs": [
+      "I05",
+      "I08"
+    ]
+  },
+  "G08": {
+    "check_id": "G08",
+    "status": "BLOCKED",
+    "model_stage": "D0",
+    "source_sha256": "10619ca22b5c01b95cff03629dca21a1f95c3ebb80732f2f39442ac0e21d3c15",
+    "method_version": "marc-D0-review-1",
+    "reason": "Power design and tests absent",
+    "evidence": [],
+    "blocking_inputs": [
+      "I06",
+      "I07"
+    ]
+  },
+  "G09": {
+    "check_id": "G09",
+    "status": "BLOCKED",
+    "model_stage": "D0",
+    "source_sha256": "10619ca22b5c01b95cff03629dca21a1f95c3ebb80732f2f39442ac0e21d3c15",
+    "method_version": "marc-D0-review-1",
+    "reason": "Sensor envelopes only; occlusion and optical performance not measured",
+    "evidence": [],
+    "blocking_inputs": [
+      "I05",
+      "I09"
+    ]
+  },
+  "G10": {
+    "check_id": "G10",
+    "status": "NOT_RUN",
+    "model_stage": "D0",
+    "source_sha256": "10619ca22b5c01b95cff03629dca21a1f95c3ebb80732f2f39442ac0e21d3c15",
+    "method_version": "marc-D0-review-1",
+    "reason": "No MuJoCo asset generated",
+    "evidence": [],
+    "blocking_inputs": []
+  },
+  "G11": {
+    "check_id": "G11",
+    "status": "BLOCKED",
+    "model_stage": "D0",
+    "source_sha256": "10619ca22b5c01b95cff03629dca21a1f95c3ebb80732f2f39442ac0e21d3c15",
+    "method_version": "marc-D0-review-1",
+    "reason": "CAD joint limits now enforced: yaw +-60 deg, q1 -29.594..+25.406 deg in Fusion units (beta -80..-25 deg logical). Support-mode and trot beta rules still need the trajectory generator",
+    "evidence": [
+      "evidence/motor_import.json"
+    ],
+    "blocking_inputs": [],
+    "subchecks": {
+      "CAD_joint_limits": "PASS",
+      "trajectory_generator": "BLOCKED"
+    }
+  }
+}

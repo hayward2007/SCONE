@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "<string>", line 18, in <module>
+  File "<string>", line 7, in run
+StopIteration

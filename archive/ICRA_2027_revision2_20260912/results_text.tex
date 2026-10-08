@@ -1,0 +1,53 @@
+\subsection{Rewind Feasibility and Forward Transport}
+Table~\ref{tab:main} separates completion from full-window transport. B, U, N, and P complete all 16 main trials. At the high command, B reaches 0.283 m/s against N's 0.126 m/s, a factor of 2.25. The phase-paired B-minus-N gain averages 0.157 m/s and spans [0.151, 0.162] m/s. B retains 99.95\% of U's mean speed while reducing the maximum sector rate from 1516.8 to 536.4 degree/s. U exceeds the prescribed rate in every high-command trial; B has no violating frames in the main matrix.
+
+\begin{table*}[t]\centering\small
+\caption{Main matrix: completion and full-window speed, mean [minimum, maximum]}
+\label{tab:main}
+\begin{tabular}{cccccc}\toprule
+ & \multicolumn{2}{c}{0.18 m/s command} & \multicolumn{2}{c}{0.45 m/s command} & High-command sector\\
+Code & Complete & Speed (m/s) & Complete & Speed (m/s) & peak rate (degree/s)\\\midrule
+U & 8/8 & 0.114 [0.113, 0.116] & 8/8 & 0.283 [0.278, 0.288] & 1516.8\\
+B & 8/8 & 0.114 [0.113, 0.116] & 8/8 & 0.283 [0.280, 0.286] & 536.4\\
+G & 8/8 & 0.114 [0.113, 0.116] & 0/8 & -- & 535.7\\
+N & 8/8 & 0.094 [0.092, 0.095] & 8/8 & 0.126 [0.122, 0.129] & 0.0\\
+S & 0/8 & -- & 0/8 & -- & 179.3\\
+D & 0/8 & -- & 0/8 & -- & 203.0\\
+P & 8/8 & 0.113 [0.111, 0.114] & 8/8 & 0.284 [0.281, 0.285] & 536.4\\
+\bottomrule\end{tabular}
+\par\vspace{5pt}\noindent\parbox{.96\textwidth}{\footnotesize Peaks for failed conditions cover only the interval before termination. A dash indicates that no trial completed the full 8 s; truncated speeds are not averaged into successful performance.}
+\end{table*}
+
+The distance-only restriction G completes the low-command trials but rejects an IK target in all eight high-command trials. Bounding sector excursion without anticipating the next swing can exhaust the rolling budget while the leg remains in stance; the resulting articulated residual becomes unreachable. Adding the lookahead in B restores completion for these trials. The full-superposition restriction S and disabled-reindexing restriction D reject targets in all main trials. These outcomes concern this posture, workspace, and command range; they do not imply that all superposed or nonreindexing controllers must fail.
+
+Periodic scheduling P also completes all main trials and has essentially the same high-command speed as B. At the low command, B has only a small mean advantage. Thus these trials support the need for timely reindexing but do not establish adaptive scheduling as superior to periodic scheduling. The stronger contrast is rate feasibility against U, and reachable residual motion against G and S.
+
+\begin{figure*}[t]\centering\includegraphics[width=.97\textwidth]{results.pdf}
+\caption{Four conditions that complete every main trial. Bars are eight-phase means; whiskers are full phase ranges. G, S, and D are reported with their failures in Table~\ref{tab:main}. Faster transport is accompanied by changes in joint work and slip, so speed alone is not an efficiency result.}
+\label{fig:results}\end{figure*}
+\subsection{Work, Tracking, and Loaded Support}
+At the high command, B uses 94.2 J of absolute joint work against N's 58.1 J. Integrated slip is 0.509 versus 0.290 m. Their respective translational RMSE values are 0.196 and 0.331 m/s. B therefore improves net transport without demonstrating uniformly lower work or slip. Its main trials include a minimum loaded-leg count of 1, and up to 11.65\% of physics samples have fewer than three. This illustrates why a three-leg stance schedule is not a three-contact load guarantee. The summed distal target reaches 1594.6 degree/s across the B trials, exceeding the sector-component bound; applying the method to a physical actuator requires a joint-level trajectory constraint.
+
+\subsection{Commands Beyond Forward Motion}
+Table~\ref{tab:domain} reports all seven additional commands. Translational and yaw errors are separate because a controller can remain upright while tracking poorly. Each comparison uses the same four initial phases. The results describe constant-command operating points, including cases where both B and N fall back to stepping.
+\begin{table*}[t]\centering\small
+\caption{Additional commands: completion and tracking error over completed trials}
+\label{tab:domain}\begin{tabular}{lccccc}\toprule
+Command $(v_x,v_y,\omega_z)$ & Complete B/N/S & B $e_v$ & N $e_v$ & B $e_\omega$ & N $e_\omega$\\\midrule
+(0.3, 0, 0) & 4/4/0 & 0.124 & 0.177 & 0.084 & 0.086\\
+(-0.18, 0, 0) & 4/4/0 & 0.078 & 0.097 & 0.058 & 0.036\\
+(0, 0.12, 0) & 4/4/4 & 0.041 & 0.057 & 0.004 & 0.002\\
+(0, -0.12, 0) & 4/4/4 & 0.042 & 0.057 & 0.005 & 0.002\\
+(0, 0, 0.45) & 4/4/4 & 0.043 & 0.043 & 0.275 & 0.275\\
+(0, 0, -0.45) & 4/4/4 & 0.042 & 0.042 & 0.274 & 0.274\\
+(0.18, 0, 0.35) & 4/4/1 & 0.102 & 0.112 & 0.186 & 0.212\\
+\bottomrule\end{tabular}
+\par\vspace{5pt}\noindent\parbox{.96\textwidth}{\footnotesize Each completion count is out of four. $e_v$ is translational RMSE (m/s); $e_\omega$ is yaw-rate RMSE (rad/s). Units of the command are m/s, m/s, and rad/s. Failed-trial errors are not mixed with full-window errors.}
+\end{table*}
+
+\subsection{Parameter, Geometry, and Timestep Checks}
+With 1.2-fold mass, B completes 4/4 trials and N completes 4/4. Their mean speeds are 0.270 and 0.118 m/s. With half nominal friction, B completes 4/4 trials and N completes 4/4. Their mean speeds are 0.316 and 0.134 m/s. With 0.8-fold actuator strength, B completes 4/4 trials and N completes 4/4. Their mean speeds are 0.293 and 0.130 m/s. These isolated stress cases are not a population robustness estimate.
+
+For paired completed B/N trials, changing from decomposed contacts to the single hull changes net speed by at most 0.0122 m/s. The 1/2/4 ms comparison changes speed by at most 0.0008 m/s relative to 2 ms. These are local sensitivity results, not a proof of solver convergence or concave-edge accuracy. Contact-point slip is not compared across the two representations because decomposition changes the contact manifold.
+
+Across the prescribed matrix, 193/268 trials complete; all incomplete trials terminate because an IK target is rejected. B completes 68/68 trials with 0 sector-rate violation frames. A separate 20-trial check integrates the velocity at the same root origin used for displacement. Its maximum speed discrepancy is 0.00009 m/s. Velocity at the body center of mass is retained as a diagnostic at a different point and is not substituted for velocity at the root origin. The three visual replays in Fig.~\ref{fig:replay} reproduce the corresponding nominal records to the verified numerical tolerance.

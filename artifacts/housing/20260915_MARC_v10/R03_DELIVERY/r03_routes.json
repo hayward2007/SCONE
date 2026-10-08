@@ -1,0 +1,316 @@
+{
+  "status": "Illustrative centerline corridors; exact purchased plug envelopes, flexible-cable bend radii and strain relief require harness prototype",
+  "routes": [
+    {
+      "name": "USB-C external service",
+      "assumed_radius_mm": 1.5,
+      "points_mm": [
+        [
+          36,
+          -42,
+          50.3
+        ],
+        [
+          25,
+          -42,
+          51
+        ],
+        [
+          9,
+          -17,
+          57
+        ],
+        [
+          -27,
+          -17,
+          57
+        ]
+      ]
+    },
+    {
+      "name": "Ethernet external service",
+      "assumed_radius_mm": 2.2,
+      "points_mm": [
+        [
+          36,
+          -27,
+          54.4
+        ],
+        [
+          18,
+          -27,
+          56
+        ],
+        [
+          3,
+          13,
+          57
+        ],
+        [
+          -27,
+          13,
+          57
+        ]
+      ]
+    },
+    {
+      "name": "U2D2 USB",
+      "assumed_radius_mm": 1.4,
+      "points_mm": [
+        [
+          36,
+          -9.6,
+          56
+        ],
+        [
+          21,
+          -9.6,
+          56
+        ],
+        [
+          16,
+          24,
+          27
+        ],
+        [
+          2,
+          29,
+          13
+        ],
+        [
+          2,
+          24,
+          13
+        ]
+      ]
+    },
+    {
+      "name": "Jetson regulated DC",
+      "assumed_radius_mm": 1.5,
+      "points_mm": [
+        [
+          36,
+          44,
+          54
+        ],
+        [
+          27,
+          44,
+          57
+        ],
+        [
+          29,
+          39,
+          80
+        ],
+        [
+          137,
+          39,
+          81
+        ],
+        [
+          145,
+          18,
+          66
+        ]
+      ]
+    },
+    {
+      "name": "Battery fused power",
+      "assumed_radius_mm": 2.0,
+      "points_mm": [
+        [
+          112,
+          35,
+          31
+        ],
+        [
+          117,
+          35,
+          32
+        ],
+        [
+          140,
+          25,
+          32
+        ],
+        [
+          147,
+          15,
+          22
+        ]
+      ]
+    },
+    {
+      "name": "Camera twin CSI corridor",
+      "assumed_radius_mm": 1.5,
+      "points_mm": [
+        [
+          171,
+          0,
+          101.7
+        ],
+        [
+          158,
+          0,
+          98
+        ],
+        [
+          143,
+          0,
+          89
+        ],
+        [
+          140,
+          24,
+          53
+        ],
+        [
+          116,
+          24,
+          48
+        ]
+      ]
+    },
+    {
+      "name": "Lidar power UART",
+      "assumed_radius_mm": 1.2,
+      "points_mm": [
+        [
+          53,
+          -19.3,
+          107
+        ],
+        [
+          53,
+          -23,
+          105
+        ],
+        [
+          53,
+          -23,
+          98
+        ],
+        [
+          37,
+          -28,
+          88
+        ],
+        [
+          17,
+          -22,
+          28
+        ],
+        [
+          7,
+          -23,
+          17
+        ]
+      ]
+    },
+    {
+      "name": "Front servo harness -1",
+      "assumed_radius_mm": 1.8,
+      "points_mm": [
+        [
+          147,
+          -20,
+          22
+        ],
+        [
+          167,
+          -19,
+          23
+        ],
+        [
+          208,
+          -24,
+          19
+        ]
+      ]
+    },
+    {
+      "name": "Rear servo harness -1",
+      "assumed_radius_mm": 1.8,
+      "points_mm": [
+        [
+          147,
+          -20,
+          22
+        ],
+        [
+          137,
+          -38,
+          32
+        ],
+        [
+          30,
+          -38,
+          31
+        ],
+        [
+          -7,
+          -19,
+          23
+        ],
+        [
+          -42,
+          -24,
+          19
+        ]
+      ]
+    },
+    {
+      "name": "Front servo harness 1",
+      "assumed_radius_mm": 1.8,
+      "points_mm": [
+        [
+          147,
+          20,
+          22
+        ],
+        [
+          167,
+          19,
+          23
+        ],
+        [
+          208,
+          24,
+          19
+        ]
+      ]
+    },
+    {
+      "name": "Rear servo harness 1",
+      "assumed_radius_mm": 1.8,
+      "points_mm": [
+        [
+          147,
+          20,
+          22
+        ],
+        [
+          137,
+          38,
+          32
+        ],
+        [
+          30,
+          38,
+          31
+        ],
+        [
+          -7,
+          19,
+          23
+        ],
+        [
+          -42,
+          24,
+          19
+        ]
+      ]
+    }
+  ]
+}

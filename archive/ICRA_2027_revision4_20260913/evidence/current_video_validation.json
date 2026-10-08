@@ -1,0 +1,14 @@
+{
+  "size_bytes": 9747928,
+  "duration_s": 114.0,
+  "width": 1280,
+  "height": 720,
+  "frame_rate": "25/1",
+  "field_order": "progressive",
+  "audio": false,
+  "segments": [
+    "0-74 s: prior labeled archival and baseline simulation",
+    "74-94 s: B, H 0.8, simulated 1x",
+    "94-114 s: P, H 0.8, simulated 1x"
+  ]
+}

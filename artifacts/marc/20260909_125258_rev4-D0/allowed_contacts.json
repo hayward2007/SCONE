@@ -1,0 +1,70 @@
+{
+  "stage": "D0",
+  "pairs": [
+    {
+      "pair": [
+        "FL_SPIN/PLA_sector_D0_SOLID_HUB",
+        "FL_SPIN/TPU_tire_D0_EFFECTIVE_ENVELOPE"
+      ],
+      "mode": "PLA outer surface to TPU inner surface, coincident zero-volume interface",
+      "pose": "P00 reference"
+    },
+    {
+      "pair": [
+        "FR_SPIN/PLA_sector_D0_SOLID_HUB",
+        "FR_SPIN/TPU_tire_D0_EFFECTIVE_ENVELOPE"
+      ],
+      "mode": "PLA outer surface to TPU inner surface, coincident zero-volume interface",
+      "pose": "P00 reference"
+    },
+    {
+      "pair": [
+        "RR_SPIN/PLA_sector_D0_SOLID_HUB",
+        "RR_SPIN/TPU_tire_D0_EFFECTIVE_ENVELOPE"
+      ],
+      "mode": "PLA outer surface to TPU inner surface, coincident zero-volume interface",
+      "pose": "P00 reference"
+    },
+    {
+      "pair": [
+        "RL_SPIN/PLA_sector_D0_SOLID_HUB",
+        "RL_SPIN/TPU_tire_D0_EFFECTIVE_ENVELOPE"
+      ],
+      "mode": "PLA outer surface to TPU inner surface, coincident zero-volume interface",
+      "pose": "P00 reference"
+    },
+    {
+      "pair": [
+        "FL_SPIN/TPU_tire_D0_EFFECTIVE_ENVELOPE",
+        "reference_ground_z_-273.0"
+      ],
+      "mode": "Tire tangent contact; no penetration",
+      "pose": "P00"
+    },
+    {
+      "pair": [
+        "FR_SPIN/TPU_tire_D0_EFFECTIVE_ENVELOPE",
+        "reference_ground_z_-273.0"
+      ],
+      "mode": "Tire tangent contact; no penetration",
+      "pose": "P00"
+    },
+    {
+      "pair": [
+        "RR_SPIN/TPU_tire_D0_EFFECTIVE_ENVELOPE",
+        "reference_ground_z_-273.0"
+      ],
+      "mode": "Tire tangent contact; no penetration",
+      "pose": "P00"
+    },
+    {
+      "pair": [
+        "RL_SPIN/TPU_tire_D0_EFFECTIVE_ENVELOPE",
+        "reference_ground_z_-273.0"
+      ],
+      "mode": "Tire tangent contact; no penetration",
+      "pose": "P00"
+    }
+  ],
+  "note": "No yoke/link/hub overlaps are whitelisted. Frame rib-to-motor contact requires actual motor geometry."
+}

@@ -1,0 +1,8 @@
+{
+  "content": [
+    {
+      "text": "{\n    \"error\": \"Traceback (most recent call last):\\n  File \\\"<string>\\\", line 37, in <module>\\n  File \\\"<string>\\\", line 35, in run\\n  File \\\"/Users/hayward_kim/Developer/SCONE/tools/marc/configure_joints.py\\\", line 18, in run\\n    m.customRotationAxisEntity=line\\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \\\"/Users/hayward_kim/Library/Application Support/Autodesk/webdeploy/production/5b508d94493ed3344e38945ffca1b03b713ee401/Autodesk Fusion.app/Contents/Api/Python/packages/adsk/fusion.py\\\", line 118030, in _set_customRotationAxisEntity\\n    return _fusion.RevoluteJointMotion__set_customRotationAxisEntity(self, value)\\n           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^\\nRuntimeError: 3 : Cannot be edited before rolling back\\n\",\n    \"success\": false\n}",
+      "type": "text"
+    }
+  ]
+}

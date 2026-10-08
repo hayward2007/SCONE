@@ -1,0 +1,332 @@
+{
+  "order": [
+    "M01",
+    "M02",
+    "M03",
+    "M04",
+    "M05",
+    "M06",
+    "M07",
+    "M08",
+    "M09",
+    "M10",
+    "M11",
+    "M12"
+  ],
+  "joints": [
+    {
+      "joint_id": "M01",
+      "leg": "FL",
+      "kind": "yaw",
+      "native_name": "M01_FL_yaw",
+      "token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZQpccb9IBPpcpTccVpR5krZwFVGGkYGymkGpmkGxkkmyqm5iWZKRrYmRkpGthlGSim2SeaGhpYmpibGiZBlYLNIMBDYDtM1AAWwey3sTIwNICAAGuIqqKAAAA",
+      "parent_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/32OvQ1CMRCDJ4ABKFAY4KTcX16uZ5Fc3qVgDEpqKjZgCzrWeKMQRI/cWNYn2zlJooQpTyHV6fCXlHQ77vy1P9+v79Nhuzwfk6DEJUXJnaQrtOEEQkRQyQV8aWiiwmhjtkwyN6saskKPoSBREZrqCjqaFRFjD/y/ZVxJORjCi4Do0sDMGZBW7b1K64t/v38APyebd8cAAAA=",
+      "child_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/31Ouw1CMRCbAAagQMcAJ903L9ezyLuQFIxBSU3FBmxBxxqMQhA9cmPZlm0CAwEGmmCpk/FPKXDdb/K5Pd4ur8PufX7cZ0JAC/RCTaw5riMFTUSwShrmsnKYm3KM2TKTNDwoT45K5mjTxcoeWHUZ3ZOspf/f0hJdkxz7SEYbUnAtGWjaNFM4Gun3+weYsp6LxwAAAA==",
+      "origin_world_mm": [
+        50.0,
+        160.0,
+        20.5
+      ],
+      "axis_world": [
+        0,
+        0,
+        1
+      ],
+      "q_reference_rad": 0,
+      "fusion_drive_zero_rad": 0,
+      "roll_forward_sign": null,
+      "hardware_id": null,
+      "hardware_sign": null,
+      "physical_limits": null,
+      "frame_source": "Oriented plane and circle; positive primary axis matches docs/30"
+    },
+    {
+      "joint_id": "M02",
+      "leg": "FR",
+      "kind": "yaw",
+      "native_name": "M02_FR_yaw",
+      "token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZQpccb9IBPpcpTccVpR5krZwFVGGkYGymkGpmkGxkkmyqm5iWZKRrYmRkpGthlGSim2SeaGhpYmpibGiZBlYLNIMBDYDtM1AAWwey3sTI2MAQALUTegCKAAAA",
+      "parent_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/32OvQ1CMRCDJ4ABKFAY4KTcX16uZ5Fc3qVgDEpqKjZgCzrWeKMQRI/cWNYn2zlJooQpTyHV6fCXlHQ77vy1P9+v79Nhuzwfk6DEJUXJnaQrtOEEQkRQyQV8aWiiwmhjtkwyN6saskKPoSBREZrqCjqaFRFjD/y/ZVxJORjCi4Do0sDMGZBW7b1K64t/v38APyebd8cAAAA=",
+      "child_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/31OsQ0CMRCbAAagQMcAJ+V8l5DrWSQX8gVjUFJTsQFb0LEGo5AXPbJkWZZlO5ERSChNCOpU8nMK3fabeG1P9+v7sPtcno+ZAGmhUVKH9cxtCbAB4IowjmMTt2wqvsyWmax5dPMsnGKSLR3s6JUFEJHUhtfz/y0tPjRS5rHE2oDCrYSzadcIiPek6/cvmoZ/WccAAAA=",
+      "origin_world_mm": [
+        50.0,
+        -160.0,
+        20.5
+      ],
+      "axis_world": [
+        0,
+        0,
+        1
+      ],
+      "q_reference_rad": 0,
+      "fusion_drive_zero_rad": 0,
+      "roll_forward_sign": null,
+      "hardware_id": null,
+      "hardware_sign": null,
+      "physical_limits": null,
+      "frame_source": "Oriented plane and circle; positive primary axis matches docs/30"
+    },
+    {
+      "joint_id": "M03",
+      "leg": "RL",
+      "kind": "yaw",
+      "native_name": "M03_RL_yaw",
+      "token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZQpccb9IBPpcpTccVpR5krZwFVGGkYGymkGpmkGxkkmyqm5iWZKRrYmRkpGthlGSim2SeaGhpYmpibGiZBlYLNIMBDYDtM1AAWwey3sTI1MwEAA48xyKKAAAA",
+      "parent_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/32OvQ1CMRCDJ4ABKFAY4KTcX16uZ5Fc3qVgDEpqKjZgCzrWeKMQRI/cWNYn2zlJooQpTyHV6fCXlHQ77vy1P9+v79Nhuzwfk6DEJUXJnaQrtOEEQkRQyQV8aWiiwmhjtkwyN6saskKPoSBREZrqCjqaFRFjD/y/ZVxJORjCi4Do0sDMGZBW7b1K64t/v38APyebd8cAAAA=",
+      "child_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/32Ovc2CMQyEJ4ABKJAZwJL/4jfpWSSOnIIxvpKaig3Ygo41vlEIokfXnE6P7o7AQICBlljqcvxNHK7HXTz359vf63T4vzzuixBQh3QaYqNgnyFoIoJVwjC2zs2KKbe5WhbZpc+SG6OXrmhGiZWqYlZpjWkTz/i9pd5SgwrmDEab4tg9GpoOjRBug/Tz/Q3ZFknBxwAAAA==",
+      "origin_world_mm": [
+        -50.0,
+        160.0,
+        20.5
+      ],
+      "axis_world": [
+        0,
+        0,
+        1
+      ],
+      "q_reference_rad": 0,
+      "fusion_drive_zero_rad": 0,
+      "roll_forward_sign": null,
+      "hardware_id": null,
+      "hardware_sign": null,
+      "physical_limits": null,
+      "frame_source": "Oriented plane and circle; positive primary axis matches docs/30"
+    },
+    {
+      "joint_id": "M04",
+      "leg": "RR",
+      "kind": "yaw",
+      "native_name": "M04_RR_yaw",
+      "token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZQpccb9IBPpcpTccVpR5krZwFVGGkYGymkGpmkGxkkmyqm5iWZKRrYmRkpGthlGSim2SeaGhpYmpibGiZBlYLNIMBDYDtM1AAWwey3sTIwsIcAGnTlS2KAAAA",
+      "parent_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/32OvQ1CMRCDJ4ABKFAY4KTcX16uZ5Fc3qVgDEpqKjZgCzrWeKMQRI/cWNYn2zlJooQpTyHV6fCXlHQ77vy1P9+v79Nhuzwfk6DEJUXJnaQrtOEEQkRQyQV8aWiiwmhjtkwyN6saskKPoSBREZrqCjqaFRFjD/y/ZVxJORjCi4Do0sDMGZBW7b1K64t/v38APyebd8cAAAA=",
+      "child_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/32Ouw0CMAxEJ4ABKFAYwFL8iRP3LBKHuGAMSmoqNmALOtZgFILo0TWn09Pd5SSJEqa8hNSWw1+i6brf+HN7vF1eh937/LgvghJrmpoHySjQwwmEiKCRC3jtaFKE0WK1LBI19yFi0PPpBMLKYEUajKgcrUqNOf9vsdpkzwVmOIIEKXR1W12D3QltZP5+/wD0UgV5xwAAAA==",
+      "origin_world_mm": [
+        -50.0,
+        -160.0,
+        20.5
+      ],
+      "axis_world": [
+        0,
+        0,
+        1
+      ],
+      "q_reference_rad": 0,
+      "fusion_drive_zero_rad": 0,
+      "roll_forward_sign": null,
+      "hardware_id": null,
+      "hardware_sign": null,
+      "physical_limits": null,
+      "frame_source": "Oriented plane and circle; positive primary axis matches docs/30"
+    },
+    {
+      "joint_id": "M05",
+      "leg": "FL",
+      "kind": "q1",
+      "native_name": "M05_FL_q1",
+      "token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZQpccb9IBPpcpTccVpR5krZwFVGGkYGymkGpmkGxkkmyqm5iWZKRrYmRkpGthlGSim2SeaGhpYmpibGiZBlYLNIMBDYDtM1AAWwey3sTYyNwAALa4QoGKAAAA",
+      "parent_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/31Ouw1CMRCbAAagQMcAJ903L9ezyLuQFIxBSU3FBmxBxxqMQhA9cmPZlm0CAwEGmmCpk/FPKXDdb/K5Pd4ur8PufX7cZ0JAC/RCTaw5riMFTUSwShrmsnKYm3KM2TKTNDwoT45K5mjTxcoeWHUZ3ZOspf/f0hJdkxz7SEYbUnAtGWjaNFM4Gun3+weYsp6LxwAAAA==",
+      "child_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/32Ouw0CMAxEJ4ABKJAZwFLsOB/3LBKbuGAMSmoqNmALOtZgFILo0TWn09PdJRBgIEhLxH05+iUVrvuNPbfH2+V12L3Pj/siGHKFWZOzeMERxijMjJ1N0NoglSKZNFbLIru6eFhBdTOUEEIdTjhmSS3zbH6i/1tRPc3IDbWniaJ9rTIXLI0scteiNX+/fwAeCCxWxwAAAA==",
+      "origin_world_mm": [
+        108.0,
+        160.0,
+        0
+      ],
+      "axis_world": [
+        0,
+        -1,
+        0
+      ],
+      "q_reference_rad": -1.1200842295176878,
+      "fusion_drive_zero_rad": 0,
+      "roll_forward_sign": null,
+      "hardware_id": null,
+      "hardware_sign": null,
+      "physical_limits": null,
+      "frame_source": "Oriented plane and circle; positive primary axis matches docs/30"
+    },
+    {
+      "joint_id": "M06",
+      "leg": "FR",
+      "kind": "q1",
+      "native_name": "M06_FR_q1",
+      "token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZQpccb9IBPpcpTccVpR5krZwFVGGkYGymkGpmkGxkkmyqm5iWZKRrYmRkpGthlGSim2SeaGhpYmpibGiZBlYLNIMBDYDtM1AAWwey3sTY3NAYAGGM2kiKAAAA",
+      "parent_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/31OsQ0CMRCbAAagQMcAJ+V8l5DrWSQX8gVjUFJTsQFb0LEGo5AXPbJkWZZlO5ERSChNCOpU8nMK3fabeG1P9+v7sPtcno+ZAGmhUVKH9cxtCbAB4IowjmMTt2wqvsyWmax5dPMsnGKSLR3s6JUFEJHUhtfz/y0tPjRS5rHE2oDCrYSzadcIiPek6/cvmoZ/WccAAAA=",
+      "child_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/32OsQ1CMQxEJ4ABKJAZwFJiO4nds8jPl10wBiU1FRuwBR1rMMo3okfXnE5Pd1dAgKBCSVXSdPWXdLgdd/O1P9+v79Phc3k+kiDgDt7LSrI2XGISChGh0hScY6kmTbhaZEuS6ipTxkBncZRBA6c1xx7sxgtLKP3fir4WDx5oWrLBNFeJGrZRZ7Bas87f7xtxUdylxwAAAA==",
+      "origin_world_mm": [
+        108.0,
+        -160.0,
+        0
+      ],
+      "axis_world": [
+        0,
+        -1,
+        0
+      ],
+      "q_reference_rad": -1.1200842295176878,
+      "fusion_drive_zero_rad": 0,
+      "roll_forward_sign": null,
+      "hardware_id": null,
+      "hardware_sign": null,
+      "physical_limits": null,
+      "frame_source": "Oriented plane and circle; positive primary axis matches docs/30"
+    },
+    {
+      "joint_id": "M07",
+      "leg": "RL",
+      "kind": "q1",
+      "native_name": "M07_RL_q1",
+      "token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZQpccb9IBPpcpTccVpR5krZwFVGGkYGymkGpmkGxkkmyqm5iWZKRrYmRkpGthlGSim2SeaGhpYmpibGiZBlYLNIMBDYDtM1AAWwey3sTEyNAMALyCrKOKAAAA",
+      "parent_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/32Ovc2CMQyEJ4ABKJAZwJL/4jfpWSSOnIIxvpKaig3Ygo41vlEIokfXnE6P7o7AQICBlljqcvxNHK7HXTz359vf63T4vzzuixBQh3QaYqNgnyFoIoJVwjC2zs2KKbe5WhbZpc+SG6OXrmhGiZWqYlZpjWkTz/i9pd5SgwrmDEab4tg9GpoOjRBug/Tz/Q3ZFknBxwAAAA==",
+      "child_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/31Ou82CMQycAAagQGYAS37FiXsWSaIvBWP8JTUVG7AFHWv8o2BEj645ne5FYCDAQAmWloy/isP1uBvP/fn29zod/i+PezoE1GFzmmKzYF9D0EQEmwzDUTuHFVOOlS3pjGlKyoRWZUOzPnEwOfbalTlaaea/t5ZP2pZWjEbZkBHsIgVL5bG0RQnXz/c3NUeBgscAAAA=",
+      "origin_world_mm": [
+        -108.0,
+        160.0,
+        0
+      ],
+      "axis_world": [
+        0,
+        1,
+        0
+      ],
+      "q_reference_rad": -1.1200842295176878,
+      "fusion_drive_zero_rad": 0,
+      "roll_forward_sign": null,
+      "hardware_id": null,
+      "hardware_sign": null,
+      "physical_limits": null,
+      "frame_source": "Oriented plane and circle; positive primary axis matches docs/30"
+    },
+    {
+      "joint_id": "M08",
+      "leg": "RR",
+      "kind": "q1",
+      "native_name": "M08_RR_q1",
+      "token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZQpccb9IBPpcpTccVpR5krZwFVGGkYGymkGpmkGxkkmyqm5iWZKRrYmRkpGthlGSim2SeaGhpYmpibGiZBlYLNIMBDYDtM1AAWwey3sTE3NwSAED6gmOKAAAA",
+      "parent_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/32Ouw0CMAxEJ4ABKFAYwFL8iRP3LBKHuGAMSmoqNmALOtZgFILo0TWn09Pd5SSJEqa8hNSWw1+i6brf+HN7vF1eh937/LgvghJrmpoHySjQwwmEiKCRC3jtaFKE0WK1LBI19yFi0PPpBMLKYEUajKgcrUqNOf9vsdpkzwVmOIIEKXR1W12D3QltZP5+/wD0UgV5xwAAAA==",
+      "child_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/32OsQ1CMQxEJ4ABKJAZwJLt2E7cs0gSJQVjUFJTsQFb0LEGo/wgenTN6fR0dwQKAgy0xFKW41/icDvu2mt/vl/fp8Pn8nwsQiA5DKcu2g3rbIIqIlikKbZcOdQ0cczVssiUcok6DbvmgtqEsRkRjhgySOp08/9b0zuNmTJGoYEaZa2KGFrmNlMJC0/f7xvx9QVdxwAAAA==",
+      "origin_world_mm": [
+        -108.0,
+        -160.0,
+        0
+      ],
+      "axis_world": [
+        0,
+        1,
+        0
+      ],
+      "q_reference_rad": -1.1200842295176878,
+      "fusion_drive_zero_rad": 0,
+      "roll_forward_sign": null,
+      "hardware_id": null,
+      "hardware_sign": null,
+      "physical_limits": null,
+      "frame_source": "Oriented plane and circle; positive primary axis matches docs/30"
+    },
+    {
+      "joint_id": "M09",
+      "leg": "FL",
+      "kind": "q2",
+      "native_name": "M09_FL_q2",
+      "token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZQpccb9IBPpcpTccVpR5krZwFVGGkYGymkGpmkGxkkmyqm5iWZKRrYmRkpGthlGSim2SeaGhpYmpibGiZBlYLNIMBDYDtM1AAWweyHqjcwAgAM2zrAYoAAAA=",
+      "parent_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/32Ouw0CMAxEJ4ABKJAZwFLsOB/3LBKbuGAMSmoqNmALOtZgFILo0TWn09PdJRBgIEhLxH05+iUVrvuNPbfH2+V12L3Pj/siGHKFWZOzeMERxijMjJ1N0NoglSKZNFbLIru6eFhBdTOUEEIdTjhmSS3zbH6i/1tRPc3IDbWniaJ9rTIXLI0scteiNX+/fwAeCCxWxwAAAA==",
+      "child_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/32OvQ1CMQyEJ4ABKJAZwFL8E7+kZ5HY4RWMQUlNxQZsQccajIIRPbrmdPp0dwUUGAhKirilo19icN1v/Lk93i6vw+59ftyTYBCDk5VgjYpjdUZlZmzsir4M6lpVqK/ZkmQfFFq74Gptog7jhIrgDFWnWZsS/d+qRdaYMpGtUzYsDZu3QJtahmi3qP79/gGzhNcfxwAAAA==",
+      "origin_world_mm": [
+        232.47748464411416,
+        160.0,
+        -150.5
+      ],
+      "axis_world": [
+        0,
+        -1,
+        0
+      ],
+      "q_reference_rad": 1.1200842295176878,
+      "fusion_drive_zero_rad": 0,
+      "roll_forward_sign": -1,
+      "hardware_id": null,
+      "hardware_sign": null,
+      "physical_limits": null,
+      "frame_source": "Oriented plane and circle; positive primary axis matches docs/30"
+    },
+    {
+      "joint_id": "M10",
+      "leg": "FR",
+      "kind": "q2",
+      "native_name": "M10_FR_q2",
+      "token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZQpccb9IBPpcpTccVpR5krZwFVGGkYGymkGpmkGxkkmyqm5iWZKRrYmRkpGthlGSim2SeaGhpYmpibGiZBlYLNIMBDYDtM1AAWwey3sTMwMIUAKp06kKKAAAA",
+      "parent_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/32OsQ1CMQxEJ4ABKJAZwFJiO4nds8jPl10wBiU1FRuwBR1rMMo3okfXnE5Pd1dAgKBCSVXSdPWXdLgdd/O1P9+v79Phc3k+kiDgDt7LSrI2XGISChGh0hScY6kmTbhaZEuS6ipTxkBncZRBA6c1xx7sxgtLKP3fir4WDx5oWrLBNFeJGrZRZ7Bas87f7xtxUdylxwAAAA==",
+      "child_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/32OsQ1CMQxEJ4ABKFAYwFLs2InTs0icOAVjUFJTsQFb0LHGH4UgenTN6fR0dzFwoIAhLiHpcvhLcrgdd/ban+/X9+mwXZ6PRVBIOXiOnbgLtGkETESgZAxWGlYWTljnallkqT5LcYcS0YEFE5g7g7TRo6ugafu/JTHNPtIAyhWBW1FQ0w55cGyJa+5i3+8faSv2w8cAAAA=",
+      "origin_world_mm": [
+        232.47748464411416,
+        -160.0,
+        -150.5
+      ],
+      "axis_world": [
+        0,
+        -1,
+        0
+      ],
+      "q_reference_rad": 1.1200842295176878,
+      "fusion_drive_zero_rad": 0,
+      "roll_forward_sign": -1,
+      "hardware_id": null,
+      "hardware_sign": null,
+      "physical_limits": null,
+      "frame_source": "Oriented plane and circle; positive primary axis matches docs/30"
+    },
+    {
+      "joint_id": "M11",
+      "leg": "RL",
+      "kind": "q2",
+      "native_name": "M11_RL_q2",
+      "token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZQpccb9IBPpcpTccVpR5krZwFVGGkYGymkGpmkGxkkmyqm5iWZKRrYmRkpGthlGSim2SeaGhpYmpibGiZBlYLNIMBDYDtM1AAWwey3sTMwsgCACWxp8iKAAAA",
+      "parent_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/31Ou82CMQycAAagQGYAS37FiXsWSaIvBWP8JTUVG7AFHWv8o2BEj645ne5FYCDAQAmWloy/isP1uBvP/fn29zod/i+PezoE1GFzmmKzYF9D0EQEmwzDUTuHFVOOlS3pjGlKyoRWZUOzPnEwOfbalTlaaea/t5ZP2pZWjEbZkBHsIgVL5bG0RQnXz/c3NUeBgscAAAA=",
+      "child_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/4WOsa2CMQyEJ4ABKJAZwFLsOE7cs0js/CkYg5Kaig3eFnSswSjkiQHQNafTp7tLIMBAkJaI23L0TRRux50/9+f79XU6vC9/j0UwZIVNU7BEwT6dUZgZG7ug104mRTLZXC2L7MyRa5rYhwpKGYEtzHGbUmIzmlZ/bJWUZ4w8kNUIpdeGzVugDkk9i2kU///+AaCShNvHAAAA",
+      "origin_world_mm": [
+        -232.47748464411416,
+        160.0,
+        -150.5
+      ],
+      "axis_world": [
+        0,
+        1,
+        0
+      ],
+      "q_reference_rad": 1.1200842295176878,
+      "fusion_drive_zero_rad": 0,
+      "roll_forward_sign": 1,
+      "hardware_id": null,
+      "hardware_sign": null,
+      "physical_limits": null,
+      "frame_source": "Oriented plane and circle; positive primary axis matches docs/30"
+    },
+    {
+      "joint_id": "M12",
+      "leg": "RR",
+      "kind": "q2",
+      "native_name": "M12_RR_q2",
+      "token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZQpccb9IBPpcpTccVpR5krZwFVGGkYGymkGpmkGxkkmyqm5iWZKRrYmRkpGthlGSim2SeaGhpYmpibGiZBlYLNIMBDYDtM1AAWwey3sTczNgQAK9yQhqKAAAA",
+      "parent_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/32OsQ1CMQxEJ4ABKJAZwJLt2E7cs0gSJQVjUFJTsQFb0LEGo/wgenTN6fR0dwQKAgy0xFKW41/icDvu2mt/vl/fp8Pn8nwsQiA5DKcu2g3rbIIqIlikKbZcOdQ0cczVssiUcok6DbvmgtqEsRkRjhgySOp08/9b0zuNmTJGoYEaZa2KGFrmNlMJC0/f7xvx9QVdxwAAAA==",
+      "child_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/32Osa2CMQyEJ4ABKJAZwFLi2I7ds0ic/CkYg5Kaig3eFnSswSjkiR5dczp9ursEDAQZ0lImWy5/E4XbcRfP/fl+fZ0O78vfYxEERWHT1Im7YJtByESERsEYtWVn4ZJ9rpZFugQ1SYa1hSHzZmjsgtFjs+GVx9TfW5LK7KMMJPWM3OpqCOuog1Mr7Nol/r9/AHW5wbvHAAAA",
+      "origin_world_mm": [
+        -232.47748464411416,
+        -160.0,
+        -150.5
+      ],
+      "axis_world": [
+        0,
+        1,
+        0
+      ],
+      "q_reference_rad": 1.1200842295176878,
+      "fusion_drive_zero_rad": 0,
+      "roll_forward_sign": 1,
+      "hardware_id": null,
+      "hardware_sign": null,
+      "physical_limits": null,
+      "frame_source": "Oriented plane and circle; positive primary axis matches docs/30"
+    }
+  ],
+  "stage": "D0",
+  "hardware_status": "BLOCKED"
+}

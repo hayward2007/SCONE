@@ -1,0 +1,17 @@
+{
+  "document": "MARC v4 Body v5 BOX v21",
+  "saved": true,
+  "modified": false,
+  "files": [
+    "E10_Jetson_electronics_carrier.f3d",
+    "E10_Jetson_electronics_carrier.step",
+    "STL/P1_1.stl",
+    "STL/P2_1.stl",
+    "STL/P3_1.stl",
+    "STL/P3_2.stl",
+    "STL/P3_3.stl",
+    "STL/P3_4.stl",
+    "STL/P4_1.stl"
+  ],
+  "version": 21
+}

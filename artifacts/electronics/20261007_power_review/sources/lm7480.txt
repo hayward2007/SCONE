@@ -1,0 +1,2388 @@
+                                                                                                                                                         LM7480-Q1
+www.ti.com                                                                                                                             LM7480-Q1
+                                                                                                     SNOSD95C – APRIL 2020 – REVISED DECEMBER 2020
+                                                                                                     SNOSD95C – APRIL 2020 – REVISED DECEMBER 2020
+
+                       LM7480-Q1 Ideal Diode Controller with Load Dump Protection
+
+1 Features                                                                     3 Description
+•    AEC-Q100 qualified for automotive applications                            The LM7480x-Q1 ideal diode controller drives and
+     – Device temperature grade 1:                                             controls external back to back N-Channel MOSFETs
+         –40°C to +125°C ambient operating                                     to emulate an ideal diode rectifier with power path
+         temperature range                                                     ON/OFF control and overvoltage protection. The wide
+     – Device HBM ESD classification level 2                                   input supply of 3 V to 65 V allows protection and
+     – Device CDM ESD classification level C4B                                 control of 12-V and 24-V automotive battery powered
+                                                                               ECUs. The device can withstand and protect the
+•    3-V to 65-V input range
+                                                                               loads from negative supply voltages down to –65 V.
+•    Reverse input protection down to –65 V                                    An integrated ideal diode controller (DGATE) drives
+•    Drives external back-to-back N-Channel MOSFETs                            the first MOSFET to replace a Schottky diode for
+     in common drain and common source                                         reverse input protection and output voltage holdup.
+     configurations                                                            With a second MOSFET in the power path the device
+•    Ideal diode operation with 10.5-mV A to C forward                         allows load disconnect (ON/OFF control) and
+     voltage drop regulation (LM74800-Q1)                                      overvoltage protection using HGATE control. The
+•    Low reverse detection threshold (–4.5 mV) with                            device features an adjustable overvoltage cut-off
+     fast response (0.5 µs)                                                    protection feature. LM7480-Q1 has two variants,
+•    20-mA peak gate (DGATE) turnon current                                    LM74800-Q1       and    LM74801-Q1.       LM74800-Q1
+•    2.6-A peak DGATE turnoff current                                          employs reverse current blocking using linear
+•    Adjustable overvoltage protection                                         regulation and comparator scheme vs. LM74801-Q1
+                                                                               which supports comparator based scheme. With
+•    Low 2.87-µA shutdown current (EN/UVLO=Low)
+                                                                               Common Drain configuration of the power MOSFETs,
+•    Meets automotive ISO7637 transient requirements                           the mid-point can be utilized for OR-ing designs using
+     with a suitable TVS diode                                                 an another ideal diode. The LM7480x-Q1 has a
+•    Available in space saving 12-Pin WSON package                             maximum voltage rating of 65 V. The loads can be
+2 Applications                                                                 protected from extended overvoltage transients like
+                                                                               200-V Unsuppressed Load Dumps in 24-V Battery
+•    Automotive battery protection                                             systems by configuring the device with external
+     – ADAS domain controller                                                  MOSFETs in Common Source topology.
+     – Camera ECU
+                                                                                                          Device Information
+     – Head Unit
+                                                                                     PART NUMBER                   PACKAGE(1)                BODY SIZE (NOM)
+     – USB HUBs
+                                                                               LM74800-Q1,
+•    Active ORing for redundant power                                                                        WSON (12)                      3.0 mm x 3.0 mm
+                                                                               LM74801-Q1
+
+                                                                               (1)    For all available packages, see the orderable addendum at
+                                                                                      the end of the data sheet.
+                                                            VOUT2                             VBATT:                               60V
+                                                                                                                   200V
+                                                         (Always ON)                          12V/24V        Q1               Q2
+                       Q1                   Q2                                         with 200V Load Dump                                        VOUT
+        VBATT                                                   VOUT1
+         12 V                                               (VBATT Switched)                   R1
+                                                                                              10NŸ
+                                                                                                               HGATE OUT A DGATE              C
+          D1           DGATE CAP VS C        HGATE                                                            VS
+       SMBJ36CA        A
+                       VSNS                      OUT                                    C1    D1              CAP
+                        SW                                                             1µF    60V
+                                                                                                              VSNS        LM7480x-Q1
+                  R1           LM7480x-Q1
+                                                                                                              SW
+         BATT_MON                                                                                    R1
+                 R2                                                                                                                      EN/UVLO
+                                            EN/UVLO                                                                                                  ON OFF
+                                                       ON OFF                                                 OV            GND
+                        OV        GND                                                                R2
+                  R3
+
+
+
+
+                Ideal Diode with Switched Output                                 Ideal Diode with 200-V Load Dump Protection
+
+
+
+
+       An© 2020
+Copyright IMPORTANT      NOTICE at the
+                Texas Instruments         end of this data sheet addresses availability, warranty, changes, use in
+                                  Incorporated                                                                     safety-critical
+                                                                                                                Submit  Document   applications,
+                                                                                                                                     Feedback                        1
+       intellectual property matters and other important disclaimers. PRODUCTION DATA.
+                                                       Product Folder Links: LM7480-Q1
+LM7480-Q1
+SNOSD95C – APRIL 2020 – REVISED DECEMBER 2020                                                                                                                        www.ti.com
+
+
+                                                                        Table of Contents
+1 Features............................................................................1         10.1 Application Information........................................... 19
+2 Applications..................................................................... 1           10.2 Typical 12-V Reverse Battery Protection
+3 Description.......................................................................1             Application...................................................................19
+4 Revision History.............................................................. 2              10.3 200-V Unsuppressed Load Dump Protection
+5 Device Comparison Table...............................................3                         Application...................................................................29
+6 Pin Configuration and Functions...................................3                           10.4 Do's and Don'ts.......................................................32
+7 Specifications.................................................................. 4          11 Power Supply Recommendations..............................33
+  7.1 Absolute Maximum Ratings ....................................... 4                        11.1 Transient Protection................................................ 33
+  7.2 ESD Ratings .............................................................. 4              11.2 TVS Selection for 12-V Battery Systems................ 34
+  7.3 Recommended Operating Conditions ........................4                                11.3 TVS Selection for 24-V Battery Systems................ 34
+  7.4 Thermal Information ...................................................5                12 Layout...........................................................................35
+  7.5 Electrical Characteristics ............................................5                  12.1 Layout Guidelines................................................... 35
+  7.6 Switching Characteristics ...........................................6                    12.2 Layout Example...................................................... 35
+  7.7 Typical Characteristics................................................ 8               13 Device and Documentation Support..........................37
+8 Parameter Measurement Information.......................... 11                                13.1 Receiving Notification of Documentation Updates..37
+9 Detailed Description......................................................12                  13.2 Support Resources................................................. 37
+  9.1 Overview................................................................... 12            13.3 Trademarks............................................................. 37
+  9.2 Functional Block Diagram......................................... 13                      13.4 Electrostatic Discharge Caution..............................37
+  9.3 Feature Description...................................................13                  13.5 Glossary..................................................................37
+  9.4 Device Functional Modes..........................................16                     14 Mechanical, Packaging, and Orderable
+  9.5 Application Examples................................................17                    Information.................................................................... 37
+10 Applications and Implementation.............................. 19
+
+
+
+4 Revision History
+NOTE: Page numbers for previous revisions may differ from page numbers in the current version.
+Changes from Revision B (October 2020) to Revision C (December 2020)                                                                              Page
+• Changed status of LM74800-Q1 from "Preview" to "Active"...............................................................................1
+• Updated Functional Block Diagram ................................................................................................................. 13
+• Changed "VAC(REV)" to "V(AC_REV)"....................................................................................................................14
+
+
+Changes from Revision A (May 2020) to Revision B (October 2020)                                                               Page
+• Changed status from "Advance Information" to "Production Data".....................................................................1
+
+Changes from Revision * (April 2020) to Revision *2 (May 2020)                                                                      Page
+• Changed second paragraph of Application Information ...................................................................................19
+
+
+                          DATE                                                     REVISION                                                      NOTES
+                       May 2020                                                   A is APL/AI                                   2nd Advance Information release.
+                       April 2020                                                         *                                        Advance Information release.
+
+
+
+
+2       Submit Document Feedback                                                                                               Copyright © 2020 Texas Instruments Incorporated
+
+                                                                    Product Folder Links: LM7480-Q1
+                                                                                                                                        LM7480-Q1
+www.ti.com                                                                                        SNOSD95C – APRIL 2020 – REVISED DECEMBER 2020
+
+
+5 Device Comparison Table
+                                                    LM74800-Q1                                                    LM74801-Q1
+  Reverse Current Blocking              V(A-C) linear regulation and comparator                              V(A-C) comparator only
+
+
+6 Pin Configuration and Functions
+                                                   DGATE      1                            12
+                                                                                                 C
+                                                          A   2                            11   CAP
+
+                                                    VSNS      3                            10
+                                                                                                VS
+                                                                           DRR
+                                                              4                            9    OUT
+                                                      SW
+                                                                          Exposed          8    HGATE
+                                                       OV     5
+                                                                          Thermal
+                                                                            Pad
+                                                  EN/UVLO     6                            7    GND
+
+
+
+                                       Figure 6-1. WSON 12-Pin DRR Transparent Top View
+
+                                                          Table 6-1. Pin Functions
+                       PIN
+                             LM7480x-Q1             TYPE                                             DESCRIPTION
+ NAME
+                         DRR-12 (WSON)
+                                                                  Diode Controller Gate Drive Output. Connect to the GATE of the external
+ DGATE                           1                    O
+                                                                  MOSFET.
+ A                               2                    I           Anode of the ideal diode. Connect to the source of the external MOSFET.
+ VSNS                            3                    I           Voltage sensing input.
+                                                                  Voltage sensing disconnect switch terminal. VSNS and SW are internally
+                                                                  connected through a switch. Use SW as the top connection of the battery
+                                                                  sensing or OV resistor ladder network. When EN/UVLO is pulled low, the switch
+ SW                              4                    I
+                                                                  is OFF disconnecting the resistor ladder from the battery line thereby cutting off
+                                                                  the leakage current. If the internal disconnect switch between VSNS and SW is
+                                                                  not used then short them together and connect to VS pin.
+                                                                  Adjustable overvoltage threshold input. Connect a resistor ladder across SW to
+                                                                  OV terminal. When the voltage at OVP exceeds the overvoltage cut-off threshold
+ OV                              5                    I
+                                                                  then the HGATE is pulled low turning OFF the HSFET. HGATE turns ON when
+                                                                  the sense voltage goes below the OVP falling threshold.
+                                                                  EN/UVLO Input. Connect to VS pin for always ON operation. Can be driven
+                                                                  externally from a micro controller I/O. Pulling it low below V(ENF) makes the
+ EN/UVLO                         6                    I
+                                                                  device enter into low Iq shutdown mode. For UVLO, connect an external resistor
+                                                                  ladder to EN/UVLO to GND.
+ GND                             7                    G           Connect to the system ground plane.
+ HGATE                           8                    O           GATE driver output for the HSFET. Connect to the GATE of the external FET.
+ OUT                             9                    I           Connect to the output rail (external MOSFET source).
+                                                                  Input power supply to the IC. Connect VS to middle point of the common drain
+ VS                              10                   I           back to back MOSFET configuration. Connect a 100nF capacitor across VS and
+                                                                  GND pins.
+ CAP                             11                   O           Charge pump output. Connect a 100-nF capacitor across CAP and VS pins.
+ C                               12                   I           Cathode of the ideal diode. Connect to the drain of the external MOSFET.
+ RTN                         Thermal Pad             —            Leave exposed pad floating. Do Not connect to GND plane.
+
+
+
+
+Copyright © 2020 Texas Instruments Incorporated                                                                    Submit Document Feedback            3
+                                                          Product Folder Links: LM7480-Q1
+LM7480-Q1
+SNOSD95C – APRIL 2020 – REVISED DECEMBER 2020                                                                                           www.ti.com
+
+
+7 Specifications
+7.1 Absolute Maximum Ratings
+over operating free-air temperature range (unless otherwise noted)(1)
+                                                                                                           MIN              MAX          UNIT
+                                    A to GND                                                               –65               70
+                                    VS to GND                                                               –1               70
+                                    VSNS, SW, EN/UVLO, C, OV, OUT to GND, V(A) > 0 V                       –0.3              70           V
+                                    VSNS, SW, EN/UVLO, C, OV, OUT to GND, V(A) ≤ 0 V                       V(A)      (70 + V(A))
+    Input Pins
+                                    RTN to GND                                                             –65               0.3
+                                    IVSNS, ISW                                                              –1               10          mA
+                                    IEN/UVLO, IOV, V(A) > 0 V                                               –1                           mA
+                                    IEN/UVLO, IOV, V(A) ≤ 0 V                                          Internally limited
+    Output Pins                     OUT to VS                                                              –65              16.5          V
+                                    CAP to VS                                                              –0.3              15
+                                    CAP to A                                                               –0.3              85
+    Output Pins
+                                    DGATE to A                                                             –0.3              15           V
+                                    HGATE to OUT                                                           –0.3              15
+    Output to Input Pins            C to A                                                                  –5               85
+    Operating junction temperature, Tj (2)                                                                 –40              150
+                                                                                                                                          °C
+    Storage temperature, Tstg                                                                              –40              150
+
+(1)      Stresses beyond those listed under Absolute Maximum Rating may cause permanent damage to the device. These are stress ratings
+         only, which do not imply functional operation of the device at these or any other conditions beyond those indicated under
+         Recommended Operating Condition. Exposure to absolute-maximum-rated conditions for extended periods may affect device
+         reliability.
+(2)      High junction temperatures degrade operating lifetimes. Operating lifetime is de-rated for junction temperatures greater than 125°C.
+
+
+7.2 ESD Ratings
+                                                                                                                              VALUE        UNIT
+                                                    Human body model (HBM), per AEC Q100-002(1)                                ±2000
+    V(ESD)   Electrostatic discharge                Charged device model (CDM), per    Corner pins (DGATE, OV, and C)          ±750            V
+                                                    AEC Q100-011                       Other pins                              ±500
+
+(1)      AEC Q100-002 indicates that HBM stressing shall be in accordance with the ANSI/ESDA/JEDEC JS-001 specification.
+
+
+7.3 Recommended Operating Conditions
+over operating free-air temperature range (unless otherwise noted)(1)
+                                                                                                    MIN           NOM         MAX         UNIT
+                  A to GND                                                                          –60                            65      V
+    Input Pins    VS to GND                                                                           0                            65      V
+                  EN/UVLO to GND                                                                      0                            65      V
+    External
+    Capacitanc CAP to A, VS to GND, A to GND                                                         0.1                                   µF
+    e
+    External
+    MOSFET
+                  DGATE to A and HGATE to OUT                                                        15                                    V
+    max VGS
+    rating
+
+
+
+
+4        Submit Document Feedback                                                                    Copyright © 2020 Texas Instruments Incorporated
+
+                                                           Product Folder Links: LM7480-Q1
+                                                                                                                                           LM7480-Q1
+www.ti.com                                                                                       SNOSD95C – APRIL 2020 – REVISED DECEMBER 2020
+
+7.3 Recommended Operating Conditions (continued)
+over operating free-air temperature range (unless otherwise noted)(1)
+                                                                                                           MIN          NOM          MAX        UNIT
+ Tj              Operating Junction temperature(2)                                                         –40                       150         °C
+
+(1)       Recommended Operating Conditions are conditions under which the device is intended to be functional. For specifications and test
+          conditions, see Electrical Characteristics.
+(2)       High junction temperatures degrade operating lifetimes. Operating lifetime is de-rated for junction temperatures greater than 125°C.
+
+
+7.4 Thermal Information
+                                                                                                           LM7480x-Q1
+                                    THERMAL METRIC(1)                                                      DRR (WSON)                       UNIT
+                                                                                                             12 PINS
+ RθJA                 Junction-to-ambient thermal resistance                                                     60.9                       °C/W
+ RθJC(top)            Junction-to-case (top) thermal resistance                                                  48                         °C/W
+ RθJB                 Junction-to-board thermal resistance                                                       31.5                       °C/W
+ ΨJT                  Junction-to-top characterization parameter                                                 1.2                        °C/W
+ ΨJB                  Junction-to-board characterization parameter                                               31.4                       °C/W
+ RθJC(bot)            Junction-to-case (bottom) thermal resistance                                               7.1                        °C/W
+
+(1)       For more information about traditional and new thermal metrics, see the Semiconductor and IC Package Thermal Metrics application
+          report.
+
+
+7.5 Electrical Characteristics
+TJ = –40°C to +125°C; typical values at TJ = 25°C, V(A) = V(OUT) = V(VS) = V(VSNS) = 12 V, V(AC) = 20 mV, C(VCAP) = 0.1 µF,
+V(EN/UVLO) = 2 V, over operating free-air temperature range (unless otherwise noted)
+                           PARAMETER                                        TEST CONDITIONS                        MIN        TYP     MAX        UNIT
+ SUPPLY VOLTAGE
+ V(VS)                  Operating input voltage                                                                         3                  65      V
+ V(VS_PORR)             VS POR threshold, rising                                                                      2.4      2.6     2.85        V
+ V(VS_PORF)             VS POR threshold, falling                                                                     1.9      2.1      2.3        V
+ I(SHDN)                SHDN current, I(GND)                       V(EN/UVLO) = 0 V                                           2.87          5    µA
+                                                                   V(EN/UVLO) = 2 V                                           397                µA
+ I(Q)                   Total System Quiescent current, I(GND)
+                                                                   V(A) = V(VS) = 24 V, V(EN/UVLO) = 2 V                      413      495       µA
+                        I(A) leakage current during Reverse
+                                                                                                                               19      112       µA
+                        Polarity,
+ I(REV)                                                            0 V ≤ V(A) ≤ – 65 V
+                        I(OUT) leakage current during Reverse
+                                                                                                                                            1    µA
+                        Polarity
+ ENABLE AND UNDERVOLTAGE LOCKOUT (EN/UVLO) INPUT
+ V(UVLOR)               EN/UVLO threshold voltage, rising                                                        1.195      1.231     1.267        V
+ V(UVLOF)               EN/UVLO threshold voltage, falling                                                       1.091      1.132     1.159        V
+                        Enable threshold voltage for low Iq
+ V(ENF)                                                                                                               0.3     0.67     0.93        V
+                        shutdown, falling
+ V(EN_Hys)              Enable Hysteresis                                                                              37      72          95    mV
+ I(EN/UVLO)                                                        0 V ≤ V(EN/UVLO) ≤ 65 V                                     52      200       nA
+ OVERVOLTAGE PROTECTION AND BATTERY SENSING (VSNS, SW, OV) INPUT
+                        Battery sensing disconnect switch
+ R(SW)                                                             3 V ≤ V(SNS) ≤ 65 V                                 10     19.5         46      Ω
+                        resistance
+ V(OVR)                 Overvoltage threshold input, rising                                                      1.195      1.231     1.267        V
+ V(OVF)                 Overvoltage threshold input, falling                                                     1.091        1.13    1.159        V
+
+
+
+Copyright © 2020 Texas Instruments Incorporated                                                                        Submit Document Feedback         5
+                                                         Product Folder Links: LM7480-Q1
+LM7480-Q1
+SNOSD95C – APRIL 2020 – REVISED DECEMBER 2020                                                                                            www.ti.com
+
+7.5 Electrical Characteristics (continued)
+TJ = –40°C to +125°C; typical values at TJ = 25°C, V(A) = V(OUT) = V(VS) = V(VSNS) = 12 V, V(AC) = 20 mV, C(VCAP) = 0.1 µF,
+V(EN/UVLO) = 2 V, over operating free-air temperature range (unless otherwise noted)
+                           PARAMETER                                     TEST CONDITIONS                        MIN        TYP       MAX      UNIT
+    I(OV)                OV Input leakage current               0 V ≤ V(OV) ≤ 65 V                                           53       200      nA
+    CHARGE PUMP (CAP)
+                         Charge Pump source current (Charge
+    I(CAP)                                                      V(CAP) – V(A) = 7 V, 6 V ≤ V(S) ≤ 65 V           1.3        2.7                mA
+                         pump on)
+                         Charge Pump Turn ON voltage                                                              11       12.2       13.2      V
+    VCAP – VS
+                         Charge Pump Turnoff voltage                                                            11.9       13.2       14.1      V
+                         Charge Pump UVLO voltage
+                                                                                                                 5.4        6.6        7.9      V
+                         threshold, rising
+    V(CAP UVLO)
+                         Charge Pump UVLO voltage
+                                                                                                                 4.4        5.5        6.6      V
+                         threshold, falling
+    IDEAL DIODE (A, C, DGATE)
+    V(A_PORR)            V(A) POR threshold, rising                                                              2.2       2.35        2.6      V
+    V(A_PORF)            V(A) POR threshold, falling                                                               2        2.2        2.4      V
+                         Regulated Forward V(A)–V(C)
+    V(AC_REG)                                                   For LM74800-Q1 Only                              6.8       10.5       13.4     mV
+                         Threshold
+                         V(A)–V(C) Threshold for Fast Reverse
+    V(AC_REV)                                                                                                   –6.4       –4.5       –1.3     mV
+                         Current Blocking
+                         V(A)–V(C) Threshold for Reverse to
+    V(AC_FWD)                                                                                                    150       177        200      mV
+                         Forward transition
+                                                                3 V < V(S) < 5 V                                   7                            V
+    V(DGATE) – V(A)      Gate Drive Voltage
+                                                                5 V < V(S) < 65 V                                 10       11.5         13      V
+                                                                V(A) – V(C) = 100 mV, V(DGATE) – V(A) =
+                         Peak Gate Source current                                                                            20                mA
+                                                                1V
+                                                                V(A) – V(C) = –12 mV, V(DGATE) – V(A) =
+    I(DGATE)             Peak Gate Sink current                                                                           2670                 mA
+                                                                11 V
+                                                                V(A) – V(C) = 0 V, V(DGATE) – V(A) = 11
+                         Regulation sink current                                                                 8.4       12.3                µA
+                                                                V, LM74800-Q1 Only
+                                                                V(A) = –14 V, V(C) = 12 V, LM74801-
+                                                                                                                 0.1       2.84         15     µA
+                                                                Q1
+    I(C)                 Cathode leakage Current
+                                                                V(A) = –14 V, V(C) = 12 V, LM74800-
+                                                                                                                   4       8.77         32     µA
+                                                                Q1
+    HIGH SIDE CONTROLLER (HGATE, OUT, SNS, SW, OV)
+                                                                3 V < V(S) < 5 V                                   7                            V
+    V(HGATE) – V(OUT)    Gate Drive Voltage
+                                                                5 V < V(S) < 65 V                                 10       11.1       14.5      V
+                         Source Current                                                                           39         55         75     µA
+    I(HGATE)
+                         Sink Current                           V(OV) > V(OVR)                                   168       260                 mA
+
+
+
+7.6 Switching Characteristics
+TJ = –40°C to +125°C; typical values at TJ = 25°C, V(A) = V(C) = V(OUT) = V(VS) = 12V, V(AC) = 20 mV, C(VCAP) = 0.1 µF,
+V(EN/UVLO) = 2 V, over operating free-air temperature range (unless otherwise noted)
+                           PARAMETER                                     TEST CONDITIONS                        MIN        TYP       MAX      UNIT
+                         DGATE Turnoff Delay during reverse     V(A) – V(C) = +30 mV to –100 mV
+    tDGATE_OFF(dly)                                                                                                         0.5     0.875      µs
+                         voltage detection                      to V(DGATE–A) < 1 V, C(DGATE–A) = 10 nF
+                                                                V(A) – V(C) = –20 mV to +700
+                         DGATE Turnon Delay during forward
+    tDGATE_ON(dly)                                              mV to V(DGATE-A) > 5 V, C(DGATE-A) = 10                     2.8        3.8     µs
+                         voltage detection
+                                                                nF
+                         DGATE Turnon Delay during EN/          EN/UVLO ↑ to V(DGATE-A) > 5V,
+    tEN(dly)_DGATE                                                                                                98       175        270      µs
+                         UVLO                                   C(DGATE-A) = 10 nF
+
+
+6            Submit Document Feedback                                                                     Copyright © 2020 Texas Instruments Incorporated
+
+                                                         Product Folder Links: LM7480-Q1
+                                                                                                                        LM7480-Q1
+www.ti.com                                                                             SNOSD95C – APRIL 2020 – REVISED DECEMBER 2020
+
+TJ = –40°C to +125°C; typical values at TJ = 25°C, V(A) = V(C) = V(OUT) = V(VS) = 12V, V(AC) = 20 mV, C(VCAP) = 0.1 µF,
+V(EN/UVLO) = 2 V, over operating free-air temperature range (unless otherwise noted)
+                         PARAMETER                                  TEST CONDITIONS                 MIN      TYP     MAX     UNIT
+                       DGATE Turnoff Deglitch during EN/
+ tEN_OFF(deg)_DGATE                                        EN/UVLO ↓ to DGATE ↓                               8.1             µs
+                       UVLO
+                       HGATE Turnoff Deglitch during EN/
+ tEN_OFF(deg)_HGATE                                        EN/UVLO ↓ to HGATE ↓                        3      4.6       6     µs
+                       UVLO
+                                                           OV ↑ to HGATE ↓, For LM74800-Q1
+                                                                                                             3.98      5.4    µs
+ tOVP_OFF(deg)_HGAT                                        only
+                       HGATE Turnoff Deglitch during OV
+ E                                                         OV ↑ to HGATE ↓, For LM74801-Q1
+                                                                                                              3.2      4.7    µs
+                                                           only
+ tOVP_ON(deg)_HGATE HGATE Turnon Deglitch during OV        OV ↓ to HGATE ↑                                   2.95             µs
+
+
+
+
+Copyright © 2020 Texas Instruments Incorporated                                                       Submit Document Feedback         7
+                                                     Product Folder Links: LM7480-Q1
+LM7480-Q1
+SNOSD95C – APRIL 2020 – REVISED DECEMBER 2020                                                                                                                                                      www.ti.com
+
+7.7 Typical Characteristics
+                                8000                                                                                           500
+                                7500
+                                7000                                                -40qC
+                                6500                                                25qC
+                                6000                                                85qC
+                                                                                                                               450
+                                5500                                                125qC
+                                                                                    150qC
+                                5000
+                                4500
+     IQ (PA)                    4000                                                                IQ (PA)                    400
+                                3500
+                                3000
+                                2500
+                                                                                                                                                                                                   -40qC
+                                2000                                                                                           350                                                                 25qC
+                                1500                                                                                                                                                               85qC
+                                1000                                                                                                                                                               125qC
+                                 500                                                                                                                                                               150qC
+                                   0                                                                                           300
+                                          0   5   10 15 20 25 30 35 40 45 50 55 60 65                                             10         15   20   25       30   35 40       45      50   55   60   65
+                                                              VS (V)                  IQ                                                                              VS (V)                               IQ_V
+      Figure 7-1. Operating Quiescent Current vs Supply Voltage                                    Figure 7-2. Operating Quiescent Current vs Supply Voltage (>
+                                                                                                                              10 V)
+                                 4                                                                                             5.5
+
+                                3.5                                                                                             5                                                                  -40qC
+                                                                                                                                                                                                   25qC
+
+
+
+
+     Charge Pump Current (mA)                                                                       Charge Pump Current (mA)
+                                                                                                                               4.5                                                                 85qC
+                                 3
+                                                                                                                                                                                                   125qC
+                                                                                                                                4                                                                  150qC
+                                2.5
+                                                                                                                               3.5
+                                 2
+                                                                                                                                3
+                                1.5
+                                                                                                                               2.5
+                                                                                    -40qC
+                                 1                                                  25qC                                        2
+                                                                                    85qC
+                                0.5                                                 125qC                                      1.5
+                                                                                    150qC
+                                 0                                                                                              1
+                                      3       4     5    6   7     8   9   10      11   12                                           0            2         4           6            8        10        12
+                                                              VS (V)                        D025
+                                                                                                                                                                 VCAP       VS (V)                         D013
+
+    Figure 7-3. Charge Pump Current vs Supply Voltage at CAP = 6                                        Figure 7-4. Charge Pump V-I Characteristics at VS > = 12 V
+                                 V
+                                12.25                                                                                             12
+                                   12                                                                                          11.75
+                                11.75                                                                                           11.5
+                                 11.5
+
+
+
+
+     DGATE Drive Voltage (V)                                                                        HGATE Drive Voltage (V)
+                                                                                                                               11.25
+                                11.25                                                                                             11
+                                   11
+                                                                                                                               10.75
+                                10.75
+                                                                                                                                10.5
+                                 10.5
+                                                                                                                               10.25
+                                10.25
+                                                                                                                                  10
+                                   10
+                                 9.75                                               -40qC                                       9.75                                                               -40qC
+                                  9.5                                               25qC                                         9.5                                                               25qC
+                                                                                    85qC                                        9.25                                                               85qC
+                                 9.25                                               125qC                                                                                                          125qC
+                                    9                                               150qC                                          9                                                               150qC
+                                 8.75                                                                                           8.75
+                                          0   5   10 15 20 25 30 35 40 45 50 55 60 65                                                    0    5   10 15 20 25 30 35 40 45 50 55 60 65
+                                                              VS (V)                D024
+                                                                                                                                                              VS (V)                D024
+
+                                 Figure 7-5. DGATE Drive Voltage vs Supply Voltage                                              Figure 7-6. HGATE Drive Voltage vs Supply Voltage
+
+
+
+
+8                               Submit Document Feedback                                                                                                        Copyright © 2020 Texas Instruments Incorporated
+
+                                                                                Product Folder Links: LM7480-Q1
+                                                                                                                                                                                             LM7480-Q1
+www.ti.com                                                                                                                                            SNOSD95C – APRIL 2020 – REVISED DECEMBER 2020
+
+
+7.7 Typical Characteristics (continued)
+                                        -9                                                                                              1.4
+                                       -12
+                                       -15
+
+
+
+
+    ANODE leakage current, I(A) (PA)
+                                       -18
+                                       -21                                                                                              1.3
+
+
+
+
+                                                                                                      UVLO Thresholds (V)
+                                       -24
+                                       -27
+                                       -30
+                                                                                                                                        1.2
+                                       -33
+                                       -36
+                                       -39
+                                                                                        -40qC
+                                       -42                                                                                              1.1
+                                                                                        25qC
+                                       -45                                              85qC
+                                       -48                                              125qC
+                                       -51                                              150qC
+                                       -54                                                                                               1
+                                         -65 -60 -55 -50 -45 -40 -35 -30 -25 -20 -15 -10 -5 0                                            -50           0        50        100          150      200
+                                                                  VA (V)                      D024
+                                                                                                                                                               Temperature (qC)                     D024
+
+                           Figure 7-7. ANODE Leakage Current vs Reverse ANODE                                                                 Figure 7-8. UVLO Thresholds vs Temperature
+                                                 Voltage
+                                       1.4                                                                                              7.5
+
+
+
+
+                                                                                                      Charge Pump UVLO Thresholds (V)
+                                                                                                                                         6
+                                       1.3
+
+
+
+
+    OVP Thresholds (V)
+                                                                                                                                        4.5
+                                       1.2
+                                                                                                                                         3
+
+                                       1.1
+                                                                                                                                        1.5
+                                                                                                                                                                                  (VCAP VS) UVLOR
+                                                                                                                                                                                  (VCAP VS) UVLOF
+                                        1                                                                                                0
+                                        -50           0        50        100      150        200                                         -50           0        50        100          150      200
+                                                              Temperature (qC)                 D024
+                                                                                                                                                               Temperature (qC)                     D024
+
+                                              Figure 7-9. OVP Thresholds vs Temperature               Figure 7-10. Charge Pump UVLO Threshold vs Temperature
+                                        3                                                                                                3
+
+
+                                                                                                                                        2.5
+                                       2.4
+
+
+
+
+    VA POR Thresholds (V)                                                                             VS POR Thresholds (V)
+                                                                                                                                         2
+                                       1.8
+                                                                                                                                        1.5
+                                       1.2
+                                                                                                                                         1
+
+                                       0.6
+                                                                                                                                        0.5
+                                                                                     VA PORR                                                                                             VS PORR
+                                                                                     VA PORF                                                                                             VS PORF
+                                        0                                                                                                0
+                                        -50           0        50        100      150        200                                         -50           0        50        100          150      200
+                                                              Temperature (qC)                 D024
+                                                                                                                                                               Temperature (qC)                     D024
+
+                                             Figure 7-11. VA POR Threshold vs Temperature                                                     Figure 7-12. VS POR Threshold vs Temperature
+
+
+
+
+Copyright © 2020 Texas Instruments Incorporated                                                                                                                       Submit Document Feedback             9
+                                                                                    Product Folder Links: LM7480-Q1
+LM7480-Q1
+SNOSD95C – APRIL 2020 – REVISED DECEMBER 2020                                                                                                                                  www.ti.com
+
+7.7 Typical Characteristics (continued)
+                                 3                                                                                       57.2
+                                                                                                                          57
+
+
+
+
+                                                                                             HGATE Source Current (PA)
+                                2.8                                                                                      56.8
+
+
+
+
+     tOVP_OFF(deg)_HGATE (Ps)
+                                                                                                                         56.6
+
+                                2.6                                                                                      56.4
+                                                                                                                         56.2
+
+                                2.4                                                                                       56
+                                                                                                                         55.8
+
+                                2.2                                                                                      55.6
+                                                                                                                         55.4
+
+                                 2                                                                                       55.2
+                                 -50          0        50        100     150        200                                         0   5   10 15 20 25 30 35 40 45 50 55 60 65
+                                                      Temperature (qC)                                                                              VS (V)                D024
+                                                                                    HGAT
+
+                                      Figure 7-13. HGATE Turn OFF Delay during OV                               Figure 7-14. HGATE Current (IHGATE) vs Supply Voltage
+
+
+
+
+10                              Submit Document Feedback                                                                                        Copyright © 2020 Texas Instruments Incorporated
+
+                                                                           Product Folder Links: LM7480-Q1
+                                                                                                                                               LM7480-Q1
+www.ti.com                                                                                                   SNOSD95C – APRIL 2020 – REVISED DECEMBER 2020
+
+
+8 Parameter Measurement Information
+
+                                                30 mV
+
+                            V A ± VC
+                                                                           VA > V C
+                                                 0 mV
+                                                                                                         VC > VA
+                                       -100 mV
+
+
+
+                                                         VDGATE
+
+
+                            VDGATE ± VA
+                                                                                                                         1V
+                                                  0V
+
+                                                                                                  ttDGATE_OFF(DLY)t
+
+
+
+
+                                           700 mV
+
+                            VA ± VC
+                                                                                              V A > VC
+                                                 0 mV
+                                                                      V C > VA
+                                                -20 mV
+
+                                                                                                                         VDGATE
+
+
+
+                            VDGATE ± VA
+                                                                                                                   5V
+
+
+                                                  0V
+                                                                                          ttDGATE_ON(DLY)t
+
+
+
+                                                                  VOVR + 0.1V
+                            VOV
+
+                                                   0V
+
+
+                                                         VHGATE
+
+
+                                VHGATE ± VOUT
+
+                                                   0V
+
+                                                                                 ttOVP_OFF(deg)HGATEt
+
+                                                                    Figure 8-1. Timing Waveforms
+
+
+
+
+Copyright © 2020 Texas Instruments Incorporated                                                                               Submit Document Feedback   11
+                                                                       Product Folder Links: LM7480-Q1
+LM7480-Q1
+SNOSD95C – APRIL 2020 – REVISED DECEMBER 2020                                                                    www.ti.com
+
+
+9 Detailed Description
+9.1 Overview
+The LM7480x-Q1 ideal diode controller drives and controls external back to back N-Channel MOSFETs to
+emulate an ideal diode rectifier with power path ON/OFF control, inrush current limiting and overvoltage
+protection. The wide input supply of 3 V to 65 V allows protection and control of 12-V and 24-V automotive
+battery powered ECUs. The device can withstand and protect the loads from negative supply voltages down to –
+65 V. An integrated ideal diode controller (DGATE) drives the first MOSFET to replace a Schottky diode for
+reverse input protection and output voltage holdup. A strong charge pump with 20-mA peak GATE source
+current driver stage and short turn ON and turn OFF delay times ensures fast transient response ensuring robust
+performance during automotive testing such as ISO16750 or LV124 where an ECU is subjected to AC
+superimpose input signals. With a second MOSFET in the power path the device allows load disconnect
+(ON/OFF control) and overvoltage protection using HGATE control. The device features an adjustable
+overvoltage cut-off protection feature using a programming resistor across SW and OVP terminal.
+The LM7480x-Q1 controller can drive the external MOSFETs in Common Drain and Common Source
+configurations. With Common Drain configuration of the power MOSFETs, the mid-point can be utilized for OR-
+ing designs using an another ideal diode. The LM7480x-Q1 has a maximum voltage rating of 65 V. The loads
+can be protected from extended overvoltage transients like 200-V Unsuppressed Load Dumps in 24-V Battery
+systems by configuring the device with external MOSFETs in Common Source topology.
+The LM74800-Q1 controls the DGATE of the MOSFET to regulate the forward voltage drop at 10.5 mV. The
+linear regulation scheme in these devices enables graceful control of the GATE voltage and turns off of the
+MOSFET during a reverse current event and ensures zero DC reverse current flow. The LM74801-Q1 features a
+comparator based scheme to turn ON/OFF the MOSFET GATE.
+The device features enable control. With the enable pin low during the standby mode, both the external
+MOSFETs and controller is off and draws a very low 2.87 μA of current. The high voltage rating of LM7480x-Q1
+helps to simplify the system designs for automotive ISO7637 protection. The LM74800-Q1 is also suitable for
+ORing applications
+
+
+
+
+12    Submit Document Feedback                                                    Copyright © 2020 Texas Instruments Incorporated
+
+                                                Product Folder Links: LM7480-Q1
+                                                                                                                                                            LM7480-Q1
+www.ti.com                                                                                                  SNOSD95C – APRIL 2020 – REVISED DECEMBER 2020
+
+
+9.2 Functional Block Diagram
+
+                  VBATT                                       Q1                                                      Q2                             VOUT
+
+
+                                                        A               DGATE            C     VS               CAP                  HGATE            OUT
+
+                                                                                                    CP
+                                                                                                                     OUT+12V
+                            VSNS                                                                    CP
+                                                  EN                                              2.7mA            55µA
+                              SW
+                                                                Reverse Current                                                Gate
+                                                            Protection controller and
+                       R1                                                                                                      Driver
+          BATT_MON                              A+12V             Gate Driver
+                                                                                                            VCAP
+                       R2
+                               OV                  +                                    VCAP
+                                                            OV                                   Charge
+                       R3              1.23 V
+                                                                                                                                        UVLO
+                                        1.13
+                                                   ±                                    EN       Pump                         OV
+                                                                                                 Enable
+                                                                                        VS        Logic                            EN
+
+                         EN/UVLO                   +         EN
+                                        1V                                          VCAP                     A+12V
+                                                   ±
+                                        0.3 V
+                                                                                        VA                   OUT+12V
+                                                                                               Bias Rails
+                                                   +         UVLO                       VOUT                 Internal Rails
+                                        1.23 V     ±
+                                        1.13
+                                                              A
+                                                                            Reverse
+                                                              VS        Protection Logic
+                                                                                                    GND                                        LM7480x-Q1
+
+
+
+
+9.3 Feature Description
+9.3.1 Charge Pump
+The charge pump supplies the voltage necessary to drive the external N-channel MOSFET. An external charge
+pump capacitor is placed between CAP and VS pins to provide energy to turn on the external MOSFET. In order
+for the charge pump to supply current to the external capacitor, the EN/UVLO pin voltage must be above the
+specified input high threshold, V(ENR). When enabled the charge pump sources a charging current of 2.7-mA
+typical. If EN/UVLO pin is pulled low, then the charge pump remains disabled. To ensure that the external
+MOSFET can be driven above its specified threshold voltage, the CAP to VS voltage must be above the
+undervoltage lockout threshold, typically 6.6 V, before the internal gate driver is enabled. Use Equation 1 to
+calculate the initial gate driver enable delay.
+
+                                             V(CAP _ UVLOR)
+       T DRV _ EN      175Ps C(CAP) x
+                                                  2.7mA                                                                                                        (1)
+
+where
+•    C(CAP) is the charge pump capacitance connected across VS and CAP pins
+•    V(CAP_UVLOR) = 6.6 V (typical)
+To remove any chatter on the gate drive approximately 1 V of hysteresis is added to the VCAP undervoltage
+lockout. The charge pump remains enabled until the CAP to VS voltage reaches 13.2 V, typically, at which point
+the charge pump is disabled decreasing the current draw on the VS pin. The charge pump remains disabled until
+the CAP to VS voltage is below to 12.2 V typically at which point the charge pump is enabled. The voltage
+between CAP and VS continue to charge and discharge between 12.2 V and 13.2 V as shown in Figure 9-1. By
+enabling and disabling the charge pump, the operating quiescent current of the LM7480x-Q1 is reduced. When
+the charge pump is disabled it sinks 15 µA.
+
+Copyright © 2020 Texas Instruments Incorporated                                                                                    Submit Document Feedback          13
+                                                            Product Folder Links: LM7480-Q1
+LM7480-Q1
+SNOSD95C – APRIL 2020 – REVISED DECEMBER 2020                                                                          www.ti.com
+
+                                                  TDRV_EN                         TON                TOFF
+
+                            VIN
+
+
+
+                         VA=Vs
+
+
+
+                             0V
+
+
+                             VEN/UVLO
+
+
+
+                         13.2 V
+
+
+                         12.2 V
+                    VCAP-VS
+                           6.6 V                            V(VCAP UVLOR)
+
+
+
+
+                  GATE DRIVER
+                  ENABLE
+
+                                         Figure 9-1. Charge Pump Operation
+
+9.3.2 Dual Gate Control (DGATE, HGATE)
+The LM7480x-Q1 feature two separate gate control and driver outputs i.e DGATE and HGATE to drive back to
+back N-channel MOSFETs.
+9.3.2.1 Reverse Battery Protection (A, C, DGATE)
+A, C, DGATE comprises of Ideal Diode stage. Connect the Source of the external MOSFET to A, Drain to C and
+Gate to DGATE. The LM7480x-Q1 has integrated reverse input protection down to –65 V.
+Before the DGATE driver is enabled, following conditions must be achieved:
+• The EN/UVLO pin voltage must be greater than the specified input high voltage.
+• The CAP to VS voltage must be greater than the undervoltage lockout voltage.
+• Voltage at A pin must be greater than VA POR Rising threshold.
+• Voltage at Vs pin must be greater than Vs POR Rising thershold.
+If the above conditions are not achieved, then the DGATE pin is internally connected to the A pin, assuring that
+the external MOSFET is disabled.
+In LM74800-Q1 the voltage drop across the MOSFET is continuously monitored between the A and C pins, and
+the DGATE to A voltage is adjusted as needed to regulate the forward voltage drop at 10.5 mV (typ). This closed
+loop regulation scheme enables graceful turn off of the MOSFET during a reverse current event and ensures
+zero DC reverse current flow. This scheme ensures robust performance during slow input voltage ramp down
+tests. Along with the linear regulation amplifier scheme, the LM74800-Q1 also integrates a fast reverse voltage
+comparator. When the voltage drop across A and C reaches V(AC_REV) threshold then the DGATE goes low
+within 0.5-µs (typ). This fast reverse voltage comparator scheme ensures robust performance during fast input
+voltage ramp down tests such as input micro-shorts. The external MOSFET is turned ON back when the voltage
+across A and C hits V(AC_FWD) threshold within 2.8 µs (typ).
+In LM74801-Q1, reverse current blocking is by fast reverse voltage comparator only. When the voltage drop
+across A and C reaches V(AC_REV) threshold then the DGATE goes low within 0.5 µs (typ). This fast reverse
+voltage comparator scheme ensures robust performance during fast input voltage ramp down tests such as input
+
+
+
+14    Submit Document Feedback                                                          Copyright © 2020 Texas Instruments Incorporated
+
+                                                Product Folder Links: LM7480-Q1
+                                                                                                                                   LM7480-Q1
+www.ti.com                                                                                    SNOSD95C – APRIL 2020 – REVISED DECEMBER 2020
+
+micro-shorts. The external MOSFET is turned ON back when the voltage across A and C hits V(AC_FWD)
+threshold within 2.8 µs (typ).
+For Ideal Diode only designs, connect LM7480x-Q1 as shown in Figure 9-2
+
+                                                                Q1
+                                             VBATT
+                                              12 V                                       VOUT
+
+
+
+                                              D1                DGATE CAP VS C           HGATE
+                                           SMBJ36CA             A
+                                                                VSNS                         OUT
+                                                                 SW
+                                                      R1                   LM7480x-Q1
+                                            BATT_MON
+                                                    R2
+                                                                                        EN/UVLO     ON OFF
+                                                                 OV              GND
+
+
+
+
+                                   Figure 9-2. Configuring LM7480x-Q1 for Ideal Diode Only
+
+                                      Table 9-1. Performance with 'C' Terminal Left Floating
+                     Feature                                          LM74800-Q1                                 LM74801-Q1
+                                                  DGATE gets pulled to A. MOSFET Q1 turned         DGATE to A fully enhanced. MOSFET Q1
+                   DGATE drive
+                                                                     OFF.                                        turned ON.
+           Reverse Polarity Protection                                    Yes.                                        Yes.
+            Reverse Current Blocking                                      Yes.                       No. Allows bi-directional current flow.
+
+
+9.3.2.2 Load Disconnect Switch Control (HGATE, OUT)
+HGATE and OUT comprises of Load disconnect switch control stage. Connect the Source of the external
+MOSFET to OUT and Gate to HGATE.
+Before the HGATE driver is enabled, following conditions must be achieved:
+• The EN/UVLO pin voltage must be greater than the specified input high voltage.
+• The CAP to VS voltage must be greater than the undervoltage lockout voltage.
+• Voltage at Vs pin must be greater than Vs POR Rising thershold.
+If the above conditions are not achieved, then the HGATE pin is internally connected to the OUT pin, assuring
+that the external MOSFET is disabled.
+For Inrush Current limiting, connect CdVdT capacitor and R1 as shown in Figure 9-3.
+
+                                                                          Q1
+
+
+
+                                                                     R1
+
+                                                      CdVdT
+                                                                          HGATE OUT
+
+                                                                          LM7480x-Q1
+
+
+
+                                                  Figure 9-3. Inrush Current Limiting
+
+
+
+Copyright © 2020 Texas Instruments Incorporated                                                               Submit Document Feedback         15
+                                                           Product Folder Links: LM7480-Q1
+LM7480-Q1
+SNOSD95C – APRIL 2020 – REVISED DECEMBER 2020                                                                          www.ti.com
+
+The CdVdT capacitor is required for slowing down the HGATE voltage ramp during power up for inrush current
+limiting. Use Equation 2 to calculate CdVdT capacitance value .
+
+               I HGATE _ DRV
+     CdVdT                     xCOUT
+                 I INRUSH
+                                                                                                                           (2)
+
+where IHATE_DRV is 55 μA (typ), IINRUSH is the inrush current and COUT is the output load capacitance. An extra
+resistor, R1, in series with the CdVdT capacitor improves the turn off time.
+9.3.3 Overvoltage Protection and Battery Voltage Sensing (VSNS, SW, OV)
+Connect a resistor ladder as shown in Figure 9-4 for overvoltage threshold programming.
+                                            VBATT
+
+                                                               A
+
+
+                                                         SNS
+                                                                        EN
+                                                         SW
+
+                                                   R1                   LM7480x-Q1
+                                       BATT_MON
+
+                                                    R2
+                                                         OV
+                                                                         +      HGATE_OFF
+                                                   R3          1.23 V
+                                                                         ±
+                                                               1.13 V
+
+
+
+                      Figure 9-4. Programming Overvoltage Threshold and Battery Sensing
+
+A disconnect switch is integrated between VSNS and SW pins. This switch is turned OFF when EN/UVLO pin is
+pulled low. This helps to reduce the leakage current through the resistor divider network during system shutdown
+state (IGN_OFF state).
+9.3.4 Low Iq Shutdown and Under Voltage Lockout (EN/UVLO)
+The enable pin allows for the gate driver to be either enabled or disabled by an external signal. If the EN/UVLO
+pin voltage is greater than the rising threshold, the gate driver and charge pump operates as described in
+Charge Pump section. If EN/UVLO pin voltage is less than the input low threshold, V(ENF), the charge pump and
+both the gate drivers (DGATE and HGATE) are disabled placing the LM7480x-Q1 in shutdown mode. If V(ENF) <
+V(EN/UVLO) < V(UVLOF) then only HGATE is disabled disconnecting the load from the supply, DGATE remains ON.
+The EN/UVLO pin can withstand a maximum voltage of 65 V. For always ON operation connect EN/UVLO pin to
+VS.
+9.4 Device Functional Modes
+
+Shutdown Mode
+The LM7480x-Q1 enters shutdown mode when the EN/UVLO pin voltage is below the specified input low
+threshold V(ENF). Both the gate drivers and the charge pump are disabled in shutdown mode. During shutdown
+mode the LM7480x-Q1 enters low IQ operation with a total input quiescent consumption of 2.87 µA (typ). When
+the LM7480x-Q1 is in shutdown mode, forward current flow to always ON loads connected to the common drain
+point of the back to back MOSFETs is not interrupted but is conducted through the MOSFET's body diode.
+
+
+
+
+16    Submit Document Feedback                                                          Copyright © 2020 Texas Instruments Incorporated
+
+                                                  Product Folder Links: LM7480-Q1
+                                                                                                                                LM7480-Q1
+www.ti.com                                                                                     SNOSD95C – APRIL 2020 – REVISED DECEMBER 2020
+
+
+9.5 Application Examples
+9.5.1 Redundant Supply OR-ing with Inrush Current Limiting, Overvoltage Protection and ON/OFF
+Control
+
+                                                                  Q1
+                                        VIN1
+
+
+
+
+                                        D1                 ANODE GATE CATHODE
+                                     SMBJ36CA
+                                                           VCAP
+                                                                  LM74700-Q1
+
+                                                           EN
+                                                  ON OFF            GND
+
+                                                                                                    VOUT2
+
+                                                           Q1                       Q2
+                                       VIN2
+                                                                                                         VOUT1
+                                                                          VS
+
+
+
+                                       D2                  DGATE CAP VS C            HGATE
+                                    SMBJ36CA               A
+                                                     VS    VSNS                          OUT
+                                                            SW
+                                                     R1                LM74800-Q1
+                                        BATT_MON
+                                                R2
+                                                                                    EN/UVLO    ON OFF
+                                                     R3    OV             GND
+
+
+
+
+             Figure 9-5. Redundant Supply OR-ing with Overvoltage Protection and ON/OFF Control
+
+Figure 9-5 shows the implementation of Dual OR-ing with Inrush Current Limiting, overvoltage Protection and
+power path ON/OFF control. The input side SMBJ36CA TVS across the ideal diodes is required for ISO7637
+Pulse 1 transient suppression to limit the input voltage within the device max voltage rating of –65V.
+R1 and R2 are the programming resistors for over voltage protection (OVP) threshold. When the voltage at OV
+pin exceeds OV cut-off reference threshold then the HGATE driver turns OFF the FET Q3, disconnecting the
+power path and protecting the downstream load. HGATE goes high once the OVP pin voltage goes below the
+OVP falling hysteresis threshold. Use 0.1-μF to 1-μF capacitor across VS to CAP pins of the LM7480x-Q1. This
+is the charge pump capacitor and acts as the supply for both the DGATE and HGATE driver stages. The DGATE
+driver of the LM7480x-Q1 is equipped with 20-mA peak source current and 2.6-A peak sink current capability
+resulting in fast and efficient transient responses during the ISO16750 or LV124 short interruptions as well as AC
+superimpose testing.
+Pull EN low during the sleep/standby mode. With EN low, both the DGATE and HGATE drivers are pulled low
+turning OFF both the power FETs. VOUT1 gets disconnected from the input supply rail reducing the system IQ.
+VOUT2 is gets power through the body diode of the MOSFET Q2 and this supply can be utilized for always ON
+loads. The LM7480x-Q1 draws a 2.87-μA (typ) current during this mode.
+
+
+
+
+Copyright © 2020 Texas Instruments Incorporated                                                               Submit Document Feedback     17
+                                                           Product Folder Links: LM7480-Q1
+LM7480-Q1
+SNOSD95C – APRIL 2020 – REVISED DECEMBER 2020                                                                                       www.ti.com
+
+9.5.2 Ideal Diode with Unsuppressed Load Dump Protection
+An extended overvoltage protection support above 65 V can be achieved by configuring the device with external
+back to back MOSFETs in common source topology as shown in Figure 9-6. Place a resistor R1 and a zener
+clamp across VS pin to GND to limit the voltage below 65 V. The load gets protected from overvoltages
+transients like un-suppressed load dumps with the help of overvoltage protection feature. Use R2 and R3 for
+setting the overvoltage protection threshold. When voltage at OV pin exceeds the set OV threshold then the
+HGATE turns OFF. This results in power path disconnection between input and output.
+                                        VBATT:                                 60V
+                                                               200V
+                                        12V/24V          Q1               Q2
+                                 with 200V Load Dump                                          VOUT
+
+                                         R1
+                                        10NŸ
+                                                           HGATE OUT A DGATE              C
+                                                          VS
+
+                                  C1    D1                 CAP
+                                 1µF    60V
+                                                           VSNS       LM74800-Q1
+                                                           SW
+                                                R1
+                                                                                     EN/UVLO     ON OFF
+                                                          OV            GND
+                                                R2
+
+
+
+
+                     Figure 9-6. Ideal Diode with 200-V Unsupressed Load Dump Protection
+
+
+
+
+18    Submit Document Feedback                                                                       Copyright © 2020 Texas Instruments Incorporated
+
+                                                     Product Folder Links: LM7480-Q1
+                                                                                                                            LM7480-Q1
+www.ti.com                                                                              SNOSD95C – APRIL 2020 – REVISED DECEMBER 2020
+
+
+10 Applications and Implementation
+                                                         Note
+       Information in the following applications sections is not part of the TI component specification, and TI
+       does not warrant its accuracy or completeness. TI’s customers are responsible for determining
+       suitability of components for their purposes, as well as validating and testing their design
+       implementation to confirm system functionality.
+10.1 Application Information
+LM7480x-Q1 controls two N-channel power MOSFETs with DGATE used to control diode MOSFET to emulate
+an ideal diode and HGATE controlling second MOSFET for power path cut-off when disabled or during an
+overvoltage protection. HGATE controlled MOSFET can be used to clamp the output during overvoltage or load
+dump conditions. LM7480x-Q1 can be placed into low quiescent current mode using EN/UVLO, where both
+DGATE and HGATE are turned OFF.
+The device has a separate supply input pin (Vs). The charge pump is derived from this supply input. With the
+separate supply input provision and separate GATE control architecture, the LM7480x-Q1 device offers flexibility
+in system design architectures and enables circuit design with various power path control topologies like
+common drain, common source, ORing and Power MUXing. With these various topologies, the system
+designers can design the front-end power system to meet various system design requirements. For more
+information, see the Six System Architectures With Robust Reverse Battery Protection Using an Ideal Diode
+Controller Application Report.
+10.2 Typical 12-V Reverse Battery Protection Application
+A typical application circuit of LM74800-Q1 configured in common-drain topology to provide reverse battery
+protection with overvoltage protection is shown in Figure 10-1.
+
+
+
+
+   Figure 10-1. Typical Application Circuit - 12-V Reverse Battery Protection and Overvoltage Protection
+
+10.2.1 Design Requirements for 12-V Battery Protection
+The system design requirements are listed in Table 10-1.
+         Table 10-1. Design Parameters - 12-V Reverse Battery Protection and Overvoltage Protection
+                          DESIGN PARAMETER                                                   EXAMPLE VALUE
+                                                                        12-V battery, 12-V nominal with 3.2-V Cold Crank and 35-V Load
+                      Operating Input Voltage Range
+                                                                                                     Dump
+                               Output Power                                                         50 W
+                          Output Current Range                                           4-A Nominal, 5-A maximum
+                            Input Capacitance                                                  0.1-µF minimum
+
+
+
+Copyright © 2020 Texas Instruments Incorporated                                                         Submit Document Feedback         19
+                                                      Product Folder Links: LM7480-Q1
+LM7480-Q1
+SNOSD95C – APRIL 2020 – REVISED DECEMBER 2020                                                                             www.ti.com
+
+Table 10-1. Design Parameters - 12-V Reverse Battery Protection and Overvoltage Protection (continued)
+                     DESIGN PARAMETER                                                  EXAMPLE VALUE
+                                                                   0.1-µF minimum, (optional 220 µF for E-10 functional class A
+                      Output Capacitance
+                                                                                         performance)
+                       Overvoltage Cut-off                                        37.0 V, output cut-off > 37.0 V
+                     AC Super Imposed Test                         2-V Peak-Peak 30 KHz, extendable to 6-V Peak-Peak 30 KHz
+            Automotive Transient Immunity Compliance                          ISO 7637-2, ISO 16750-2 and LV124
+                      Battery Monitor Ratio                                                    8:1
+
+
+10.2.2 Automotive Reverse Battery Protection
+The LM7480x-Q1 feature two separate gate control and driver outputs i.e DGATE and HGATE to drive back to
+back N-channel MOSFETs. This enables LM7480x-Q1 to provide comprehensive immunity with robust system
+protection during various automotive transient tests as per ISO 7637-2 and ISO 16750-2 standard as well as
+other automotive OEM standards. For more information, see the Automotive EMC-compliant reverse-battery
+protection with ideal-diode controllers article.
+LM7480x-Q1 gate drive output DGATE controls MOSFET Q1 to provide reverse battery protection and true
+reverse current blocking functionality. HGATE controls MOSFET Q2 to turn off the power path during input
+overvoltage condition. Resistor network R1, R2 and R3 connected to OV and SW can be configured for
+overvoltage protection and also for battery monitoring under normal operating conditions as well as reverse
+battery conditions. Bi-directional TVS D1 clamps the automotive transient input voltages on the 12-V battery,
+both positive and negative transients, to voltage levels safe for MOSFET Q1 and LM7480x-Q1.
+Fast reverse current blocking response and quick reverse recovery enables LM7480x-Q1 to turn ON/OFF
+MOSFET Q1 during AC super imposed input specified by ISO 16750-2 and LV124 E-06 and provide active
+rectification of the AC input superimposed on DC battery voltage. Fast reverse current blocking response of
+LM7480x-Q1 helps to turn off MOSFET Q1 during negative transients inputs such as –150-V 2-ms Pulse 1
+specified in ISO 7637-2 and input micro short conditions such as LV124 E-10 test.
+10.2.2.1 Input Transient Protection: ISO 7637-2 Pulse 1
+ISO 7637-2 Pulse 1 specifies negative transient immunity of electronic modules connected in parallel with an
+inductive load when the battery is disconnected. A typical pulse 1 specified in ISO 7637-2 starts with battery
+disconnection where supply voltage collapses to 0 V followed by –150 V 2 ms applied with a source impedance
+of 10 Ω at a slew rate of 1 µs on the supply input. LM7480x-Q1 blocks reverse current and prevents the output
+voltage from swinging negative, protecting the rest of the electronic circuits from damage due to negative
+transient voltage. MOSFET Q1 is quickly turned off within 0.5 µs by fast reverse comparator of LM7480x-Q1. A
+single bi-directional TVS is required at the input to clamp the negative transient pulse within the operating
+maximum voltage across cathode to anode of 85 V and does not violate the MOSFET Q1 drain-source
+breakdown voltage rating.
+ISO 7637-2 Pulse 1 performance of LM74800-Q1 is shown in Figure 10-2.
+
+
+
+
+20    Submit Document Feedback                                                             Copyright © 2020 Texas Instruments Incorporated
+
+                                                Product Folder Links: LM7480-Q1
+                                                                                                                       LM7480-Q1
+www.ti.com                                                                            SNOSD95C – APRIL 2020 – REVISED DECEMBER 2020
+
+
+
+
+                                                  Figure 10-2. ISO 7637-2 Pulse 1
+
+10.2.2.2 AC Super Imposed Input Rectification: ISO 16750-2 and LV124 E-06
+Alternators are used to power the automotive electrical system and charge the battery during normal runtime of
+the vehicle. Rectified alternator output contains residual AC ripple voltage superimposed on the DC battery
+voltage due to various reasons which includes engine speed variation, regulator duty cycle with field switching
+ON/OFF and electrical load variations. On a 12-V battery supply, alternator output voltage is regulated by a
+voltage regulator between 14.5 V to 12.5 V by controlling the field current of alternator's rotor. All electronic
+modules are tested for proper operation with superimposed AC ripple on the DC battery voltage. AC super
+imposed test specified in ISO 16750-2 and LV124 E-06 requires AC ripple of 2-V Peak-Peak on a 13.5-V DC
+battery voltage, swept from 15 Hz to 30 KHz. LM7480x-Q1 rectifies the AC superimposed voltage by turning the
+MOSFET Q1 OFF quickly to cut-off reverse current and turning the MOSFET Q1 ON quickly during forward
+conduction. Active rectification of 2-V peak-peak 5-KHz AC input by LM7480x-Q1 is shown in Figure 10-3. Fast
+turn off and quick turn ON of the MOSFET reduces power dissipation in the MOSFET Q1 and active rectification
+reduces power dissipation in the output hold-up capacitor's ESR by half. Active rectification of 2-V peak-peak 30-
+KHz AC input is shown in Figure 10-4.
+
+
+
+
+Copyright © 2020 Texas Instruments Incorporated                                                      Submit Document Feedback     21
+                                                    Product Folder Links: LM7480-Q1
+LM7480-Q1
+SNOSD95C – APRIL 2020 – REVISED DECEMBER 2020                                                                       www.ti.com
+
+
+
+
+     Figure 10-3. AC Super Imposed Test - 2-V Peak-               Figure 10-4. AC Super Imposed Test - 2-V Peak-
+                      Peak 5 KHz                                                   Peak 30 KHz
+
+10.2.2.3 Input Micro-Short Protection: LV124 E-10
+E-10 test specified in LV124 standard checks for immunity of electronic modules to short interruptions in power
+supply input due to contact issues or relay bounce. During this test (case 2), micro-short is applied on the input
+for a duration as low as 10 µs to several ms. For a functional pass status A, electronic modules are required to
+run uninterrupted during the E-10 test (case 2) with 100-µs duration. Dual-Gate drive architecture of LM7480x-
+Q1 - DGATE and HGATE - enables to achieve a functional pass status A with optimum hold up capacitance on
+the output when compared to a single gate drive controller. When input micro-short is applied for 100 µs,
+LM7480x-Q1 quickly turns off MOSFET Q1 by shorting DGATE to ANODE (source of MOSFET) within 0.5µs to
+prevent the output from discharging and the HGATE remains ON keeping MOSFET Q2 ON, enabling fast
+recovery after the input short is removed.
+Performance of LM74800-Q1 during E10 input power supply interruption test case 2 is shown in Figure 10-5.
+After the input short is removed, input voltage recovers and MOSFET Q1 is turned back ON within 130 µs. Note
+that dual-gate drive topology allows MOSFET Q2 to remain ON during the test and helps in restoring the input
+power faster. Output voltage remains unperturbed during the entire duration, achieving functional status A.
+
+
+
+
+     Figure 10-5. Input Micro-Short - LV124 E10 TC 2              Figure 10-6. Input Micro-Short - LV124 E10 TC 2
+                          100 µs                                                 100 µs with HGATE
+
+
+
+
+22     Submit Document Feedback                                                      Copyright © 2020 Texas Instruments Incorporated
+
+                                                Product Folder Links: LM7480-Q1
+                                                                                                                     LM7480-Q1
+www.ti.com                                                                          SNOSD95C – APRIL 2020 – REVISED DECEMBER 2020
+
+
+10.2.3 Detailed Design Procedure
+10.2.3.1 Design Considerations
+Table 10-1 summarizes the design parameters that must be known for designing an automotive reverse battery
+protection circuit with overvoltage cut-off. During power up, inrush current through MOSFET Q2 needs to be
+limited so that the MOSFET operates well within its SOA. Maximum load current, maximum ambient temperature
+and thermal properties of the PCB determine the RDSON of the MOSFET Q2 and maximum operating voltage
+determines the voltage rating of the MOSFET Q2. Selection of MOSFET Q2 is determined mainly by the
+maximum operating load current, maximum ambient temperature, maximum frequency of AC super imposed
+voltage ripple and ISO 7637-2 pulse 1 requirements. overvoltage threshold is decided based on the rating of
+downstream DC/DC converter or other components after the reverse battery protection circuit. A single bi-
+directional TVS or two back-back uni-directional TVS are required to clamp input transients to a safe operating
+level for the MOSFETs Q1, Q2 and LM7480x-Q1.
+10.2.3.2 Charge Pump Capacitance VCAP
+Minimum required capacitance for charge pump VCAP is based on input capacitance of the MOSFET Q1,
+CISS(MOSFET_Q1)and input capactiance of Q2 CISS(MOSFET).
+Charge Pump VCAP: Minimum 0.1 µF is required; recommended value of VCAP (µF) ≥ 10 x ( CISS(MOSFET_Q1) +
+CISS(MOSFET_Q2) ) (µF)
+10.2.3.3 Input and Output Capacitance
+A minimum input capacitance CIN of 0.1 µF and output capacitance COUT of 0.1 µF is recommended.
+10.2.3.4 Hold-Up Capacitance
+Usually bulk capacitors are placed on the output due to various reasons such as uninterrupted operation during
+power interruption or micro-short at the input, hold-up requirements for doing a memory dump before turning of
+the module and filtering requirements as well. This design considers minimum bulk capacitors requirements for
+meeting functional status "A" during LV124 E10 test case 2 100-µs input interruption. To achieve functional pass
+status A, acceptable voltage droop in the output of LM7480x-Q1 is based on the UVLO settings of downstream
+DC-DC converters. For this design, 2.5-V drop in output voltage for 100 µs is considered and the minimum hold-
+up capacitance required is calculated by
+
+
+
+
+                                                                                                                         (3)
+
+Minimum hold-up capacitance required for 2.5-V drop in 100 µs is 200 µF. Note that the typical application circuit
+shows the hold-up capacitor as optional because not all designs require hold-up capacitance.
+10.2.3.5 Overvoltage Protection and Battery Monitor
+Resistors R1, R2 and R3 connected in series are used to program the overvoltage threshold and battery monitor
+ratio. The resistor values required for setting the overvoltage threshold VOV to 37.0 V and battery monitor ratio
+VBATT_MON : VBATT to 1:8 are calculated by solving Equation 3 and Equation 4.
+
+
+
+                                                                                                                         (4)
+
+
+
+
+                                                                                                                         (5)
+
+For minimizing the input current drawn from the battery through resistors R1, R2 and R3, it recommended to use
+higher value of resistance. Using high value resistors will add error in the calculations because the current
+
+Copyright © 2020 Texas Instruments Incorporated                                                    Submit Document Feedback     23
+                                                  Product Folder Links: LM7480-Q1
+LM7480-Q1
+SNOSD95C – APRIL 2020 – REVISED DECEMBER 2020                                                                    www.ti.com
+
+through the resistors at higher value will become comparable to the leakage current into the OV pin. Maximum
+leakage current into the OV pin is 1 µA and choosing (R1 + R2 + R3) < 120 kΩ ensures current through resistors
+is 100 times greater than leakage through OV pin.
+Based on the device electrical characteristics, VOVR is 1.23 V and battery monitor ratio (VBATT_MON / VBATT) is
+designed for a ratio of 1/8. To limit (R1 + R2 + R3) < 120 kΩ, select (R1 + R2) = 100 kΩ. Solving Equation 3 gives
+R3 = 3.45 kΩ. Solving Equation 4 for R2 using (R1 + R2) = 100 kΩ and R3 = 3.45 kΩ, gives R2 = 9.48 kΩ and R1
+= 90.52 kΩ.
+Standard 1% resistor values closest to the calculated resistor values are R1 = 90.9 kΩ, R2 = 9.09 kΩ and R3 =
+3.48 kΩ.
+10.2.4 MOSFET Selection: Blocking MOSFET Q1
+For selecting the blocking MOSFET Q1, important electrical parameters are the maximum continuous drain
+current ID, the maximum drain-to-source voltage VDS(MAX), the maximum drain-to-source voltage VGS(MAX), the
+maximum source current through body diode and the drain-to-source ON resistance RDSON.
+The maximum continuous drain current, ID, rating must exceed the maximum continuous load current.
+The maximum drain-to-source voltage, VDS(MAX), must be high enough to withstand the highest differential
+voltage seen in the application. This would include all the automotive transient events and any anticipated fault
+conditions. It is recommended to use MOSFETs with VDS voltage rating of 60 V along with a single bidirectional
+TVS or a VDS rating 40-V maximum rating along with two unidirectional TVS connected back-back at the input.
+The maximum VGS LM7480x-Q1 can drive is 14 V, so a MOSFET with 15-V minimum VGS rating should be
+selected. If a MOSFET with < 15-V VGS rating is selected, a zener diode can be used to clamp VGS to safe level,
+but this would result in increased IQ current.
+To reduce the MOSFET conduction losses, lowest possible RDS(ON) is preferred, but selecting a MOSFET based
+on low RDS(ON) may not be beneficial always. Higher RDS(ON) will provide increased voltage information to
+LM7480x-Q1's reverse comparator at a lower reverse current. Reverse current detection is better with increased
+RDS(ON). Choosing a MOSFET with < 50-mV forward voltage drop at maximum current is a good starting point.
+For active rectification of AC super imposed ripple on the battery supply voltage, gate-source charge QGS of Q1
+must be selected to meet the required AC ripple frequency. Maximum gate-source charge QGS (at 4.5-V VGS) for
+active rectification every cycle is
+
+                    1.3mA
+      QGS_MAX
+                  FAC_RIPPLE
+                                                                                                                     (6)
+
+Where 1.3 mA is minimum charge pump current at 7-V VDGATE-VA, FAC_RIPPLE is frequency of the AC ripple
+superimposed on the battery and QGS_MAX is the QGS value specified in manufacturer datasheet at 6-V VGS. For
+active rectification at FAC_RIPPLE = 30 KHz, QGS_MAX = 43 nC.
+Based on the design requirements, BUK7Y4R8-60E MOSFET is selected and its ratings are:
+•    60-V VDS(MAX) and ±20-V VGS(MAX)
+•    RDS(ON) 5.0-mΩ typical at 5-V VGS and 2.9-mΩ rated at 10-V VGS
+•    MOSFET QGS 17.4 nC
+Thermal resistance of the MOSFET should be considered against the expected maximum power dissipation in
+the MOSFET to ensure that the junction temperature (TJ) is well controlled.
+10.2.5 MOSFET Selection: Hot-Swap MOSFET Q2
+The VDS rating of the MOSFET Q2 should be sufficient to handle the maximum system voltage along with the
+input transient voltage. For this 12-V design, transient overvoltage events are during suppressed load dump 35
+V 400 ms and ISO 7637-2 pulse 2 A 50 V for 50 µs. Further, ISO 7637-2 Pulse 3B is a very fast repetitive pulse
+of 100 V 100 ns that is usually absorbed by the input and output ceramic capacitors and the maximum voltage
+on the 12-V battery can be limited to < 40 V the minimum recommended input capacitance of 0.1 µF. The 50-V
+
+24    Submit Document Feedback                                                    Copyright © 2020 Texas Instruments Incorporated
+
+                                                Product Folder Links: LM7480-Q1
+                                                                                                                     LM7480-Q1
+www.ti.com                                                                          SNOSD95C – APRIL 2020 – REVISED DECEMBER 2020
+
+SO 7637-2 Pulse 2 A can also be absorbed by input and output capacitors and its amplitude could be reduced to
+40-V peak by placing sufficient amount of capacitance at input and output. However for this 12-V design,
+maximum system voltage is 50 V and a 60-V VDS rated MOSFET is selected.
+The VGS rating of the MOSFET Q2 should be higher than that maximum HGATE-OUT voltage 15 V.
+Inrush current through the MOSFET during input hot-plug into the 12-V battery is determined by output
+capacitance. External capacitor on HGATE, CDVDT is used to limit the inrush current during input hot-plug or
+startup. The value of inrush current determined by Equation 2 need to be selected to ensure that the MOSFET
+Q2 is operating well within its safe operating area (SOA). To limit inrush current to 250 mA, value of CDVDT is
+10.43 nF, closest standard value of 10.0 nF is chosen.
+Duration of inrush current is calculated by
+
+
+
+                                                                                                                         (7)
+
+Calculated inrush current duration is 2.36 ms with 250-mA inrush current.
+MOSFET BUK7Y4R8-60E having 60-V VDS and ±20-V VGS rating is selected for Q2. Power dissipation during
+inrush is well within the MOSFET's safe operating area (SOA).
+10.2.6 TVS Selection
+A 600-W SMBJ TVS such as SMBJ33CA is recommended for input transient clamping and protection. For
+detailed explanation on TVS selection for 12-V battery systems, refer to TVS Selection for 12-V Battery Systems.
+10.2.7 Application Curves
+
+
+
+
+     Figure 10-7. Startup 12 V with EN Pulled to VIN                Figure 10-8. Startup 12 V showing Charge Pump
+                                                                                          VCAP
+
+
+
+
+Copyright © 2020 Texas Instruments Incorporated                                                    Submit Document Feedback     25
+                                                  Product Folder Links: LM7480-Q1
+LM7480-Q1
+SNOSD95C – APRIL 2020 – REVISED DECEMBER 2020                                                                       www.ti.com
+
+
+
+
+       Figure 10-9. Reverse Input Voltage –14 V                  Figure 10-10. Reverse Input Voltage –14 V for 60 s
+
+
+
+
+     Figure 10-11. Inrush Current with no Load at                   Figure 10-12. Inrush Current with 60-Ω Load
+                        Output
+
+
+
+
+            Figure 10-13. Hot-Plug into 12 V                          Figure 10-14. Output Turn ON with Enable
+
+
+
+
+26    Submit Document Feedback                                                       Copyright © 2020 Texas Instruments Incorporated
+
+                                                Product Folder Links: LM7480-Q1
+                                                                                                                     LM7480-Q1
+www.ti.com                                                                          SNOSD95C – APRIL 2020 – REVISED DECEMBER 2020
+
+
+
+
+        Figure 10-15. DGATE Turn ON with Enable                     Figure 10-16. Turn ON with VCAP ON - EN rising
+                                                                                       from 0.8 V
+
+
+
+
+       Figure 10-17. Turn OFF with Enable Control                          Figure 10-18. Overvoltage Protection
+
+
+
+
+            Figure 10-19. Overvoltage Recovery                             Figure 10-20. Turn ON delay - HGATE
+
+
+
+
+Copyright © 2020 Texas Instruments Incorporated                                                    Submit Document Feedback     27
+                                                  Product Folder Links: LM7480-Q1
+LM7480-Q1
+SNOSD95C – APRIL 2020 – REVISED DECEMBER 2020                                                                       www.ti.com
+
+
+
+
+         Figure 10-21. Turn OFF Delay - DGATE                           Figure 10-22. Turn OFF Delay - HGATE
+
+
+
+
+      Figure 10-23. Load Transient 100 mA to 5 A                 Figure 10-24. Startup 1-A Load 1 ms After Output
+                                                                                    Powers Up
+
+
+
+
+28    Submit Document Feedback                                                       Copyright © 2020 Texas Instruments Incorporated
+
+                                                Product Folder Links: LM7480-Q1
+                                                                                                                                                  LM7480-Q1
+www.ti.com                                                                                                   SNOSD95C – APRIL 2020 – REVISED DECEMBER 2020
+
+
+10.3 200-V Unsuppressed Load Dump Protection Application
+Independent gate drive topology of LM74800-Q1 enables to configure the LM74800-Q1 in to provide
+unsuppressed load dump or surge protection along with reverse battery protection. LM74800-Q1 configured in
+common-source topology to provide 200-V unsuppressed load dump protection with reverse battery protection
+is Figure 10-25.
+
+                                                                                    Q1        200V           Q2      60V
+                               VBATT (200V Load Dump)                                                                                 VOUT
+                                   D3                        R1                                        CA
+                               SMBJ150A                                            D2                  1µF
+                                             CIN            10NŸ                   85V                                         VOUT    CLOAD
+                                             0.1µF
+                                                                     D1
+                                                                     60V              HGATE OUT A DGATE                    C           47 µF
+                                   D4                                                VS
+                               SMBJ33CA                     CVS
+                                                                           CCAP
+                                                            1µF            0.1µF
+                                                                                     CAP
+                                                                                     VSNS            LM74800-Q1
+                                             OV Cut-Off                              SW
+                                                 VOUT
+                                             Output Clamp               R2
+                                                                  100 NŸ                                             EN/UVLO          ON OFF
+                                                                                     OV                 GND
+                                                                           R3
+                                                                  3.48 NŸ
+
+
+
+    Figure 10-25. Typical Application Circuit - 200-V Unsuppressed Load Dump Protection with Reverse
+                                              Battery Protection
+
+10.3.1 Design Requirements for 200-V Unsuppressed Load Dump Protection
+                      Table 10-2. Design Parameters - 24-V Unsuppressed Load Dump Protection
+                          DESIGN PARAMETER                                                                          EXAMPLE VALUE
+                      Operating Input Voltage Range                                  24-V battery, 6 V during cold crank 200-V unsuppressed load lump
+                              Output Voltage                                                   6 V during cold crank and 37.0 V during load dump
+                               Output Power                                                                                25 W
+                          Output Current Range                                                                    2-A Nominal, 2.5-A Peak
+                            Input Capacitance                                                                        0.1-µF minimum
+                           Output Capacitance                                                 0.1-µF minimum, 220-µF typical hold-up capacitance
+                      Overvoltage Cut-Off Threshold                                                                        37.0 V
+                            Overvoltage Clamp                                                        Output clamped between 34.5 V and 37.5 V
+                                                                                         ISO 7637-2 and ISO 16750-2 including 200-V unsuppressed load
+               Automotive Transient Immunity Compliance
+                                                                                               dump Pulse 5 A and –600-V 50-Ω ISO-7637 Pulse 1
+
+
+10.3.2 Design Procedure
+Load dump transients occurs on loads connected to the alternator when a discharged battery is disconnected
+from alternator while it is still generating charging current. Load dump amplitude and duration depends on
+alternator speed and field current into the rotor. The pulse shape and parameter are specified in ISO 7637-2 5A
+where a 200-V pulse lasts maximum 350 ms on 24-V battery system. Circuit topology and MOSFET ratings are
+important when designing a 200-V unsuppressed load dump protection circuit using LM74800-Q1. Dual gate
+drive enables LM74800-Q1 to be configured in common source topology in Figure 10-25 where MOSFET Q1 is
+used to turn off or clamp output voltage to acceptable safe level and protect the MOSFET Q2 and LM74800-Q1
+from 200 V. Note that only the VS pin is exposed to 200 V through a 10-kΩ resistor. A 60-V rated zener diode is
+used to clamp and protect the VS pin. Rest of the circuit is not exposed to higher voltage as the MOSFET Q1 can
+either be turned off completely or output voltage clamped to safe level. MOSFET Q1 selection, input TVS
+selection and MOSFET Q2 selection for ISO 7637-2 and ISO 16750-2 compliance are discussed in this section.
+
+
+
+
+Copyright © 2020 Texas Instruments Incorporated                                                                                  Submit Document Feedback   29
+                                                            Product Folder Links: LM7480-Q1
+LM7480-Q1
+SNOSD95C – APRIL 2020 – REVISED DECEMBER 2020                                                                    www.ti.com
+
+10.3.2.1 Charge Pump Capacitance VCAP
+Minimum required capacitance for charge pump VCAP is based on input capacitance of the MOSFET Q1,
+CISS(MOSFET_Q1)and input capactiance of Q2 CISS(MOSFET_Q2).
+Charge Pump VCAP: Minimum 0.1 µF is required; recommended value of VCAP (µF) ≥ 10 x ( CISS(MOSFET_Q1) +
+CISS(MOSFET_Q2) ) (µF)
+10.3.2.2 Input and output capacitance
+A minimum input capacitance CIN of 0.1 µF and output capacitance COUT of 0.1 µF is recommended.
+10.3.2.3 VS Capacitance, Resistor and Zener Clamp
+Minimum of 1-µF CVS capacitance is required. During 200-V load dump, resistor R1 and zener diode D1 are used
+to protect VS pin from exceeding the maximum ratings by clamping VVS to 60 V. Choosing R1 = 10 kΩ, the peak
+power dissipated in zener diode D1 = 60 V * (200 V - 60 V) / 10 kΩ = 0.840 W of peak power dissipation. SMA
+package diode such as BZG03B62-M can handle 840mW peak power dissipation. Peak power dissipated in R1
+= (200 V - 60 V)2 / 10 kΩ = 1.96 W. One 10-kΩ resistor in 1210 package with 0.5-W DC power rating and 200-V
+rating can withstand 200 Load Dump for 350 ms.
+10.3.2.4 Overvoltage Protection and Output Clamp
+Resistors R2 and R3 connected in series is used to program the overvoltage threshold. Connecting R2 to VBATT
+provides overvoltage cut-off and switching the connection to VOUT provides overvoltage clamp. The resistor
+values required for setting the overvoltage threshold VOV to 37.0 V is calculated by solving Equation 7.
+
+
+
+                                                                                                                     (8)
+
+For minimizing the input current drawn from the battery through resistors R2 and R3, it recommended to use
+higher value of resistance. Using high value resistors will add error in the calculations because the current
+through the resistors at higher value will become comparable to the leakage current into the OV pin. Maximum
+leakage current into the OV pin is 1 µA and choosing (R2 + R3) < 120 kΩ ensures current through resistors is
+100 times greater than leakage through OV pin.
+Based on the device electrical characteristics, VOVR is 1.233V V. To limit (R2 + R3) < 120 kΩ, select (R2) = 100
+kΩ. Solving Equation 7 gives R3 = 3.45 kΩ.
+Closest standard 1% resistor values are R2 = 100 kΩ and R3 = 3.48 kΩ.
+10.3.2.5 MOSFET Q1 Selection
+The VDS rating of the MOSFET Q1 should be minimum 200 V for a output cutoff design where output can reach
+0 V while the load dump transient is present and should be a minimum of 164.5 V when output is clamped to 37
+V (±1.5 V). The VGS rating is based on HGATE-OUT maximum voltage of 15 V. A 20-V VGS rated MOSFET is
+recommended.
+Power dissipation on MOSFET Q1 on a design where output is clamped is critical and SOA characteristics of the
+MOSFET need to be considered with sufficient design margin for reliable operation.
+10.3.2.6 Input TVS Selection
+Two TVS diodes D3 and D4 are required at the input. The breakdown voltage of TVS in the positive side should
+be higher than the maximum system voltage 200 V. On the negative side clamping, diode D4 is used to clamp
+ISO 7637-2 pulse 1 and its selection is similar to procedure in TVS selection for 24-V Battery Systems.
+SMBJ150A for D3 and SMBJ33CA for D4 are recommended.
+
+
+
+
+30    Submit Document Feedback                                                    Copyright © 2020 Texas Instruments Incorporated
+
+                                                Product Folder Links: LM7480-Q1
+                                                                                                                     LM7480-Q1
+www.ti.com                                                                          SNOSD95C – APRIL 2020 – REVISED DECEMBER 2020
+
+
+10.3.2.7 MOSFET Q2 Selection
+Design requirements for selecting Q2 is similar to MOSFET Q1 selection in Table 10-1 and hence the procedure
+for selecting MOSFET Q2 is same as outlined in MOSFET Selection: Blocking MOSFET Q1. MOSFET
+BUK7Y4R8-60E is selected based on the design requirements.
+10.3.3 Application Curves
+
+
+
+
+    Figure 10-26. Unsuppressed Load Dump 200 V -                    Figure 10-27. Unsuppressed Load Dump 200 V -
+                    Output Clamp                                                    Output Cut-off
+
+
+
+
+      Figure 10-28. ISO 7637-2 Pulse 1 –600 V 50 Ω                    Figure 10-29. ISO 7637-2 Pulse 1 –600 V 50 Ω
+
+
+
+
+   Figure 10-30. Power up 12 V - HGATE and Output                      Figure 10-31. Power up 12 V - DGATE and A
+
+
+Copyright © 2020 Texas Instruments Incorporated                                                    Submit Document Feedback     31
+                                                  Product Folder Links: LM7480-Q1
+LM7480-Q1
+SNOSD95C – APRIL 2020 – REVISED DECEMBER 2020                                                                     www.ti.com
+
+
+
+
+  Figure 10-32. Power up 12 V - Charge Pump VCAP                 Figure 10-33. Power up 12 V - DGATE and HGATE
+
+10.4 Do's and Don'ts
+Leave exposed pad (RTN) of the IC floating. Do not connect it to the GND plane. Connecting RTN to GND
+disables the Reverse Polarity protection feature.
+
+
+
+
+32    Submit Document Feedback                                                     Copyright © 2020 Texas Instruments Incorporated
+
+                                                Product Folder Links: LM7480-Q1
+                                                                                                                                   LM7480-Q1
+www.ti.com                                                                                      SNOSD95C – APRIL 2020 – REVISED DECEMBER 2020
+
+
+11 Power Supply Recommendations
+11.1 Transient Protection
+When the external MOSFETs turn OFF during the conditions such as overvoltage cut-off, reverse current
+blocking, EN/UVLO causing an interruption of the current flow, the input line inductance generates a positive
+voltage spike on the input and output inductance generates a negative voltage spike on the output. The peak
+amplitude of voltage spikes (transients) depends on the value of inductance in series to the input or output of the
+device. These transients can exceed the Absolute Maximum Ratings of the device if steps are not taken to
+address the issue.
+Typical methods for addressing transients include:
+•    Minimizing lead length and inductance into and out of the device.
+•    Using large PCB GND plane.
+•    Use of a Schottky diode across the output and GND to absorb negative spikes.
+•    A low value ceramic capacitor (C(IN) to approximately 0.1 μF) to absorb the energy and dampen the
+     transients.
+The approximate value of input capacitance can be estimated with Equation 8.
+
+                                                    L(IN)
+      Vspike(Absolute ) = V(IN) + I(Load) ´
+                                                    C(IN)
+                                                                                                                                      (9)
+
+where
+•    V(IN) is the nominal supply voltage
+•    I(LOAD) is the load current
+•    L(IN) equals the effective inductance seen looking into the source
+•    C(IN) is the capacitance present at the input
+Some applications may require additional Transient Voltage Suppressor (TVS) to prevent transients from
+exceeding the Absolute Maximum Ratings of the device. These transients can occur during EMC testing such as
+automotive ISO7637 pulses.
+The circuit implementation with optional protection components (a ceramic capacitor, TVS and schottky diode) is
+shown in Figure 11-1
+
+                                                             Q1                  Q2
+                                          VIN                                                         VOUT
+                                                                          CVS
+                                                *
+                                                      CIN              CVCAP                        COUT   * D2
+                                        D1
+                                                             DGATE   C VS CAP     HGATE OUT
+                                                             A
+                                                             VSNS
+                                                              SW
+                                                      R1               LM7480x-Q1
+                                          BATT_MON
+                                                  R2
+                                                                                      EN/UVLO     ON OFF
+                                                      R3      OV          GND
+
+
+
+
+     * Optional components needed for suppression of transients
+
+
+           Figure 11-1. Circuit Implementation with Optional Protection Components for LM7480x-Q1
+
+
+
+Copyright © 2020 Texas Instruments Incorporated                                                                   Submit Document Feedback   33
+                                                            Product Folder Links: LM7480-Q1
+LM7480-Q1
+SNOSD95C – APRIL 2020 – REVISED DECEMBER 2020                                                                    www.ti.com
+
+11.2 TVS Selection for 12-V Battery Systems
+In selecting the TVS, important specifications are breakdown voltage and clamping voltage. The breakdown
+voltage of the TVS+ should be higher than 24-V jump start voltage and 35-V suppressed load dump voltage and
+less than the maximum ratings of LM7480x-Q1 (65 V). The breakdown voltage of TVS- should be beyond than
+maximum reverse battery voltage –16 V, so that the TVS- is not damaged due to long time exposure to reverse
+connected battery.
+Clamping voltage is the voltage the TVS diode clamps in high current pulse situations and this voltage is much
+higher than the breakdown voltage. In the case of an ISO 7637-2 pulse 1, the input voltage goes up to –150 V
+with a generator impedance of 10 Ω. This translates to 15 A flowing through the TVS - and the voltage across
+the TVS would be close to its clamping voltage.
+The next criterion is that the absolute maximum rating of cathode to anode voltage of the LM7480x-Q1 (85 V)
+and the maximum V DS rating MOSFET are not exceeded. In the design example, 60-V rated MOSFET is chosen
+and maximum limit on the cathode to anode voltage is 60 V.
+During ISO 7637-2 pulse 1, the anode of LM7480x-Q1 is pulled down by the ISO pulse, clamped by TVS- and
+the MOSFET Q1 is turned off quickly to prevent reverse current from discharging the bulk output capacitors.
+When the MOSFET turns off, the cathode to anode voltage seen is equal to (TVS Clamping voltage + Output
+capacitor voltage). If the maximum voltage on output capacitor is 16 V (maximum battery voltage), then the
+clamping voltage of the TVS- should not exceed, (60 V – 16) V = –44 V.
+The SMBJ33CA TVS diode can be used for 12-V battery protection application. The breakdown voltage of 36.7
+V meets the jump start, load dump requirements on the positive side and 16-V reverse battery connection on the
+negative side. During ISO 7637-2 pulse 1 test, the SMBJ33CA clamps at –44 V with 12 A of peak surge current
+as shown in and it meets the clamping voltage ≤ 44 V.
+SMBJ series of TVS' are rated up to 600-W peak pulse power levels and are sufficient for ISO 7637-2 pulses.
+11.3 TVS Selection for 24-V Battery Systems
+For 24-V battery protection application, the TVS and MOSFET in Figure 10-1 needs to be changed to suit 24-V
+battery requirements.
+The breakdown voltage of the TVS+ should be higher than 48-V jump start voltage, less than the absolute
+maximum ratings of anode and enable pin of LM7480x-Q1 (70 V) and should withstand 65-V suppressed load
+dump. The breakdown voltage of TVS- should be lower than maximum reverse battery voltage –32 V, so that the
+TVS- is not damaged due to long time exposure to reverse connected battery.
+During ISO 7637-2 pulse 1, the input voltage goes up to –600 V with a generator impedance of 50 Ω. This
+translates to 12-A flowing through the TVS-. The clamping voltage of the TVS- cannot be same as that of 12-V
+battery protection circuit. Because during the ISO 7637-2 pulse, the Anode to Cathode voltage seen is equal to
+(- TVS Clamping voltage + Output capacitor voltage). For 24-V battery application, the maximum battery voltage
+is 32 V, then the clamping voltage of the TVS- should not exceed, 85 V – 32 V = 53 V.
+Single bi-directional TVS cannot be used for 24-V battery protection because breakdown voltage for TVS+ ≥
+65V, maximum clamping voltage is ≤ 53 V and the clamping voltage cannot be less than the breakdown voltage.
+Two un-directional TVS connected back-back needs to be used at the input. For positive side TVS+, SMBJ58A
+with the breakdown voltage of 64.4 V (minimum), 67.8 (typical) is recommended. For the negative side TVS-,
+SMBJ28A with breakdown voltage close to 32 V (to withstand maximum reverse battery voltage –32 V) and
+maximum clamping voltage of 42.1 V is recommended.
+For 24-V battery protection, a 75-V rated MOSFET is recommended to be used along with SMBJ28A and
+SMBJ58A connected back-back at the input.
+
+
+
+
+34    Submit Document Feedback                                                    Copyright © 2020 Texas Instruments Incorporated
+
+                                                Product Folder Links: LM7480-Q1
+                                                                                                                               LM7480-Q1
+www.ti.com                                                                                   SNOSD95C – APRIL 2020 – REVISED DECEMBER 2020
+
+
+12 Layout
+12.1 Layout Guidelines
+•    For the ideal diode stage, connect A, DGATE and C pins of LM7480x-Q1 close to the MOSFET's SOURCE,
+     GATE and DRAIN pins.
+•    For the load disconnect stage, connect HGATE and OUT pins of LM7480x-Q1 close to the MOSFET's GATE
+     and SOURCE pins.
+•    The high current path of for this solution is through the MOSFET, therefore it is important to use thick and
+     short traces for source and drain of the MOSFET to minimize resistive losses.
+•    The DGATE pin of the LM7480x-Q1 must be connected to the MOSFET GATE with short trace.
+•    Place transient suppression components close to LM7480x-Q1.
+•    Place the decopuling capacitor, CVS close to VS pin and chip GND.
+•    The charge pump capacitor across CAP and VS pins must be kept away from the MOSFET to lower the
+     thermal effects on the capacitance value.
+•    Obtaining acceptable performance with alternate layout schemes is possible, however the layout shown in
+     the Layout Example is intended as a guideline and to produce good results.
+12.2 Layout Example
+
+
+                                                  S                   D
+                                                                                         D    D       D   D
+
+                                                  S                   D
+                                                                 Q1                            Q2
+                                                  S                   D
+
+
+                                                  G                   D
+
+                                                                                         S    S       S   G
+                                  VIN PLANE           DGATE                C
+
+
+                                                       A                  CAP
+                                                                                  CCAP
+                                                      VSNS                 VS                VOUT PLANE
+
+                                    D1
+                                                      SW                  OUT
+                                                                                    CVS
+                                                                          HGATE
+                                                      OV
+                                                                                               COUT
+                                                       EN/                GND
+                                                      UVLO
+
+
+
+
+                                                              GND PLANE
+
+                            Figure 12-1. PCB Layout Example for Common Drain Configuration
+
+
+
+
+Copyright © 2020 Texas Instruments Incorporated                                                               Submit Document Feedback   35
+                                                      Product Folder Links: LM7480-Q1
+LM7480-Q1
+SNOSD95C – APRIL 2020 – REVISED DECEMBER 2020                                                                             www.ti.com
+
+
+                                        D       D        D     D
+
+
+
+                                                    Q2                      G
+
+
+
+
+                                                                                      Q1
+                VOUT PLANE              S       S        S     G                                    VIN PLANE
+
+                                                                            S
+
+
+                                        DGAT
+                                         E
+                                                                    C
+
+
+                                        A                          CAP
+                                                                           CCAP
+                                        VSNS                       VS
+
+
+                                        SW                         OUT
+
+
+                COUT                                                        CVS                D1
+                                                                   HGATE
+                                        OV
+
+
+
+                                         EN/                       GND
+                                        UVLO
+
+
+
+
+                                                             GND PLANE
+
+                       Figure 12-2. PCB Layout Example for Common Source Configuration
+
+
+
+
+36    Submit Document Feedback                                                             Copyright © 2020 Texas Instruments Incorporated
+
+                                                    Product Folder Links: LM7480-Q1
+                                                                                                                               LM7480-Q1
+www.ti.com                                                                                SNOSD95C – APRIL 2020 – REVISED DECEMBER 2020
+
+
+13 Device and Documentation Support
+13.1 Receiving Notification of Documentation Updates
+To receive notification of documentation updates, navigate to the device product folder on ti.com. Click on
+Subscribe to updates to register and receive a weekly digest of any product information that has changed. For
+change details, review the revision history included in any revised document.
+13.2 Support Resources
+TI E2E™ support forums are an engineer's go-to source for fast, verified answers and design help — straight
+from the experts. Search existing answers or ask your own question to get the quick design help you need.
+Linked content is provided "AS IS" by the respective contributors. They do not constitute TI specifications and do
+not necessarily reflect TI's views; see TI's Terms of Use.
+13.3 Trademarks
+TI E2E™ is a trademark of Texas Instruments.
+All trademarks are the property of their respective owners.
+13.4 Electrostatic Discharge Caution
+                    This integrated circuit can be damaged by ESD. Texas Instruments recommends that all integrated circuits be handled
+                    with appropriate precautions. Failure to observe proper handling and installation procedures can cause damage.
+                    ESD damage can range from subtle performance degradation to complete device failure. Precision integrated circuits may
+                    be more susceptible to damage because very small parametric changes could cause the device not to meet its published
+                    specifications.
+
+
+13.5 Glossary
+ TI Glossary              This glossary lists and explains terms, acronyms, and definitions.
+
+14 Mechanical, Packaging, and Orderable Information
+The following pages include mechanical, packaging, and orderable information. This information is the most
+current data available for the designated devices. This data is subject to change without notice and revision of
+this document. For browser-based versions of this data sheet, refer to the left-hand navigation.
+
+
+
+
+Copyright © 2020 Texas Instruments Incorporated                                                            Submit Document Feedback          37
+                                                      Product Folder Links: LM7480-Q1
+                                                                                                                                                                      PACKAGE OPTION ADDENDUM
+
+       www.ti.com                                                                                                                                                                                                    9-Nov-2025
+
+
+
+
+PACKAGING INFORMATION
+
+       Orderable part number          Status     Material type      Package | Pins      Package qty | Carrier        RoHS             Lead finish/              MSL rating/               Op temp (°C)          Part marking
+                                        (1)            (2)                                                             (3)            Ball material             Peak reflow                                           (6)
+                                                                                                                                            (4)                      (5)
+
+         LM74800QDRRRQ1               Active      Production       WSON (DRR) | 12       3000 | LARGE T&R             Yes        NIPDAU | NIPDAUAG Level-2-260C-1 YEAR                     -40 to 125              L74800
+       LM74800QDRRRQ1.A               Active      Production       WSON (DRR) | 12       3000 | LARGE T&R             Yes                NIPDAU           Level-2-260C-1 YEAR              -40 to 125              L74800
+         LM74801QDRRRQ1               Active      Production       WSON (DRR) | 12       3000 | LARGE T&R             Yes        NIPDAU | NIPDAUAG Level-2-260C-1 YEAR                     -40 to 125              L74801
+       LM74801QDRRRQ1.A               Active      Production       WSON (DRR) | 12       3000 | LARGE T&R             Yes                NIPDAU           Level-2-260C-1 YEAR              -40 to 125              L74801
+
+(1)
+      Status: For more details on status, see our product life cycle.
+
+(2)
+   Material type: When designated, preproduction parts are prototypes/experimental devices, and are not yet approved or released for full production. Testing and final process, including without limitation quality assurance,
+reliability performance testing, and/or process qualification, may not yet be complete, and this item is subject to further changes or possible discontinuation. If available for ordering, purchases will be subject to an additional
+waiver at checkout, and are intended for early internal evaluation purposes only. These items are sold without warranties of any kind.
+
+(3)
+      RoHS values: Yes, No, RoHS Exempt. See the TI RoHS Statement for additional information and value definition.
+
+(4)
+   Lead finish/Ball material: Parts may have multiple material finish options. Finish options are separated by a vertical ruled line. Lead finish/Ball material values may wrap to two lines if the finish value exceeds the maximum
+column width.
+
+(5)
+  MSL rating/Peak reflow: The moisture sensitivity level ratings and peak solder (reflow) temperatures. In the event that a part has multiple moisture sensitivity ratings, only the lowest level per JEDEC standards is shown.
+Refer to the shipping label for the actual reflow temperature that will be used to mount the part to the printed circuit board.
+
+(6)
+      Part marking: There may be an additional marking, which relates to the logo, the lot trace code information, or the environmental category of the part.
+
+Multiple part markings will be inside parentheses. Only one part marking contained in parentheses and separated by a "~" will appear on a part. If a line is indented then it is a continuation of the previous line and the two
+combined represent the entire part marking for that device.
+
+Important Information and Disclaimer:The information provided on this page represents TI's knowledge and belief as of the date that it is provided. TI bases its knowledge and belief on information provided by third parties, and
+makes no representation or warranty as to the accuracy of such information. Efforts are underway to better integrate information from third parties. TI has taken and continues to take reasonable steps to provide representative
+and accurate information but may not have conducted destructive testing or chemical analysis on incoming materials and chemicals. TI and TI suppliers consider certain information to be proprietary, and thus CAS numbers
+and other limited information may not be available for release.
+
+In no event shall TI's liability arising out of such information exceed the total purchase price of the TI part(s) at issue in this document sold by TI to Customer on an annual basis.
+
+OTHER QUALIFIED VERSIONS OF LM7480-Q1 :
+
+
+
+
+                                                                                                          Addendum-Page 1
+                                                                     PACKAGE OPTION ADDENDUM
+
+   www.ti.com                                                                          9-Nov-2025
+
+
+
+
+• Catalog : LM7480
+
+NOTE: Qualified Version Definitions:
+
+       • Catalog - TI's standard catalog product
+
+
+
+
+                                                   Addendum-Page 2
+                                                                              PACKAGE MATERIALS INFORMATION
+
+www.ti.com                                                                                                                                   12-Nov-2023
+
+
+
+TAPE AND REEL INFORMATION
+
+       REEL DIMENSIONS                                                                     TAPE DIMENSIONS
+                                                                                      K0       P1
+
+
+
+                                                                                                                     B0 W
+                                       Reel
+                                     Diameter
+                                                                                   Cavity           A0
+                                                               A0   Dimension designed to accommodate the component width
+                                                               B0   Dimension designed to accommodate the component length
+                                                               K0   Dimension designed to accommodate the component thickness
+                                                               W    Overall width of the carrier tape
+                                                               P1   Pitch between successive cavity centers
+
+
+                                      Reel Width (W1)
+                              QUADRANT ASSIGNMENTS FOR PIN 1 ORIENTATION IN TAPE
+
+                                                                                                    Sprocket Holes
+
+
+                                                Q1        Q2          Q1    Q2
+
+                                                Q3        Q4          Q3    Q4                  User Direction of Feed
+
+
+
+                                                           Pocket Quadrants
+
+
+*All dimensions are nominal
+             Device           Package Package Pins             SPQ       Reel   Reel   A0                  B0         K0     P1     W     Pin1
+                               Type Drawing                            Diameter Width (mm)                (mm)       (mm)   (mm)   (mm) Quadrant
+                                                                         (mm) W1 (mm)
+   LM74800QDRRRQ1             WSON     DRR           12        3000        330.0        12.4        3.3    3.3       1.1    8.0    12.0    Q2
+   LM74801QDRRRQ1             WSON     DRR           12        3000        330.0        12.4        3.3    3.3       1.1    8.0    12.0    Q2
+
+
+
+
+                                                                     Pack Materials-Page 1
+                                                                PACKAGE MATERIALS INFORMATION
+
+www.ti.com                                                                                                              12-Nov-2023
+
+
+
+ TAPE AND REEL BOX DIMENSIONS
+
+
+
+
+                                                               Width (mm)
+                                                                              H
+
+
+
+
+                      W                                   L
+
+
+
+
+*All dimensions are nominal
+             Device           Package Type   Package Drawing   Pins         SPQ    Length (mm)   Width (mm)   Height (mm)
+   LM74800QDRRRQ1                WSON             DRR           12          3000      367.0        367.0         35.0
+   LM74801QDRRRQ1                WSON             DRR           12          3000      367.0        367.0         35.0
+
+
+
+
+                                                        Pack Materials-Page 2
+                                                                  GENERIC PACKAGE VIEW
+DRR 12                                                                  WSON - 0.8 mm max height
+3 x 3, 0.5 mm pitch                                                         PLASTIC SMALL OUTLINE - NO LEAD
+
+
+
+
+               This image is a representation of the package family, actual package may vary.
+                             Refer to the product data sheet for package details.
+
+
+
+
+                                                                                                   4223490/B
+
+
+
+
+                                                    www.ti.com
+                                                                                                         PACKAGE OUTLINE
+DRR0012E                                                                                         WSON - 0.8 mm max height
+                                                                                           PLASTIC QUAD FLAT PACK- NO LEAD
+
+
+                                              B                 3.1                        A
+                                                                2.9
+
+
+
+
+                                                                                           3.1
+                           PIN 1 INDEX AREA                                                2.9                                     0.1 MIN
+
+
+
+
+                                                                                                                  (0.13)
+
+                                                                                                                 SECTION A-A
+                                                                                                                        TYPICAL
+                                    0.8
+                                    0.7
+                                                                                               C
+
+                                                                                                   SEATING PLANE
+
+                                                                                                       0.08 C
+                                        0.05
+                                        0.00                    1.4
+                                                                1.2
+                                                              SYMM
+                                        (0.43) TYP                                                                           (0.2) TYP
+                                                                                                 (0.16) TYP
+                              10X 0.5
+                                                  6                                7
+
+
+
+
+                                          SYMM                               A         A
+                                  2X                                                             2.6
+                                  2.5                             13                             2.4
+
+
+
+
+                                                  1
+                                                                                   12
+                                   PIN 1 ID                                                    12X 0.3
+                                                                                                   0.2
+                                 (45° X 0.3)                      12X 0.52
+                                                                      0.32                              0.1     C A B
+                                                                                                        0.05     C
+
+
+
+                                                                                                                           4224874/C 11/2023
+
+NOTES:
+
+ 1.   All linear dimensions are in millimeters. Any dimensions in parenthesis are for reference only. Dimensioning and tolerancing
+      per ASME Y14.5M.
+ 2.   This drawing is subject to change without notice.
+ 3.   The package thermal pad must be soldered to the printed circuit board for optimal thermal and mechanical performance.
+
+
+
+
+                                                               www.ti.com
+                                                                                    EXAMPLE BOARD LAYOUT
+DRR0012E                                                                                     WSON - 0.8 mm max height
+                                                                                         PLASTIC QUAD FLAT PACK- NO LEAD
+
+
+
+
+                                  12X (0.62)
+                                                                    (1.3)
+                          12X (0.25)
+                                               1
+                                                                                                 12
+
+
+
+
+                                  10X (0.5)
+
+                           2X                                            13                            SYMM
+                          (2.5)                                                                               (2.5)
+
+                              (R0.05)                                                                 2X
+                                TYP                                                                   (1)
+
+
+
+
+                                               6                                                  7
+
+                                   (Ø0.2) VIA                      SYMM
+                                      TYP
+                                                                  2X (2.78)
+
+                                                       LAND PATTERN EXAMPLE
+                                                          EXPOSED METAL SHOWN
+                                                               SCALE: 20X
+
+                   0.07 MAX                                                     0.07 MIN
+                 ALL AROUND                                                   ALL AROUND                          METAL UNDER
+                                                       METAL                                                      SOLDER MASK
+                                                                               EXPOSED
+                                                                                 METAL
+                  EXPOSED
+                    METAL                              SOLDER MASK                                                    SOLDER MASK
+                                                       OPENING                                                        OPENING
+                                  NON SOLDER MASK                                          SOLDER MASK
+                                      DEFINED                                                DEFINED
+                                    (PREFERRED)
+
+                                                         SOLDER MASK DETAILS
+
+
+
+
+                                                                                                                      4224874/C 11/2023
+
+NOTES: (continued)
+
+ 4.   This package is designed to be soldered to a thermal pad on the board. For more information, see Texas Instruments literature
+      number SLUA271 (www.ti.com/lit/slua271) .
+ 5.   Vias are optional depending on application, refer to device data sheet. If any vias are implemented, refer to their locations shown
+      on this view. It is recommended that vias under paste be filled, plugged or tented.
+
+
+
+
+                                                                www.ti.com
+                                                                                EXAMPLE STENCIL DESIGN
+DRR0012E                                                                                  WSON - 0.8 mm max height
+                                                                                      PLASTIC QUAD FLAT PACK- NO LEAD
+
+
+
+
+                                 12X (0.62)
+                                                               2X (1.21)
+                        12X (0.25)
+                                              1                     13
+                                                                                             12
+
+
+                                                                                                   2X
+                                                                                                  (1.1)
+                                 10X (0.5)
+
+                          2X                                                                          SYMM
+                         (2.5)
+
+                             (R0.05)
+                               TYP
+                                                                                                      2X
+                                                                                                    (0.65)
+                                                                                              7
+                                              6
+
+                                                                SYMM
+
+
+                                                               2X (2.78)
+
+
+
+                                                    SOLDER PASTE EXAMPLE
+                                                  BASED ON 0.125 mm THICK STENCIL
+
+                                                           EXPOSED PAD
+                                                  82% PRINTED COVERAGE BY AREA
+                                                            SCALE: 20X
+
+
+
+
+                                                                                                                 4224874/C 11/2023
+
+NOTES: (continued)
+
+ 6.   Laser cutting apertures with trapezoidal walls and rounded corners may offer better paste release. IPC-7525 may have alternate
+      design recommendations.
+
+
+
+
+                                                              www.ti.com
+                                         IMPORTANT NOTICE AND DISCLAIMER
+TI PROVIDES TECHNICAL AND RELIABILITY DATA (INCLUDING DATASHEETS), DESIGN RESOURCES (INCLUDING REFERENCE
+DESIGNS), APPLICATION OR OTHER DESIGN ADVICE, WEB TOOLS, SAFETY INFORMATION, AND OTHER RESOURCES “AS IS”
+AND WITH ALL FAULTS, AND DISCLAIMS ALL WARRANTIES, EXPRESS AND IMPLIED, INCLUDING WITHOUT LIMITATION ANY
+IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT OF THIRD
+PARTY INTELLECTUAL PROPERTY RIGHTS.
+These resources are intended for skilled developers designing with TI products. You are solely responsible for (1) selecting the appropriate
+TI products for your application, (2) designing, validating and testing your application, and (3) ensuring your application meets applicable
+standards, and any other safety, security, regulatory or other requirements.
+These resources are subject to change without notice. TI grants you permission to use these resources only for development of an
+application that uses the TI products described in the resource. Other reproduction and display of these resources is prohibited. No license
+is granted to any other TI intellectual property right or to any third party intellectual property right. TI disclaims responsibility for, and you fully
+indemnify TI and its representatives against any claims, damages, costs, losses, and liabilities arising out of your use of these resources.
+TI’s products are provided subject to TI’s Terms of Sale, TI’s General Quality Guidelines, or other applicable terms available either on
+ti.com or provided in conjunction with such TI products. TI’s provision of these resources does not expand or otherwise alter TI’s applicable
+warranties or warranty disclaimers for TI products. Unless TI explicitly designates a product as custom or customer-specified, TI products
+are standard, catalog, general purpose devices.
+TI objects to and rejects any additional or different terms you may propose.
+IMPORTANT NOTICE
+
+                                                Copyright © 2025, Texas Instruments Incorporated
+                                                                Last updated 10/2025
+

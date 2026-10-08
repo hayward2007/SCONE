@@ -1,0 +1,11 @@
+{
+  "after_revision": "14d677ab07969898ee3bee69214a30fac16be6f6",
+  "after_git_dirty": false,
+  "root_new_source_matches_snapshot": {
+    "benchmark/stair_simplification.py": true,
+    "tests/test_stair_simplification.py": true
+  },
+  "source_bundle_sha256": "7f2f06bab82dea4c905926ed2f93897a4f70c74fbdfa5176327feda84cef0a61",
+  "source_tar_sha256": "a35c8af65cd3f6238488671cb2a1ea0d4983a521c3c032377c2ae1ee06bcd7c5",
+  "visual_qa": "All six final English pages and all four Korean pages rendered and inspected; no overlaps or clipped content. Companion decoded without errors; labeled archival and final limitation cards inspected."
+}

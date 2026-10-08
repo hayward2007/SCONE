@@ -1,0 +1,3978 @@
+{
+  "purpose": "prospectively fixed deterministic mechanism study; parameter stress tests are not hardware uncertainty distributions",
+  "jobs": [
+    {
+      "id": 0,
+      "suite": "main",
+      "code": "U",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 1,
+      "suite": "main",
+      "code": "B",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 2,
+      "suite": "main",
+      "code": "N",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 3,
+      "suite": "main",
+      "code": "S",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 4,
+      "suite": "main",
+      "code": "D",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 5,
+      "suite": "main",
+      "code": "P",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 6,
+      "suite": "main",
+      "code": "U",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.125,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 7,
+      "suite": "main",
+      "code": "B",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.125,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 8,
+      "suite": "main",
+      "code": "N",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.125,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 9,
+      "suite": "main",
+      "code": "S",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.125,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 10,
+      "suite": "main",
+      "code": "D",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.125,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 11,
+      "suite": "main",
+      "code": "P",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.125,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 12,
+      "suite": "main",
+      "code": "U",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 13,
+      "suite": "main",
+      "code": "B",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 14,
+      "suite": "main",
+      "code": "N",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 15,
+      "suite": "main",
+      "code": "S",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 16,
+      "suite": "main",
+      "code": "D",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 17,
+      "suite": "main",
+      "code": "P",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 18,
+      "suite": "main",
+      "code": "U",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.375,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 19,
+      "suite": "main",
+      "code": "B",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.375,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 20,
+      "suite": "main",
+      "code": "N",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.375,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 21,
+      "suite": "main",
+      "code": "S",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.375,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 22,
+      "suite": "main",
+      "code": "D",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.375,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 23,
+      "suite": "main",
+      "code": "P",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.375,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 24,
+      "suite": "main",
+      "code": "U",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 25,
+      "suite": "main",
+      "code": "B",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 26,
+      "suite": "main",
+      "code": "N",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 27,
+      "suite": "main",
+      "code": "S",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 28,
+      "suite": "main",
+      "code": "D",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 29,
+      "suite": "main",
+      "code": "P",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 30,
+      "suite": "main",
+      "code": "U",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.625,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 31,
+      "suite": "main",
+      "code": "B",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.625,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 32,
+      "suite": "main",
+      "code": "N",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.625,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 33,
+      "suite": "main",
+      "code": "S",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.625,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 34,
+      "suite": "main",
+      "code": "D",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.625,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 35,
+      "suite": "main",
+      "code": "P",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.625,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 36,
+      "suite": "main",
+      "code": "U",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 37,
+      "suite": "main",
+      "code": "B",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 38,
+      "suite": "main",
+      "code": "N",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 39,
+      "suite": "main",
+      "code": "S",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 40,
+      "suite": "main",
+      "code": "D",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 41,
+      "suite": "main",
+      "code": "P",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 42,
+      "suite": "main",
+      "code": "U",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.875,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 43,
+      "suite": "main",
+      "code": "B",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.875,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 44,
+      "suite": "main",
+      "code": "N",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.875,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 45,
+      "suite": "main",
+      "code": "S",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.875,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 46,
+      "suite": "main",
+      "code": "D",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.875,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 47,
+      "suite": "main",
+      "code": "P",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.875,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 48,
+      "suite": "main",
+      "code": "U",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 49,
+      "suite": "main",
+      "code": "B",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 50,
+      "suite": "main",
+      "code": "N",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 51,
+      "suite": "main",
+      "code": "S",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 52,
+      "suite": "main",
+      "code": "D",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 53,
+      "suite": "main",
+      "code": "P",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 54,
+      "suite": "main",
+      "code": "U",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.125,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 55,
+      "suite": "main",
+      "code": "B",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.125,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 56,
+      "suite": "main",
+      "code": "N",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.125,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 57,
+      "suite": "main",
+      "code": "S",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.125,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 58,
+      "suite": "main",
+      "code": "D",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.125,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 59,
+      "suite": "main",
+      "code": "P",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.125,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 60,
+      "suite": "main",
+      "code": "U",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 61,
+      "suite": "main",
+      "code": "B",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 62,
+      "suite": "main",
+      "code": "N",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 63,
+      "suite": "main",
+      "code": "S",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 64,
+      "suite": "main",
+      "code": "D",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 65,
+      "suite": "main",
+      "code": "P",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 66,
+      "suite": "main",
+      "code": "U",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.375,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 67,
+      "suite": "main",
+      "code": "B",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.375,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 68,
+      "suite": "main",
+      "code": "N",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.375,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 69,
+      "suite": "main",
+      "code": "S",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.375,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 70,
+      "suite": "main",
+      "code": "D",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.375,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 71,
+      "suite": "main",
+      "code": "P",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.375,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 72,
+      "suite": "main",
+      "code": "U",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 73,
+      "suite": "main",
+      "code": "B",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 74,
+      "suite": "main",
+      "code": "N",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 75,
+      "suite": "main",
+      "code": "S",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 76,
+      "suite": "main",
+      "code": "D",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 77,
+      "suite": "main",
+      "code": "P",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 78,
+      "suite": "main",
+      "code": "U",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.625,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 79,
+      "suite": "main",
+      "code": "B",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.625,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 80,
+      "suite": "main",
+      "code": "N",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.625,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 81,
+      "suite": "main",
+      "code": "S",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.625,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 82,
+      "suite": "main",
+      "code": "D",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.625,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 83,
+      "suite": "main",
+      "code": "P",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.625,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 84,
+      "suite": "main",
+      "code": "U",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 85,
+      "suite": "main",
+      "code": "B",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 86,
+      "suite": "main",
+      "code": "N",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 87,
+      "suite": "main",
+      "code": "S",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 88,
+      "suite": "main",
+      "code": "D",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 89,
+      "suite": "main",
+      "code": "P",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 90,
+      "suite": "main",
+      "code": "U",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.875,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 91,
+      "suite": "main",
+      "code": "B",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.875,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 92,
+      "suite": "main",
+      "code": "N",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.875,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 93,
+      "suite": "main",
+      "code": "S",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.875,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 94,
+      "suite": "main",
+      "code": "D",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.875,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 95,
+      "suite": "main",
+      "code": "P",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.875,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 96,
+      "suite": "domain",
+      "code": "B",
+      "command": [
+        0.3,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 97,
+      "suite": "domain",
+      "code": "N",
+      "command": [
+        0.3,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 98,
+      "suite": "domain",
+      "code": "S",
+      "command": [
+        0.3,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 99,
+      "suite": "domain",
+      "code": "B",
+      "command": [
+        0.3,
+        0,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 100,
+      "suite": "domain",
+      "code": "N",
+      "command": [
+        0.3,
+        0,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 101,
+      "suite": "domain",
+      "code": "S",
+      "command": [
+        0.3,
+        0,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 102,
+      "suite": "domain",
+      "code": "B",
+      "command": [
+        0.3,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 103,
+      "suite": "domain",
+      "code": "N",
+      "command": [
+        0.3,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 104,
+      "suite": "domain",
+      "code": "S",
+      "command": [
+        0.3,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 105,
+      "suite": "domain",
+      "code": "B",
+      "command": [
+        0.3,
+        0,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 106,
+      "suite": "domain",
+      "code": "N",
+      "command": [
+        0.3,
+        0,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 107,
+      "suite": "domain",
+      "code": "S",
+      "command": [
+        0.3,
+        0,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 108,
+      "suite": "domain",
+      "code": "B",
+      "command": [
+        -0.18,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 109,
+      "suite": "domain",
+      "code": "N",
+      "command": [
+        -0.18,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 110,
+      "suite": "domain",
+      "code": "S",
+      "command": [
+        -0.18,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 111,
+      "suite": "domain",
+      "code": "B",
+      "command": [
+        -0.18,
+        0,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 112,
+      "suite": "domain",
+      "code": "N",
+      "command": [
+        -0.18,
+        0,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 113,
+      "suite": "domain",
+      "code": "S",
+      "command": [
+        -0.18,
+        0,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 114,
+      "suite": "domain",
+      "code": "B",
+      "command": [
+        -0.18,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 115,
+      "suite": "domain",
+      "code": "N",
+      "command": [
+        -0.18,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 116,
+      "suite": "domain",
+      "code": "S",
+      "command": [
+        -0.18,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 117,
+      "suite": "domain",
+      "code": "B",
+      "command": [
+        -0.18,
+        0,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 118,
+      "suite": "domain",
+      "code": "N",
+      "command": [
+        -0.18,
+        0,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 119,
+      "suite": "domain",
+      "code": "S",
+      "command": [
+        -0.18,
+        0,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 120,
+      "suite": "domain",
+      "code": "B",
+      "command": [
+        0,
+        0.12,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 121,
+      "suite": "domain",
+      "code": "N",
+      "command": [
+        0,
+        0.12,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 122,
+      "suite": "domain",
+      "code": "S",
+      "command": [
+        0,
+        0.12,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 123,
+      "suite": "domain",
+      "code": "B",
+      "command": [
+        0,
+        0.12,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 124,
+      "suite": "domain",
+      "code": "N",
+      "command": [
+        0,
+        0.12,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 125,
+      "suite": "domain",
+      "code": "S",
+      "command": [
+        0,
+        0.12,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 126,
+      "suite": "domain",
+      "code": "B",
+      "command": [
+        0,
+        0.12,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 127,
+      "suite": "domain",
+      "code": "N",
+      "command": [
+        0,
+        0.12,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 128,
+      "suite": "domain",
+      "code": "S",
+      "command": [
+        0,
+        0.12,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 129,
+      "suite": "domain",
+      "code": "B",
+      "command": [
+        0,
+        0.12,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 130,
+      "suite": "domain",
+      "code": "N",
+      "command": [
+        0,
+        0.12,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 131,
+      "suite": "domain",
+      "code": "S",
+      "command": [
+        0,
+        0.12,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 132,
+      "suite": "domain",
+      "code": "B",
+      "command": [
+        0,
+        -0.12,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 133,
+      "suite": "domain",
+      "code": "N",
+      "command": [
+        0,
+        -0.12,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 134,
+      "suite": "domain",
+      "code": "S",
+      "command": [
+        0,
+        -0.12,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 135,
+      "suite": "domain",
+      "code": "B",
+      "command": [
+        0,
+        -0.12,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 136,
+      "suite": "domain",
+      "code": "N",
+      "command": [
+        0,
+        -0.12,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 137,
+      "suite": "domain",
+      "code": "S",
+      "command": [
+        0,
+        -0.12,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 138,
+      "suite": "domain",
+      "code": "B",
+      "command": [
+        0,
+        -0.12,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 139,
+      "suite": "domain",
+      "code": "N",
+      "command": [
+        0,
+        -0.12,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 140,
+      "suite": "domain",
+      "code": "S",
+      "command": [
+        0,
+        -0.12,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 141,
+      "suite": "domain",
+      "code": "B",
+      "command": [
+        0,
+        -0.12,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 142,
+      "suite": "domain",
+      "code": "N",
+      "command": [
+        0,
+        -0.12,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 143,
+      "suite": "domain",
+      "code": "S",
+      "command": [
+        0,
+        -0.12,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 144,
+      "suite": "domain",
+      "code": "B",
+      "command": [
+        0,
+        0,
+        0.45
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 145,
+      "suite": "domain",
+      "code": "N",
+      "command": [
+        0,
+        0,
+        0.45
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 146,
+      "suite": "domain",
+      "code": "S",
+      "command": [
+        0,
+        0,
+        0.45
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 147,
+      "suite": "domain",
+      "code": "B",
+      "command": [
+        0,
+        0,
+        0.45
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 148,
+      "suite": "domain",
+      "code": "N",
+      "command": [
+        0,
+        0,
+        0.45
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 149,
+      "suite": "domain",
+      "code": "S",
+      "command": [
+        0,
+        0,
+        0.45
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 150,
+      "suite": "domain",
+      "code": "B",
+      "command": [
+        0,
+        0,
+        0.45
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 151,
+      "suite": "domain",
+      "code": "N",
+      "command": [
+        0,
+        0,
+        0.45
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 152,
+      "suite": "domain",
+      "code": "S",
+      "command": [
+        0,
+        0,
+        0.45
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 153,
+      "suite": "domain",
+      "code": "B",
+      "command": [
+        0,
+        0,
+        0.45
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 154,
+      "suite": "domain",
+      "code": "N",
+      "command": [
+        0,
+        0,
+        0.45
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 155,
+      "suite": "domain",
+      "code": "S",
+      "command": [
+        0,
+        0,
+        0.45
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 156,
+      "suite": "domain",
+      "code": "B",
+      "command": [
+        0,
+        0,
+        -0.45
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 157,
+      "suite": "domain",
+      "code": "N",
+      "command": [
+        0,
+        0,
+        -0.45
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 158,
+      "suite": "domain",
+      "code": "S",
+      "command": [
+        0,
+        0,
+        -0.45
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 159,
+      "suite": "domain",
+      "code": "B",
+      "command": [
+        0,
+        0,
+        -0.45
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 160,
+      "suite": "domain",
+      "code": "N",
+      "command": [
+        0,
+        0,
+        -0.45
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 161,
+      "suite": "domain",
+      "code": "S",
+      "command": [
+        0,
+        0,
+        -0.45
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 162,
+      "suite": "domain",
+      "code": "B",
+      "command": [
+        0,
+        0,
+        -0.45
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 163,
+      "suite": "domain",
+      "code": "N",
+      "command": [
+        0,
+        0,
+        -0.45
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 164,
+      "suite": "domain",
+      "code": "S",
+      "command": [
+        0,
+        0,
+        -0.45
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 165,
+      "suite": "domain",
+      "code": "B",
+      "command": [
+        0,
+        0,
+        -0.45
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 166,
+      "suite": "domain",
+      "code": "N",
+      "command": [
+        0,
+        0,
+        -0.45
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 167,
+      "suite": "domain",
+      "code": "S",
+      "command": [
+        0,
+        0,
+        -0.45
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 168,
+      "suite": "domain",
+      "code": "B",
+      "command": [
+        0.18,
+        0,
+        0.35
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 169,
+      "suite": "domain",
+      "code": "N",
+      "command": [
+        0.18,
+        0,
+        0.35
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 170,
+      "suite": "domain",
+      "code": "S",
+      "command": [
+        0.18,
+        0,
+        0.35
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 171,
+      "suite": "domain",
+      "code": "B",
+      "command": [
+        0.18,
+        0,
+        0.35
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 172,
+      "suite": "domain",
+      "code": "N",
+      "command": [
+        0.18,
+        0,
+        0.35
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 173,
+      "suite": "domain",
+      "code": "S",
+      "command": [
+        0.18,
+        0,
+        0.35
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 174,
+      "suite": "domain",
+      "code": "B",
+      "command": [
+        0.18,
+        0,
+        0.35
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 175,
+      "suite": "domain",
+      "code": "N",
+      "command": [
+        0.18,
+        0,
+        0.35
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 176,
+      "suite": "domain",
+      "code": "S",
+      "command": [
+        0.18,
+        0,
+        0.35
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 177,
+      "suite": "domain",
+      "code": "B",
+      "command": [
+        0.18,
+        0,
+        0.35
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 178,
+      "suite": "domain",
+      "code": "N",
+      "command": [
+        0.18,
+        0,
+        0.35
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 179,
+      "suite": "domain",
+      "code": "S",
+      "command": [
+        0.18,
+        0,
+        0.35
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 180,
+      "suite": "stress",
+      "code": "B",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {
+        "mass_scale": 1.2
+      }
+    },
+    {
+      "id": 181,
+      "suite": "stress",
+      "code": "N",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {
+        "mass_scale": 1.2
+      }
+    },
+    {
+      "id": 182,
+      "suite": "stress",
+      "code": "S",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {
+        "mass_scale": 1.2
+      }
+    },
+    {
+      "id": 183,
+      "suite": "stress",
+      "code": "B",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {
+        "mass_scale": 1.2
+      }
+    },
+    {
+      "id": 184,
+      "suite": "stress",
+      "code": "N",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {
+        "mass_scale": 1.2
+      }
+    },
+    {
+      "id": 185,
+      "suite": "stress",
+      "code": "S",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {
+        "mass_scale": 1.2
+      }
+    },
+    {
+      "id": 186,
+      "suite": "stress",
+      "code": "B",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {
+        "mass_scale": 1.2
+      }
+    },
+    {
+      "id": 187,
+      "suite": "stress",
+      "code": "N",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {
+        "mass_scale": 1.2
+      }
+    },
+    {
+      "id": 188,
+      "suite": "stress",
+      "code": "S",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {
+        "mass_scale": 1.2
+      }
+    },
+    {
+      "id": 189,
+      "suite": "stress",
+      "code": "B",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {
+        "mass_scale": 1.2
+      }
+    },
+    {
+      "id": 190,
+      "suite": "stress",
+      "code": "N",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {
+        "mass_scale": 1.2
+      }
+    },
+    {
+      "id": 191,
+      "suite": "stress",
+      "code": "S",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {
+        "mass_scale": 1.2
+      }
+    },
+    {
+      "id": 192,
+      "suite": "stress",
+      "code": "B",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {
+        "friction_scale": 0.5
+      }
+    },
+    {
+      "id": 193,
+      "suite": "stress",
+      "code": "N",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {
+        "friction_scale": 0.5
+      }
+    },
+    {
+      "id": 194,
+      "suite": "stress",
+      "code": "S",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {
+        "friction_scale": 0.5
+      }
+    },
+    {
+      "id": 195,
+      "suite": "stress",
+      "code": "B",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {
+        "friction_scale": 0.5
+      }
+    },
+    {
+      "id": 196,
+      "suite": "stress",
+      "code": "N",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {
+        "friction_scale": 0.5
+      }
+    },
+    {
+      "id": 197,
+      "suite": "stress",
+      "code": "S",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {
+        "friction_scale": 0.5
+      }
+    },
+    {
+      "id": 198,
+      "suite": "stress",
+      "code": "B",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {
+        "friction_scale": 0.5
+      }
+    },
+    {
+      "id": 199,
+      "suite": "stress",
+      "code": "N",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {
+        "friction_scale": 0.5
+      }
+    },
+    {
+      "id": 200,
+      "suite": "stress",
+      "code": "S",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {
+        "friction_scale": 0.5
+      }
+    },
+    {
+      "id": 201,
+      "suite": "stress",
+      "code": "B",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {
+        "friction_scale": 0.5
+      }
+    },
+    {
+      "id": 202,
+      "suite": "stress",
+      "code": "N",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {
+        "friction_scale": 0.5
+      }
+    },
+    {
+      "id": 203,
+      "suite": "stress",
+      "code": "S",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {
+        "friction_scale": 0.5
+      }
+    },
+    {
+      "id": 204,
+      "suite": "stress",
+      "code": "B",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {
+        "actuator_strength_scale": 0.8
+      }
+    },
+    {
+      "id": 205,
+      "suite": "stress",
+      "code": "N",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {
+        "actuator_strength_scale": 0.8
+      }
+    },
+    {
+      "id": 206,
+      "suite": "stress",
+      "code": "S",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {
+        "actuator_strength_scale": 0.8
+      }
+    },
+    {
+      "id": 207,
+      "suite": "stress",
+      "code": "B",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {
+        "actuator_strength_scale": 0.8
+      }
+    },
+    {
+      "id": 208,
+      "suite": "stress",
+      "code": "N",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {
+        "actuator_strength_scale": 0.8
+      }
+    },
+    {
+      "id": 209,
+      "suite": "stress",
+      "code": "S",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {
+        "actuator_strength_scale": 0.8
+      }
+    },
+    {
+      "id": 210,
+      "suite": "stress",
+      "code": "B",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {
+        "actuator_strength_scale": 0.8
+      }
+    },
+    {
+      "id": 211,
+      "suite": "stress",
+      "code": "N",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {
+        "actuator_strength_scale": 0.8
+      }
+    },
+    {
+      "id": 212,
+      "suite": "stress",
+      "code": "S",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {
+        "actuator_strength_scale": 0.8
+      }
+    },
+    {
+      "id": 213,
+      "suite": "stress",
+      "code": "B",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {
+        "actuator_strength_scale": 0.8
+      }
+    },
+    {
+      "id": 214,
+      "suite": "stress",
+      "code": "N",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {
+        "actuator_strength_scale": 0.8
+      }
+    },
+    {
+      "id": 215,
+      "suite": "stress",
+      "code": "S",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.002,
+      "stress": {
+        "actuator_strength_scale": 0.8
+      }
+    },
+    {
+      "id": 216,
+      "suite": "geometry",
+      "code": "B",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "open-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 217,
+      "suite": "geometry",
+      "code": "N",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "open-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 218,
+      "suite": "geometry",
+      "code": "S",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "open-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 219,
+      "suite": "geometry",
+      "code": "B",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "open-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 220,
+      "suite": "geometry",
+      "code": "N",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "open-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 221,
+      "suite": "geometry",
+      "code": "S",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "open-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 222,
+      "suite": "geometry",
+      "code": "B",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "open-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 223,
+      "suite": "geometry",
+      "code": "N",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "open-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 224,
+      "suite": "geometry",
+      "code": "S",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "open-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 225,
+      "suite": "geometry",
+      "code": "B",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "open-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 226,
+      "suite": "geometry",
+      "code": "N",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "open-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 227,
+      "suite": "geometry",
+      "code": "S",
+      "command": [
+        0.18,
+        0,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "open-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 228,
+      "suite": "geometry",
+      "code": "B",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "open-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 229,
+      "suite": "geometry",
+      "code": "N",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "open-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 230,
+      "suite": "geometry",
+      "code": "S",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.0,
+      "geometry": "open-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 231,
+      "suite": "geometry",
+      "code": "B",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "open-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 232,
+      "suite": "geometry",
+      "code": "N",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "open-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 233,
+      "suite": "geometry",
+      "code": "S",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.25,
+      "geometry": "open-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 234,
+      "suite": "geometry",
+      "code": "B",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "open-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 235,
+      "suite": "geometry",
+      "code": "N",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "open-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 236,
+      "suite": "geometry",
+      "code": "S",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "open-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 237,
+      "suite": "geometry",
+      "code": "B",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "open-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 238,
+      "suite": "geometry",
+      "code": "N",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "open-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 239,
+      "suite": "geometry",
+      "code": "S",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.75,
+      "geometry": "open-arc",
+      "physics_dt": 0.002,
+      "stress": {}
+    },
+    {
+      "id": 240,
+      "suite": "timestep",
+      "code": "B",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.001,
+      "stress": {}
+    },
+    {
+      "id": 241,
+      "suite": "timestep",
+      "code": "N",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.001,
+      "stress": {}
+    },
+    {
+      "id": 242,
+      "suite": "timestep",
+      "code": "S",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.001,
+      "stress": {}
+    },
+    {
+      "id": 243,
+      "suite": "timestep",
+      "code": "B",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.001,
+      "stress": {}
+    },
+    {
+      "id": 244,
+      "suite": "timestep",
+      "code": "N",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.001,
+      "stress": {}
+    },
+    {
+      "id": 245,
+      "suite": "timestep",
+      "code": "S",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.001,
+      "stress": {}
+    },
+    {
+      "id": 246,
+      "suite": "timestep",
+      "code": "B",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.004,
+      "stress": {}
+    },
+    {
+      "id": 247,
+      "suite": "timestep",
+      "code": "N",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.004,
+      "stress": {}
+    },
+    {
+      "id": 248,
+      "suite": "timestep",
+      "code": "S",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.004,
+      "stress": {}
+    },
+    {
+      "id": 249,
+      "suite": "timestep",
+      "code": "B",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.004,
+      "stress": {}
+    },
+    {
+      "id": 250,
+      "suite": "timestep",
+      "code": "N",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.004,
+      "stress": {}
+    },
+    {
+      "id": 251,
+      "suite": "timestep",
+      "code": "S",
+      "command": [
+        0.45,
+        0,
+        0
+      ],
+      "phase": 0.5,
+      "geometry": "decomposed-arc",
+      "physics_dt": 0.004,
+      "stress": {}
+    }
+  ],
+  "source_files_sha256": {
+    "src/cli_i18n.py": "28d1fc78974c6193c1525a98cf13b7062561cd013cbdfcbe0da77987a34b030a",
+    "src/__init__.py": "3aff5e2500ea2860b9e133850e9303a8e322860cef7d806d2040dee2af428ec4",
+    "src/cli_ui.py": "f6ad062e633373ed1cd8ca3be9caaf1e1a44d965224470fae1dff829f6b46c84",
+    "src/cli.py": "f382ddd6e8e4a66ac1094c4a3c28aed83adfe71e0280c927407ef1f29a4451a7",
+    "src/main.py": "23a46654ae8aa35eb4a33e263489dcddaf1ffc74e104da969e5088e3f4a2ade8",
+    "src/hardware/controller.py": "946f0c2fe8858a1cf8f7f6833285032bdbb8122f0bcddd4a7fe32797bc40873b",
+    "src/hardware/config.py": "10e112b6e4545836e4195c58d405f1f0789e39ae3cb533d3a971f937222ca9d1",
+    "src/hardware/discovery.py": "a60d50b4abb96c97d0240f84a8673663605b63a115fee02928d4be5430ccb3a3",
+    "src/hardware/interface.py": "936cf96c4256b93e1e95dccc346732ad1eafb4ebd0fb9ce55c7c781fcd19f9ab",
+    "src/hardware/__init__.py": "efd4676d20793aa76bb12a8358d110619df773b1bb60b8b67d934b2b29988e3b",
+    "src/hardware/actuator_control_table.py": "39c8867ee37fde5b7f947df8ba3f2504a346fce755f59cf2a8626b85448f0909",
+    "src/hardware/actuator_index.py": "c871dd4d2775a8a64c9bf8bb0fa5f9f9675f75bcd382388cad2c4e7c71c004e7",
+    "src/hardware/actuator.py": "03768fb70f5d6f7aa230323d6ff46d3a28ae06fa20d14fc63fce88aba83a1ee8",
+    "src/locomotion/sector_wheel.py": "06db5851a39e2f5cffbda5fd0c4f3662028527974399cdb957cd2ae3d483f059",
+    "src/locomotion/support_polygon.py": "4301e402770961775a43b2c8d63e9f7c15ff8a0f5d3724b6f5285d095f8d10bc",
+    "src/locomotion/fault_gait.py": "0971a7925e8946eb0762b5352e63f0350c4f611aec0094bbe10e073d423ff1ba",
+    "src/locomotion/climb.py": "38664b6e277483066b911c47cd3bac9888322252f03f16b18346c116db943e60",
+    "src/locomotion/profile.py": "f12eba3cb740f78fdf3635b9ade3a2ecc06e8f364ad15ec82fe13a0cedfd21d9",
+    "src/locomotion/stair_geometry.py": "44ddd869fa16e78df61e5f80fcad31e51bf1e9b89440b51ee268d8ef75048264",
+    "src/locomotion/__init__.py": "371a9271e539d5103b0a4e7aca5163b00b21c060eea883f4e1603685790e0542",
+    "src/locomotion/non_rl_walk.py": "910ad21e419a550dcaf1b2207adc16e2d7fb45de4ada85be119739d96550b271",
+    "src/locomotion/scone_gait.py": "2f45bb1059c18c3a1a1075425980ef641a7dd3f6b872ae978cfb7b41e268b019",
+    "src/locomotion/mode.py": "38a650bd660051912dfd4f096fd5ea7b434f8794ea0c0c00969ca9b707946a64",
+    "src/locomotion/tripod_gait.py": "54fbf1cb217a3d345ee7446444a1afb6be8d6ca14d0c4f4c3f6e600e6c21e2fe",
+    "src/locomotion/walk.py": "c1fce47f20c9c60211b5a80dd5734835663f6e6f5bcafd567a1e2fa3eee6c65a",
+    "src/locomotion/legacy_velocity.py": "d1e04a138f35b766f1649ef74e5bc7537cd760686f8a96ff358d4d1d11600a40",
+    "src/locomotion/drive.py": "fec41878ad3666d78b6a00c2201fb98b5e5de52c405375982e210f1bd7e28f79",
+    "src/locomotion/scone_gait_v2.py": "b31be463d797cc1d17fe9b2208981b972e859b4e648738db132dc422ab6c4a46",
+    "src/simulation/controller.py": "0897943e055b92e7edbb9e6108478bce26d20f14b6fb65454348e2191c48a0af",
+    "src/simulation/pid.py": "c7d4d407ec78825244c368930806d5f4aa740d95814bdd7c3b51f2b6ba1c17e7",
+    "src/simulation/simulator_cli.py": "ed78cf2f81fe7360ec3101196c67c944943323b15182869467047b7d311b7521",
+    "src/simulation/__init__.py": "6a57ddc0d71d016c4a7a49845eb2924a60e257fe43a4954aa9b6aa6f93be07e9",
+    "src/simulation/cli_bridge.py": "f3ac3ae244e03f609e08fecae46dd7244f7ef0efbe755f31a88a8296ee71469b",
+    "src/simulation/stair_benchmark.py": "35fbd52a30a4ecde066bac08d2e71eb95bd8f95c3667dd8eedc893eaaa856855",
+    "src/simulation/model.py": "e38339eef8de8a6bda847448776f92e9490ea48725b4435c9ad420867fca1bcf",
+    "src/simulation/__main__.py": "41581aae761a0a88bcba422f4438d801d0f57537f94f2710b6345686134e986c",
+    "src/kinematics/__init__.py": "ecffd22b37b03d6f4e29cd63ca5f6970bfc6a56e3ddf007561522ba3b4a753f8",
+    "src/kinematics/types.py": "decc11711efe042a6238f78da94b27101f35a9bbaceb8308db74c73a26d55522",
+    "src/kinematics/robot.py": "74867ecea658971413c6e79ad5d9b6501541494723987001fb0785b38f01061a",
+    "src/kinematics/leg.py": "4d24d3e476611f5dc4d44111685ba4aa20f2d127b5d7e68ce64977a96dcef7ec",
+    "src/assets/model.xml": "871d5c83e8b4c5e806763262d1aa67421920b9a2fc44608d8ceea37d44ee36b0",
+    "src/assets/acdc4robot-export-report.json": "1f5377da769c2ca89ba1d8a9070a37b829d9bf572d0abaa5f891bb51d28118d1",
+    "src/rl/joystick_control.py": "dd62bc1d945d793c08e4c6c3ad90cd3cec23967495139188632eddc076287870",
+    "src/rl/motion_profile.py": "48422bf9dfd117e369c843c9048c90ca79dcdaf6c4fe90510a1eba70f75f2e05",
+    "src/rl/walk_v3.py": "c639efbbc063e63b200d691945c38bade8df6728d9a772977d58c71bcf08742d",
+    "src/rl/stance.py": "a7a10e83fc8617b9237f5b0f6f7c8b8d0b8685bf4c73db2f86c4783085129ac7",
+    "src/rl/inquiry.py": "0c310ea86c934f82f1ed3e9f086385e02e6ab0be27638ab737728e79c45f9217",
+    "src/rl/__init__.py": "0a9e8659fbd39e27bf5c561b020989d4af706398871badc69b84166b63efacd4",
+    "src/rl/remote_watch.py": "e95e7a1b398b2efdcb945c0c7652c93298eadfe8eea13ecb5f83fe60c4d87084",
+    "src/rl/walk_v2.py": "c0ee7aa1aa020481c194eac17ef775c1c76df534873d32107aab3aba48acd561",
+    "src/rl/walk_learn.py": "807e46a481be9c21cf7d0b892745db9b3393946f853d7023c7e3d0bf5b23b90d",
+    "src/rl/policy_compat.py": "64cee3408b66a6aecba1e09e2a21bd91ede3fcf69f5ffce3419f271a462f7b6a",
+    "src/rl/walk_failsafe.py": "c8ff1c8c087055fd4ead20e22fe58a12504c4a76fc1deb0b0f51c10af67d1b11",
+    "src/rl/__main__.py": "cf45bfe80cd9911016c76bdcffe60707f845da6f8411282a6d7fd740c1e2ebf8",
+    "src/simulation/core/viewer.py": "6cee383041091e117b970bca0277dbe504f0d895cb2d97f3a5742ba29737e957",
+    "src/simulation/core/controller.py": "2af00bc8548be3a1455547487472ba33d320a7264e2ef538821ba4dc340012db",
+    "src/simulation/core/pid.py": "bece75111d29766f58d4151b8fe178cd46c2dc06645c3f781bb5b28a0ff085bd",
+    "src/simulation/core/simulator_cli.py": "2e3b6102ba6a64d83990d6708cd0693eb85d25d9a2cdde4736095ffa8683bd73",
+    "src/simulation/core/__init__.py": "b204444a2d148358fa0c1a59b6e6283e8cbc72a9d644802af178fa3281ad6ead",
+    "src/simulation/core/cli_bridge.py": "cea9f275cc4f43ffd9d93178b3809acf358214fb4e857ad88219fea7fa8d7a88",
+    "src/simulation/core/model.py": "0773c12dea99023360030baceca7345224320ef385bc5f67ffc8d25c99d62f97",
+    "src/simulation/core/scone_rolling_gait.py": "b0635669c9662d09491e38a369f14324873bb060aa9d746aef9211e3ff45131a",
+    "src/simulation/core/stair_demo.py": "ed8f653f4570c01c7dbb0de41b4732270acfcfd1e101b98b6af4143fa291c37e",
+    "src/simulation/core/stair_climber.py": "5eb5ee0d9548126fc483c4e3a78b4a6ad006eed470be6d9a1a68690e36382b86",
+    "src/simulation/terrain/presets.py": "688a289ca93b70441562c7964f33b0bd86f5d15e85a836c3d339bf0f78f34071",
+    "src/simulation/terrain/__init__.py": "eeaa2be8797025e3452269b38b5d2f542f4ee1f7b3fdd2e38a2752ce7bb1bc4b",
+    "src/simulation/terrain/types.py": "ff6c59f17cad64bef610b62df1e550c54ddd82a960b85366e47635f521ccf625",
+    "src/simulation/terrain/README.md": "acd5f1c14acaf4c39b93f85abffac4ee8f4293ef9383c5089eba274fa5fc4125",
+    "src/simulation/terrain/generator.py": "dc9d02f02972b95f261882981efd5dca02d535a31793c2c1f9cc510aa6a14d6c",
+    "src/assets/meshes/FR12.stl": "590e5c1236bf82aaea8de8d2722d563068a31e82de46866a19880e5818d5c265",
+    "src/assets/meshes/FR07.stl": "11a18d17a979c507398341b9bfb7a60c9dc098789b804e7c7d767d3ccafdc484",
+    "src/assets/meshes/ARC_SHAPED_WHEEL.stl": "6fe0b36bd3f12d79813d87c1224fb53816d63aea3d24b4589cd58f576c564e15",
+    "src/assets/meshes/LINK.stl": "ba1c4c849e6d2e5cba474bd372ae18bc55b739f7cc6cb91d7bd6a2ab9b9c7db8",
+    "src/assets/meshes/BODY.stl": "bfe0fa538ff00a6ea7028043260f0fefb83afd8fbd4f8dd40814a8bd68e1a9c4",
+    "src/assets/meshes/TIRE.stl": "7dbd6bc82d5111e1be5b7b92f387a0d7ab7f538a966b5251434e4681c8401c8e",
+    "src/assets/meshes/LEG_ACTUATOR.stl": "c2399b002c02a34876ace845ae2d1be1fdcc5a9a4ca6098870e796d3d61b633a",
+    "src/assets/meshes/BODY_ACTUATOR.stl": "8401d3dc04006ecdbf2ade73492bcc57b161b40d33a4ef5f300e396b53c0b7b7",
+    "benchmark/actuator_bench.py": "e87a3ff0286726d4caa889967e2997b6da0144f510c83434eba1743467f58cc8",
+    "benchmark/controllers.py": "7f7ff328666ca9ec6b54a8b1b20d2772bf97ca5c4abd834181829d46051ef089",
+    "benchmark/leg_usage.py": "756330ba8b348c72398b00a6208d6ac829fe206711733c83d51b7f0ade181a32",
+    "benchmark/stairs.py": "abc26c69c56204223615b44f7665cf961d59bc1ed8c73d680dcc02f1aad244b0",
+    "benchmark/flat.py": "6e2eacff2a764ee776db4931b47d58b4d2f891ce7954ac216149050c401a6f4c",
+    "benchmark/__init__.py": "39163f69dbf53deecc3ad8f7d856ba19be592122ab45360463b371540caee483",
+    "benchmark/README.md": "0ecf8b0d45ae3b5a7c823af9eb1c7fe3ffc30f6b344974d6fab6e2ed5ee25737",
+    "benchmark/model_variants.py": "e4492ab509e73784007cf44cd32580306b0de59de35d3618c8c0ff97e1e05351",
+    "benchmark/capture.py": "74c3b514dceef499948f92ddde8c3d63ff30a064e79bce1de633584ce8b2ff22",
+    "benchmark/robustness.py": "13d1bf9035405f48d38ccffffa75c7069b039da7aab5170ef569d40a965f2b0b",
+    "benchmark/common.py": "3a6b5c3ab488ad56ba672727594c19485f32d88c6560cece6aca37edfff5f662",
+    "benchmark/transitions.py": "230c813db3e4799bd139fbd07ad400af22de66ecd2b2f20839f7f8995ef26f24",
+    "benchmark/icra.py": "02260c8922b719e94ab9e815d47a922645c967c8b9ac86ca3cb73b5d05758f62",
+    "benchmark/revision_study.py": "a36ff7895d73340cef9c089a7f5765cd22aaa499fd3c4bcdf5530c3bcdf0992c",
+    "benchmark/__main__.py": "6ccdfb02e480ee6da83aa6ecee2c914fdce9ed31dd347eda2993fa8cfaa49112",
+    "benchmark/report.py": "65ac26c890a617a232dfb07756de5f45fb80ad879720ae53d4aa8bdad67fbe4e",
+    "benchmark/results/smoke-stairs-custom.jsonl": "48e0f7c3e8a5a27a94d56b9a3be8e108c12be95f74d989518b12e7aaabed641f",
+    "benchmark/results/robustness-smoke-summary.csv": "6f1d4c780b5d60edf77b9082935e16e9d07c9e042e6c37dc391487a66b97606a",
+    "benchmark/results/smoke-flat-abc-summary.csv": "7f7085e15c4d935decc2a4e052bf75a926e4813ce5cd3a1c5a8d19324d300152",
+    "benchmark/results/flat-nominal.jsonl": "07daeb6aeac64ff2f2db6fe002b562b4e127f6824fb0a3bbbfb6e08eb7696a8b",
+    "benchmark/results/smoke-transitions.jsonl": "eb7259cf7d446e71ce233a17f7231844b9a8041a957ac31454f96214266863da",
+    "benchmark/results/smoke-stairs.jsonl": "385bb42b4c51671587ec5b78f6a661a5e52ae297ba3babba42375710b22d3c27",
+    "benchmark/results/transitions-nominal-summary.csv": "9ac1faa1cf4508fd0cf9cbbd0c70c83ca1419834d1a6200d50558c7be60b27c5",
+    "benchmark/results/stairs-nominal.jsonl": "3be10f3b1981131a01d9f49a2b16e11be6c5fa05a1199b5f92d79f427b52d919",
+    "benchmark/results/smoke-flat-abc.jsonl": "00cb829ce81bf9fd3286133c5dd42f59c8ae20802418049fc820fefe4c6f8f03",
+    "benchmark/results/.gitignore": "240a3e0d37d2e86b614063f5347eb02d4f99ca6c254de6b82871ff8d95532a7d",
+    "benchmark/results/stairs-nominal-summary.csv": "cbbd9b1f937809dc2d8e73f74e9a6e3972e01653b96e13c7a27e4ea058d568bc",
+    "benchmark/results/smoke-flat.jsonl": "4ad343d55b71870df027c8409c37af286915525f8a62527f5440fc93a892d519",
+    "benchmark/results/transitions-nominal.jsonl": "7e0944464e7efab4bc0b002279f4e178cffbad1569f4fe64b5deac937f810057",
+    "benchmark/results/robustness-smoke.jsonl": "fd3169405c26aaff96b8e0dbb7379f7e3cedc29a6263d050cf1f5ded7c3bdd03",
+    "benchmark/results/flat-nominal-summary.csv": "43edfe03d46189a659149ad0ffa6232d9316ad4478ae173b82d58ce107980fcf",
+    "benchmark/results/smoke-robustness.jsonl": "9be596953f9ca4b8f4c510500cbffb08e5c0f4fae55e809089b91a481559bb77",
+    "benchmark/assets/tire_coacd_2mm.json": "02d008bffccb626ee503c81ac3e2f706f53fbe81f624c0a488e10ce8f154541e",
+    "packages/dynamixel-mujoco/LICENSE": "51153fd50e68814fb96efef696720855a709dcd3c18cf8f352e4c2cdafec1775",
+    "packages/dynamixel-mujoco/pyproject.toml": "fb66944a71b600680e6201a81778d39e6a884b6cc86a368c33d2d6df82eecc9a",
+    "packages/dynamixel-mujoco/README.md": "56ec7009842dfaeb23761e303393584ab930f3ff857b48fed8df22c159205c03",
+    "packages/dynamixel-mujoco/.gitignore": "27c605dec40ab55605775e30d634fc84854fd86086484b2d2055a7ceea7bdb0b",
+    "packages/dynamixel-mujoco/.pytest_cache/CACHEDIR.TAG": "37dc88ef9a0abeddbe81053a6dd8fdfb13afb613045ea1eb4a5c815a74a3bde4",
+    "packages/dynamixel-mujoco/.pytest_cache/README.md": "73fd6fccdd802c419a6b2d983d6c3173b7da97558ac4b589edec2dfe443db9ad",
+    "packages/dynamixel-mujoco/.pytest_cache/.gitignore": "3ed731b65d06150c138e2dadb0be0697550888a6b47eb8c45ecc9adba8b8e9bd",
+    "packages/dynamixel-mujoco/tests/conftest.py": "26433ec8f402c5e55600c47b9db9ee2ca151b51acff822276e45bf628f51ca9e",
+    "packages/dynamixel-mujoco/tests/test_specs.py": "6e0f6a99577ae04deda50ca0efe2ddcf11842929ff9d34f1ebf624765a29a093",
+    "packages/dynamixel-mujoco/dynamixel_mujoco/specs.py": "dd205fffe48e4cdf1928a2aa078ad1ac10ed3cb1b7e3be549b23fb01d0fd5be7",
+    "packages/dynamixel-mujoco/dynamixel_mujoco/__init__.py": "ce89ebbeb3f7fe24a1606b66d78a76940516f4bbbe4cf4fe9635ea264dcb3c77",
+    "packages/dynamixel-mujoco/dynamixel_mujoco/bench.py": "3bf7c050e9c6145106d8d0a6084a97c9f4cbb416ecddbf1a7e9e534675f02a8d",
+    "packages/dynamixel-mujoco/dynamixel_mujoco/mjcf.py": "6bb79a68b58618b1259ef70ddb9f3db6fd08a523e77ed75a63d64a7e5633e94a",
+    "packages/dynamixel-mujoco/.pytest_cache/v/cache/nodeids": "594c348d5d58c443afd70562b39d913899dd4ae28f23982984d43c2dd7b067af",
+    "packages/dynamixel-mujoco/.pytest_cache/v/cache/lastfailed": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  },
+  "controller_configs": {
+    "role-split-scone": {
+      "control_frequency": 50.0,
+      "cycle_frequency": 2.0,
+      "duty_factor": 0.6,
+      "step_height": 0.025,
+      "max_stride": 0.09,
+      "max_lateral_stride": 0.07,
+      "max_vx": 0.45,
+      "max_vy": 0.25,
+      "max_yaw_rate": 0.9,
+      "yaw_about_footprint_centroid": true,
+      "command_time_constant": 0.15,
+      "idle_epsilon": 0.001,
+      "ik_tolerance": 0.001,
+      "ik_max_iterations": 80,
+      "ik_damping": 0.002,
+      "ik_max_step": 0.15,
+      "ik_stride_backoff_attempts": 4,
+      "ik_stride_backoff_factor": 0.8,
+      "roll_authority": 1.0,
+      "max_steering_degrees": 35.0,
+      "min_roll_alignment": 0.7,
+      "minimum_rolling_legs": 2,
+      "roll_legs": null,
+      "arc_margin_degrees": 20.0,
+      "motor_headroom_degrees": 15.0,
+      "min_arc_reserve_degrees": 35.0,
+      "arc_reserve_safety": 1.8,
+      "roll_derate_degrees": 12.0,
+      "max_roll_rate_degrees": 540.0,
+      "reindex_threshold": 0.5,
+      "swing_lift_reference_speed": 0.05,
+      "ik_branch_guard_degrees": 40.0,
+      "arc_lift_tolerance": 0.002,
+      "arc_scan_step": 2.0,
+      "subtract_rolling_travel": true,
+      "rolling_swing_policy": "adaptive",
+      "limit_reindex_rate": false
+    },
+    "rewind-budget-scone": {
+      "control_frequency": 50.0,
+      "cycle_frequency": 2.0,
+      "duty_factor": 0.6,
+      "step_height": 0.025,
+      "max_stride": 0.09,
+      "max_lateral_stride": 0.07,
+      "max_vx": 0.45,
+      "max_vy": 0.25,
+      "max_yaw_rate": 0.9,
+      "yaw_about_footprint_centroid": true,
+      "command_time_constant": 0.15,
+      "idle_epsilon": 0.001,
+      "ik_tolerance": 0.001,
+      "ik_max_iterations": 80,
+      "ik_damping": 0.002,
+      "ik_max_step": 0.15,
+      "ik_stride_backoff_attempts": 4,
+      "ik_stride_backoff_factor": 0.8,
+      "roll_authority": 1.0,
+      "max_steering_degrees": 35.0,
+      "min_roll_alignment": 0.7,
+      "minimum_rolling_legs": 2,
+      "roll_legs": null,
+      "arc_margin_degrees": 20.0,
+      "motor_headroom_degrees": 15.0,
+      "min_arc_reserve_degrees": 35.0,
+      "arc_reserve_safety": 1.8,
+      "roll_derate_degrees": 12.0,
+      "max_roll_rate_degrees": 540.0,
+      "reindex_threshold": 0.5,
+      "swing_lift_reference_speed": 0.05,
+      "ik_branch_guard_degrees": 40.0,
+      "arc_lift_tolerance": 0.002,
+      "arc_scan_step": 2.0,
+      "subtract_rolling_travel": true,
+      "rolling_swing_policy": "adaptive",
+      "limit_reindex_rate": true
+    },
+    "role-split-no-roll": {
+      "control_frequency": 50.0,
+      "cycle_frequency": 2.0,
+      "duty_factor": 0.6,
+      "step_height": 0.025,
+      "max_stride": 0.09,
+      "max_lateral_stride": 0.07,
+      "max_vx": 0.45,
+      "max_vy": 0.25,
+      "max_yaw_rate": 0.9,
+      "yaw_about_footprint_centroid": true,
+      "command_time_constant": 0.15,
+      "idle_epsilon": 0.001,
+      "ik_tolerance": 0.001,
+      "ik_max_iterations": 80,
+      "ik_damping": 0.002,
+      "ik_max_step": 0.15,
+      "ik_stride_backoff_attempts": 4,
+      "ik_stride_backoff_factor": 0.8,
+      "roll_authority": 1.0,
+      "max_steering_degrees": 35.0,
+      "min_roll_alignment": 0.7,
+      "minimum_rolling_legs": 2,
+      "roll_legs": [],
+      "arc_margin_degrees": 20.0,
+      "motor_headroom_degrees": 15.0,
+      "min_arc_reserve_degrees": 35.0,
+      "arc_reserve_safety": 1.8,
+      "roll_derate_degrees": 12.0,
+      "max_roll_rate_degrees": 540.0,
+      "reindex_threshold": 0.5,
+      "swing_lift_reference_speed": 0.05,
+      "ik_branch_guard_degrees": 40.0,
+      "arc_lift_tolerance": 0.002,
+      "arc_scan_step": 2.0,
+      "subtract_rolling_travel": true,
+      "rolling_swing_policy": "adaptive",
+      "limit_reindex_rate": true
+    },
+    "role-split-superposition": {
+      "control_frequency": 50.0,
+      "cycle_frequency": 2.0,
+      "duty_factor": 0.6,
+      "step_height": 0.025,
+      "max_stride": 0.09,
+      "max_lateral_stride": 0.07,
+      "max_vx": 0.45,
+      "max_vy": 0.25,
+      "max_yaw_rate": 0.9,
+      "yaw_about_footprint_centroid": true,
+      "command_time_constant": 0.15,
+      "idle_epsilon": 0.001,
+      "ik_tolerance": 0.001,
+      "ik_max_iterations": 80,
+      "ik_damping": 0.002,
+      "ik_max_step": 0.15,
+      "ik_stride_backoff_attempts": 4,
+      "ik_stride_backoff_factor": 0.8,
+      "roll_authority": 1.0,
+      "max_steering_degrees": 35.0,
+      "min_roll_alignment": 0.7,
+      "minimum_rolling_legs": 2,
+      "roll_legs": null,
+      "arc_margin_degrees": 20.0,
+      "motor_headroom_degrees": 15.0,
+      "min_arc_reserve_degrees": 35.0,
+      "arc_reserve_safety": 1.8,
+      "roll_derate_degrees": 12.0,
+      "max_roll_rate_degrees": 540.0,
+      "reindex_threshold": 0.5,
+      "swing_lift_reference_speed": 0.05,
+      "ik_branch_guard_degrees": 40.0,
+      "arc_lift_tolerance": 0.002,
+      "arc_scan_step": 2.0,
+      "subtract_rolling_travel": false,
+      "rolling_swing_policy": "adaptive",
+      "limit_reindex_rate": true
+    },
+    "role-split-no-reindex": {
+      "control_frequency": 50.0,
+      "cycle_frequency": 2.0,
+      "duty_factor": 0.6,
+      "step_height": 0.025,
+      "max_stride": 0.09,
+      "max_lateral_stride": 0.07,
+      "max_vx": 0.45,
+      "max_vy": 0.25,
+      "max_yaw_rate": 0.9,
+      "yaw_about_footprint_centroid": true,
+      "command_time_constant": 0.15,
+      "idle_epsilon": 0.001,
+      "ik_tolerance": 0.001,
+      "ik_max_iterations": 80,
+      "ik_damping": 0.002,
+      "ik_max_step": 0.15,
+      "ik_stride_backoff_attempts": 4,
+      "ik_stride_backoff_factor": 0.8,
+      "roll_authority": 1.0,
+      "max_steering_degrees": 35.0,
+      "min_roll_alignment": 0.7,
+      "minimum_rolling_legs": 2,
+      "roll_legs": null,
+      "arc_margin_degrees": 20.0,
+      "motor_headroom_degrees": 15.0,
+      "min_arc_reserve_degrees": 35.0,
+      "arc_reserve_safety": 1.8,
+      "roll_derate_degrees": 12.0,
+      "max_roll_rate_degrees": 540.0,
+      "reindex_threshold": 0.5,
+      "swing_lift_reference_speed": 0.05,
+      "ik_branch_guard_degrees": 40.0,
+      "arc_lift_tolerance": 0.002,
+      "arc_scan_step": 2.0,
+      "subtract_rolling_travel": true,
+      "rolling_swing_policy": "disabled",
+      "limit_reindex_rate": true
+    },
+    "role-split-periodic": {
+      "control_frequency": 50.0,
+      "cycle_frequency": 2.0,
+      "duty_factor": 0.6,
+      "step_height": 0.025,
+      "max_stride": 0.09,
+      "max_lateral_stride": 0.07,
+      "max_vx": 0.45,
+      "max_vy": 0.25,
+      "max_yaw_rate": 0.9,
+      "yaw_about_footprint_centroid": true,
+      "command_time_constant": 0.15,
+      "idle_epsilon": 0.001,
+      "ik_tolerance": 0.001,
+      "ik_max_iterations": 80,
+      "ik_damping": 0.002,
+      "ik_max_step": 0.15,
+      "ik_stride_backoff_attempts": 4,
+      "ik_stride_backoff_factor": 0.8,
+      "roll_authority": 1.0,
+      "max_steering_degrees": 35.0,
+      "min_roll_alignment": 0.7,
+      "minimum_rolling_legs": 2,
+      "roll_legs": null,
+      "arc_margin_degrees": 20.0,
+      "motor_headroom_degrees": 15.0,
+      "min_arc_reserve_degrees": 35.0,
+      "arc_reserve_safety": 1.8,
+      "roll_derate_degrees": 12.0,
+      "max_roll_rate_degrees": 540.0,
+      "reindex_threshold": 0.5,
+      "swing_lift_reference_speed": 0.05,
+      "ik_branch_guard_degrees": 40.0,
+      "arc_lift_tolerance": 0.002,
+      "arc_scan_step": 2.0,
+      "subtract_rolling_travel": true,
+      "rolling_swing_policy": "periodic",
+      "limit_reindex_rate": true
+    }
+  },
+  "python": "3.12.13",
+  "numpy": "2.5.0",
+  "mujoco": "3.10.0",
+  "settle_seconds": 1,
+  "measure_seconds": 8,
+  "control_dt": 0.02,
+  "git_revision": "1c44eb6c4ab4c7b9ed4f863ac9a73054d8b1e458",
+  "git_dirty": false,
+  "model_sha256": "9a45b402e66944df600387cffa68d7b15b612956810eee4b0f0726fe9255b701",
+  "mujoco_version": "3.10.0"
+}

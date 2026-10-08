@@ -186,3 +186,7 @@ events.out.tfevents.*
 #.idea/
 
 .vscode
+
+# Local recovery packages and assistant worktrees are kept outside the Git commit.
+/.claude/
+/archive/project-closeout/

@@ -1,0 +1,265 @@
+{
+  "nominal_leg_intersections": [],
+  "internal_intersections": [
+    [
+      "H01 Upper shell:1/PA12 cover",
+      "H04 Raised PCB carrier:1/PCB slotted frame 70 x 90 mm reserved",
+      0.9959115129370697
+    ],
+    [
+      "H01 Upper shell:1/PA12 cover",
+      "H05 Battery retention and lid anchors:1/Side-access M3 lid anchor (3)",
+      0.4341181806331498
+    ]
+  ],
+  "payload_intersections": [],
+  "errors": [],
+  "proxy_copy_check": [
+    {
+      "name": "LEG 1:1+FR07:1",
+      "proxy": [
+        [
+          195.108703,
+          -95.140926,
+          -3.5
+        ],
+        [
+          221.108703,
+          -62.640926,
+          40.5
+        ]
+      ],
+      "temp": [
+        [
+          195.108703,
+          -95.140926,
+          -3.5
+        ],
+        [
+          221.108703,
+          -62.640926,
+          40.5
+        ]
+      ]
+    },
+    {
+      "name": "LEG 1:1+LINK:1",
+      "proxy": [
+        [
+          84.983703,
+          -135.540926,
+          32.75
+        ],
+        [
+          208.733703,
+          -97.340926,
+          37.75
+        ]
+      ],
+      "temp": [
+        [
+          84.983703,
+          -135.540926,
+          32.75
+        ],
+        [
+          208.733703,
+          -97.340926,
+          37.75
+        ]
+      ]
+    },
+    {
+      "name": "LEG 1:1+LINK:1",
+      "proxy": [
+        [
+          84.983703,
+          -135.540926,
+          -0.75
+        ],
+        [
+          208.733703,
+          -97.340926,
+          4.25
+        ]
+      ],
+      "temp": [
+        [
+          84.983703,
+          -135.540926,
+          -0.75
+        ],
+        [
+          208.733703,
+          -97.340926,
+          4.25
+        ]
+      ]
+    },
+    {
+      "name": "LEG 1:1+XM430:2+X-430_IDLE:1",
+      "proxy": [
+        [
+          172.858703,
+          -132.940926,
+          4.25
+        ],
+        [
+          219.358703,
+          -90.540926,
+          32.75
+        ]
+      ],
+      "temp": [
+        [
+          172.858703,
+          -132.940926,
+          4.25
+        ],
+        [
+          219.358703,
+          -90.540926,
+          32.75
+        ]
+      ]
+    }
+  ],
+  "masses": [
+    {
+      "name": "H01 Upper shell:1",
+      "mass_kg": 0.1386882255072447,
+      "materials": [
+        "Housing Warm ochre PA12"
+      ]
+    },
+    {
+      "name": "H02 Aluminium backbone:1",
+      "mass_kg": 0.16583382774202335,
+      "materials": [
+        "Housing Anodized aluminium"
+      ]
+    },
+    {
+      "name": "H03 Removable Jetson carrier:1",
+      "mass_kg": 0.038959615253500036,
+      "materials": [
+        "Housing Anodized aluminium"
+      ]
+    },
+    {
+      "name": "H04 Raised PCB carrier:1",
+      "mass_kg": 0.019740258298668566,
+      "materials": [
+        "Housing Anodized aluminium"
+      ]
+    },
+    {
+      "name": "H05 Battery retention and lid anchors:1",
+      "mass_kg": 0.02028992829091969,
+      "materials": [
+        "Housing Graphite PA12"
+      ]
+    },
+    {
+      "name": "H06 Sensor mounts:1",
+      "mass_kg": 0.015548045255293068,
+      "materials": [
+        "Housing Graphite PA12"
+      ]
+    },
+    {
+      "name": "H08 Roof fasteners:1",
+      "mass_kg": 0.0005565237138054896,
+      "materials": [
+        "Housing Black fastener"
+      ]
+    }
+  ],
+  "battery_intersections": [],
+  "joint_health": [
+    {
+      "component": "LEG 1(미러)",
+      "name": "회전 1",
+      "health": 0,
+      "message": ""
+    },
+    {
+      "component": "LEG 1(미러)",
+      "name": "강체 2",
+      "health": 0,
+      "message": ""
+    },
+    {
+      "component": "LEG 1(미러)",
+      "name": "강체 3",
+      "health": 0,
+      "message": ""
+    },
+    {
+      "component": "LEG 1(미러)",
+      "name": "회전 4",
+      "health": 0,
+      "message": ""
+    },
+    {
+      "component": "LEG 1(미러)",
+      "name": "회전 5",
+      "health": 0,
+      "message": ""
+    },
+    {
+      "component": "MARC Housing A01 v5",
+      "name": "강체 5",
+      "health": 0,
+      "message": ""
+    },
+    {
+      "component": "MARC Housing A01 v5",
+      "name": "강체 6",
+      "health": 0,
+      "message": ""
+    },
+    {
+      "component": "MARC Housing A01 v5",
+      "name": "회전 7",
+      "health": 0,
+      "message": ""
+    },
+    {
+      "component": "MARC Housing A01 v5",
+      "name": "회전 8",
+      "health": 0,
+      "message": ""
+    },
+    {
+      "component": "MARC Housing A01 v5",
+      "name": "회전 14",
+      "health": 0,
+      "message": ""
+    },
+    {
+      "component": "MARC Housing A01 v5",
+      "name": "강체 15",
+      "health": 0,
+      "message": ""
+    },
+    {
+      "component": "MARC Housing A01 v5",
+      "name": "강체 16",
+      "health": 0,
+      "message": ""
+    },
+    {
+      "component": "MARC Housing A01 v5",
+      "name": "강체 17",
+      "health": 0,
+      "message": ""
+    },
+    {
+      "component": "MARC Housing A01 v5",
+      "name": "강체 18",
+      "health": 0,
+      "message": ""
+    }
+  ]
+}

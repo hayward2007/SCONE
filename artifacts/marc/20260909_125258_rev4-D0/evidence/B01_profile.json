@@ -1,0 +1,13 @@
+{
+  "step_id": "B01",
+  "status": "PASS",
+  "source_sha256": "3f129dbbf8bb31f3cba3e3a3431a3558a3cc7f7ca9dbad55b351475836253cd3",
+  "params_sha256": "9016f7ae0c61b47d2dc5956501b72e76cb43e6b856222ea5a5a4c550a5e09977",
+  "max_support_difference_mm": 0.0011661117100487672,
+  "heave_mm": 18.563552592480264,
+  "tip_chord_mm": 86.1037722821452,
+  "alpha_step_deg": 0.25,
+  "coarse_vertices": 631,
+  "fine_vertices": 1261,
+  "method": "Compare both polylines at identical 0.25 deg absolute angles; linear-segment minimum occurs at a vertex."
+}

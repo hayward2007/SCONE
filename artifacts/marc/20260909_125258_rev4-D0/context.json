@@ -1,0 +1,9 @@
+{
+  "repo_root": "/Users/hayward_kim/Developer/SCONE",
+  "run_dir": "/Users/hayward_kim/Developer/SCONE/artifacts/marc/20260909_125258_rev4-D0",
+  "document_id": "urn:adsk.wipprod:dm.lineage:m-tfDl7GQVSpPaaj3cYogw",
+  "creation_id": "28a25f2f-444b-4871-ac20-29ae09d54ba3",
+  "stage": "D0",
+  "source_sha256": "3f129dbbf8bb31f3cba3e3a3431a3558a3cc7f7ca9dbad55b351475836253cd3",
+  "params_sha256": "9016f7ae0c61b47d2dc5956501b72e76cb43e6b856222ea5a5a4c550a5e09977"
+}

@@ -1,0 +1,6 @@
+{
+  "component": "CHECK R08 user rear pose - reference only",
+  "bodies": 26,
+  "source": "user_pose_before.json",
+  "saved_design_pose": "Native joints may recompute to their original pose when saving; this hidden solid reference preserves the exact demonstrated pose independently."
+}

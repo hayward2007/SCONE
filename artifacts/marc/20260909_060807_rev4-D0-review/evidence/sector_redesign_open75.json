@@ -1,0 +1,162 @@
+{
+  "scope": "sector opening-angle redesign and real fastener detail (rev.4b)",
+  "trigger": "user review: 45-degree opening is a notched wheel, not a sector; no fastener detail anywhere",
+  "findings": {
+    "F1_lobe_heave_claim_wrong": {
+      "doc_claim": "spiral lobe reduced heave 75.6 -> 18.56 mm",
+      "reality": "heave = R_tread - r_lobe_tip*cos(opening/2); at the SAME opening the ramp roughly doubles heave",
+      "evidence": {
+        "open45_with_ramp": 18.56,
+        "open45_no_ramp": 9.32,
+        "open135_no_ramp": 75.62
+      },
+      "conclusion": "75.6 -> 18.56 was the effect of shrinking the opening 135 -> 45, not the lobe. The lobe's real value is edge-impact smoothing and a pointed stair-hooking tip."
+    },
+    "F2_degenerate_optimum": {
+      "problem": "heave was minimised with no lower bound on the opening angle, so the optimum walked toward a full wheel",
+      "fix": "three explicit constraints written into 2.35: tread arc >= 180 deg, rolling tilt, throat width"
+    },
+    "F3_hard_geometric_wall": {
+      "rule": "with diagonal 180-degree phasing the body heave is exactly zero iff tread arc >= 180 deg",
+      "verified": {
+        "tread_140": 6.5449,
+        "tread_170": 0.4661,
+        "tread_180": 0.0,
+        "tread_195": 0.0,
+        "tread_200": 0.0
+      },
+      "consequence": "with 45-degree lobes the opening cannot exceed 90 deg"
+    },
+    "F4_no_fastener_detail": {
+      "was": "hub deliberately solid, no holes anywhere, I02 BLOCKED",
+      "now": "horn spigot, 8x M2 insert pilots on PCD 16, bearing seat, stub relief, 6 web lightening holes"
+    },
+    "F5_horn_spec_recovered": {
+      "source": "SCONEv3 v8 Fusion document, coaxial cylinder grouping about each part's largest cylinder",
+      "XM430_horn_plate_dia_mm": 22.0,
+      "XM430_horn_bolts": "8 x dia 2.0 on PCD 16.0",
+      "XM430_shaft_dia_mm": 8.0,
+      "MX28_horn_bolts": "16 x dia 1.6 on PCD 16.0",
+      "frame_insert": "dia 4.0 on PCD 12.04 and 18.0",
+      "doc_correction": "4.2 said 'do not reuse M2.5x4 PCD16'. PCD 16 was right; the count and thread were wrong. Actual is M2 x 8."
+    }
+  },
+  "decision": {
+    "opening_deg": 75.0,
+    "tread_arc_deg": 195.0,
+    "lobe_deg": 45.0,
+    "r_lobe_tip_mm": 112.5,
+    "chosen_by": "user",
+    "alternatives_offered_deg": [
+      60,
+      75,
+      90
+    ]
+  },
+  "as_built": {
+    "heave_mm": 33.247749217236,
+    "tip_chord_mm": 136.97132152696,
+    "distance_per_rev_mm": 739.536141755,
+    "arc_only_mm": 416.91552507,
+    "lobe_roll_mm": 185.649295158,
+    "tip_pivot_share_pct": 18.521,
+    "roll_speed_max_m_s": 0.949022,
+    "rolling_phase_diagonal": {
+      "body_heave_mm": 0.0,
+      "pitch_deg": 4.09,
+      "roll_deg": 5.93,
+      "contacts": "3-4"
+    },
+    "sector_PLA_cm3": 146.2834,
+    "sector_PLA_g": 172.614,
+    "tire_TPU_cm3": 115.3212,
+    "tire_TPU_g": 56.969,
+    "spin_module_g": 229.5832,
+    "Izz_spin_axis_kgm2": 0.001985933,
+    "Izz_pct_of_target": 90.27,
+    "root_mass_g": 3052.055,
+    "root_com_mm": [
+      0.688,
+      9.109,
+      -63.301
+    ]
+  },
+  "previous": {
+    "sector_PLA_g": 182.39,
+    "tire_TPU_g": 63.0,
+    "spin_module_g": 245.44,
+    "Izz_spin_axis_kgm2": 0.0022310337,
+    "Izz_pct_of_target": 101.41,
+    "root_mass_g": 3115.469,
+    "distance_per_rev_mm": 752.8095232252366
+  },
+  "hub_stack_mm": [
+    {
+      "step": "horn spigot recess",
+      "dia": 22.4,
+      "z_from": 10.0,
+      "z_to": 8.5
+    },
+    {
+      "step": "shaft / centre screw relief",
+      "dia": 9.0,
+      "z_from": 10.0,
+      "z_to": 6.0
+    },
+    {
+      "step": "M2 insert pilots x8 on PCD 16",
+      "dia": 3.2,
+      "z_from": 8.5,
+      "z_to": 2.5
+    },
+    {
+      "step": "bearing seat (10x19x5)",
+      "dia": 19.0,
+      "z_from": -10.0,
+      "z_to": -5.0
+    },
+    {
+      "step": "stub relief",
+      "dia": 11.0,
+      "z_from": -5.0,
+      "z_to": -2.0
+    }
+  ],
+  "web_lightening": {
+    "dia_mm": 30.0,
+    "count": 6,
+    "pcd_mm": 120.0,
+    "angles_deg": [
+      -112.5,
+      -67.5,
+      -22.5,
+      22.5,
+      67.5,
+      112.5
+    ],
+    "removed_cm3": 8.4823,
+    "min_web_to_rib_mm": 7.4
+  },
+  "rib_angles_deg": [
+    -135,
+    -90,
+    -45,
+    0,
+    45,
+    90,
+    135
+  ],
+  "interference_after": {
+    "brep_pairs": 20,
+    "classification": "16 joint-envelope nesting (unchanged) + 4 sector/tire coincident-face noise at 0.002 cm3 each",
+    "note": "tire inner boundary and rim outer boundary share the same polyline vertices; the 2 mm3 is numerical, classify as an intended bonded contact"
+  },
+  "fusion_lessons": [
+    "deleteMe() on a parametric-feature body returns True but the body persists; keep it as an unmassed hidden envelope instead",
+    "body.material assignments revert to default steel on timeline recompute; assign last, then save immediately",
+    "scripts creating ~1000 sketch lines exceed the 60 s MCP response window but still complete; verify in a separate call"
+  ],
+  "document_sha256_after": "f62da344cd8fb2d643494e3900fd0a03f32dceb106e195e77f26907f5c956907",
+  "document_revision": "rev.4b",
+  "fusion_document_version": 5
+}

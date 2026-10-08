@@ -1,0 +1,8 @@
+{
+  "content": [
+    {
+      "text": "{\n    \"message\": \"{\\\"stage\\\": \\\"D0\\\", \\\"status\\\": \\\"BLOCKED\\\", \\\"cad_structure_subtotal_kg\\\": 1.7973274158239267, \\\"cad_structure_com_world_m\\\": [7.721346531317797e-18, -1.930336632829449e-18, -0.09770949670659364], \\\"known_mass_subtotal_kg\\\": 3.1943274158239263, \\\"missing_mass_count\\\": 12, \\\"missing_inertia_count\\\": 29, \\\"excluded\\\": [\\\"study fork envelopes\\\", \\\"mast space\\\", \\\"battery slot space\\\", \\\"payload envelope default CAD density\\\"], \\\"reason\\\": \\\"Partial BOM only; yoke envelopes overlap and physical interfaces are unresolved. Do not treat the subtotal as final robot mass.\\\"}\\n\",\n    \"success\": true\n}",
+      "type": "text"
+    }
+  ]
+}

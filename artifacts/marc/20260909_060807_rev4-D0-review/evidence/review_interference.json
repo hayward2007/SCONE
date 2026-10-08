@@ -1,0 +1,118 @@
+{
+  "method": "BRep-BRep exact boolean intersection volume; motor mesh tested by transforming mesh vertices to world and calling BRepBody.pointContainment",
+  "pose": "P00 design reference pose (yaw=0, q1=q1_ref, q2 such that alpha_abs=0)",
+  "before_review": {
+    "source": "20260909_125258_rev4-D0/evidence/G03_P00_intersections.json",
+    "brep_pairs": 24,
+    "per_leg": {
+      "frame_yoke1": 1.11426,
+      "yoke1_yoke2": 7.051,
+      "yoke1_link": 0.293116,
+      "yoke2_link": 0.658913,
+      "link_sector": 2.323546,
+      "link_tire": 1.175653
+    }
+  },
+  "after_review": {
+    "brep_pairs": 16,
+    "per_leg": {
+      "frame_yoke1": 1.11426,
+      "yoke1_yoke2": 7.051,
+      "yoke1_link": 0.293116,
+      "yoke2_link": 0.658913
+    },
+    "removed": [
+      "link_sector",
+      "link_tire"
+    ],
+    "reason": "clevis slot cut into Crank_Link_D0"
+  },
+  "clevis_cut": {
+    "tool": "cylinder about the stage-2 axis",
+    "radius_mm": 124.5,
+    "half_gap_mm": 12.0,
+    "inner_width_mm": 24.0,
+    "rule": "b_sector/2 + clevis_gap = 12; arms therefore 12..17 mm which equals clevis_arm_t = 5",
+    "removed_cm3": 16.70751,
+    "link_mass_before_g": 86.4326,
+    "link_mass_after_g": 66.7178,
+    "why_radius": "the sector sweeps a full disc of R_tread = 122.5 about the stage-2 axis; any link material inside that disc at |v| <= 10 collides during a revolution. Doc 4.1 states the fork arms are 44x44 mm, i.e. 22 mm reach, which is NOT enough."
+  },
+  "motor_vs_structure": {
+    "count": 24,
+    "classification": "all 24 are motor-inside-its-own-mounting-envelope, not leg-to-leg collisions",
+    "per_leg": [
+      {
+        "pair": "yaw motor MX-28AT vs Frame beams/ribs/plate",
+        "vertices_inside_pct": 20.9,
+        "meaning": "the frame has no motor pocket yet",
+        "action": "D1: cut a pocket, I02"
+      },
+      {
+        "pair": "yaw motor horn vs Yoke1_D0",
+        "vertices_inside_pct": 3.98,
+        "meaning": "intended coupling region",
+        "action": "D1 interface"
+      },
+      {
+        "pair": "stage-1 motor vs Yoke1_D0",
+        "vertices_inside_pct": 16.2,
+        "action": "D1 interface"
+      },
+      {
+        "pair": "stage-1 motor vs Yoke2_D0",
+        "vertices_inside_pct": 19.63,
+        "action": "D1 interface"
+      },
+      {
+        "pair": "stage-1 motor vs crank link",
+        "vertices_inside_pct": 0.92,
+        "action": "D1 interface"
+      },
+      {
+        "pair": "spin motor vs crank link (fork arm)",
+        "vertices_inside_pct": 0.8,
+        "action": "D1 interface"
+      }
+    ]
+  },
+  "yoke_envelope_defect": {
+    "Yoke1_D0": {
+      "envelope_mm_sorted": [
+        44.0,
+        33.0,
+        26.0
+      ],
+      "MX-28AT_mm_sorted": [
+        50.6,
+        45.1,
+        35.6
+      ],
+      "fits": false,
+      "shortfall_mm": [
+        6.6,
+        12.1,
+        9.6
+      ]
+    },
+    "Yoke2_D0": {
+      "envelope_mm_sorted": [
+        41.0,
+        31.0,
+        24.0
+      ],
+      "XM430_mm_sorted": [
+        46.5,
+        42.4,
+        28.5
+      ],
+      "fits": false,
+      "shortfall_mm": [
+        5.5,
+        11.4,
+        4.5
+      ]
+    },
+    "conclusion": "the yoke envelopes in doc 5.1 are smaller than the actuators they must carry. This was invisible until real parts were imported."
+  }
+}

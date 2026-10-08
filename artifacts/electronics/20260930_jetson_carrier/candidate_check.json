@@ -1,0 +1,698 @@
+{
+  "existing_collisions": [],
+  "internal_collisions": [],
+  "existing_checked": [
+    "LEG 1(미러):1/본체1",
+    "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.2:1/본체1",
+    "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.6:1/본체1",
+    "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.7:1/본체1",
+    "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.8:1/본체1",
+    "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.9:1/본체2",
+    "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.10:1/본체1",
+    "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.11:1/본체1",
+    "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.12:1/본체1",
+    "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.13:1/본체1",
+    "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.13:2/본체1",
+    "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.15:1/본체1",
+    "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.15:2/본체1",
+    "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.17:1/본체1",
+    "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.18:1/본체1",
+    "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.19:1/본체1",
+    "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.20:1/본체1",
+    "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.21:1/본체1",
+    "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.22:1/본체1",
+    "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.22:2/본체1",
+    "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.24:1/본체1",
+    "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.25:1/본체1",
+    "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.24:2/본체1",
+    "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.25:2/본체1",
+    "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.28:1/본체1",
+    "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.29:1/본체1",
+    "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.30:1/본체1",
+    "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.31:1/본체1",
+    "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.32:1/본체1",
+    "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.33:1/본체1",
+    "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.34:1/본체1",
+    "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.35:1/본체1",
+    "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.34:2/본체1",
+    "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.37:1/본체1",
+    "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.38:1/본체1",
+    "V01 NVIDIA official mechanical model:1+Open CASCADE STEP translator 8.0 1:1+Open CASCADE STEP translator 8.0 1.39:1/본체1",
+    "V02 Waveshare official camera:1+0619:1/본체1",
+    "MARC v4 Body v5 BOX:1+M2 Jetson holder for original stand (6x M3x8):1/M2 holder",
+    "MARC v4 Body v5 BOX:1+M2C Jetson top clips (2x M3x8):1/M2C clip -x",
+    "MARC v4 Body v5 BOX:1+M2C Jetson top clips (2x M3x8):1/M2C clip +x",
+    "MARC v4 Body v5 BOX:1/Body v5 REAR",
+    "MARC v4 Body v5 BOX:1/Body v5 FRONT"
+  ],
+  "parts": [
+    {
+      "name": "P1 body-Jetson brace - 4x M2.5x8 plus 2x M3x12",
+      "box": [
+        [
+          104.1,
+          5.4,
+          38.7
+        ],
+        [
+          239.0,
+          39.8,
+          136.5
+        ]
+      ],
+      "volume_mm3": 20713.953578029683,
+      "kind": "print",
+      "lumps": 1
+    },
+    {
+      "name": "P2 lift-out PCB plate - 2x M2.5x8 captive nuts",
+      "box": [
+        [
+          103.55,
+          19.5,
+          45.5
+        ],
+        [
+          240.0,
+          34.0,
+          134.5
+        ]
+      ],
+      "volume_mm3": 27789.024984610252,
+      "kind": "print",
+      "lumps": 1
+    },
+    {
+      "name": "P3 PCB spacer 4.85mm 1",
+      "box": [
+        [
+          162.7,
+          23.5,
+          53.2
+        ],
+        [
+          170.3,
+          28.35,
+          60.8
+        ]
+      ],
+      "volume_mm3": 175.9841664724733,
+      "kind": "print",
+      "lumps": 1
+    },
+    {
+      "name": "P3 PCB spacer 4.85mm 2",
+      "box": [
+        [
+          162.7,
+          23.5,
+          95.2
+        ],
+        [
+          170.3,
+          28.35,
+          102.8
+        ]
+      ],
+      "volume_mm3": 175.9841664724733,
+      "kind": "print",
+      "lumps": 1
+    },
+    {
+      "name": "P3 PCB spacer 4.85mm 3",
+      "box": [
+        [
+          224.7,
+          23.5,
+          53.2
+        ],
+        [
+          232.3,
+          28.35,
+          60.8
+        ]
+      ],
+      "volume_mm3": 175.9841664724733,
+      "kind": "print",
+      "lumps": 1
+    },
+    {
+      "name": "P3 PCB spacer 4.85mm 4",
+      "box": [
+        [
+          224.7,
+          23.5,
+          95.2
+        ],
+        [
+          232.3,
+          28.35,
+          102.8
+        ]
+      ],
+      "volume_mm3": 175.9841664724733,
+      "kind": "print",
+      "lumps": 1
+    },
+    {
+      "name": "P4 U2D2 upward port shelf - 4x M2x5",
+      "box": [
+        [
+          164.0,
+          23.5,
+          104.5
+        ],
+        [
+          231.0,
+          44.5,
+          114.0
+        ]
+      ],
+      "volume_mm3": 5013.638765084869,
+      "kind": "print",
+      "lumps": 1
+    },
+    {
+      "name": "REF power PCB 70x50x1.6 - mechanical envelope",
+      "box": [
+        [
+          162.5,
+          28.35,
+          53.0
+        ],
+        [
+          232.5,
+          29.95,
+          103.0
+        ]
+      ],
+      "volume_mm3": 5543.034338946569,
+      "kind": "pcb",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+CUI_PJ-102A-95_1:1",
+      "box": [
+        [
+          127.168976,
+          26.5,
+          99.031165
+        ],
+        [
+          130.168976,
+          38.6,
+          101.411165
+        ]
+      ],
+      "volume_mm3": 12.096344765613754,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+SCREW_TERMINAL_BLOCK_3_5MM_-101:1",
+      "box": [
+        [
+          136.55862,
+          30.5,
+          102.000021
+        ],
+        [
+          138.85862,
+          33.7,
+          107.500021
+        ]
+      ],
+      "volume_mm3": 26.484204728329313,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+MBRS340FSCT-ND_1:1",
+      "box": [
+        [
+          126.598751,
+          30.0,
+          86.640342
+        ],
+        [
+          134.648764,
+          32.932224,
+          92.890342
+        ]
+      ],
+      "volume_mm3": 112.73712715879968,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+JST_B4B_EH_A_1:1",
+      "box": [
+        [
+          147.24473,
+          26.8,
+          89.08447
+        ],
+        [
+          159.74473,
+          36.0,
+          92.88447
+        ]
+      ],
+      "volume_mm3": 116.24636774445999,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+SCREW_TERMINAL_BLOCK_3_5MM_-119:1",
+      "box": [
+        [
+          135.70862,
+          30.0,
+          101.200021
+        ],
+        [
+          143.00862,
+          38.4,
+          108.000021
+        ]
+      ],
+      "volume_mm3": 211.4041853818204,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+CUI_PJ-102A-127_1:1",
+      "box": [
+        [
+          124.168976,
+          30.0,
+          98.491165
+        ],
+        [
+          133.168976,
+          41.0,
+          112.891165
+        ]
+      ],
+      "volume_mm3": 959.3816946423741,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+CUI_PJ-102A-133_1:1",
+      "box": [
+        [
+          127.668976,
+          26.5,
+          105.066165
+        ],
+        [
+          129.668976,
+          37.5,
+          111.316165
+        ]
+      ],
+      "volume_mm3": 21.751689860455865,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+EDGED7B6KTYP_1:1",
+      "box": [
+        [
+          113.612519,
+          25.278012,
+          82.796037
+        ],
+        [
+          124.082287,
+          44.5725,
+          98.636365
+        ]
+      ],
+      "volume_mm3": 1423.5691660527218,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+SCREW_TERMINAL_BLOCK_3_5MM_-145:1",
+      "box": [
+        [
+          140.05862,
+          30.5,
+          102.000021
+        ],
+        [
+          142.35862,
+          33.7,
+          107.500021
+        ]
+      ],
+      "volume_mm3": 26.484204728330887,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+SCREW_TERMINAL_BLOCK_3_5MM_-151:1",
+      "box": [
+        [
+          136.45862,
+          34.0,
+          103.450021
+        ],
+        [
+          138.75862,
+          38.4,
+          105.750021
+        ]
+      ],
+      "volume_mm3": 18.083178248349075,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+SCREW_TERMINAL_BLOCK_3_5MM_-157:1",
+      "box": [
+        [
+          140.73362,
+          27.8,
+          104.225021
+        ],
+        [
+          141.48362,
+          30.4,
+          104.975021
+        ]
+      ],
+      "volume_mm3": 1.1379110390694611,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+CUI_PJ-102A-163_1:1",
+      "box": [
+        [
+          131.168976,
+          26.5,
+          100.941165
+        ],
+        [
+          133.568976,
+          33.0,
+          103.441165
+        ]
+      ],
+      "volume_mm3": 6.095176902286824,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+SCREW_TERMINAL_BLOCK_3_5MM_-169:1",
+      "box": [
+        [
+          137.23362,
+          27.9,
+          104.225021
+        ],
+        [
+          137.98362,
+          30.5,
+          104.975021
+        ]
+      ],
+      "volume_mm3": 1.137911039069461,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+PART_1_1:1",
+      "box": [
+        [
+          112.499961,
+          28.35,
+          51.000021
+        ],
+        [
+          160.499961,
+          30.4,
+          108.000021
+        ]
+      ],
+      "volume_mm3": 4350.549595367383,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+JST_B3B_EH_A_1:1",
+      "box": [
+        [
+          136.499961,
+          26.8,
+          77.109279
+        ],
+        [
+          146.499961,
+          36.0,
+          80.909279
+        ]
+      ],
+      "volume_mm3": 97.01677441096564,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+039281023_1:1",
+      "box": [
+        [
+          112.907166,
+          26.5,
+          76.230789
+        ],
+        [
+          123.907166,
+          42.8,
+          82.430789
+        ]
+      ],
+      "volume_mm3": 452.974815396094,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+CP_ELEC_8X10_1:1",
+      "box": [
+        [
+          125.784728,
+          30.0,
+          76.856103
+        ],
+        [
+          135.284728,
+          40.0,
+          85.156103
+        ]
+      ],
+      "volume_mm3": 500.09053925250424,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+SCREW_TERMINAL_BLOCK_3_5MM_-205:1",
+      "box": [
+        [
+          139.95862,
+          34.0,
+          103.450021
+        ],
+        [
+          142.25862,
+          38.4,
+          105.750021
+        ]
+      ],
+      "volume_mm3": 18.08317824807255,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+JST_B4B_EH_A_1:2",
+      "box": [
+        [
+          147.24473,
+          26.8,
+          77.109279
+        ],
+        [
+          159.74473,
+          36.0,
+          80.909279
+        ]
+      ],
+      "volume_mm3": 116.24636774446179,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+JST_B3B_EH_A_1:2",
+      "box": [
+        [
+          136.499961,
+          26.8,
+          89.08447
+        ],
+        [
+          146.499961,
+          36.0,
+          92.88447
+        ]
+      ],
+      "volume_mm3": 97.01677441096426,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+JST_B4B_EH_A_1:3",
+      "box": [
+        [
+          147.24473,
+          26.8,
+          83.131538
+        ],
+        [
+          159.74473,
+          36.0,
+          86.931538
+        ]
+      ],
+      "volume_mm3": 116.24636774446125,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+JST_B3B_EH_A_1:3",
+      "box": [
+        [
+          136.499961,
+          26.8,
+          83.131538
+        ],
+        [
+          146.499961,
+          36.0,
+          86.931538
+        ]
+      ],
+      "volume_mm3": 97.01677441096525,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS U2D2 U2D2_CASE_B_DUMMY:1",
+      "box": [
+        [
+          172.0,
+          24.0,
+          108.0
+        ],
+        [
+          220.0,
+          42.0,
+          116.4
+        ]
+      ],
+      "volume_mm3": 5372.483911978065,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS U2D2 U2D2_CASE_T_DUMMY:1",
+      "box": [
+        [
+          172.0,
+          24.0,
+          114.9
+        ],
+        [
+          220.0,
+          42.0,
+          122.9
+        ]
+      ],
+      "volume_mm3": 5501.908553759927,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS U2D2 USB-C_DUMMY:1",
+      "box": [
+        [
+          212.15,
+          28.53,
+          116.5
+        ],
+        [
+          219.5,
+          37.47,
+          119.76
+        ]
+      ],
+      "volume_mm3": 136.4524771110822,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS U2D2 UART_4P:1",
+      "box": [
+        [
+          177.0,
+          35.55,
+          116.6
+        ],
+        [
+          187.0,
+          40.2,
+          122.55
+        ]
+      ],
+      "volume_mm3": 109.92903237760714,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS U2D2 TTL_3P:1",
+      "box": [
+        [
+          177.0,
+          29.6,
+          116.5
+        ],
+        [
+          187.0,
+          33.4,
+          122.5
+        ]
+      ],
+      "volume_mm3": 102.23761880820008,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS U2D2 RS-485_4P:1",
+      "box": [
+        [
+          177.0,
+          25.4,
+          116.5
+        ],
+        [
+          189.5,
+          29.2,
+          122.5
+        ]
+      ],
+      "volume_mm3": 123.49094859570009,
+      "kind": "official",
+      "lumps": 1
+    }
+  ]
+}

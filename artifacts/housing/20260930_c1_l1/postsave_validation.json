@@ -1,0 +1,17 @@
+{
+  "document": "MARC v4 Body v5 BOX v37",
+  "version": 37,
+  "modified": false,
+  "saved": true,
+  "after_save_differences": [],
+  "protected_body_count": 266,
+  "occurrences": 172,
+  "warnings": [
+    {
+      "i": 41,
+      "name": "스케치4",
+      "health": 1,
+      "error": "대상 발생 변환 가져오기 실패<b>1 참조 실패</b><br/>대상 발생 변환 가져오기 실패프로젝트1스케치4"
+    }
+  ]
+}

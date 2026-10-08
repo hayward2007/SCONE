@@ -1,0 +1,11 @@
+{
+  "source_packet": "archive/ICRA_2027_revision2_20260912",
+  "source_sha256": {
+    "paper.tex": "9b92a8cf186d2f06936897561db2a38bd810eb5ad506ad03e6f92990696ef181",
+    "results_text.tex": "ba16766fe6baa37abbedc566c864e1d82cc0f33fa557033645cf62090632b299",
+    "numbers.tex": "f55aa9dbce616a8b6dd05a994d3c5e5d316feeebe46fad58a6f3bd3261bc1386",
+    "references.bib": "9979124e9bbb8416a05c17202619f84787655e611d5c606c2a5fe48c4d4e4713",
+    "output/pdf/SCONE_ICRA2027_Manuscript_EN.pdf": "587b404cd7b8fb9d3229742fbeeae85bb226bb50d869532a4957531b193c9f3a"
+  },
+  "scope": "Manuscript, post-hoc analysis, reviewer assessment and typesetting. No controller or simulation changes."
+}

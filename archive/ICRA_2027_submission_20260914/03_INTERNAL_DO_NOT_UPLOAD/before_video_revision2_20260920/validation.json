@@ -1,0 +1,54 @@
+{
+  "checked_at_utc": "2026-09-14T00:03:47.618132+00:00",
+  "status": "LOCAL_FILE_CHECKS_PASS",
+  "files": [
+    {
+      "file": "01_UPLOAD/SCONE_ICRA2027_Paper.pdf",
+      "source": "/Users/hayward_kim/Developer/SCONE/archive/ICRA_2027_revision5_20260913/output/pdf/SCONE_ICRA2027_Manuscript_EN.pdf",
+      "bytes": 462375,
+      "sha256": "c82a1da950bd0c160c0cf1e0922ee899db300dbd3b3b07be63f37fd8de4c2720",
+      "identical_to_source": true
+    },
+    {
+      "file": "01_UPLOAD/SCONE_ICRA2027_Video.mp4",
+      "source": "/Users/hayward_kim/Developer/SCONE/archive/ICRA_2027_revision5_20260913/media/companion_video.mp4",
+      "bytes": 5441604,
+      "sha256": "dcb6d52733f2912f49125f790b1bcb74a4c2e07482a3bc626b014f71c9562301",
+      "identical_to_source": true
+    }
+  ],
+  "pdf": {
+    "pages": 6,
+    "all_pages_us_letter": true,
+    "fonts_embedded": true,
+    "type3_fonts": 0,
+    "encrypted": false,
+    "annotations": 0,
+    "bookmarks": 0,
+    "author_metadata": "",
+    "embedded_attachments": false,
+    "ai_disclosure_present": true,
+    "searchable": true,
+    "pdf_version": "%PDF-1.5"
+  },
+  "video": {
+    "duration_s": 91.84,
+    "bytes": 5441604,
+    "width": 1280,
+    "height": 720,
+    "fps": 25.0,
+    "codec": "h264",
+    "scan_type": "progressive",
+    "audio_streams": 0
+  },
+  "form": {
+    "abstract_matches_source": true,
+    "title_matches_pdf_ignoring_case": true,
+    "abstract_words": 190,
+    "abstract_characters": 1310,
+    "authors_complete": false
+  },
+  "visual_review": "Preserved byte-identical Revision 5 files; reused prior complete page and media inspection. No PDF regeneration.",
+  "online_pdf_test": "NOT_PERFORMED",
+  "external_submission": "NOT_SUBMITTED"
+}

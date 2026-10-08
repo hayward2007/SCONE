@@ -1,0 +1,771 @@
+{
+  "tests": [
+    {
+      "name": "lid M3 underside [-14, -25]",
+      "hits": [],
+      "driver_diameter_mm": 4.8,
+      "approach": "-Z",
+      "screw": "M3x35 low head D6 H2.5"
+    },
+    {
+      "name": "lid M3 underside [-14, 25]",
+      "hits": [],
+      "driver_diameter_mm": 4.8,
+      "approach": "-Z",
+      "screw": "M3x35 low head D6 H2.5"
+    },
+    {
+      "name": "lid M3 underside [77, -72]",
+      "hits": [],
+      "driver_diameter_mm": 4.8,
+      "approach": "-Z",
+      "screw": "M3x35 low head D6 H2.5"
+    },
+    {
+      "name": "lid M3 underside [77, 72]",
+      "hits": [],
+      "driver_diameter_mm": 4.8,
+      "approach": "-Z",
+      "screw": "M3x35 low head D6 H2.5"
+    },
+    {
+      "name": "lid M3 underside [97, -69]",
+      "hits": [],
+      "driver_diameter_mm": 4.8,
+      "approach": "-Z",
+      "screw": "M3x35 low head D6 H2.5"
+    },
+    {
+      "name": "lid M3 underside [97, 69]",
+      "hits": [],
+      "driver_diameter_mm": 4.8,
+      "approach": "-Z",
+      "screw": "M3x35 low head D6 H2.5"
+    },
+    {
+      "name": "lid M3 underside [180, -25]",
+      "hits": [],
+      "driver_diameter_mm": 4.8,
+      "approach": "-Z",
+      "screw": "M3x35 low head D6 H2.5"
+    },
+    {
+      "name": "lid M3 underside [180, 25]",
+      "hits": [],
+      "driver_diameter_mm": 4.8,
+      "approach": "-Z",
+      "screw": "M3x35 low head D6 H2.5"
+    },
+    {
+      "name": "MX top M2 [-56.8912974452, -35.64092583]",
+      "hits": [],
+      "driver_diameter_mm": 3.5,
+      "approach": "+Z",
+      "screw": "M2x6, 4 per motor",
+      "stage": "sensor lids removed together with camera/lidar, leg subassembly not installed"
+    },
+    {
+      "name": "MX bottom M2 [-56.8912974452, -35.64092583]",
+      "hits": [],
+      "driver_diameter_mm": 3.5,
+      "approach": "-Z",
+      "screw": "M2x4, 4 per motor",
+      "stage": "before legs/wheels"
+    },
+    {
+      "name": "MX top M2 [-26.891297445200003, -35.64092583]",
+      "hits": [],
+      "driver_diameter_mm": 3.5,
+      "approach": "+Z",
+      "screw": "M2x6, 4 per motor",
+      "stage": "sensor lids removed together with camera/lidar, leg subassembly not installed"
+    },
+    {
+      "name": "MX bottom M2 [-26.891297445200003, -35.64092583]",
+      "hits": [],
+      "driver_diameter_mm": 3.5,
+      "approach": "-Z",
+      "screw": "M2x4, 4 per motor",
+      "stage": "before legs/wheels"
+    },
+    {
+      "name": "MX top M2 [-50.3912974452, -29.34092583]",
+      "hits": [],
+      "driver_diameter_mm": 3.5,
+      "approach": "+Z",
+      "screw": "M2x6, 4 per motor",
+      "stage": "sensor lids removed together with camera/lidar, leg subassembly not installed"
+    },
+    {
+      "name": "MX bottom M2 [-50.3912974452, -29.34092583]",
+      "hits": [],
+      "driver_diameter_mm": 3.5,
+      "approach": "-Z",
+      "screw": "M2x4, 4 per motor",
+      "stage": "before legs/wheels"
+    },
+    {
+      "name": "MX top M2 [-33.3912974452, -29.34092583]",
+      "hits": [],
+      "driver_diameter_mm": 3.5,
+      "approach": "+Z",
+      "screw": "M2x6, 4 per motor",
+      "stage": "sensor lids removed together with camera/lidar, leg subassembly not installed"
+    },
+    {
+      "name": "MX bottom M2 [-33.3912974452, -29.34092583]",
+      "hits": [],
+      "driver_diameter_mm": 3.5,
+      "approach": "-Z",
+      "screw": "M2x4, 4 per motor",
+      "stage": "before legs/wheels"
+    },
+    {
+      "name": "bridge M3 [-41.8912974452, -15]",
+      "hits": [],
+      "driver_diameter_mm": 4.8,
+      "approach": "+Z",
+      "screw": "M3x8 low head D5.5 H2"
+    },
+    {
+      "name": "MX top M2 [-56.8912974452, 35.64092583]",
+      "hits": [],
+      "driver_diameter_mm": 3.5,
+      "approach": "+Z",
+      "screw": "M2x6, 4 per motor",
+      "stage": "sensor lids removed together with camera/lidar, leg subassembly not installed"
+    },
+    {
+      "name": "MX bottom M2 [-56.8912974452, 35.64092583]",
+      "hits": [],
+      "driver_diameter_mm": 3.5,
+      "approach": "-Z",
+      "screw": "M2x4, 4 per motor",
+      "stage": "before legs/wheels"
+    },
+    {
+      "name": "MX top M2 [-26.891297445200003, 35.64092583]",
+      "hits": [],
+      "driver_diameter_mm": 3.5,
+      "approach": "+Z",
+      "screw": "M2x6, 4 per motor",
+      "stage": "sensor lids removed together with camera/lidar, leg subassembly not installed"
+    },
+    {
+      "name": "MX bottom M2 [-26.891297445200003, 35.64092583]",
+      "hits": [],
+      "driver_diameter_mm": 3.5,
+      "approach": "-Z",
+      "screw": "M2x4, 4 per motor",
+      "stage": "before legs/wheels"
+    },
+    {
+      "name": "MX top M2 [-50.3912974452, 29.34092583]",
+      "hits": [],
+      "driver_diameter_mm": 3.5,
+      "approach": "+Z",
+      "screw": "M2x6, 4 per motor",
+      "stage": "sensor lids removed together with camera/lidar, leg subassembly not installed"
+    },
+    {
+      "name": "MX bottom M2 [-50.3912974452, 29.34092583]",
+      "hits": [],
+      "driver_diameter_mm": 3.5,
+      "approach": "-Z",
+      "screw": "M2x4, 4 per motor",
+      "stage": "before legs/wheels"
+    },
+    {
+      "name": "MX top M2 [-33.3912974452, 29.34092583]",
+      "hits": [],
+      "driver_diameter_mm": 3.5,
+      "approach": "+Z",
+      "screw": "M2x6, 4 per motor",
+      "stage": "sensor lids removed together with camera/lidar, leg subassembly not installed"
+    },
+    {
+      "name": "MX bottom M2 [-33.3912974452, 29.34092583]",
+      "hits": [],
+      "driver_diameter_mm": 3.5,
+      "approach": "-Z",
+      "screw": "M2x4, 4 per motor",
+      "stage": "before legs/wheels"
+    },
+    {
+      "name": "bridge M3 [-41.8912974452, 15]",
+      "hits": [],
+      "driver_diameter_mm": 4.8,
+      "approach": "+Z",
+      "screw": "M3x8 low head D5.5 H2"
+    },
+    {
+      "name": "MX top M2 [193.1087025548, -35.64092583]",
+      "hits": [],
+      "driver_diameter_mm": 3.5,
+      "approach": "+Z",
+      "screw": "M2x6, 4 per motor",
+      "stage": "sensor lids removed together with camera/lidar, leg subassembly not installed"
+    },
+    {
+      "name": "MX bottom M2 [193.1087025548, -35.64092583]",
+      "hits": [],
+      "driver_diameter_mm": 3.5,
+      "approach": "-Z",
+      "screw": "M2x4, 4 per motor",
+      "stage": "before legs/wheels"
+    },
+    {
+      "name": "MX top M2 [223.1087025548, -35.64092583]",
+      "hits": [],
+      "driver_diameter_mm": 3.5,
+      "approach": "+Z",
+      "screw": "M2x6, 4 per motor",
+      "stage": "sensor lids removed together with camera/lidar, leg subassembly not installed"
+    },
+    {
+      "name": "MX bottom M2 [223.1087025548, -35.64092583]",
+      "hits": [],
+      "driver_diameter_mm": 3.5,
+      "approach": "-Z",
+      "screw": "M2x4, 4 per motor",
+      "stage": "before legs/wheels"
+    },
+    {
+      "name": "MX top M2 [199.6087025548, -29.34092583]",
+      "hits": [],
+      "driver_diameter_mm": 3.5,
+      "approach": "+Z",
+      "screw": "M2x6, 4 per motor",
+      "stage": "sensor lids removed together with camera/lidar, leg subassembly not installed"
+    },
+    {
+      "name": "MX bottom M2 [199.6087025548, -29.34092583]",
+      "hits": [],
+      "driver_diameter_mm": 3.5,
+      "approach": "-Z",
+      "screw": "M2x4, 4 per motor",
+      "stage": "before legs/wheels"
+    },
+    {
+      "name": "MX top M2 [216.6087025548, -29.34092583]",
+      "hits": [],
+      "driver_diameter_mm": 3.5,
+      "approach": "+Z",
+      "screw": "M2x6, 4 per motor",
+      "stage": "sensor lids removed together with camera/lidar, leg subassembly not installed"
+    },
+    {
+      "name": "MX bottom M2 [216.6087025548, -29.34092583]",
+      "hits": [],
+      "driver_diameter_mm": 3.5,
+      "approach": "-Z",
+      "screw": "M2x4, 4 per motor",
+      "stage": "before legs/wheels"
+    },
+    {
+      "name": "bridge M3 [208.1087025548, -15]",
+      "hits": [],
+      "driver_diameter_mm": 4.8,
+      "approach": "+Z",
+      "screw": "M3x8 low head D5.5 H2"
+    },
+    {
+      "name": "MX top M2 [193.1087025548, 35.64092583]",
+      "hits": [],
+      "driver_diameter_mm": 3.5,
+      "approach": "+Z",
+      "screw": "M2x6, 4 per motor",
+      "stage": "sensor lids removed together with camera/lidar, leg subassembly not installed"
+    },
+    {
+      "name": "MX bottom M2 [193.1087025548, 35.64092583]",
+      "hits": [],
+      "driver_diameter_mm": 3.5,
+      "approach": "-Z",
+      "screw": "M2x4, 4 per motor",
+      "stage": "before legs/wheels"
+    },
+    {
+      "name": "MX top M2 [223.1087025548, 35.64092583]",
+      "hits": [],
+      "driver_diameter_mm": 3.5,
+      "approach": "+Z",
+      "screw": "M2x6, 4 per motor",
+      "stage": "sensor lids removed together with camera/lidar, leg subassembly not installed"
+    },
+    {
+      "name": "MX bottom M2 [223.1087025548, 35.64092583]",
+      "hits": [],
+      "driver_diameter_mm": 3.5,
+      "approach": "-Z",
+      "screw": "M2x4, 4 per motor",
+      "stage": "before legs/wheels"
+    },
+    {
+      "name": "MX top M2 [199.6087025548, 29.34092583]",
+      "hits": [],
+      "driver_diameter_mm": 3.5,
+      "approach": "+Z",
+      "screw": "M2x6, 4 per motor",
+      "stage": "sensor lids removed together with camera/lidar, leg subassembly not installed"
+    },
+    {
+      "name": "MX bottom M2 [199.6087025548, 29.34092583]",
+      "hits": [],
+      "driver_diameter_mm": 3.5,
+      "approach": "-Z",
+      "screw": "M2x4, 4 per motor",
+      "stage": "before legs/wheels"
+    },
+    {
+      "name": "MX top M2 [216.6087025548, 29.34092583]",
+      "hits": [],
+      "driver_diameter_mm": 3.5,
+      "approach": "+Z",
+      "screw": "M2x6, 4 per motor",
+      "stage": "sensor lids removed together with camera/lidar, leg subassembly not installed"
+    },
+    {
+      "name": "MX bottom M2 [216.6087025548, 29.34092583]",
+      "hits": [],
+      "driver_diameter_mm": 3.5,
+      "approach": "-Z",
+      "screw": "M2x4, 4 per motor",
+      "stage": "before legs/wheels"
+    },
+    {
+      "name": "bridge M3 [208.1087025548, 15]",
+      "hits": [],
+      "driver_diameter_mm": 4.8,
+      "approach": "+Z",
+      "screw": "M3x8 low head D5.5 H2"
+    },
+    {
+      "name": "chassis M4 bottom [71, -62]",
+      "hits": [],
+      "driver_diameter_mm": 6,
+      "approach": "-Z",
+      "screw": "M4x25 with nut and washers",
+      "stage": "tray/lids removed"
+    },
+    {
+      "name": "chassis M4 nut [71, -62]",
+      "hits": [],
+      "driver_diameter_mm": 9,
+      "approach": "+Z",
+      "stage": "tray/lids removed"
+    },
+    {
+      "name": "chassis M4 bottom [71, 62]",
+      "hits": [],
+      "driver_diameter_mm": 6,
+      "approach": "-Z",
+      "screw": "M4x25 with nut and washers",
+      "stage": "tray/lids removed"
+    },
+    {
+      "name": "chassis M4 nut [71, 62]",
+      "hits": [],
+      "driver_diameter_mm": 9,
+      "approach": "+Z",
+      "stage": "tray/lids removed"
+    },
+    {
+      "name": "chassis M4 bottom [79, -62]",
+      "hits": [],
+      "driver_diameter_mm": 6,
+      "approach": "-Z",
+      "screw": "M4x25 with nut and washers",
+      "stage": "tray/lids removed"
+    },
+    {
+      "name": "chassis M4 nut [79, -62]",
+      "hits": [],
+      "driver_diameter_mm": 9,
+      "approach": "+Z",
+      "stage": "tray/lids removed"
+    },
+    {
+      "name": "chassis M4 bottom [79, 62]",
+      "hits": [],
+      "driver_diameter_mm": 6,
+      "approach": "-Z",
+      "screw": "M4x25 with nut and washers",
+      "stage": "tray/lids removed"
+    },
+    {
+      "name": "chassis M4 nut [79, 62]",
+      "hits": [],
+      "driver_diameter_mm": 9,
+      "approach": "+Z",
+      "stage": "tray/lids removed"
+    },
+    {
+      "name": "tray M3 [33, -48]",
+      "hits": [],
+      "driver_diameter_mm": 4.8,
+      "approach": "+Z",
+      "screw": "M3x10 low head D5.5 H2",
+      "stage": "Jetson/lids removed"
+    },
+    {
+      "name": "tray M3 [33, 48]",
+      "hits": [],
+      "driver_diameter_mm": 4.8,
+      "approach": "+Z",
+      "screw": "M3x10 low head D5.5 H2",
+      "stage": "Jetson/lids removed"
+    },
+    {
+      "name": "tray M3 [125, -50]",
+      "hits": [],
+      "driver_diameter_mm": 4.8,
+      "approach": "+Z",
+      "screw": "M3x10 low head D5.5 H2",
+      "stage": "Jetson/lids removed"
+    },
+    {
+      "name": "tray M3 [125, 50]",
+      "hits": [],
+      "driver_diameter_mm": 4.8,
+      "approach": "+Z",
+      "screw": "M3x10 low head D5.5 H2",
+      "stage": "Jetson/lids removed"
+    },
+    {
+      "name": "Jetson retaining clip [45, -53.5]",
+      "hits": [],
+      "driver_diameter_mm": 3.5,
+      "approach": "+Z",
+      "screw": "M3x6 plus nonconductive retaining tab",
+      "required_slim_shaft_diameter_mm": 3.5,
+      "stage": "lids removed"
+    },
+    {
+      "name": "Jetson retaining clip [45, 53.5]",
+      "hits": [],
+      "driver_diameter_mm": 3.5,
+      "approach": "+Z",
+      "screw": "M3x6 plus nonconductive retaining tab",
+      "required_slim_shaft_diameter_mm": 3.5,
+      "stage": "lids removed"
+    },
+    {
+      "name": "Jetson retaining clip [119, -53.5]",
+      "hits": [],
+      "driver_diameter_mm": 3.5,
+      "approach": "+Z",
+      "screw": "M3x6 plus nonconductive retaining tab",
+      "required_slim_shaft_diameter_mm": 3.5,
+      "stage": "lids removed"
+    },
+    {
+      "name": "Jetson retaining clip [119, 53.5]",
+      "hits": [],
+      "driver_diameter_mm": 3.5,
+      "approach": "+Z",
+      "screw": "M3x6 plus nonconductive retaining tab",
+      "required_slim_shaft_diameter_mm": 3.5,
+      "stage": "lids removed"
+    },
+    {
+      "name": "lidar M2 [38.9, -14.1]",
+      "hits": [],
+      "driver_diameter_mm": 3.5,
+      "approach": "-Z",
+      "screw": "M2x5 example",
+      "stage": "rear cover detached"
+    },
+    {
+      "name": "lidar M2 [67.1, 14.1]",
+      "hits": [],
+      "driver_diameter_mm": 3.5,
+      "approach": "-Z",
+      "screw": "M2x5 example",
+      "stage": "rear cover detached"
+    },
+    {
+      "name": "HEAD lid [-14, -25]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD lid [-14, 25]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD lid [77, -72]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD lid [77, 72]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD lid [97, -69]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD lid [97, 69]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD lid [180, -25]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD lid [180, 25]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD MX top [-56.8912974452, -35.64092583]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD MX bottom [-56.8912974452, -35.64092583]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD MX top [-26.891297445200003, -35.64092583]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD MX bottom [-26.891297445200003, -35.64092583]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD MX top [-50.3912974452, -29.34092583]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD MX bottom [-50.3912974452, -29.34092583]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD MX top [-33.3912974452, -29.34092583]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD MX bottom [-33.3912974452, -29.34092583]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD bridge [-41.8912974452, -15]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD MX top [-56.8912974452, 35.64092583]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD MX bottom [-56.8912974452, 35.64092583]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD MX top [-26.891297445200003, 35.64092583]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD MX bottom [-26.891297445200003, 35.64092583]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD MX top [-50.3912974452, 29.34092583]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD MX bottom [-50.3912974452, 29.34092583]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD MX top [-33.3912974452, 29.34092583]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD MX bottom [-33.3912974452, 29.34092583]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD bridge [-41.8912974452, 15]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD MX top [193.1087025548, -35.64092583]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD MX bottom [193.1087025548, -35.64092583]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD MX top [223.1087025548, -35.64092583]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD MX bottom [223.1087025548, -35.64092583]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD MX top [199.6087025548, -29.34092583]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD MX bottom [199.6087025548, -29.34092583]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD MX top [216.6087025548, -29.34092583]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD MX bottom [216.6087025548, -29.34092583]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD bridge [208.1087025548, -15]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD MX top [193.1087025548, 35.64092583]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD MX bottom [193.1087025548, 35.64092583]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD MX top [223.1087025548, 35.64092583]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD MX bottom [223.1087025548, 35.64092583]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD MX top [199.6087025548, 29.34092583]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD MX bottom [199.6087025548, 29.34092583]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD MX top [216.6087025548, 29.34092583]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD MX bottom [216.6087025548, 29.34092583]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD bridge [208.1087025548, 15]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD M4 head [71, -62]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD M4 nut [71, -62]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD M4 head [71, 62]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD M4 nut [71, 62]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD M4 head [79, -62]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD M4 nut [79, -62]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD M4 head [79, 62]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD M4 nut [79, 62]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD tray [33, -48]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD tray [33, 48]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD tray [125, -50]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    },
+    {
+      "name": "HEAD tray [125, 50]",
+      "hits": [],
+      "kind": "fastener head clearance"
+    }
+  ],
+  "total": 118,
+  "failed": 0,
+  "note": "Subassemblies are oriented so the listed axial tool direction is vertical on the assembly table. Legs/wheels installed after body motor bolts. Tool handle not included."
+}

@@ -1,0 +1,161 @@
+{
+  "analysis_type": "post-hoc reanalysis; no new trials",
+  "raw_sha256": "bb8b11fd0454c46048ba45dfd1f4357e1dd02ad14b7c03f20ff273243eda77f2",
+  "main_high": {
+    "U": {
+      "mean_vx_mps": {
+        "mean": 0.28337994683934276,
+        "min": 0.2779714300245067,
+        "max": 0.28766260684801115
+      },
+      "sector_rate_peak_dps": {
+        "mean": 1157.082919568482,
+        "min": 809.2219990677769,
+        "max": 1516.7876458188612
+      },
+      "distal_target_rate_peak_dps": {
+        "mean": 2046.402152246379,
+        "min": 981.3987082013767,
+        "max": 3299.5159754147635
+      },
+      "absolute_mechanical_work_j": {
+        "mean": 93.96356715819243,
+        "min": 93.45971596331317,
+        "max": 94.31599821795841
+      },
+      "slip_distance_m": {
+        "mean": 0.5180452358393969,
+        "min": 0.49071967840639924,
+        "max": 0.5409727672691909
+      },
+      "mechanical_cost_of_transport": {
+        "mean": 1.012476879653546,
+        "min": 0.9985973894565779,
+        "max": 1.0280873173386473
+      }
+    },
+    "B": {
+      "mean_vx_mps": {
+        "mean": 0.2832466779531233,
+        "min": 0.28013006280868635,
+        "max": 0.2860531326148178
+      },
+      "sector_rate_peak_dps": {
+        "mean": 535.4093742187515,
+        "min": 533.7411750000023,
+        "max": 536.4108000000009
+      },
+      "distal_target_rate_peak_dps": {
+        "mean": 1142.7783116632547,
+        "min": 754.7068279175733,
+        "max": 1405.5168009728134
+      },
+      "absolute_mechanical_work_j": {
+        "mean": 94.20595264567191,
+        "min": 93.29628567731224,
+        "max": 95.31825278158475
+      },
+      "slip_distance_m": {
+        "mean": 0.5087053613674352,
+        "min": 0.4963429265145703,
+        "max": 0.5184781955737633
+      },
+      "mechanical_cost_of_transport": {
+        "mean": 1.0149156827653614,
+        "min": 1.0035457144457307,
+        "max": 1.0331340926764143
+      }
+    },
+    "N": {
+      "mean_vx_mps": {
+        "mean": 0.12607363286425038,
+        "min": 0.12169724885570493,
+        "max": 0.12948817126054898
+      },
+      "sector_rate_peak_dps": {
+        "mean": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "distal_target_rate_peak_dps": {
+        "mean": 1455.4749854282907,
+        "min": 1060.3725718860658,
+        "max": 1763.1516853162723
+      },
+      "absolute_mechanical_work_j": {
+        "mean": 58.073134275297846,
+        "min": 54.89364405943076,
+        "max": 62.679978947909376
+      },
+      "slip_distance_m": {
+        "mean": 0.29030096661090904,
+        "min": 0.2770671839816351,
+        "max": 0.3005815574916012
+      },
+      "mechanical_cost_of_transport": {
+        "mean": 1.4104459917115502,
+        "min": 1.3497641663445215,
+        "max": 1.4921299317340113
+      }
+    },
+    "P": {
+      "mean_vx_mps": {
+        "mean": 0.2837935980691846,
+        "min": 0.2805241035406288,
+        "max": 0.28547006422089105
+      },
+      "sector_rate_peak_dps": {
+        "mean": 535.4093742187515,
+        "min": 533.7411750000023,
+        "max": 536.4108000000009
+      },
+      "distal_target_rate_peak_dps": {
+        "mean": 820.1928271740829,
+        "min": 736.0517879143983,
+        "max": 1191.8474405618554
+      },
+      "absolute_mechanical_work_j": {
+        "mean": 93.60490115320802,
+        "min": 93.11898869487989,
+        "max": 94.49387230696763
+      },
+      "slip_distance_m": {
+        "mean": 0.499159627662675,
+        "min": 0.4849133903848914,
+        "max": 0.5165292379728947
+      },
+      "mechanical_cost_of_transport": {
+        "mean": 1.0071688928924911,
+        "min": 0.999575406326048,
+        "max": 1.0200445429576301
+      }
+    }
+  },
+  "paired_B_minus_U_target_peak_dps": [
+    -2112.78466017187,
+    -1380.209597077051,
+    0.0,
+    -226.69188028380347,
+    -1834.834491370391,
+    -1437.4475372721788,
+    0.0,
+    -237.02255848969992
+  ],
+  "paired_B_minus_P_speed_mps": [
+    -0.0008498660684118642,
+    -0.0025501870118614933,
+    -0.0009853524223328303,
+    -0.0003940407319424355,
+    -0.00028287176820879223,
+    0.0006034435176817121,
+    -5.834451120301232e-05,
+    0.00014185806778843624
+  ],
+  "worst_observed_target_peak_reduction_percent": 57.40233381363963,
+  "scope_notes": [
+    "Target derivatives exclude the first measurement command, as in the original recorder.",
+    "Maxima compare maxima over eight prescribed phases, not matched individual episodes.",
+    "The 540 degree/s bound applies only to the sector component.",
+    "Periodic P has comparable speed and lower aggregate target peak than B."
+  ]
+}

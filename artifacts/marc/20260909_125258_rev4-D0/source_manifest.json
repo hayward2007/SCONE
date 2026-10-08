@@ -1,0 +1,50 @@
+{
+  "created_at": "2026-09-09T12:52:58.833141+09:00",
+  "document_path": "/Users/hayward_kim/Developer/SCONE/docs/30-scone-v3-design-plan.md",
+  "document_sha256": "3f129dbbf8bb31f3cba3e3a3431a3558a3cc7f7ca9dbad55b351475836253cd3",
+  "git_head": "c706117241c0da2e099b5d8375d3210d87888f14",
+  "git_status": " M src/locomotion/scone_gait_v2.py\n?? artifacts/\n?? benchmark/leg_usage.py\n?? docs/29-two-leg-sector-drive.md\n?? docs/30-scone-v3-design-plan.md\n?? docs/reviews/\n?? tests/test_scone_gait_v2.py\n?? tools/\n",
+  "protected_files": {
+    "benchmark/leg_usage.py": "756330ba8b348c72398b00a6208d6ac829fe206711733c83d51b7f0ade181a32",
+    "docs/29-two-leg-sector-drive.md": "1c977f22ef526db9fc422d7c45d33fdba1f0787d4edc1740d6aa73877ddcc5d7",
+    "docs/30-scone-v3-design-plan.md": "3f129dbbf8bb31f3cba3e3a3431a3558a3cc7f7ca9dbad55b351475836253cd3",
+    "docs/reviews/2026-09-09-scone-v3-rev3-verification.md": "4d21e385fda5a1ae05c98b040b0e782d6ae39cf17b056906155af19603be8dd4",
+    "tests/test_scone_gait_v2.py": "3dec1ac3091ff63fdcc63732fb426af8c140f60d840d0d2a1b9a7c7494c67cd4",
+    "tools/fmcp.py": "3c93e9be725f8d2d8b37b9c502c2658e85624c340f5b36a62ca8180eb8d951e3",
+    "tools/leg_torque.py": "842e477fe92d4efc75e40da7ee0ce2cedcb162f5baad498a30d2421c152ff808",
+    "tools/mass_budget.py": "d2fdf7c08d7b788c9c3cfa460c33e5b3e1fc3ebbfb8e390bc71b4d02c6994267",
+    "tools/sector_geom.py": "eac8bb14a7a0d0616bab9ea0ffb10e665a372174e14fbfd17bfb0529ace7a750",
+    "tools/sector_mass.py": "f5bd44ecaf0958bf2351c88a0b5207d36dd98e1620011c204d9f31d82f8e5fd5",
+    "tools/sector_struct.py": "736b72e46565610bf02a0eff9b6c719045565a320a7d8a279bb6d126796655f5",
+    "tools/v3/fusion_rpc.py": "c69c20befb879e0f8849f4b3f428a34077f83f63ebcd7c746df0166fc40a58d0",
+    "tools/v3/prepare_run.py": "12a0ede6335835f16652c288b9c232812ca63f02c2d8b05e8eb5ebfc95318ba7",
+    "src/locomotion/scone_gait_v2.py": "cf3869aeb8c3011815ddc80980c335bb1c956c6f365b040092638178e610e0f0"
+  },
+  "scope": "New Fusion D0 design; existing models and controllers preserved",
+  "tool_sha256": {
+    "evidence/tools_snapshot/build_03_sector.py": "18dfebfbde44b669dc7a802832775b51abbaea9e20355e6c865cc023a9114991",
+    "evidence/tools_snapshot/build_04_leg_body.py": "19f8e4663ec2e1929970fe3588a6a723c42ae1917a2e9dcfcac7639ba7803722",
+    "evidence/tools_snapshot/build_06_assembly.py": "8aeae1daad3644467da0fadea6b29357bd3cd4cac4df0d519eca4d25fac9a3dd",
+    "evidence/tools_snapshot/calc_profile.py": "0440fd30ad2d436c5e846d5c44bdb4b949fa93cf34d3d6fd897dd1faca1fc76a",
+    "evidence/tools_snapshot/check_02_joints.py": "97c8fb18ddc1c1c86e3117f9a536dcca23d14b9d3fd163f7d883abaf337f4cbb",
+    "evidence/tools_snapshot/check_05_properties.py": "a6d081901739c17d798bf124a92147224a0fc0da281b98851ac4b685a95b5af5",
+    "evidence/tools_snapshot/check_05_units.py": "1eda20a09f6d70ab5ea784d5068d66f0bfeccd32d851cecca5922388ea66f0ce",
+    "evidence/tools_snapshot/check_09_clearance.py": "d117099120ef5cf594843592786cd74a8f987b4c253b3a536e651b67b142179a",
+    "evidence/tools_snapshot/check_archive.py": "252310b5bc04b7b83b92e2109b6ff5d43b003569d0174e512687062c207bccc8",
+    "evidence/tools_snapshot/check_step.py": "05c3bc68e6b0afeaf92047b77a915997717db787db2a948ddea9767e5ae91052",
+    "evidence/tools_snapshot/create_document.py": "fd4a6454a5db735d8961fbf344cfc93b0889dbc0ccf2a3545381f0c0d3cc83cd",
+    "evidence/tools_snapshot/finalize_cad.py": "6cd4056e33811d7500dbdca8f3d670dc6feb58b30421757be5790ad235f6f5b3",
+    "evidence/tools_snapshot/fusion_common.py": "1035ce4c00fab1f84864749cb77c02e87c31176e19898ab61534209c3c37b7f6",
+    "evidence/tools_snapshot/fusion_rpc.py": "e3d769656227f8441380cc5f7730db85a9853159d19ce57dbf435768534eb795",
+    "evidence/tools_snapshot/prepare_run.py": "85bb83a3480f0d37fc5b25a36761581038242bdf95c667de1c65c8e6d6b6c42e",
+    "evidence/tools_snapshot/rebuild_joint_frames.py": "582b47e1e2add362f4cc2fe45695b721f757a4c1e5964932a8d25b026184ad80",
+    "evidence/tools_snapshot/write_14_handoff.py": "d1ba111801cb7d7ec11ced9b46e15dc018bd4c29b91c52768f9346ae8612f253"
+  },
+  "completed_at": "2026-09-09T14:59:55.561093+09:00",
+  "protected_files_verified": true,
+  "document_snapshot": "evidence/design_plan_snapshot.md",
+  "parameters_sha256": "9016f7ae0c61b47d2dc5956501b72e76cb43e6b856222ea5a5a4c550a5e09977",
+  "known_analytical_conflicts": [
+    "Section 6.3 disallows double-counting internal efficiency but section 16 uses design_factor / drive_efficiency. Load reference output is not operational acceptance."
+  ]
+}

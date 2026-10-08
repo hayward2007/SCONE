@@ -1,0 +1,13 @@
+{
+  "n": 80,
+  "completed": 80,
+  "ik_failure_frames": 0,
+  "forbidden_collision_steps": 0,
+  "minimum_upright": 0.999211278540008,
+  "maximum_abs_yaw_degrees": 9.743195981868773,
+  "maximum_lateral_drift_m": 0.18824544232741827,
+  "maximum_velocity_crosscheck_difference_mps": 0.002262348510030876,
+  "scheduled_stance_min": 3,
+  "pair12_to_corners_speed_ratio_high": 0.9733126005644834,
+  "corner_vs_n_speed_ratio_high": 2.0745251834145204
+}

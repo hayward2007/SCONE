@@ -1,0 +1,46 @@
+{
+  "yaw_step_deg": 1,
+  "yaw_range_deg": [
+    0,
+    92
+  ],
+  "hip_deg": -0.14356,
+  "method": "FCL meshes 0.03mm; includes surface contact, native volume witness required",
+  "hits": [
+    [
+      89,
+      "LEG 1:5+XM430:2+X-430_IDLE:1/\ubcf8\uccb41",
+      "R01 Rear smooth PLA chassis:1"
+    ],
+    [
+      90,
+      "LEG 1:5+XM430:2+X-430_IDLE:1/\ubcf8\uccb41",
+      "R01 Rear smooth PLA chassis:1"
+    ],
+    [
+      90,
+      "LEG 1:5+XM430:2+X-430_SPACER_RING:6/\ubcf8\uccb41",
+      "R01 Rear smooth PLA chassis:1"
+    ],
+    [
+      91,
+      "LEG 1:5+XM430:2+X-430_IDLE:1/\ubcf8\uccb41",
+      "R01 Rear smooth PLA chassis:1"
+    ],
+    [
+      91,
+      "LEG 1:5+XM430:2+X-430_SPACER_RING:6/\ubcf8\uccb41",
+      "R01 Rear smooth PLA chassis:1"
+    ],
+    [
+      92,
+      "LEG 1:5+XM430:2+X-430_IDLE:1/\ubcf8\uccb41",
+      "R01 Rear smooth PLA chassis:1"
+    ],
+    [
+      92,
+      "LEG 1:5+XM430:2+X-430_SPACER_RING:6/\ubcf8\uccb41",
+      "R01 Rear smooth PLA chassis:1"
+    ]
+  ]
+}

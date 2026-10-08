@@ -1,0 +1,29 @@
+{
+  "step_id": "B05-units",
+  "status": "FAIL",
+  "raw_kg_cm2": [
+    1154.6300000000012,
+    1002.410000000001,
+    585.2800000000008,
+    -64.95675176507748,
+    -212.40000000000012,
+    -169.92000000000024
+  ],
+  "expected_products_about_origin_kg_cm2": [
+    1154.63,
+    1002.4100000000001,
+    585.28,
+    64.95675176507717,
+    212.4,
+    169.92000000000002
+  ],
+  "max_error": 424.8000000000001,
+  "mass_kg": 7.080000000000004,
+  "expected_mass_kg": 7.08,
+  "com_cm": [
+    3.9999999999999996,
+    5.000000000000003,
+    5.9999999999999964
+  ],
+  "convention": "XYZ values about component origin; xy,yz,xz are products. Negate off-diagonals, then subtract parallel-axis term and multiply all entries by 1e-4."
+}

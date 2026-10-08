@@ -1,0 +1,20 @@
+{
+  "protected_unchanged": true,
+  "occurrence_count": 172,
+  "protected_body_count": 266,
+  "candidate_symmetric_difference_mm3": {
+    "L1 frame": 0,
+    "C1 USB cable guide": 0
+  },
+  "L1_removed_outside_four_feet_mm3": 0,
+  "warnings": [
+    {
+      "i": 41,
+      "name": "스케치4",
+      "health": 1,
+      "error": "대상 발생 변환 가져오기 실패<b>1 참조 실패</b><br/>대상 발생 변환 가져오기 실패프로젝트1스케치4"
+    }
+  ],
+  "timeline_count": 866,
+  "numeric_comparison_tolerance_cm": 2e-07
+}

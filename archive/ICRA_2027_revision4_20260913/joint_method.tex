@@ -1,0 +1,13 @@
+\subsection{All-Joint Target Governor}
+A sector bound alone does not enforce~\eqref{eq:joint}. We therefore add a common, simulation-only governor after summing IK and sector motion, and compare U, B, and P through the same governor. This conventional rate-limiting construction is a feasibility probe, not an additional novelty claim.
+
+Let $n_j$ and $n_j^d$ be the issued and desired integer motor positions, with resolution $\delta=360^\circ/4096$. For joint-rate limit $L_j$, define $C_j=\lfloor L_j\Delta t/\delta\rfloor$ and $d_j=n_j^d-n_j$. At each wall-clock update,
+\begin{align}
+ \alpha&=\min\!\left(1,\min_{j:d_j\ne0}\frac{C_j}{|d_j|}\right),\\
+ n_j^+&=n_j+\operatorname{sgn}(d_j)\lfloor\alpha|d_j|\rfloor.\label{eq:governor}
+\end{align}
+If all $d_j=0$, we set $\alpha=1$. All tested $C_j$ are positive. Thus $\delta|n_j^+-n_j|/\Delta t\le L_j$ for all eighteen joints, including the first measurement command. We also cap the inner motor profile at or below $L_j$, using its discrete speed units. Otherwise, a bounded 20 ms goal step could still produce a larger 2 ms internal setpoint rate. These bounds apply to commands, not measured joint motion, acceleration, or contact feasibility.
+
+The model maps proximal, middle, and distal joints to MX-28, XM430-W350, and XM430-W210 actuators. Their published 12 V no-load speeds are 55, 46, and 77 rpm~\cite{robotisMX,robotisW350,robotisW210}, giving $L^0=(330,276,462)^\circ$/s by joint group. We test $L=\rho L^0$ for $\rho=1.0,0.8,0.5$. These are declared stress levels anchored to nominal motor data, not measured loaded capabilities or uncertainty distributions.
+
+In the fixed-clock mode F, the gait advances every 20 ms even when the issued target lags. In the governed-clock mode H, the next gait step is requested only after the preceding quantized target has been fully issued. H preserves the target order and retimes the gait and its command filter together; it does not wait for measured joint convergence. External commands remain functions of wall time, so this retiming can introduce tracking delay. All comparison controllers use identical clock and profile settings.

@@ -356,6 +356,11 @@ class MetricsRecorder:
             for leg in range(1, 7)
         }
         self.tire_geom_ids.discard(-1)
+        tire_body_ids = {int(self.model.geom_bodyid[g]) for g in self.tire_geom_ids}
+        self.tire_geom_ids.update(
+            g for g in range(self.model.ngeom)
+            if int(self.model.geom_bodyid[g]) in tire_body_ids
+        )
 
     def _is_ground_geom(self, geom_id: int) -> bool:
         name = mujoco.mj_id2name(

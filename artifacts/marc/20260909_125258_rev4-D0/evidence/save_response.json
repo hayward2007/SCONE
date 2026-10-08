@@ -1,0 +1,8 @@
+{
+  "content": [
+    {
+      "text": "{\n    \"message\": \"{\\\"step_id\\\": \\\"CAD-save\\\", \\\"status\\\": \\\"PASS\\\", \\\"document\\\": {\\\"name\\\": \\\"MARC-PARAM-D0 v2\\\", \\\"id\\\": \\\"urn:adsk.wipprod:dm.lineage:m-tfDl7GQVSpPaaj3cYogw\\\", \\\"creation_id\\\": \\\"28a25f2f-444b-4871-ac20-29ae09d54ba3\\\", \\\"is_saved\\\": true, \\\"is_modified\\\": false, \\\"folder\\\": \\\"SCONE\\\", \\\"exports\\\": [{\\\"format\\\": \\\"f3d\\\", \\\"path\\\": \\\"/Users/hayward_kim/Developer/SCONE/artifacts/marc/20260909_125258_rev4-D0/cad/MARC-PARAM-D0.f3d\\\", \\\"bytes\\\": 7353654, \\\"sha256\\\": \\\"d6af7121d6bd7017f63fbba0942990e94bd6266114484c1b30ea4fc450b521d3\\\", \\\"scope\\\": \\\"Entire D0 document; STEP may include hidden study envelopes. No production approval.\\\"}, {\\\"format\\\": \\\"step\\\", \\\"path\\\": \\\"/Users/hayward_kim/Developer/SCONE/artifacts/marc/20260909_125258_rev4-D0/cad/MARC-PARAM-D0_WITH_STUDY_ENVELOPES.step\\\", \\\"bytes\\\": 7492993, \\\"sha256\\\": \\\"c1d890b02c7ba3efacda2b00a4ee25a105c90fb1de6293d88b54d1a472ecfd1f\\\", \\\"scope\\\": \\\"Entire D0 document; STEP may include hidden study envelopes. No production approval.\\\"}]}, \\\"binding_count\\\": 17}\\n\",\n    \"success\": true\n}",
+      "type": "text"
+    }
+  ]
+}

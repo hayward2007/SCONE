@@ -1,0 +1,29 @@
+{
+  "prepared_on": "2026-09-14",
+  "conference": "ICRA 2027",
+  "recommended_submission_type": "Contributed paper",
+  "submission_type_condition": "Ordinary original submission; prior submission/publication history has not been provided.",
+  "title": "Posture and contact geometry in simple hybrid locomotion of an articulated arc-leg hexapod",
+  "title_note": "Sentence case; same wording as the PDF title.",
+  "abstract": "An articulated arc leg can combine rolling and stepping without a separate wheel actuator. The resulting design is useful only if its mobility justifies the required control. We investigate how much control can be removed while retaining flat-ground transport and stair ascent on one hexapod embodiment. For flat motion, periodic reindexing replaces conditional swing scheduling. For stairs, a fixed leading-joint posture and one common distal phase replace height-dependent settings. A paired 102-trial MuJoCo study separates contact shape, posture, and stair dimensions and requires rear-leg clearance followed by a supported halt. With a 2 ms step, the fixed arc controller succeeds in all six conditions at each of 100 and 150 mm riser heights; height-dependent settings add no successes. The matched closed-wheel model succeeds in five and zero conditions, respectively. However, one 150 mm wheel outcome changes at 1 ms, and neither geometry completes the 200 mm flight under the stricter endpoint. A separate 176-trial flat study likewise finds no transport advantage for conditional scheduling over periodic reindexing under common target-rate limits. The evidence identifies where simple mode-specific control suffices and where simulation sensitivity or incomplete transfer prevents a mobility claim.",
+  "abstract_words": 190,
+  "abstract_characters": 1310,
+  "keywords_recommended": [
+    "Multilegged Robots",
+    "Climbing robots",
+    "Mechanism Design of Mobile Robots"
+  ],
+  "authors": [],
+  "corresponding_author": null,
+  "paper_upload_file": "01_UPLOAD/SCONE_ICRA2027_Paper.pdf",
+  "video_upload_file": "01_UPLOAD/SCONE_ICRA2027_Video.mp4",
+  "paper_deadline_official_label": "2026-09-15 23:59 PST",
+  "next_video_window_official_label": "2026-09-17 through 2026-09-22 23:59 PST",
+  "portal_deadline_timezone_label": "Pacific Time",
+  "online_pdf_test_status": "not_performed",
+  "submission_status": "not_submitted",
+  "paper_id": null,
+  "source_packet": "/Users/hayward_kim/Developer/SCONE/archive/ICRA_2027_revision5_20260913",
+  "official_call": "https://2027.ieee-icra.org/contribute/call-for-icra-2027-papers-now-accepting-submissions/",
+  "submission_portal": "https://ras.papercept.net/conferences/scripts/start.pl"
+}

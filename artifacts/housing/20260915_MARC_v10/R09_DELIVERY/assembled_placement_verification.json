@@ -1,0 +1,12 @@
+{
+  "all_housing_at_verified_assembly_coordinates": true,
+  "parts": [
+    "R01 Rear smooth PLA chassis:1",
+    "R02 Front smooth PLA chassis:1",
+    "S01 Rear fairing lid:1",
+    "S02 Front camera fairing lid:1",
+    "P04 PLA electronics tray:1",
+    "M01 Rear removable motor bridge:1",
+    "M02 Front removable motor bridge:1"
+  ]
+}

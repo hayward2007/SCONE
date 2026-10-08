@@ -1,0 +1,672 @@
+{
+  "existing_collisions": [],
+  "internal_collisions": [],
+  "parts": [
+    {
+      "name": "P3 removable top clamp -90.25 - M2x8",
+      "box": [
+        [
+          -93.0,
+          42.8,
+          136.2
+        ],
+        [
+          -87.3,
+          48.6,
+          140.2
+        ]
+      ],
+      "volume_mm3": 88.51230323941472,
+      "kind": "print",
+      "lumps": 1
+    },
+    {
+      "name": "P3 removable top clamp -24.25 - M2x8",
+      "box": [
+        [
+          -27.5,
+          42.8,
+          136.2
+        ],
+        [
+          -22.0,
+          48.6,
+          140.2
+        ]
+      ],
+      "volume_mm3": 83.8723032394147,
+      "kind": "print",
+      "lumps": 1
+    },
+    {
+      "name": "P1 frame - 4x M2.5x10 to existing M6R holes",
+      "box": [
+        [
+          -93.0,
+          -45.0,
+          84.0
+        ],
+        [
+          -14.0,
+          54.0,
+          140.0
+        ]
+      ],
+      "volume_mm3": 30368.367228038005,
+      "kind": "print",
+      "lumps": 1
+    },
+    {
+      "name": "P2 slide-out U2D2 PHB cassette - captive M3 nuts",
+      "box": [
+        [
+          -89.0,
+          43.15,
+          88.6993
+        ],
+        [
+          -26.0,
+          47.5,
+          139.3729
+        ]
+      ],
+      "volume_mm3": 5356.516955420189,
+      "kind": "print",
+      "lumps": 1
+    },
+    {
+      "name": "P4 power PCB spacer 6mm 1",
+      "box": [
+        [
+          -14.0,
+          -34.8,
+          87.2
+        ],
+        [
+          -8.0,
+          -27.2,
+          94.8
+        ]
+      ],
+      "volume_mm3": 217.71237089378198,
+      "kind": "print",
+      "lumps": 1
+    },
+    {
+      "name": "P4 power PCB spacer 6mm 2",
+      "box": [
+        [
+          -14.0,
+          -34.8,
+          129.2
+        ],
+        [
+          -8.0,
+          -27.2,
+          136.8
+        ]
+      ],
+      "volume_mm3": 217.71237089378198,
+      "kind": "print",
+      "lumps": 1
+    },
+    {
+      "name": "P4 power PCB spacer 6mm 3",
+      "box": [
+        [
+          -14.0,
+          27.2,
+          87.2
+        ],
+        [
+          -8.0,
+          34.8,
+          94.8
+        ]
+      ],
+      "volume_mm3": 217.71237089378198,
+      "kind": "print",
+      "lumps": 1
+    },
+    {
+      "name": "P4 power PCB spacer 6mm 4",
+      "box": [
+        [
+          -14.0,
+          27.2,
+          129.2
+        ],
+        [
+          -8.0,
+          34.8,
+          136.8
+        ]
+      ],
+      "volume_mm3": 217.71237089378198,
+      "kind": "print",
+      "lumps": 1
+    },
+    {
+      "name": "REF power PCB 70x50x1.6 - BMS charger 12V 5V - mechanical envelope only",
+      "box": [
+        [
+          -8.0,
+          -35.0,
+          87.0
+        ],
+        [
+          -6.4,
+          35.0,
+          137.0
+        ]
+      ],
+      "volume_mm3": 5543.034338946555,
+      "kind": "pcb",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+CUI_PJ-102A-95_1:1",
+      "box": [
+        [
+          -36.968835,
+          32.9,
+          104.668976
+        ],
+        [
+          -34.588835,
+          45.0,
+          107.668976
+        ]
+      ],
+      "volume_mm3": 12.096344765613717,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+SCREW_TERMINAL_BLOCK_3_5MM_-101:1",
+      "box": [
+        [
+          -33.999979,
+          37.8,
+          114.05862
+        ],
+        [
+          -28.499979,
+          41.0,
+          116.35862
+        ]
+      ],
+      "volume_mm3": 26.48420472832923,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+MBRS340FSCT-ND_1:1",
+      "box": [
+        [
+          -49.359658,
+          38.567776,
+          104.098751
+        ],
+        [
+          -43.109658,
+          41.5,
+          112.148764
+        ]
+      ],
+      "volume_mm3": 112.7371271587997,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+JST_B4B_EH_A_1:1",
+      "box": [
+        [
+          -46.91553,
+          35.5,
+          124.74473
+        ],
+        [
+          -43.11553,
+          44.7,
+          137.24473
+        ]
+      ],
+      "volume_mm3": 116.24636774446171,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+SCREW_TERMINAL_BLOCK_3_5MM_-119:1",
+      "box": [
+        [
+          -34.799979,
+          33.1,
+          113.20862
+        ],
+        [
+          -27.999979,
+          41.5,
+          120.50862
+        ]
+      ],
+      "volume_mm3": 211.40418538182118,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+CUI_PJ-102A-127_1:1",
+      "box": [
+        [
+          -37.508835,
+          30.5,
+          101.668976
+        ],
+        [
+          -23.108835,
+          41.5,
+          110.668976
+        ]
+      ],
+      "volume_mm3": 959.3816946423754,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+CUI_PJ-102A-133_1:1",
+      "box": [
+        [
+          -30.933835,
+          34.0,
+          105.168976
+        ],
+        [
+          -24.683835,
+          45.0,
+          107.168976
+        ]
+      ],
+      "volume_mm3": 21.751689860455738,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+EDGED7B6KTYP_1:1",
+      "box": [
+        [
+          -53.203963,
+          26.9275,
+          91.112519
+        ],
+        [
+          -37.363635,
+          46.221988,
+          101.582287
+        ]
+      ],
+      "volume_mm3": 1423.5691660527054,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+SCREW_TERMINAL_BLOCK_3_5MM_-145:1",
+      "box": [
+        [
+          -33.999979,
+          37.8,
+          117.55862
+        ],
+        [
+          -28.499979,
+          41.0,
+          119.85862
+        ]
+      ],
+      "volume_mm3": 26.48420472833079,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+SCREW_TERMINAL_BLOCK_3_5MM_-151:1",
+      "box": [
+        [
+          -32.549979,
+          33.1,
+          113.95862
+        ],
+        [
+          -30.249979,
+          37.5,
+          116.25862
+        ]
+      ],
+      "volume_mm3": 18.083178248513942,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+SCREW_TERMINAL_BLOCK_3_5MM_-157:1",
+      "box": [
+        [
+          -31.774979,
+          41.1,
+          118.23362
+        ],
+        [
+          -31.024979,
+          43.7,
+          118.98362
+        ]
+      ],
+      "volume_mm3": 1.1379110390693918,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+CUI_PJ-102A-163_1:1",
+      "box": [
+        [
+          -35.058835,
+          38.5,
+          108.668976
+        ],
+        [
+          -32.558835,
+          45.0,
+          111.068976
+        ]
+      ],
+      "volume_mm3": 6.0951769022868145,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+SCREW_TERMINAL_BLOCK_3_5MM_-169:1",
+      "box": [
+        [
+          -31.774979,
+          41.0,
+          114.73362
+        ],
+        [
+          -31.024979,
+          43.6,
+          115.48362
+        ]
+      ],
+      "volume_mm3": 1.1379110390693918,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+PART_1_1:1",
+      "box": [
+        [
+          -84.999979,
+          41.1,
+          89.999961
+        ],
+        [
+          -27.999979,
+          43.15,
+          137.999961
+        ]
+      ],
+      "volume_mm3": 4350.549595367381,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+JST_B3B_EH_A_1:1",
+      "box": [
+        [
+          -58.890721,
+          35.5,
+          113.999961
+        ],
+        [
+          -55.090721,
+          44.7,
+          123.999961
+        ]
+      ],
+      "volume_mm3": 97.01677441096555,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+039281023_1:1",
+      "box": [
+        [
+          -59.769211,
+          28.7,
+          90.407166
+        ],
+        [
+          -53.569211,
+          45.0,
+          101.407166
+        ]
+      ],
+      "volume_mm3": 452.97481539609413,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+CP_ELEC_8X10_1:1",
+      "box": [
+        [
+          -59.143897,
+          31.5,
+          103.284728
+        ],
+        [
+          -50.843897,
+          41.5,
+          112.784728
+        ]
+      ],
+      "volume_mm3": 500.0905392525048,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+SCREW_TERMINAL_BLOCK_3_5MM_-205:1",
+      "box": [
+        [
+          -32.549979,
+          33.1,
+          117.45862
+        ],
+        [
+          -30.249979,
+          37.5,
+          119.75862
+        ]
+      ],
+      "volume_mm3": 18.083178248179475,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+JST_B4B_EH_A_1:2",
+      "box": [
+        [
+          -58.890721,
+          35.5,
+          124.74473
+        ],
+        [
+          -55.090721,
+          44.7,
+          137.24473
+        ]
+      ],
+      "volume_mm3": 116.24636774446178,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+JST_B3B_EH_A_1:2",
+      "box": [
+        [
+          -46.91553,
+          35.5,
+          113.999961
+        ],
+        [
+          -43.11553,
+          44.7,
+          123.999961
+        ]
+      ],
+      "volume_mm3": 97.01677441096551,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+JST_B4B_EH_A_1:3",
+      "box": [
+        [
+          -52.868462,
+          35.5,
+          124.74473
+        ],
+        [
+          -49.068462,
+          44.7,
+          137.24473
+        ]
+      ],
+      "volume_mm3": 116.24636774446172,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS PHB ASSEM1_ASM_1_ASM:1+JST_B3B_EH_A_1:3",
+      "box": [
+        [
+          -52.868462,
+          35.5,
+          113.999961
+        ],
+        [
+          -49.068462,
+          44.7,
+          123.999961
+        ]
+      ],
+      "volume_mm3": 97.01677441096551,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS U2D2 U2D2_CASE_B_DUMMY:1",
+      "box": [
+        [
+          -78.3007,
+          32.7,
+          90.0361
+        ],
+        [
+          -60.3007,
+          41.1,
+          138.0361
+        ]
+      ],
+      "volume_mm3": 5372.483911978075,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS U2D2 U2D2_CASE_T_DUMMY:1",
+      "box": [
+        [
+          -78.3007,
+          26.2,
+          90.0361
+        ],
+        [
+          -60.3007,
+          34.2,
+          138.0361
+        ]
+      ],
+      "volume_mm3": 5501.908553759928,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS U2D2 USB-C_DUMMY:1",
+      "box": [
+        [
+          -73.7707,
+          29.34,
+          90.5361
+        ],
+        [
+          -64.8307,
+          32.6,
+          97.8861
+        ]
+      ],
+      "volume_mm3": 136.45247710256143,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS U2D2 UART_4P:1",
+      "box": [
+        [
+          -66.7507,
+          26.55,
+          123.0361
+        ],
+        [
+          -62.1007,
+          32.5,
+          133.0361
+        ]
+      ],
+      "volume_mm3": 109.92903237760726,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS U2D2 TTL_3P:1",
+      "box": [
+        [
+          -72.7007,
+          26.6,
+          123.0361
+        ],
+        [
+          -68.9007,
+          32.6,
+          133.0361
+        ]
+      ],
+      "volume_mm3": 102.23761880819995,
+      "kind": "official",
+      "lumps": 1
+    },
+    {
+      "name": "ROBOTIS U2D2 RS-485_4P:1",
+      "box": [
+        [
+          -76.9007,
+          26.6,
+          120.5361
+        ],
+        [
+          -73.1007,
+          32.6,
+          133.0361
+        ]
+      ],
+      "volume_mm3": 123.49094859569993,
+      "kind": "official",
+      "lumps": 1
+    }
+  ]
+}

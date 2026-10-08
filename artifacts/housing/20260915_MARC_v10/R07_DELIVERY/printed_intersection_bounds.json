@@ -1,0 +1,70 @@
+[
+  {
+    "a": "P04 PLA electronics tray:1",
+    "b": "S01 Rear fairing lid:1",
+    "bounds": [
+      [
+        33.0,
+        -64.0,
+        36.3
+      ],
+      [
+        55.083838,
+        64.0,
+        39.5
+      ]
+    ],
+    "volume_mm3": 9.635308430184079
+  },
+  {
+    "a": "P04 PLA electronics tray:1",
+    "b": "S02 Front camera fairing lid:1",
+    "bounds": [
+      [
+        108.040202,
+        -64.0,
+        36.3
+      ],
+      [
+        131.0,
+        64.0,
+        39.5
+      ]
+    ],
+    "volume_mm3": 1.0783124685795347
+  },
+  {
+    "a": "R01 Rear smooth PLA chassis:1",
+    "b": "S01 Rear fairing lid:1",
+    "bounds": [
+      [
+        52.2,
+        -63.227984,
+        33.8
+      ],
+      [
+        54.727523,
+        63.227984,
+        36.0
+      ]
+    ],
+    "volume_mm3": 11.660271750361707
+  },
+  {
+    "a": "R02 Front smooth PLA chassis:1",
+    "b": "S02 Front camera fairing lid:1",
+    "bounds": [
+      [
+        112.263291,
+        -60.013841,
+        33.8
+      ],
+      [
+        120.740704,
+        60.625927,
+        36.0
+      ]
+    ],
+    "volume_mm3": 24.638397786728326
+  }
+]

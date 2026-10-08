@@ -1,0 +1,38 @@
+\subsection{Transport Across the Phase Grid}
+Table~\ref{tab:speed} reports the same eight phases for every condition. At the high command, C reaches 0.285 m/s, 2.07 times N; P12 reaches 0.278 m/s, or 97.3\% of C. At the lower command, C reaches 0.116 m/s against 0.093 m/s for N. These are observed condition means, not a maximum attainable speed. The ordering between the two allowed pairs favors P12 for both tested commands; it need not persist at other commands or geometries.
+
+\begin{table}[t]
+\caption{Net forward speed: mean [min, max] over eight phases}
+\label{tab:speed}\centering\small
+\begin{tabular}{lcc}\toprule
+Condition & $v_x^c=0.18$ m/s & $v_x^c=0.45$ m/s\\\midrule
+N & 0.093 [0.091, 0.095] & 0.137 [0.134, 0.140]\\
+P12 & 0.108 [0.107, 0.111] & 0.278 [0.263, 0.289]\\
+P56 & 0.103 [0.100, 0.104] & 0.163 [0.157, 0.170]\\
+C & 0.116 [0.114, 0.118] & 0.285 [0.283, 0.288]\\
+T & 0.048 [0.047, 0.048] & 0.133 [0.119, 0.138]\\
+\bottomrule\end{tabular}\end{table}
+
+Pairing each phase with its N counterpart gives the high-command C-minus-N speed difference 0.148 m/s, spanning [0.144, 0.149] m/s over the grid. The analogous P12-minus-N difference is 0.140 m/s. These ranges describe sensitivity to the tested starting phases; they are not confidence intervals. The largest discrepancy between the velocity-integral diagnostic and displacement speed over all runs is 0.0023 m/s. All reported primary speeds are computed directly from net displacement.
+
+\subsection{Tracking, Work, and Slip}
+\begin{table}[t]
+\caption{High-command metrics, means over eight phases}
+\label{tab:cost}\centering\small
+\begin{tabular}{lrrrr}\toprule
+Condition & RMSE (m/s) & $W_{\rm abs}$ (J) & $C_{\rm mt}$ & Slip (m)\\\midrule
+N & 0.318 & 57.331 & 1.277 & 0.383\\
+P12 & 0.189 & 91.037 & 1.004 & 0.581\\
+P56 & 0.299 & 69.160 & 1.299 & 0.528\\
+C & 0.188 & 89.325 & 0.958 & 0.630\\
+T & 0.324 & 64.752 & 1.500 & 0.456\\
+\bottomrule\end{tabular}\end{table}
+
+The faster configuration is not cheaper over the fixed eight-second window. C uses 89.3 J against 57.3 J for N, while transporting farther. Its mechanical cost of transport is 0.958 against 1.277, a different normalization with a different interpretation. Thus the result supports neither a blanket efficiency claim nor a claim that the speed gain is free. C also accumulates 0.630 m of contact-point slip against 0.383 m for N. The travel subtraction in the planner does not enforce a no-slip physical constraint.
+
+The high-command tracking RMSE is 0.188 m/s for C and 0.318 m/s for N. Even when relative tracking improves, the commanded 0.45 m/s is not achieved. C's high-command yaw change ranges from -3.83 to 4.96 degrees; its largest lateral displacement is 0.147 m. Net forward transport, directional accuracy, and mechanical work must therefore be evaluated together.
+
+\subsection{Execution and Scope}
+All 80 trials complete their eight-second windows without nonfinite state or the 60-degree tilt termination. There are 0 recorded IK-nonconvergent control frames and 0 recorded forbidden chassis/ground collision steps. Minimum uprightness across the complete grid is 0.99921, and the minimum scheduled stance count is 3. These are finite-horizon model outcomes, not a population success rate or proof that scheduled feet always carry load.
+
+A separate whole-project test run reports 259 passing test cases and one module-import error among 260 executed test entries. The latest candidate test module is not collected successfully through the public package. This packaging failure is distinct from the direct-run simulation data above, and remains a reproducibility issue to resolve before an external release.

@@ -1,0 +1,26 @@
+{
+  "created_at": "2026-09-09T06:08:07+00:00",
+  "role": "independent review and repair of the GPT-authored D0 model",
+  "reviewed_run": "20260909_125258_rev4-D0",
+  "document_path": "/Users/hayward_kim/Developer/SCONE/docs/30-scone-v3-design-plan.md",
+  "document_sha256": "3f129dbbf8bb31f3cba3e3a3431a3558a3cc7f7ca9dbad55b351475836253cd3",
+  "git_head": "c706117241c0da2e099b5d8375d3210d87888f14",
+  "fusion_document_id": "urn:adsk.wipprod:dm.lineage:m-tfDl7GQVSpPaaj3cYogw",
+  "scope": "Edit the same MARC-PARAM-D0 document. Do not modify the reviewed run directory.",
+  "document_sha256_after_review": "10619ca22b5c01b95cff03629dca21a1f95c3ebb80732f2f39442ac0e21d3c15",
+  "document_revision_after_review": "rev.4a",
+  "fusion_document_version_after_review": 4,
+  "outputs": [
+    "cad/MARC-PARAM-D0-after-review.f3d",
+    "cad/MARC-PARAM-D0-after-review.step",
+    "checks.json",
+    "evidence/fusion_snapshot_after_review.json",
+    "evidence/motor_import.json",
+    "evidence/poll.py",
+    "evidence/review_calc.py",
+    "evidence/review_interference.json",
+    "evidence/review_stability.json",
+    "handoff.md",
+    "source_manifest.json"
+  ]
+}

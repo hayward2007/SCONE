@@ -1,0 +1,8 @@
+{
+  "content": [
+    {
+      "text": "{\n    \"error\": \"Traceback (most recent call last):\\n  File \\\"<string>\\\", line 35, in <module>\\n  File \\\"<string>\\\", line 33, in run\\n  File \\\"/Users/hayward_kim/Developer/SCONE/tools/marc/create_document.py\\\", line 24, in run\\n    d.rootComponent.name='MARC_v4_D0'\\n    ^^^^^^^^^^^^^^^^^^^^\\n  File \\\"/Users/hayward_kim/Library/Application Support/Autodesk/webdeploy/production/5b508d94493ed3344e38945ffca1b03b713ee401/Autodesk Fusion.app/Contents/Api/Python/packages/adsk/fusion.py\\\", line 14099, in _set_name\\n    return _fusion.BaseComponent__set_name(self, value)\\n           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^\\nRuntimeError: 3 : root component name cannot be changed\\n\",\n    \"success\": false\n}",
+      "type": "text"
+    }
+  ]
+}

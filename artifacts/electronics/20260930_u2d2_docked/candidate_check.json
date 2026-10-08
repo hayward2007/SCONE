@@ -1,0 +1,170 @@
+{
+  "existing_collisions": [],
+  "internal_collisions": [],
+  "parts": [
+    {
+      "name": "P1 body-rail brace - 4x M2.5x12 plus 2x M3x12",
+      "kind": "P1",
+      "box": [
+        [
+          104.1,
+          5.4,
+          38.7
+        ],
+        [
+          240.0,
+          54.6,
+          136.5
+        ]
+      ],
+      "lumps": 1,
+      "volume_mm3": 22677.826642240198
+    },
+    {
+      "name": "P2 lift-out PCB plate - shelf fittings removed",
+      "kind": "P2",
+      "box": [
+        [
+          103.55,
+          19.5,
+          45.5
+        ],
+        [
+          240.0,
+          34.0,
+          134.5
+        ]
+      ],
+      "lumps": 1,
+      "volume_mm3": 27998.654433470645
+    },
+    {
+      "name": "ROBOTIS U2D2 U2D2_CASE_B_DUMMY:1",
+      "kind": "U2D2",
+      "box": [
+        [
+          112.5361,
+          30.4,
+          57.6993
+        ],
+        [
+          160.5361,
+          38.8,
+          75.6993
+        ]
+      ],
+      "lumps": 1,
+      "volume_mm3": 5372.483911978066
+    },
+    {
+      "name": "ROBOTIS U2D2 U2D2_CASE_T_DUMMY:1",
+      "kind": "U2D2",
+      "box": [
+        [
+          112.5361,
+          37.3,
+          57.6993
+        ],
+        [
+          160.5361,
+          45.3,
+          75.6993
+        ]
+      ],
+      "lumps": 1,
+      "volume_mm3": 5501.908553759921
+    },
+    {
+      "name": "ROBOTIS U2D2 USB-C_DUMMY:1",
+      "kind": "U2D2",
+      "box": [
+        [
+          113.0361,
+          38.9,
+          62.2293
+        ],
+        [
+          120.3861,
+          42.16,
+          71.1693
+        ]
+      ],
+      "lumps": 1,
+      "volume_mm3": 136.45247711108252
+    },
+    {
+      "name": "ROBOTIS U2D2 UART_4P:1",
+      "kind": "U2D2",
+      "box": [
+        [
+          145.5361,
+          39.0,
+          69.2493
+        ],
+        [
+          155.5361,
+          44.95,
+          73.8993
+        ]
+      ],
+      "lumps": 1,
+      "volume_mm3": 109.9290323776075
+    },
+    {
+      "name": "ROBOTIS U2D2 TTL_3P:1",
+      "kind": "U2D2",
+      "box": [
+        [
+          145.5361,
+          38.9,
+          63.2993
+        ],
+        [
+          155.5361,
+          44.9,
+          67.0993
+        ]
+      ],
+      "lumps": 1,
+      "volume_mm3": 102.23761880819995
+    },
+    {
+      "name": "ROBOTIS U2D2 RS-485_4P:1",
+      "kind": "U2D2",
+      "box": [
+        [
+          143.0361,
+          38.9,
+          59.0993
+        ],
+        [
+          155.5361,
+          44.9,
+          62.8993
+        ]
+      ],
+      "lumps": 1,
+      "volume_mm3": 123.49094859569996
+    }
+  ],
+  "matrix": [
+    -1.0,
+    0.0,
+    0.0,
+    33.25361,
+    0.0,
+    0.0,
+    1.0,
+    -7.760000000000001,
+    0.0,
+    1.0,
+    0.0,
+    3.369929999999999,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+  ],
+  "api_move": "\nCreates a MoveFeatureInput object. Use properties and methods on this object\nto define how the move is defined and then use the MoveFeatues.add method, passing in\nthe MoveFeatureInput object to create a move feature.\ninputEntities : An ObjectCollection containing the objects to move. For a parametric model, the collection can contain\nBRepBody or BRepFace objects but not a combination of both.\nReturns the newly created MoveFeatureInput object or null if the creation failed.\n",
+  "api_free": "\nThis method will define a move feature whose translation and orientation\nis defined using a transformation matrix. A matrix can define any translation and\norientation.\ntransform : The transformation matrix that defines the transform to apply. The matrix must\nbe an orthogonal matrix; that is the axes are perpendicular to each other\nand there isn't any scaling or mirroring defined.\nReturns true if defining the type of move is successful.\n"
+}

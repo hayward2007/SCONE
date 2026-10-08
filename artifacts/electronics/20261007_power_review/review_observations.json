@@ -1,0 +1,39 @@
+{
+  "checked_date": "2026-10-07",
+  "fusion_document": "MARC v4 Body v5 BOX v63",
+  "fusion_modified_after": false,
+  "mass_g": 5683.199692,
+  "bay_LWH_mm": [
+    186,
+    46,
+    77.5
+  ],
+  "recommended_battery": "Neonergy NE14.8V10000mAh4S1P100C, XT90 option",
+  "naver_query_url": "https://search.naver.com/search.naver?query=Neonergy%2010000%204S%20%EB%B0%B0%ED%84%B0%EB%A6%AC",
+  "observed_naver_bridge_url": "https://cr3.shopping.naver.com/v2/bridge/searchGate?nv_mid=61775229364&cat_id=50004287&query=Neonergy%2010000%204S%20%EB%B0%B0%ED%84%B0%EB%A6%AC&t=muxoycpd&h=26a593db58ac50ce521462074ffe5d8a17040fdd&frm=NVSCPRO",
+  "naver_price_card_krw": 116620,
+  "seller_url": "https://www.falconshop.co.kr/shop/goods/goods_view.php?goodsno=100092305",
+  "seller_price_krw": 119000,
+  "seller_inventory_shown": 10,
+  "installed_LWH_mm": [
+    175,
+    42,
+    49
+  ],
+  "catalogue_LWH_mm": [
+    175,
+    49,
+    42
+  ],
+  "battery_mass_g": 748,
+  "unverified": [
+    "checkout discount conditions",
+    "actual pack measurements",
+    "full operating load",
+    "referenced v1/v2/assembly documents",
+    "complete S1 schematic",
+    "manufacturing validation"
+  ],
+  "CAD_edits": false,
+  "purchase": false
+}

@@ -1,0 +1,46 @@
+{
+  "G00": {
+    "status": "NOT_RUN",
+    "model_stage": "D0"
+  },
+  "G01": {
+    "status": "NOT_RUN",
+    "model_stage": "D0"
+  },
+  "G02": {
+    "status": "NOT_RUN",
+    "model_stage": "D0"
+  },
+  "G03": {
+    "status": "NOT_RUN",
+    "model_stage": "D0"
+  },
+  "G04": {
+    "status": "NOT_RUN",
+    "model_stage": "D0"
+  },
+  "G05": {
+    "status": "NOT_RUN",
+    "model_stage": "D0"
+  },
+  "G06": {
+    "status": "NOT_RUN",
+    "model_stage": "D0"
+  },
+  "G07": {
+    "status": "NOT_RUN",
+    "model_stage": "D0"
+  },
+  "G08": {
+    "status": "NOT_RUN",
+    "model_stage": "D0"
+  },
+  "G09": {
+    "status": "NOT_RUN",
+    "model_stage": "D0"
+  },
+  "G10": {
+    "status": "NOT_RUN",
+    "model_stage": "D0"
+  }
+}

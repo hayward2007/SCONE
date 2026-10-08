@@ -1,0 +1,1422 @@
+{
+  "stage": "D0",
+  "status": "BLOCKED",
+  "parts": [
+    {
+      "part_id": "frame_PLA",
+      "instance_id": "BODY/frame_PLA",
+      "revision": "rev4-D0",
+      "role": "structure_or_tire",
+      "mass_source": "CAD_BULK",
+      "mass_kg": 0.19205000319999982,
+      "volume_cm3": 162.75423999999987,
+      "density_kg_m3": 1180.0,
+      "com_local_m": [
+        1.3970368786904245e-17,
+        1.1176295029523396e-16,
+        -0.013396457382615657
+      ],
+      "com_world_m": [
+        1.3970368786904245e-17,
+        1.1176295029523396e-16,
+        -0.013396457382615657
+      ],
+      "inertia_com_local_kgm2": [
+        [
+          0.0022587976742432262,
+          2.9986104288667787e-34,
+          -9.112726983145136e-21
+        ],
+        [
+          2.9986104288667787e-34,
+          0.00037852021592386817,
+          6.124865264634582e-20
+        ],
+        [
+          -9.112726983145136e-21,
+          6.124865264634582e-20,
+          0.0026347534402152077
+        ]
+      ],
+      "geometry_hash": null,
+      "geometry_hash_scope": "Per-body BRep hash not available; complete native archive hash is in cad/document.json",
+      "body_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZQpccb9IBPpcpTccVpR5krZwFVGGkYGymYGlsYWRqnGqsm5pkZqJrYmqeqGtpmWSsa2iUYpqcbGGSmGyeBFYLNIMBDYDtM1AAWwey3tjY0MQYAL7Kqx6KAAAA",
+      "occurrence_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/32OvQ1CMRCDJ4ABKFAY4KTcX16uZ5Fc3qVgDEpqKjZgCzrWeKMQRI/cWNYn2zlJooQpTyHV6fCXlHQ77vy1P9+v79Nhuzwfk6DEJUXJnaQrtOEEQkRQyQV8aWiiwmhjtkwyN6saskKPoSBREZrqCjqaFRFjD/y/ZVxJORjCi4Do0sDMGZBW7b1K64t/v38APyebd8cAAAA=",
+      "source_file": "cad/MARC-PARAM-D0.f3d",
+      "geometry_status": "D0_SOLID",
+      "input_sha256": "9016f7ae0c61b47d2dc5956501b72e76cb43e6b856222ea5a5a4c550a5e09977"
+    },
+    {
+      "part_id": "deck_PLA",
+      "instance_id": "BODY/deck_PLA",
+      "revision": "rev4-D0",
+      "role": "structure_or_tire",
+      "mass_source": "CAD_BULK",
+      "mass_kg": 0.10738000000000009,
+      "volume_cm3": 91.00000000000009,
+      "density_kg_m3": 1180.0,
+      "com_local_m": [
+        0.0,
+        0.0,
+        0.028999999999999995
+      ],
+      "com_world_m": [
+        0.0,
+        0.0,
+        0.028999999999999995
+      ],
+      "inertia_com_local_kgm2": [
+        [
+          0.0010962066266666667,
+          4.2928149923682207e-19,
+          -1.6768808563938362e-21
+        ],
+        [
+          4.2928149923682207e-19,
+          0.0001512626266666668,
+          -3.3537617127876727e-20
+        ],
+        [
+          -1.6768808563938362e-21,
+          -3.3537617127876727e-20,
+          0.0012473976666666664
+        ]
+      ],
+      "geometry_hash": null,
+      "geometry_hash_scope": "Per-body BRep hash not available; complete native archive hash is in cad/document.json",
+      "body_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZQpccb9IBPpcpTccVpR5krZwFVGGkYGymYGlsYWRqnGqsm5pkZqJrYmqeqGtpmWSsa2iUYpqcbGGSmGyeBFYLNIMBDYDtM1AAWwey3tjY0NwYAH2ZhjWKAAAA",
+      "occurrence_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/32OvQ1CMRCDJ4ABKFAY4KTcX16uZ5Fc3qVgDEpqKjZgCzrWeKMQRI/cWNYn2zlJooQpTyHV6fCXlHQ77vy1P9+v79Nhuzwfk6DEJUXJnaQrtOEEQkRQyQV8aWiiwmhjtkwyN6saskKPoSBREZrqCjqaFRFjD/y/ZVxJORjCi4Do0sDMGZBW7b1K64t/v38APyebd8cAAAA=",
+      "source_file": "cad/MARC-PARAM-D0.f3d",
+      "geometry_status": "D0_SOLID",
+      "input_sha256": "9016f7ae0c61b47d2dc5956501b72e76cb43e6b856222ea5a5a4c550a5e09977"
+    },
+    {
+      "part_id": "Yoke1_D0",
+      "instance_id": "FL_YAW/Yoke1_D0",
+      "revision": "rev4-D0",
+      "role": "structure_or_tire",
+      "mass_source": "CAD_BULK",
+      "mass_kg": 0.022979319999999984,
+      "volume_cm3": 19.47399999999999,
+      "density_kg_m3": 1180.0,
+      "com_local_m": [
+        0.022000000000000002,
+        0.0,
+        -0.020499999999999997
+      ],
+      "com_world_m": [
+        0.072,
+        0.15999999999999998,
+        8.881784197001253e-18
+      ],
+      "inertia_com_local_kgm2": [
+        [
+          4.688336076666666e-06,
+          5.030642569181509e-21,
+          0.0
+        ],
+        [
+          5.030642569181509e-21,
+          6.587082926666666e-06,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          7.554093516666661e-06
+        ]
+      ],
+      "geometry_hash": null,
+      "geometry_hash_scope": "Per-body BRep hash not available; complete native archive hash is in cad/document.json",
+      "body_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZQpccb9IBPpcpTccVpR5krZwFVGGkYGwGRJapxkkGprqpaUmGuiZpRma6iWZJlromxsnGSUlGhpbJBsZgtUAzGNAA2D4DBbB1IOuNjY0szAHSoRw4igAAAA==",
+      "occurrence_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/31Ouw1CMRCbAAagQMcAJ903L9ezyLuQFIxBSU3FBmxBxxqMQhA9cmPZlm0CAwEGmmCpk/FPKXDdb/K5Pd4ur8PufX7cZ0JAC/RCTaw5riMFTUSwShrmsnKYm3KM2TKTNDwoT45K5mjTxcoeWHUZ3ZOspf/f0hJdkxz7SEYbUnAtGWjaNFM4Gun3+weYsp6LxwAAAA==",
+      "source_file": "cad/MARC-PARAM-D0.f3d",
+      "geometry_status": "ENVELOPE_INTERFACE_UNRESOLVED",
+      "input_sha256": "9016f7ae0c61b47d2dc5956501b72e76cb43e6b856222ea5a5a4c550a5e09977"
+    },
+    {
+      "part_id": "Yoke2_D0",
+      "instance_id": "FL_YAW/Yoke2_D0",
+      "revision": "rev4-D0",
+      "role": "structure_or_tire",
+      "mass_source": "CAD_BULK",
+      "mass_kg": 0.01962576,
+      "volume_cm3": 16.632,
+      "density_kg_m3": 1180.0,
+      "com_local_m": [
+        0.0375,
+        0.0,
+        -0.020500000000000004
+      ],
+      "com_world_m": [
+        0.0875,
+        0.15999999999999998,
+        4.440892098500626e-18
+      ],
+      "inertia_com_local_kgm2": [
+        [
+          3.4303945200000007e-06,
+          -2.5153212845907544e-21,
+          -2.7755575615628915e-21
+        ],
+        [
+          -2.5153212845907544e-21,
+          4.7989113200000046e-06,
+          -1.2576606422953772e-21
+        ],
+        [
+          -2.7755575615628915e-21,
+          -1.2576606422953772e-21,
+          5.562250960000004e-06
+        ]
+      ],
+      "geometry_hash": null,
+      "geometry_hash_scope": "Per-body BRep hash not available; complete native archive hash is in cad/document.json",
+      "body_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZQpccb9IBPpcpTccVpR5krZwFVGGkYGwGRJapxkkGprqpaUmGuiZpRma6iWZJlromxsnGSUlGhpbJBsZgtUAzGNAA2D4DBbB1IOuNjY0NLQA9baN4igAAAA==",
+      "occurrence_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/31Ouw1CMRCbAAagQMcAJ903L9ezyLuQFIxBSU3FBmxBxxqMQhA9cmPZlm0CAwEGmmCpk/FPKXDdb/K5Pd4ur8PufX7cZ0JAC/RCTaw5riMFTUSwShrmsnKYm3KM2TKTNDwoT45K5mjTxcoeWHUZ3ZOspf/f0hJdkxz7SEYbUnAtGWjaNFM4Gun3+weYsp6LxwAAAA==",
+      "source_file": "cad/MARC-PARAM-D0.f3d",
+      "geometry_status": "ENVELOPE_INTERFACE_UNRESOLVED",
+      "input_sha256": "9016f7ae0c61b47d2dc5956501b72e76cb43e6b856222ea5a5a4c550a5e09977"
+    },
+    {
+      "part_id": "crank_PLA",
+      "instance_id": "FL_LINK/crank_PLA",
+      "revision": "rev4-D0",
+      "role": "structure_or_tire",
+      "mass_source": "CAD_BULK",
+      "mass_kg": 0.08643264000000005,
+      "volume_cm3": 73.24800000000005,
+      "density_kg_m3": 1180.0,
+      "com_local_m": [
+        0.09725787206468996,
+        0.012368939795932841,
+        7.760405589341413e-18
+      ],
+      "com_world_m": [
+        0.16149991590944837,
+        0.15999999999999995,
+        -0.08215743026597754
+      ],
+      "inertia_com_local_kgm2": [
+        [
+          5.042644669945316e-05,
+          -6.218764476393444e-05,
+          2.262165077333601e-19
+        ],
+        [
+          -6.218764476393444e-05,
+          0.0002740371103853539,
+          6.195668274767782e-20
+        ],
+        [
+          2.262165077333601e-19,
+          6.195668274767782e-20,
+          0.00029555394827840707
+        ]
+      ],
+      "geometry_hash": null,
+      "geometry_hash_scope": "Per-body BRep hash not available; complete native archive hash is in cad/document.json",
+      "body_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZQpccb9IBPpcpTccVpR5krZwFVGGkYGymkGaWbJCaZmyua2lhkKprYmlhqptoZGSqa2pumJRmbGFpamlmDFYLNIMBDYDtM1AAWwey3tjYxNIcAJWGHaiKAAAA",
+      "occurrence_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/32Ouw0CMAxEJ4ABKJAZwFLsOB/3LBKbuGAMSmoqNmALOtZgFILo0TWn09PdJRBgIEhLxH05+iUVrvuNPbfH2+V12L3Pj/siGHKFWZOzeMERxijMjJ1N0NoglSKZNFbLIru6eFhBdTOUEEIdTjhmSS3zbH6i/1tRPc3IDbWniaJ9rTIXLI0scteiNX+/fwAeCCxWxwAAAA==",
+      "source_file": "cad/MARC-PARAM-D0.f3d",
+      "geometry_status": "D0_SOLID",
+      "input_sha256": "9016f7ae0c61b47d2dc5956501b72e76cb43e6b856222ea5a5a4c550a5e09977"
+    },
+    {
+      "part_id": "Yoke1_D0",
+      "instance_id": "FR_YAW/Yoke1_D0",
+      "revision": "rev4-D0",
+      "role": "structure_or_tire",
+      "mass_source": "CAD_BULK",
+      "mass_kg": 0.022979319999999984,
+      "volume_cm3": 19.47399999999999,
+      "density_kg_m3": 1180.0,
+      "com_local_m": [
+        0.022000000000000002,
+        0.0,
+        -0.020499999999999997
+      ],
+      "com_world_m": [
+        0.07200000000000001,
+        -0.16,
+        8.881784197001253e-18
+      ],
+      "inertia_com_local_kgm2": [
+        [
+          4.688336076666666e-06,
+          5.030642569181509e-21,
+          0.0
+        ],
+        [
+          5.030642569181509e-21,
+          6.587082926666666e-06,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          7.554093516666661e-06
+        ]
+      ],
+      "geometry_hash": null,
+      "geometry_hash_scope": "Per-body BRep hash not available; complete native archive hash is in cad/document.json",
+      "body_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZQpccb9IBPpcpTccVpR5krZwFVGGkYGwGRJapxkkGprqpaUmGuiZpRma6iWZJlromxsnGSUlGhpbJBsZgtUAzGNAA2D4DBbB1IOuNjY0szAHSoRw4igAAAA==",
+      "occurrence_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/31OsQ0CMRCbAAagQMcAJ+V8l5DrWSQX8gVjUFJTsQFb0LEGo5AXPbJkWZZlO5ERSChNCOpU8nMK3fabeG1P9+v7sPtcno+ZAGmhUVKH9cxtCbAB4IowjmMTt2wqvsyWmax5dPMsnGKSLR3s6JUFEJHUhtfz/y0tPjRS5rHE2oDCrYSzadcIiPek6/cvmoZ/WccAAAA=",
+      "source_file": "cad/MARC-PARAM-D0.f3d",
+      "geometry_status": "ENVELOPE_INTERFACE_UNRESOLVED",
+      "input_sha256": "9016f7ae0c61b47d2dc5956501b72e76cb43e6b856222ea5a5a4c550a5e09977"
+    },
+    {
+      "part_id": "Yoke2_D0",
+      "instance_id": "FR_YAW/Yoke2_D0",
+      "revision": "rev4-D0",
+      "role": "structure_or_tire",
+      "mass_source": "CAD_BULK",
+      "mass_kg": 0.01962576,
+      "volume_cm3": 16.632,
+      "density_kg_m3": 1180.0,
+      "com_local_m": [
+        0.0375,
+        0.0,
+        -0.020500000000000004
+      ],
+      "com_world_m": [
+        0.0875,
+        -0.16,
+        4.440892098500626e-18
+      ],
+      "inertia_com_local_kgm2": [
+        [
+          3.4303945200000007e-06,
+          -2.5153212845907544e-21,
+          -2.7755575615628915e-21
+        ],
+        [
+          -2.5153212845907544e-21,
+          4.7989113200000046e-06,
+          -1.2576606422953772e-21
+        ],
+        [
+          -2.7755575615628915e-21,
+          -1.2576606422953772e-21,
+          5.562250960000004e-06
+        ]
+      ],
+      "geometry_hash": null,
+      "geometry_hash_scope": "Per-body BRep hash not available; complete native archive hash is in cad/document.json",
+      "body_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZQpccb9IBPpcpTccVpR5krZwFVGGkYGwGRJapxkkGprqpaUmGuiZpRma6iWZJlromxsnGSUlGhpbJBsZgtUAzGNAA2D4DBbB1IOuNjY0NLQA9baN4igAAAA==",
+      "occurrence_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/31OsQ0CMRCbAAagQMcAJ+V8l5DrWSQX8gVjUFJTsQFb0LEGo5AXPbJkWZZlO5ERSChNCOpU8nMK3fabeG1P9+v7sPtcno+ZAGmhUVKH9cxtCbAB4IowjmMTt2wqvsyWmax5dPMsnGKSLR3s6JUFEJHUhtfz/y0tPjRS5rHE2oDCrYSzadcIiPek6/cvmoZ/WccAAAA=",
+      "source_file": "cad/MARC-PARAM-D0.f3d",
+      "geometry_status": "ENVELOPE_INTERFACE_UNRESOLVED",
+      "input_sha256": "9016f7ae0c61b47d2dc5956501b72e76cb43e6b856222ea5a5a4c550a5e09977"
+    },
+    {
+      "part_id": "crank_PLA",
+      "instance_id": "FR_LINK/crank_PLA",
+      "revision": "rev4-D0",
+      "role": "structure_or_tire",
+      "mass_source": "CAD_BULK",
+      "mass_kg": 0.08643264000000005,
+      "volume_cm3": 73.24800000000005,
+      "density_kg_m3": 1180.0,
+      "com_local_m": [
+        0.09725787206468996,
+        0.012368939795932841,
+        7.760405589341413e-18
+      ],
+      "com_world_m": [
+        0.16149991590944837,
+        -0.16,
+        -0.0821574302659776
+      ],
+      "inertia_com_local_kgm2": [
+        [
+          5.042644669945316e-05,
+          -6.218764476393444e-05,
+          2.262165077333601e-19
+        ],
+        [
+          -6.218764476393444e-05,
+          0.0002740371103853539,
+          6.195668274767782e-20
+        ],
+        [
+          2.262165077333601e-19,
+          6.195668274767782e-20,
+          0.00029555394827840707
+        ]
+      ],
+      "geometry_hash": null,
+      "geometry_hash_scope": "Per-body BRep hash not available; complete native archive hash is in cad/document.json",
+      "body_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZQpccb9IBPpcpTccVpR5krZwFVGGkYGymkGaWbJCaZmyua2lhkKprYmlhqptoZGSqa2pumJRmbGFpamlmDFYLNIMBDYDtM1AAWwey3tjYxNIcAJWGHaiKAAAA",
+      "occurrence_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/32OsQ1CMQxEJ4ABKJAZwFJiO4nds8jPl10wBiU1FRuwBR1rMMo3okfXnE5Pd1dAgKBCSVXSdPWXdLgdd/O1P9+v79Phc3k+kiDgDt7LSrI2XGISChGh0hScY6kmTbhaZEuS6ipTxkBncZRBA6c1xx7sxgtLKP3fir4WDx5oWrLBNFeJGrZRZ7Bas87f7xtxUdylxwAAAA==",
+      "source_file": "cad/MARC-PARAM-D0.f3d",
+      "geometry_status": "D0_SOLID",
+      "input_sha256": "9016f7ae0c61b47d2dc5956501b72e76cb43e6b856222ea5a5a4c550a5e09977"
+    },
+    {
+      "part_id": "Yoke1_D0",
+      "instance_id": "RL_YAW/Yoke1_D0",
+      "revision": "rev4-D0",
+      "role": "structure_or_tire",
+      "mass_source": "CAD_BULK",
+      "mass_kg": 0.022979319999999984,
+      "volume_cm3": 19.47399999999999,
+      "density_kg_m3": 1180.0,
+      "com_local_m": [
+        0.022000000000000002,
+        0.0,
+        -0.020499999999999997
+      ],
+      "com_world_m": [
+        -0.07200000000000001,
+        0.16,
+        8.881784197001253e-18
+      ],
+      "inertia_com_local_kgm2": [
+        [
+          4.688336076666666e-06,
+          5.030642569181509e-21,
+          0.0
+        ],
+        [
+          5.030642569181509e-21,
+          6.587082926666666e-06,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          7.554093516666661e-06
+        ]
+      ],
+      "geometry_hash": null,
+      "geometry_hash_scope": "Per-body BRep hash not available; complete native archive hash is in cad/document.json",
+      "body_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZQpccb9IBPpcpTccVpR5krZwFVGGkYGwGRJapxkkGprqpaUmGuiZpRma6iWZJlromxsnGSUlGhpbJBsZgtUAzGNAA2D4DBbB1IOuNjY0szAHSoRw4igAAAA==",
+      "occurrence_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/32Ovc2CMQyEJ4ABKJAZwJL/4jfpWSSOnIIxvpKaig3Ygo41vlEIokfXnE6P7o7AQICBlljqcvxNHK7HXTz359vf63T4vzzuixBQh3QaYqNgnyFoIoJVwjC2zs2KKbe5WhbZpc+SG6OXrmhGiZWqYlZpjWkTz/i9pd5SgwrmDEab4tg9GpoOjRBug/Tz/Q3ZFknBxwAAAA==",
+      "source_file": "cad/MARC-PARAM-D0.f3d",
+      "geometry_status": "ENVELOPE_INTERFACE_UNRESOLVED",
+      "input_sha256": "9016f7ae0c61b47d2dc5956501b72e76cb43e6b856222ea5a5a4c550a5e09977"
+    },
+    {
+      "part_id": "Yoke2_D0",
+      "instance_id": "RL_YAW/Yoke2_D0",
+      "revision": "rev4-D0",
+      "role": "structure_or_tire",
+      "mass_source": "CAD_BULK",
+      "mass_kg": 0.01962576,
+      "volume_cm3": 16.632,
+      "density_kg_m3": 1180.0,
+      "com_local_m": [
+        0.0375,
+        0.0,
+        -0.020500000000000004
+      ],
+      "com_world_m": [
+        -0.0875,
+        0.16,
+        4.440892098500626e-18
+      ],
+      "inertia_com_local_kgm2": [
+        [
+          3.4303945200000007e-06,
+          -2.5153212845907544e-21,
+          -2.7755575615628915e-21
+        ],
+        [
+          -2.5153212845907544e-21,
+          4.7989113200000046e-06,
+          -1.2576606422953772e-21
+        ],
+        [
+          -2.7755575615628915e-21,
+          -1.2576606422953772e-21,
+          5.562250960000004e-06
+        ]
+      ],
+      "geometry_hash": null,
+      "geometry_hash_scope": "Per-body BRep hash not available; complete native archive hash is in cad/document.json",
+      "body_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZQpccb9IBPpcpTccVpR5krZwFVGGkYGwGRJapxkkGprqpaUmGuiZpRma6iWZJlromxsnGSUlGhpbJBsZgtUAzGNAA2D4DBbB1IOuNjY0NLQA9baN4igAAAA==",
+      "occurrence_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/32Ovc2CMQyEJ4ABKJAZwJL/4jfpWSSOnIIxvpKaig3Ygo41vlEIokfXnE6P7o7AQICBlljqcvxNHK7HXTz359vf63T4vzzuixBQh3QaYqNgnyFoIoJVwjC2zs2KKbe5WhbZpc+SG6OXrmhGiZWqYlZpjWkTz/i9pd5SgwrmDEab4tg9GpoOjRBug/Tz/Q3ZFknBxwAAAA==",
+      "source_file": "cad/MARC-PARAM-D0.f3d",
+      "geometry_status": "ENVELOPE_INTERFACE_UNRESOLVED",
+      "input_sha256": "9016f7ae0c61b47d2dc5956501b72e76cb43e6b856222ea5a5a4c550a5e09977"
+    },
+    {
+      "part_id": "crank_PLA",
+      "instance_id": "RL_LINK/crank_PLA",
+      "revision": "rev4-D0",
+      "role": "structure_or_tire",
+      "mass_source": "CAD_BULK",
+      "mass_kg": 0.08643264000000005,
+      "volume_cm3": 73.24800000000005,
+      "density_kg_m3": 1180.0,
+      "com_local_m": [
+        0.09725787206468996,
+        0.012368939795932841,
+        7.760405589341413e-18
+      ],
+      "com_world_m": [
+        -0.16149991590944832,
+        0.16,
+        -0.0821574302659776
+      ],
+      "inertia_com_local_kgm2": [
+        [
+          5.042644669945316e-05,
+          -6.218764476393444e-05,
+          2.262165077333601e-19
+        ],
+        [
+          -6.218764476393444e-05,
+          0.0002740371103853539,
+          6.195668274767782e-20
+        ],
+        [
+          2.262165077333601e-19,
+          6.195668274767782e-20,
+          0.00029555394827840707
+        ]
+      ],
+      "geometry_hash": null,
+      "geometry_hash_scope": "Per-body BRep hash not available; complete native archive hash is in cad/document.json",
+      "body_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZQpccb9IBPpcpTccVpR5krZwFVGGkYGymkGaWbJCaZmyua2lhkKprYmlhqptoZGSqa2pumJRmbGFpamlmDFYLNIMBDYDtM1AAWwey3tjYxNIcAJWGHaiKAAAA",
+      "occurrence_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/31Ou82CMQycAAagQGYAS37FiXsWSaIvBWP8JTUVG7AFHWv8o2BEj645ne5FYCDAQAmWloy/isP1uBvP/fn29zod/i+PezoE1GFzmmKzYF9D0EQEmwzDUTuHFVOOlS3pjGlKyoRWZUOzPnEwOfbalTlaaea/t5ZP2pZWjEbZkBHsIgVL5bG0RQnXz/c3NUeBgscAAAA=",
+      "source_file": "cad/MARC-PARAM-D0.f3d",
+      "geometry_status": "D0_SOLID",
+      "input_sha256": "9016f7ae0c61b47d2dc5956501b72e76cb43e6b856222ea5a5a4c550a5e09977"
+    },
+    {
+      "part_id": "Yoke1_D0",
+      "instance_id": "RR_YAW/Yoke1_D0",
+      "revision": "rev4-D0",
+      "role": "structure_or_tire",
+      "mass_source": "CAD_BULK",
+      "mass_kg": 0.022979319999999984,
+      "volume_cm3": 19.47399999999999,
+      "density_kg_m3": 1180.0,
+      "com_local_m": [
+        0.022000000000000002,
+        0.0,
+        -0.020499999999999997
+      ],
+      "com_world_m": [
+        -0.07200000000000001,
+        -0.15999999999999998,
+        8.881784197001253e-18
+      ],
+      "inertia_com_local_kgm2": [
+        [
+          4.688336076666666e-06,
+          5.030642569181509e-21,
+          0.0
+        ],
+        [
+          5.030642569181509e-21,
+          6.587082926666666e-06,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          7.554093516666661e-06
+        ]
+      ],
+      "geometry_hash": null,
+      "geometry_hash_scope": "Per-body BRep hash not available; complete native archive hash is in cad/document.json",
+      "body_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZQpccb9IBPpcpTccVpR5krZwFVGGkYGwGRJapxkkGprqpaUmGuiZpRma6iWZJlromxsnGSUlGhpbJBsZgtUAzGNAA2D4DBbB1IOuNjY0szAHSoRw4igAAAA==",
+      "occurrence_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/32Ouw0CMAxEJ4ABKFAYwFL8iRP3LBKHuGAMSmoqNmALOtZgFILo0TWn09Pd5SSJEqa8hNSWw1+i6brf+HN7vF1eh937/LgvghJrmpoHySjQwwmEiKCRC3jtaFKE0WK1LBI19yFi0PPpBMLKYEUajKgcrUqNOf9vsdpkzwVmOIIEKXR1W12D3QltZP5+/wD0UgV5xwAAAA==",
+      "source_file": "cad/MARC-PARAM-D0.f3d",
+      "geometry_status": "ENVELOPE_INTERFACE_UNRESOLVED",
+      "input_sha256": "9016f7ae0c61b47d2dc5956501b72e76cb43e6b856222ea5a5a4c550a5e09977"
+    },
+    {
+      "part_id": "Yoke2_D0",
+      "instance_id": "RR_YAW/Yoke2_D0",
+      "revision": "rev4-D0",
+      "role": "structure_or_tire",
+      "mass_source": "CAD_BULK",
+      "mass_kg": 0.01962576,
+      "volume_cm3": 16.632,
+      "density_kg_m3": 1180.0,
+      "com_local_m": [
+        0.0375,
+        0.0,
+        -0.020500000000000004
+      ],
+      "com_world_m": [
+        -0.0875,
+        -0.15999999999999998,
+        4.440892098500626e-18
+      ],
+      "inertia_com_local_kgm2": [
+        [
+          3.4303945200000007e-06,
+          -2.5153212845907544e-21,
+          -2.7755575615628915e-21
+        ],
+        [
+          -2.5153212845907544e-21,
+          4.7989113200000046e-06,
+          -1.2576606422953772e-21
+        ],
+        [
+          -2.7755575615628915e-21,
+          -1.2576606422953772e-21,
+          5.562250960000004e-06
+        ]
+      ],
+      "geometry_hash": null,
+      "geometry_hash_scope": "Per-body BRep hash not available; complete native archive hash is in cad/document.json",
+      "body_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZQpccb9IBPpcpTccVpR5krZwFVGGkYGwGRJapxkkGprqpaUmGuiZpRma6iWZJlromxsnGSUlGhpbJBsZgtUAzGNAA2D4DBbB1IOuNjY0NLQA9baN4igAAAA==",
+      "occurrence_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/32Ouw0CMAxEJ4ABKFAYwFL8iRP3LBKHuGAMSmoqNmALOtZgFILo0TWn09Pd5SSJEqa8hNSWw1+i6brf+HN7vF1eh937/LgvghJrmpoHySjQwwmEiKCRC3jtaFKE0WK1LBI19yFi0PPpBMLKYEUajKgcrUqNOf9vsdpkzwVmOIIEKXR1W12D3QltZP5+/wD0UgV5xwAAAA==",
+      "source_file": "cad/MARC-PARAM-D0.f3d",
+      "geometry_status": "ENVELOPE_INTERFACE_UNRESOLVED",
+      "input_sha256": "9016f7ae0c61b47d2dc5956501b72e76cb43e6b856222ea5a5a4c550a5e09977"
+    },
+    {
+      "part_id": "crank_PLA",
+      "instance_id": "RR_LINK/crank_PLA",
+      "revision": "rev4-D0",
+      "role": "structure_or_tire",
+      "mass_source": "CAD_BULK",
+      "mass_kg": 0.08643264000000005,
+      "volume_cm3": 73.24800000000005,
+      "density_kg_m3": 1180.0,
+      "com_local_m": [
+        0.09725787206468996,
+        0.012368939795932841,
+        7.760405589341413e-18
+      ],
+      "com_world_m": [
+        -0.16149991590944837,
+        -0.15999999999999998,
+        -0.0821574302659776
+      ],
+      "inertia_com_local_kgm2": [
+        [
+          5.042644669945316e-05,
+          -6.218764476393444e-05,
+          2.262165077333601e-19
+        ],
+        [
+          -6.218764476393444e-05,
+          0.0002740371103853539,
+          6.195668274767782e-20
+        ],
+        [
+          2.262165077333601e-19,
+          6.195668274767782e-20,
+          0.00029555394827840707
+        ]
+      ],
+      "geometry_hash": null,
+      "geometry_hash_scope": "Per-body BRep hash not available; complete native archive hash is in cad/document.json",
+      "body_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZQpccb9IBPpcpTccVpR5krZwFVGGkYGymkGaWbJCaZmyua2lhkKprYmlhqptoZGSqa2pumJRmbGFpamlmDFYLNIMBDYDtM1AAWwey3tjYxNIcAJWGHaiKAAAA",
+      "occurrence_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/32OsQ1CMQxEJ4ABKJAZwJLt2E7cs0gSJQVjUFJTsQFb0LEGo/wgenTN6fR0dwQKAgy0xFKW41/icDvu2mt/vl/fp8Pn8nwsQiA5DKcu2g3rbIIqIlikKbZcOdQ0cczVssiUcok6DbvmgtqEsRkRjhgySOp08/9b0zuNmTJGoYEaZa2KGFrmNlMJC0/f7xvx9QVdxwAAAA==",
+      "source_file": "cad/MARC-PARAM-D0.f3d",
+      "geometry_status": "D0_SOLID",
+      "input_sha256": "9016f7ae0c61b47d2dc5956501b72e76cb43e6b856222ea5a5a4c550a5e09977"
+    },
+    {
+      "part_id": "sector_PLA",
+      "instance_id": "FL_SPIN/sector_PLA",
+      "revision": "rev4-D0",
+      "role": "structure_or_tire",
+      "mass_source": "CAD_BULK",
+      "mass_kg": 0.1823895958141038,
+      "volume_cm3": 154.567454079749,
+      "density_kg_m3": 1180.0,
+      "com_local_m": [
+        0.012723157170268751,
+        2.2065480420533943e-16,
+        -9.193950175222475e-18
+      ],
+      "com_world_m": [
+        0.24520064181438286,
+        0.15999999999999992,
+        -0.15049999999999975
+      ],
+      "inertia_com_local_kgm2": [
+        [
+          0.0007905088313781224,
+          -2.492925246056627e-18,
+          8.598515611749189e-20
+        ],
+        [
+          -2.492925246056627e-18,
+          0.000569420155590124,
+          -2.6830093702301415e-19
+        ],
+        [
+          8.598515611749189e-20,
+          -2.6830093702301415e-19,
+          0.0013491418002127538
+        ]
+      ],
+      "geometry_hash": null,
+      "geometry_hash_scope": "Per-body BRep hash not available; complete native archive hash is in cad/document.json",
+      "body_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZQpccb9IBPpcpTccVpR5krZwFVGGkYGymYGpgnJacYpyia2RmaahrkmhuoWuRZJGsa5ZiYpBobGJplmyaBFYLNIMBDYDtM1AAWwey3szM0hIAL+452YkAAAA=",
+      "occurrence_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/32OvQ1CMQyEJ4ABKJAZwFL8E7+kZ5HY4RWMQUlNxQZsQccajIIRPbrmdPp0dwUUGAhKirilo19icN1v/Lk93i6vw+59ftyTYBCDk5VgjYpjdUZlZmzsir4M6lpVqK/ZkmQfFFq74Gptog7jhIrgDFWnWZsS/d+qRdaYMpGtUzYsDZu3QJtahmi3qP79/gGzhNcfxwAAAA==",
+      "source_file": "cad/MARC-PARAM-D0.f3d",
+      "geometry_status": "D0_SOLID",
+      "input_sha256": "9016f7ae0c61b47d2dc5956501b72e76cb43e6b856222ea5a5a4c550a5e09977"
+    },
+    {
+      "part_id": "tire_TPU",
+      "instance_id": "FL_SPIN/tire_TPU",
+      "revision": "rev4-D0",
+      "role": "structure_or_tire",
+      "mass_source": "ENVELOPE_EFFECTIVE",
+      "mass_kg": 0.0630470373418778,
+      "volume_cm3": 127.62558166372027,
+      "density_kg_m3": 494.0,
+      "com_local_m": [
+        0.018757958097251323,
+        -8.907840907724022e-16,
+        0.0
+      ],
+      "com_world_m": [
+        0.25123544274136544,
+        0.15999999999999992,
+        -0.15050000000000086
+      ],
+      "inertia_com_local_kgm2": [
+        [
+          0.0004886802161158768,
+          4.877161779854515e-18,
+          -1.1232259566895664e-20
+        ],
+        [
+          4.877161779854515e-18,
+          0.0003457059943317965,
+          0.0
+        ],
+        [
+          -1.1232259566895664e-20,
+          0.0,
+          0.0008301830746248816
+        ]
+      ],
+      "geometry_hash": null,
+      "geometry_hash_scope": "Per-body BRep hash not available; complete native archive hash is in cad/document.json",
+      "body_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZQpccb9IBPpcpTccVpR5krZwFVGGkYGymYGpgnJacYpyia2RmaahrkmhuoWuRZJGsa5ZiYpBobGJplmyaBFYLNIMBDYDtM1AAWwey3tjYwMQMACNE8fOKAAAA",
+      "occurrence_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/32OvQ1CMQyEJ4ABKJAZwFL8E7+kZ5HY4RWMQUlNxQZsQccajIIRPbrmdPp0dwUUGAhKirilo19icN1v/Lk93i6vw+59ftyTYBCDk5VgjYpjdUZlZmzsir4M6lpVqK/ZkmQfFFq74Gptog7jhIrgDFWnWZsS/d+qRdaYMpGtUzYsDZu3QJtahmi3qP79/gGzhNcfxwAAAA==",
+      "source_file": "cad/MARC-PARAM-D0.f3d",
+      "geometry_status": "D0_SOLID",
+      "input_sha256": "9016f7ae0c61b47d2dc5956501b72e76cb43e6b856222ea5a5a4c550a5e09977"
+    },
+    {
+      "part_id": "sector_PLA",
+      "instance_id": "FR_SPIN/sector_PLA",
+      "revision": "rev4-D0",
+      "role": "structure_or_tire",
+      "mass_source": "CAD_BULK",
+      "mass_kg": 0.1823895958141038,
+      "volume_cm3": 154.567454079749,
+      "density_kg_m3": 1180.0,
+      "com_local_m": [
+        0.012723157170268751,
+        2.2065480420533943e-16,
+        -9.193950175222475e-18
+      ],
+      "com_world_m": [
+        0.2452006418143829,
+        -0.15999999999999998,
+        -0.15049999999999988
+      ],
+      "inertia_com_local_kgm2": [
+        [
+          0.0007905088313781224,
+          -2.492925246056627e-18,
+          8.598515611749189e-20
+        ],
+        [
+          -2.492925246056627e-18,
+          0.000569420155590124,
+          -2.6830093702301415e-19
+        ],
+        [
+          8.598515611749189e-20,
+          -2.6830093702301415e-19,
+          0.0013491418002127538
+        ]
+      ],
+      "geometry_hash": null,
+      "geometry_hash_scope": "Per-body BRep hash not available; complete native archive hash is in cad/document.json",
+      "body_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZQpccb9IBPpcpTccVpR5krZwFVGGkYGymYGpgnJacYpyia2RmaahrkmhuoWuRZJGsa5ZiYpBobGJplmyaBFYLNIMBDYDtM1AAWwey3szM0hIAL+452YkAAAA=",
+      "occurrence_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/32OsQ1CMQxEJ4ABKFAYwFLs2InTs0icOAVjUFJTsQFb0LHGH4UgenTN6fR0dzFwoIAhLiHpcvhLcrgdd/ban+/X9+mwXZ6PRVBIOXiOnbgLtGkETESgZAxWGlYWTljnallkqT5LcYcS0YEFE5g7g7TRo6ugafu/JTHNPtIAyhWBW1FQ0w55cGyJa+5i3+8faSv2w8cAAAA=",
+      "source_file": "cad/MARC-PARAM-D0.f3d",
+      "geometry_status": "D0_SOLID",
+      "input_sha256": "9016f7ae0c61b47d2dc5956501b72e76cb43e6b856222ea5a5a4c550a5e09977"
+    },
+    {
+      "part_id": "tire_TPU",
+      "instance_id": "FR_SPIN/tire_TPU",
+      "revision": "rev4-D0",
+      "role": "structure_or_tire",
+      "mass_source": "ENVELOPE_EFFECTIVE",
+      "mass_kg": 0.0630470373418778,
+      "volume_cm3": 127.62558166372027,
+      "density_kg_m3": 494.0,
+      "com_local_m": [
+        0.018757958097251323,
+        -8.907840907724022e-16,
+        0.0
+      ],
+      "com_world_m": [
+        0.2512354427413655,
+        -0.16,
+        -0.150500000000001
+      ],
+      "inertia_com_local_kgm2": [
+        [
+          0.0004886802161158768,
+          4.877161779854515e-18,
+          -1.1232259566895664e-20
+        ],
+        [
+          4.877161779854515e-18,
+          0.0003457059943317965,
+          0.0
+        ],
+        [
+          -1.1232259566895664e-20,
+          0.0,
+          0.0008301830746248816
+        ]
+      ],
+      "geometry_hash": null,
+      "geometry_hash_scope": "Per-body BRep hash not available; complete native archive hash is in cad/document.json",
+      "body_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZQpccb9IBPpcpTccVpR5krZwFVGGkYGymYGpgnJacYpyia2RmaahrkmhuoWuRZJGsa5ZiYpBobGJplmyaBFYLNIMBDYDtM1AAWwey3tjYwMQMACNE8fOKAAAA",
+      "occurrence_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/32OsQ1CMQxEJ4ABKFAYwFLs2InTs0icOAVjUFJTsQFb0LHGH4UgenTN6fR0dzFwoIAhLiHpcvhLcrgdd/ban+/X9+mwXZ6PRVBIOXiOnbgLtGkETESgZAxWGlYWTljnallkqT5LcYcS0YEFE5g7g7TRo6ugafu/JTHNPtIAyhWBW1FQ0w55cGyJa+5i3+8faSv2w8cAAAA=",
+      "source_file": "cad/MARC-PARAM-D0.f3d",
+      "geometry_status": "D0_SOLID",
+      "input_sha256": "9016f7ae0c61b47d2dc5956501b72e76cb43e6b856222ea5a5a4c550a5e09977"
+    },
+    {
+      "part_id": "sector_PLA",
+      "instance_id": "RR_SPIN/sector_PLA",
+      "revision": "rev4-D0",
+      "role": "structure_or_tire",
+      "mass_source": "CAD_BULK",
+      "mass_kg": 0.1823895958141038,
+      "volume_cm3": 154.567454079749,
+      "density_kg_m3": 1180.0,
+      "com_local_m": [
+        0.012723157170268751,
+        2.2065480420533943e-16,
+        -9.193950175222475e-18
+      ],
+      "com_world_m": [
+        -0.24520064181438297,
+        -0.15999999999999998,
+        -0.1504999999999999
+      ],
+      "inertia_com_local_kgm2": [
+        [
+          0.0007905088313781224,
+          -2.492925246056627e-18,
+          8.598515611749189e-20
+        ],
+        [
+          -2.492925246056627e-18,
+          0.000569420155590124,
+          -2.6830093702301415e-19
+        ],
+        [
+          8.598515611749189e-20,
+          -2.6830093702301415e-19,
+          0.0013491418002127538
+        ]
+      ],
+      "geometry_hash": null,
+      "geometry_hash_scope": "Per-body BRep hash not available; complete native archive hash is in cad/document.json",
+      "body_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZQpccb9IBPpcpTccVpR5krZwFVGGkYGymYGpgnJacYpyia2RmaahrkmhuoWuRZJGsa5ZiYpBobGJplmyaBFYLNIMBDYDtM1AAWwey3szM0hIAL+452YkAAAA=",
+      "occurrence_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/32Osa2CMQyEJ4ABKJAZwFLi2I7ds0ic/CkYg5Kaig3eFnSswSjkiR5dczp9ursEDAQZ0lImWy5/E4XbcRfP/fl+fZ0O78vfYxEERWHT1Im7YJtByESERsEYtWVn4ZJ9rpZFugQ1SYa1hSHzZmjsgtFjs+GVx9TfW5LK7KMMJPWM3OpqCOuog1Mr7Nol/r9/AHW5wbvHAAAA",
+      "source_file": "cad/MARC-PARAM-D0.f3d",
+      "geometry_status": "D0_SOLID",
+      "input_sha256": "9016f7ae0c61b47d2dc5956501b72e76cb43e6b856222ea5a5a4c550a5e09977"
+    },
+    {
+      "part_id": "tire_TPU",
+      "instance_id": "RR_SPIN/tire_TPU",
+      "revision": "rev4-D0",
+      "role": "structure_or_tire",
+      "mass_source": "ENVELOPE_EFFECTIVE",
+      "mass_kg": 0.0630470373418778,
+      "volume_cm3": 127.62558166372027,
+      "density_kg_m3": 494.0,
+      "com_local_m": [
+        0.018757958097251323,
+        -8.907840907724022e-16,
+        0.0
+      ],
+      "com_world_m": [
+        -0.25123544274136556,
+        -0.15999999999999998,
+        -0.150500000000001
+      ],
+      "inertia_com_local_kgm2": [
+        [
+          0.0004886802161158768,
+          4.877161779854515e-18,
+          -1.1232259566895664e-20
+        ],
+        [
+          4.877161779854515e-18,
+          0.0003457059943317965,
+          0.0
+        ],
+        [
+          -1.1232259566895664e-20,
+          0.0,
+          0.0008301830746248816
+        ]
+      ],
+      "geometry_hash": null,
+      "geometry_hash_scope": "Per-body BRep hash not available; complete native archive hash is in cad/document.json",
+      "body_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZQpccb9IBPpcpTccVpR5krZwFVGGkYGymYGpgnJacYpyia2RmaahrkmhuoWuRZJGsa5ZiYpBobGJplmyaBFYLNIMBDYDtM1AAWwey3tjYwMQMACNE8fOKAAAA",
+      "occurrence_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/32Osa2CMQyEJ4ABKJAZwFLi2I7ds0ic/CkYg5Kaig3eFnSswSjkiR5dczp9ursEDAQZ0lImWy5/E4XbcRfP/fl+fZ0O78vfYxEERWHT1Im7YJtByESERsEYtWVn4ZJ9rpZFugQ1SYa1hSHzZmjsgtFjs+GVx9TfW5LK7KMMJPWM3OpqCOuog1Mr7Nol/r9/AHW5wbvHAAAA",
+      "source_file": "cad/MARC-PARAM-D0.f3d",
+      "geometry_status": "D0_SOLID",
+      "input_sha256": "9016f7ae0c61b47d2dc5956501b72e76cb43e6b856222ea5a5a4c550a5e09977"
+    },
+    {
+      "part_id": "sector_PLA",
+      "instance_id": "RL_SPIN/sector_PLA",
+      "revision": "rev4-D0",
+      "role": "structure_or_tire",
+      "mass_source": "CAD_BULK",
+      "mass_kg": 0.1823895958141038,
+      "volume_cm3": 154.567454079749,
+      "density_kg_m3": 1180.0,
+      "com_local_m": [
+        0.012723157170268751,
+        2.2065480420533943e-16,
+        -9.193950175222475e-18
+      ],
+      "com_world_m": [
+        -0.24520064181438275,
+        0.15999999999999998,
+        -0.15049999999999975
+      ],
+      "inertia_com_local_kgm2": [
+        [
+          0.0007905088313781224,
+          -2.492925246056627e-18,
+          8.598515611749189e-20
+        ],
+        [
+          -2.492925246056627e-18,
+          0.000569420155590124,
+          -2.6830093702301415e-19
+        ],
+        [
+          8.598515611749189e-20,
+          -2.6830093702301415e-19,
+          0.0013491418002127538
+        ]
+      ],
+      "geometry_hash": null,
+      "geometry_hash_scope": "Per-body BRep hash not available; complete native archive hash is in cad/document.json",
+      "body_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZQpccb9IBPpcpTccVpR5krZwFVGGkYGymYGpgnJacYpyia2RmaahrkmhuoWuRZJGsa5ZiYpBobGJplmyaBFYLNIMBDYDtM1AAWwey3szM0hIAL+452YkAAAA=",
+      "occurrence_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/4WOsa2CMQyEJ4ABKJAZwFLsOE7cs0js/CkYg5Kaig3eFnSswSjkiQHQNafTp7tLIMBAkJaI23L0TRRux50/9+f79XU6vC9/j0UwZIVNU7BEwT6dUZgZG7ug104mRTLZXC2L7MyRa5rYhwpKGYEtzHGbUmIzmlZ/bJWUZ4w8kNUIpdeGzVugDkk9i2kU///+AaCShNvHAAAA",
+      "source_file": "cad/MARC-PARAM-D0.f3d",
+      "geometry_status": "D0_SOLID",
+      "input_sha256": "9016f7ae0c61b47d2dc5956501b72e76cb43e6b856222ea5a5a4c550a5e09977"
+    },
+    {
+      "part_id": "tire_TPU",
+      "instance_id": "RL_SPIN/tire_TPU",
+      "revision": "rev4-D0",
+      "role": "structure_or_tire",
+      "mass_source": "ENVELOPE_EFFECTIVE",
+      "mass_kg": 0.0630470373418778,
+      "volume_cm3": 127.62558166372027,
+      "density_kg_m3": 494.0,
+      "com_local_m": [
+        0.018757958097251323,
+        -8.907840907724022e-16,
+        0.0
+      ],
+      "com_world_m": [
+        -0.25123544274136533,
+        0.16,
+        -0.15050000000000086
+      ],
+      "inertia_com_local_kgm2": [
+        [
+          0.0004886802161158768,
+          4.877161779854515e-18,
+          -1.1232259566895664e-20
+        ],
+        [
+          4.877161779854515e-18,
+          0.0003457059943317965,
+          0.0
+        ],
+        [
+          -1.1232259566895664e-20,
+          0.0,
+          0.0008301830746248816
+        ]
+      ],
+      "geometry_hash": null,
+      "geometry_hash_scope": "Per-body BRep hash not available; complete native archive hash is in cad/document.json",
+      "body_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/zNQsFAwAEJDBSMgBrOMLIAsQwUTkIiZQpccb9IBPpcpTccVpR5krZwFVGGkYGymYGpgnJacYpyia2RmaahrkmhuoWuRZJGsa5ZiYpBobGJplmyaBFYLNIMBDYDtM1AAWwey3tjYwMQMACNE8fOKAAAA",
+      "occurrence_token": "/v4BAAAARlJLZXkAH4sIAAAAAAAA/4WOsa2CMQyEJ4ABKJAZwFLsOE7cs0js/CkYg5Kaig3eFnSswSjkiQHQNafTp7tLIMBAkJaI23L0TRRux50/9+f79XU6vC9/j0UwZIVNU7BEwT6dUZgZG7ug104mRTLZXC2L7MyRa5rYhwpKGYEtzHGbUmIzmlZ/bJWUZ4w8kNUIpdeGzVugDkk9i2kU///+AaCShNvHAAAA",
+      "source_file": "cad/MARC-PARAM-D0.f3d",
+      "geometry_status": "D0_SOLID",
+      "input_sha256": "9016f7ae0c61b47d2dc5956501b72e76cb43e6b856222ea5a5a4c550a5e09977"
+    },
+    {
+      "part_id": "MX-28AT",
+      "instance_id": "FL/yaw_motor",
+      "revision": null,
+      "role": "actuator",
+      "mass_source": "DATASHEET",
+      "mass_kg": 0.077,
+      "com_local_m": null,
+      "inertia_com_local_kgm2": null,
+      "geometry_hash": null,
+      "source_file": "evidence/design_plan_snapshot.md section 8.4",
+      "geometry_status": "MISSING",
+      "blocking_input": "I02"
+    },
+    {
+      "part_id": "XM430-W350-T",
+      "instance_id": "FL/q1_motor",
+      "revision": null,
+      "role": "actuator",
+      "mass_source": "DATASHEET",
+      "mass_kg": 0.082,
+      "com_local_m": null,
+      "inertia_com_local_kgm2": null,
+      "geometry_hash": null,
+      "source_file": "evidence/design_plan_snapshot.md section 8.4",
+      "geometry_status": "MISSING",
+      "blocking_input": "I02"
+    },
+    {
+      "part_id": "XM430-W210-T",
+      "instance_id": "FL/q2_motor",
+      "revision": null,
+      "role": "actuator",
+      "mass_source": "DATASHEET",
+      "mass_kg": 0.082,
+      "com_local_m": null,
+      "inertia_com_local_kgm2": null,
+      "geometry_hash": null,
+      "source_file": "evidence/design_plan_snapshot.md section 8.4",
+      "geometry_status": "MISSING",
+      "blocking_input": "I02"
+    },
+    {
+      "part_id": "MX-28AT",
+      "instance_id": "FR/yaw_motor",
+      "revision": null,
+      "role": "actuator",
+      "mass_source": "DATASHEET",
+      "mass_kg": 0.077,
+      "com_local_m": null,
+      "inertia_com_local_kgm2": null,
+      "geometry_hash": null,
+      "source_file": "evidence/design_plan_snapshot.md section 8.4",
+      "geometry_status": "MISSING",
+      "blocking_input": "I02"
+    },
+    {
+      "part_id": "XM430-W350-T",
+      "instance_id": "FR/q1_motor",
+      "revision": null,
+      "role": "actuator",
+      "mass_source": "DATASHEET",
+      "mass_kg": 0.082,
+      "com_local_m": null,
+      "inertia_com_local_kgm2": null,
+      "geometry_hash": null,
+      "source_file": "evidence/design_plan_snapshot.md section 8.4",
+      "geometry_status": "MISSING",
+      "blocking_input": "I02"
+    },
+    {
+      "part_id": "XM430-W210-T",
+      "instance_id": "FR/q2_motor",
+      "revision": null,
+      "role": "actuator",
+      "mass_source": "DATASHEET",
+      "mass_kg": 0.082,
+      "com_local_m": null,
+      "inertia_com_local_kgm2": null,
+      "geometry_hash": null,
+      "source_file": "evidence/design_plan_snapshot.md section 8.4",
+      "geometry_status": "MISSING",
+      "blocking_input": "I02"
+    },
+    {
+      "part_id": "MX-28AT",
+      "instance_id": "RL/yaw_motor",
+      "revision": null,
+      "role": "actuator",
+      "mass_source": "DATASHEET",
+      "mass_kg": 0.077,
+      "com_local_m": null,
+      "inertia_com_local_kgm2": null,
+      "geometry_hash": null,
+      "source_file": "evidence/design_plan_snapshot.md section 8.4",
+      "geometry_status": "MISSING",
+      "blocking_input": "I02"
+    },
+    {
+      "part_id": "XM430-W350-T",
+      "instance_id": "RL/q1_motor",
+      "revision": null,
+      "role": "actuator",
+      "mass_source": "DATASHEET",
+      "mass_kg": 0.082,
+      "com_local_m": null,
+      "inertia_com_local_kgm2": null,
+      "geometry_hash": null,
+      "source_file": "evidence/design_plan_snapshot.md section 8.4",
+      "geometry_status": "MISSING",
+      "blocking_input": "I02"
+    },
+    {
+      "part_id": "XM430-W210-T",
+      "instance_id": "RL/q2_motor",
+      "revision": null,
+      "role": "actuator",
+      "mass_source": "DATASHEET",
+      "mass_kg": 0.082,
+      "com_local_m": null,
+      "inertia_com_local_kgm2": null,
+      "geometry_hash": null,
+      "source_file": "evidence/design_plan_snapshot.md section 8.4",
+      "geometry_status": "MISSING",
+      "blocking_input": "I02"
+    },
+    {
+      "part_id": "MX-28AT",
+      "instance_id": "RR/yaw_motor",
+      "revision": null,
+      "role": "actuator",
+      "mass_source": "DATASHEET",
+      "mass_kg": 0.077,
+      "com_local_m": null,
+      "inertia_com_local_kgm2": null,
+      "geometry_hash": null,
+      "source_file": "evidence/design_plan_snapshot.md section 8.4",
+      "geometry_status": "MISSING",
+      "blocking_input": "I02"
+    },
+    {
+      "part_id": "XM430-W350-T",
+      "instance_id": "RR/q1_motor",
+      "revision": null,
+      "role": "actuator",
+      "mass_source": "DATASHEET",
+      "mass_kg": 0.082,
+      "com_local_m": null,
+      "inertia_com_local_kgm2": null,
+      "geometry_hash": null,
+      "source_file": "evidence/design_plan_snapshot.md section 8.4",
+      "geometry_status": "MISSING",
+      "blocking_input": "I02"
+    },
+    {
+      "part_id": "XM430-W210-T",
+      "instance_id": "RR/q2_motor",
+      "revision": null,
+      "role": "actuator",
+      "mass_source": "DATASHEET",
+      "mass_kg": 0.082,
+      "com_local_m": null,
+      "inertia_com_local_kgm2": null,
+      "geometry_hash": null,
+      "source_file": "evidence/design_plan_snapshot.md section 8.4",
+      "geometry_status": "MISSING",
+      "blocking_input": "I02"
+    },
+    {
+      "part_id": "battery",
+      "instance_id": "BODY/battery",
+      "revision": null,
+      "role": "payload",
+      "mass_source": "DATASHEET",
+      "mass_kg": 0.204,
+      "com_local_m": null,
+      "inertia_com_local_kgm2": null,
+      "geometry_hash": null,
+      "source_file": "evidence/design_plan_snapshot.md section 8.1 and 9.2",
+      "geometry_status": "ENVELOPE",
+      "blocking_input": "I06"
+    },
+    {
+      "part_id": "U2D2",
+      "instance_id": "BODY/U2D2",
+      "revision": null,
+      "role": "payload",
+      "mass_source": "DATASHEET",
+      "mass_kg": 0.009,
+      "com_local_m": null,
+      "inertia_com_local_kgm2": null,
+      "geometry_hash": null,
+      "source_file": "evidence/design_plan_snapshot.md section 8.1 and 9.2",
+      "geometry_status": "ENVELOPE",
+      "blocking_input": "I05"
+    },
+    {
+      "part_id": "SPDB",
+      "instance_id": "BODY/SPDB",
+      "revision": null,
+      "role": "payload",
+      "mass_source": "DATASHEET",
+      "mass_kg": null,
+      "com_local_m": null,
+      "inertia_com_local_kgm2": null,
+      "geometry_hash": null,
+      "source_file": "evidence/design_plan_snapshot.md section 8.1 and 9.2",
+      "geometry_status": "ENVELOPE",
+      "blocking_input": "I06"
+    },
+    {
+      "part_id": "Jetson",
+      "instance_id": "BODY/Jetson",
+      "revision": null,
+      "role": "payload",
+      "mass_source": "DATASHEET",
+      "mass_kg": 0.145,
+      "com_local_m": null,
+      "inertia_com_local_kgm2": null,
+      "geometry_hash": null,
+      "source_file": "evidence/design_plan_snapshot.md section 8.1 and 9.2",
+      "geometry_status": "ENVELOPE",
+      "blocking_input": "I05"
+    },
+    {
+      "part_id": "lidar",
+      "instance_id": "BODY/lidar",
+      "revision": null,
+      "role": "payload",
+      "mass_source": "DATASHEET",
+      "mass_kg": 0.045,
+      "com_local_m": null,
+      "inertia_com_local_kgm2": null,
+      "geometry_hash": null,
+      "source_file": "evidence/design_plan_snapshot.md section 8.1 and 9.2",
+      "geometry_status": "ENVELOPE",
+      "blocking_input": "I05"
+    },
+    {
+      "part_id": "stereo",
+      "instance_id": "BODY/stereo",
+      "revision": null,
+      "role": "payload",
+      "mass_source": "DATASHEET",
+      "mass_kg": 0.03,
+      "com_local_m": null,
+      "inertia_com_local_kgm2": null,
+      "geometry_hash": null,
+      "source_file": "evidence/design_plan_snapshot.md section 8.1 and 9.2",
+      "geometry_status": "ENVELOPE",
+      "blocking_input": "I05"
+    },
+    {
+      "part_id": "horns",
+      "instance_id": "UNRESOLVED/horns",
+      "revision": null,
+      "role": "unresolved",
+      "mass_source": null,
+      "mass_kg": null,
+      "com_local_m": null,
+      "inertia_com_local_kgm2": null,
+      "geometry_hash": null,
+      "source_file": null,
+      "geometry_status": "MISSING"
+    },
+    {
+      "part_id": "bearings",
+      "instance_id": "UNRESOLVED/bearings",
+      "revision": null,
+      "role": "unresolved",
+      "mass_source": null,
+      "mass_kg": null,
+      "com_local_m": null,
+      "inertia_com_local_kgm2": null,
+      "geometry_hash": null,
+      "source_file": null,
+      "geometry_status": "MISSING"
+    },
+    {
+      "part_id": "shafts",
+      "instance_id": "UNRESOLVED/shafts",
+      "revision": null,
+      "role": "unresolved",
+      "mass_source": null,
+      "mass_kg": null,
+      "com_local_m": null,
+      "inertia_com_local_kgm2": null,
+      "geometry_hash": null,
+      "source_file": null,
+      "geometry_status": "MISSING"
+    },
+    {
+      "part_id": "deck_standoffs",
+      "instance_id": "UNRESOLVED/deck_standoffs",
+      "revision": null,
+      "role": "unresolved",
+      "mass_source": null,
+      "mass_kg": null,
+      "com_local_m": null,
+      "inertia_com_local_kgm2": null,
+      "geometry_hash": null,
+      "source_file": null,
+      "geometry_status": "MISSING"
+    },
+    {
+      "part_id": "sensor_mounts",
+      "instance_id": "UNRESOLVED/sensor_mounts",
+      "revision": null,
+      "role": "unresolved",
+      "mass_source": null,
+      "mass_kg": null,
+      "com_local_m": null,
+      "inertia_com_local_kgm2": null,
+      "geometry_hash": null,
+      "source_file": null,
+      "geometry_status": "MISSING"
+    },
+    {
+      "part_id": "fork_final",
+      "instance_id": "UNRESOLVED/fork_final",
+      "revision": null,
+      "role": "unresolved",
+      "mass_source": null,
+      "mass_kg": null,
+      "com_local_m": null,
+      "inertia_com_local_kgm2": null,
+      "geometry_hash": null,
+      "source_file": null,
+      "geometry_status": "MISSING"
+    },
+    {
+      "part_id": "fasteners",
+      "instance_id": "UNRESOLVED/fasteners",
+      "revision": null,
+      "role": "unresolved",
+      "mass_source": null,
+      "mass_kg": null,
+      "com_local_m": null,
+      "inertia_com_local_kgm2": null,
+      "geometry_hash": null,
+      "source_file": null,
+      "geometry_status": "MISSING"
+    },
+    {
+      "part_id": "wiring",
+      "instance_id": "UNRESOLVED/wiring",
+      "revision": null,
+      "role": "unresolved",
+      "mass_source": null,
+      "mass_kg": null,
+      "com_local_m": null,
+      "inertia_com_local_kgm2": null,
+      "geometry_hash": null,
+      "source_file": null,
+      "geometry_status": "MISSING"
+    },
+    {
+      "part_id": "converters",
+      "instance_id": "UNRESOLVED/converters",
+      "revision": null,
+      "role": "unresolved",
+      "mass_source": null,
+      "mass_kg": null,
+      "com_local_m": null,
+      "inertia_com_local_kgm2": null,
+      "geometry_hash": null,
+      "source_file": null,
+      "geometry_status": "MISSING"
+    },
+    {
+      "part_id": "power_switches_and_protection",
+      "instance_id": "UNRESOLVED/power_switches_and_protection",
+      "revision": null,
+      "role": "unresolved",
+      "mass_source": null,
+      "mass_kg": null,
+      "com_local_m": null,
+      "inertia_com_local_kgm2": null,
+      "geometry_hash": null,
+      "source_file": null,
+      "geometry_status": "MISSING"
+    },
+    {
+      "part_id": "battery_door_and_rails",
+      "instance_id": "UNRESOLVED/battery_door_and_rails",
+      "revision": null,
+      "role": "unresolved",
+      "mass_source": null,
+      "mass_kg": null,
+      "com_local_m": null,
+      "inertia_com_local_kgm2": null,
+      "geometry_hash": null,
+      "source_file": null,
+      "geometry_status": "MISSING"
+    }
+  ],
+  "cad_structure_subtotal_kg": 1.7973274158239267,
+  "cad_structure_com_world_m": [
+    7.721346531317797e-18,
+    -1.930336632829449e-18,
+    -0.09770949670659364
+  ],
+  "known_mass_subtotal_kg": 3.1943274158239263,
+  "missing_mass_count": 12,
+  "missing_inertia_count": 29,
+  "by_structure_part": {
+    "frame_PLA": {
+      "count": 1,
+      "mass_kg_each": 0.19205000319999982,
+      "subtotal_kg": 0.19205000319999982
+    },
+    "deck_PLA": {
+      "count": 1,
+      "mass_kg_each": 0.10738000000000009,
+      "subtotal_kg": 0.10738000000000009
+    },
+    "Yoke1_D0": {
+      "count": 4,
+      "mass_kg_each": 0.022979319999999984,
+      "subtotal_kg": 0.09191727999999993
+    },
+    "Yoke2_D0": {
+      "count": 4,
+      "mass_kg_each": 0.01962576,
+      "subtotal_kg": 0.07850304
+    },
+    "crank_PLA": {
+      "count": 4,
+      "mass_kg_each": 0.08643264000000005,
+      "subtotal_kg": 0.3457305600000002
+    },
+    "sector_PLA": {
+      "count": 4,
+      "mass_kg_each": 0.1823895958141038,
+      "subtotal_kg": 0.7295583832564152
+    },
+    "tire_TPU": {
+      "count": 4,
+      "mass_kg_each": 0.0630470373418778,
+      "subtotal_kg": 0.2521881493675112
+    }
+  },
+  "excluded": [
+    "study fork envelopes",
+    "mast space",
+    "battery slot space",
+    "payload envelope default CAD density"
+  ],
+  "reason": "Partial BOM only; yoke envelopes overlap and physical interfaces are unresolved. Do not treat the subtotal as final robot mass."
+}

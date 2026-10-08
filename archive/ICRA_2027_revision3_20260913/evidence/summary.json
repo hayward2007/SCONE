@@ -1,0 +1,26 @@
+{
+  "trials": 268,
+  "completed": 193,
+  "failure_counts": {
+    "ik-target-rejected": 75
+  },
+  "speed_B_high": 0.2832466779531233,
+  "speed_N_high": 0.12607363286425038,
+  "speed_U_high": 0.28337994683934276,
+  "speed_ratio_B_N": 2.2466765771563733,
+  "speed_ratio_B_U": 0.9995297165953136,
+  "paired_B_N_mean": 0.15717304508887292,
+  "paired_B_N_min": 0.15064189154813737,
+  "paired_B_N_max": 0.1621291175930623,
+  "peak_sector_U": 1516.7876458188612,
+  "peak_sector_B": 536.4108000000009,
+  "max_speed_integral_difference": 0.029139983060828278,
+  "B_total": 68,
+  "B_completed": 68,
+  "B_rate_violation_frames": 0,
+  "B_max_distal_target_rate": 1594.5818402972818,
+  "B_min_loaded_legs": 1,
+  "B_main_max_fraction_under_three": 0.1165,
+  "max_geometry_speed_change": 0.012214250255079218,
+  "max_timestep_speed_change": 0.0008290779511214014
+}

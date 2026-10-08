@@ -1,0 +1,17 @@
+{
+  "protected_source_id": "urn:adsk.wipprod:dm.lineage:VUu_hd0ATYKQ4csy_mW31g",
+  "work_id": "urn:adsk.wipprod:dm.lineage:Yj_zVXEXSSK0CEeVPW2RIQ",
+  "independent_copy": true,
+  "source_open": true,
+  "historical_source_fields_equal": {
+    "timeline": false,
+    "root_box": true,
+    "components": false,
+    "parameters": true
+  },
+  "historical_source_geometry_and_poses_equal": false,
+  "source_modified_on_read": true,
+  "historical_source_body_geometry_equal": true,
+  "source_action": "read only; no activation, editing, saving or pose restoration",
+  "source_current_state_preserved_during_export": true
+}

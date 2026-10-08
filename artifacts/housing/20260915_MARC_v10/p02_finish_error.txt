@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "<string>", line 15, in <module>
+  File "<string>", line 9, in run
+  File "<string>", line 9, in union
+  File "<string>", line 7, in boolean
+  File "/Users/hayward_kim/Library/Application Support/Autodesk/webdeploy/production/127ae56f1790f40cf393bcc73875a1a281e20234/Autodesk Fusion.app/Contents/Api/Python/packages/adsk/fusion.py", line 75852, in booleanOperation
+    return _fusion.TemporaryBRepManager_booleanOperation(self, targetBody, toolBody, booleanType)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: 3 : ASM_INCONS_REL - 부울 연산을 수행하지 못했습니다.

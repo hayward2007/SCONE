@@ -1,0 +1,4 @@
+{
+  "reason": "The superposition ablation rejected an IK target and the initial runner aborted. Failure recording added; controller settings, job matrix and geometry unchanged. First three completed rows retained in aborted_instrumentation_run. These runs are not counted twice.",
+  "frozen_revision": "1c44eb6c4ab4c7b9ed4f863ac9a73054d8b1e458"
+}

@@ -1,0 +1,17 @@
+{
+  "status": "NOT_RUN",
+  "order": [
+    "FL",
+    "FR",
+    "RL",
+    "RR"
+  ],
+  "absolute_phase_deg": [
+    0,
+    180,
+    180,
+    0
+  ],
+  "use": "Future P06 diagnostic only; reference CAD uses alpha=0 on all legs",
+  "blocked_by": "P00 intersections and missing G11 motion guards"
+}

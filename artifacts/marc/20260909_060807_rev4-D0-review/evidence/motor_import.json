@@ -1,0 +1,227 @@
+{
+  "convention": "local Z = output shaft axis, local origin on that axis, horn protrudes +Z",
+  "geometry_source": {
+    "MX-28AT": "src/assets/meshes/BODY_ACTUATOR.stl",
+    "XM430-W350-T": "src/assets/meshes/LEG_ACTUATOR.stl",
+    "XM430-W210-T": "src/assets/meshes/LEG_ACTUATOR.stl"
+  },
+  "geometry_provenance": "SCONE v2 MuJoCo assets; watertight closed STL, 0 non-manifold edges",
+  "mesh_check": {
+    "MX-28AT": {
+      "tris": 8564,
+      "edges": 25692,
+      "nonmanifold": 0,
+      "volume_cm3": 43.987
+    },
+    "XM430": {
+      "tris": 9264,
+      "edges": 27792,
+      "nonmanifold": 0,
+      "volume_cm3": 43.3325
+    }
+  },
+  "mass_source": "DATASHEET; uniform effective density chosen so the mesh mass equals the datasheet mass",
+  "effective_density_kg_m3": {
+    "MX-28AT": 1750.5172,
+    "XM430-W350-T": 1892.3442,
+    "XM430-W210-T": 1892.3442
+  },
+  "inertia_caveat": "geometry is real but internal mass distribution (gearbox, PCB, magnets) is not; inertia is PRELIMINARY",
+  "placement": [
+    {
+      "logical": "M01_FL_yaw",
+      "model": "MX-28AT",
+      "axis_origin_mm": [
+        50.0,
+        160.0,
+        0.0
+      ],
+      "axis_dir": [
+        0,
+        0,
+        1
+      ],
+      "kinematic_parent": "Frame_D0:1"
+    },
+    {
+      "logical": "M02_FR_yaw",
+      "model": "MX-28AT",
+      "axis_origin_mm": [
+        50.0,
+        -160.0,
+        0.0
+      ],
+      "axis_dir": [
+        0,
+        0,
+        1
+      ],
+      "kinematic_parent": "Frame_D0:1"
+    },
+    {
+      "logical": "M03_RL_yaw",
+      "model": "MX-28AT",
+      "axis_origin_mm": [
+        -50.0,
+        160.0,
+        0.0
+      ],
+      "axis_dir": [
+        0,
+        0,
+        1
+      ],
+      "kinematic_parent": "Frame_D0:1"
+    },
+    {
+      "logical": "M04_RR_yaw",
+      "model": "MX-28AT",
+      "axis_origin_mm": [
+        -50.0,
+        -160.0,
+        0.0
+      ],
+      "axis_dir": [
+        0,
+        0,
+        1
+      ],
+      "kinematic_parent": "Frame_D0:1"
+    },
+    {
+      "logical": "M05_FL_q1",
+      "model": "XM430-W350-T",
+      "axis_origin_mm": [
+        108.0,
+        160.0,
+        0.0
+      ],
+      "axis_dir": [
+        0,
+        -1,
+        0
+      ],
+      "kinematic_parent": "Yaw_Module_D0:1"
+    },
+    {
+      "logical": "M06_FR_q1",
+      "model": "XM430-W350-T",
+      "axis_origin_mm": [
+        108.0,
+        -160.0,
+        0.0
+      ],
+      "axis_dir": [
+        0,
+        -1,
+        0
+      ],
+      "kinematic_parent": "Yaw_Module_D0:2"
+    },
+    {
+      "logical": "M07_RL_q1",
+      "model": "XM430-W350-T",
+      "axis_origin_mm": [
+        -108.0,
+        160.0,
+        0.0
+      ],
+      "axis_dir": [
+        0,
+        1,
+        0
+      ],
+      "kinematic_parent": "Yaw_Module_D0:3"
+    },
+    {
+      "logical": "M08_RR_q1",
+      "model": "XM430-W350-T",
+      "axis_origin_mm": [
+        -108.0,
+        -160.0,
+        0.0
+      ],
+      "axis_dir": [
+        0,
+        1,
+        0
+      ],
+      "kinematic_parent": "Yaw_Module_D0:4"
+    },
+    {
+      "logical": "M09_FL_q2",
+      "model": "XM430-W210-T",
+      "axis_origin_mm": [
+        232.4775,
+        123.13,
+        -150.5
+      ],
+      "axis_dir": [
+        0,
+        1,
+        0
+      ],
+      "kinematic_parent": "Crank_Link_D0:1"
+    },
+    {
+      "logical": "M10_FR_q2",
+      "model": "XM430-W210-T",
+      "axis_origin_mm": [
+        232.4775,
+        -123.13,
+        -150.5
+      ],
+      "axis_dir": [
+        0,
+        -1,
+        0
+      ],
+      "kinematic_parent": "Crank_Link_D0:2"
+    },
+    {
+      "logical": "M11_RL_q2",
+      "model": "XM430-W210-T",
+      "axis_origin_mm": [
+        -232.4775,
+        123.13,
+        -150.5
+      ],
+      "axis_dir": [
+        0,
+        1,
+        0
+      ],
+      "kinematic_parent": "Crank_Link_D0:3"
+    },
+    {
+      "logical": "M12_RR_q2",
+      "model": "XM430-W210-T",
+      "axis_origin_mm": [
+        -232.4775,
+        -123.13,
+        -150.5
+      ],
+      "axis_dir": [
+        0,
+        -1,
+        0
+      ],
+      "kinematic_parent": "Crank_Link_D0:4"
+    }
+  ],
+  "cross_check": {
+    "yaw_housing_center_measured_mm": [
+      36.7,
+      160.0,
+      3.3
+    ],
+    "doc_parameter_body_hip_motor_center": [
+      36.7,
+      null,
+      3.3
+    ],
+    "result": "MATCH - the real MX-28AT geometry lands exactly on the documented housing centre"
+  },
+  "spin_motor_offset_rule": "case front face placed on the clevis outer face at |y| = track_half - (b/2 + clevis_gap + clevis_arm_t) = 143 mm; origin therefore 19.87 mm further out along the axis",
+  "kinematic_parenting": "recorded as metadata only. Rigid as-built joints were attempted and REVERTED: Fusion re-solved and displaced every motor to the diagonally opposite corner. Making the housings follow the joints is a B06/D1 task."
+}

@@ -1,0 +1,61 @@
+{
+  "date": "2026-10-09",
+  "timezone": "Asia/Seoul",
+  "checks": {
+    "unittest": {
+      "command": "python3 -m unittest discover -s tests -v",
+      "tests_run": 287,
+      "duration_seconds": 85.007,
+      "status": "OK",
+      "log": "tests.log"
+    },
+    "secret_pattern_scan": {
+      "text_files_checked": 1198,
+      "findings": 0,
+      "scope": "tracked and Git-eligible untracked text files; separate snapshot patches also checked"
+    },
+    "checkpoint_archives": {
+      "files_saved": 77,
+      "invalid_zip_files": 0
+    },
+    "python_syntax": {
+      "files_parsed": 265,
+      "syntax_errors": 0,
+      "method": "ast.parse; excludes installed virtualenv packages"
+    },
+    "archive_document_links": {
+      "links_checked": 87,
+      "broken_links": 0
+    },
+    "Fusion_export_service": {
+      "status": "UNAVAILABLE",
+      "endpoint": "http://127.0.0.1:27182/mcp",
+      "observed_error": "RemoteDisconnected; local server closed the initialize request",
+      "latest_cloud_F3D_export_created": false
+    },
+    "original_project_preservation": {
+      "files_checked": 1613,
+      "unexpected_changes": 0,
+      "missing_files": 0,
+      "intentional_edits": [
+        ".gitignore",
+        "README.md",
+        "docs/README.md"
+      ]
+    },
+    "staged_LFS_assets": {
+      "files": 220,
+      "bytes": 2243068512,
+      "pointer_matches_original_sha256": true,
+      "local_objects_present": true
+    },
+    "GitHub_regular_blob_limit": {
+      "index_files_checked": 1630,
+      "blobs_over_100_MiB": 0
+    }
+  },
+  "hardware_tests": "NOT_RUN",
+  "CAD_revalidation": "NOT_RUN",
+  "new_locked_ICRA_evaluation": "NOT_RUN",
+  "publication_or_submission_check": "NOT_RUN"
+}

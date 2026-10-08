@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "design_revision": "rev3-D0",
+  "status": "CANDIDATE",
+  "geometry": {
+    "R_tread_mm": 122.5,
+    "t_tire_mm": 10.0,
+    "b_sector_mm": 20.0,
+    "th_tread_deg": 225.0,
+    "d_lobe_deg": 45.0,
+    "r_lobe_tip_mm": 112.5,
+    "profile_step_deg": 0.5,
+    "nose_fillet_mm": 0.0,
+    "t_rim_mm": 3.0,
+    "t_lip_mm": 3.0,
+    "h_lip_mm": 12.0,
+    "t_web_mm": 2.0,
+    "r_hub_mm": 22.0,
+    "hub_boss_h_mm": 10.0,
+    "t_rib_mm": 2.0,
+    "rib_angles_deg": [
+      -150,
+      -100,
+      -50,
+      0,
+      50,
+      100,
+      150
+    ],
+    "web_pocket_fraction": 0.0,
+    "link_hole_fraction": 0.0,
+    "tire_representation": "envelope_effective_density",
+    "hub_interface": "solid_placeholder"
+  },
+  "leg": {
+    "steer_axis_x_mm": 50.0,
+    "steer_axis_z_mm": 20.5,
+    "stage1_axis_x_mm": 108.0,
+    "stage1_axis_z_mm": 0.0,
+    "mid_yoke_extension_mm": 25.0,
+    "link_a_mm": 90.0,
+    "link_b_mm": 110.0,
+    "gamma_crank_deg": 25.0,
+    "H_reference_mm": 255.0,
+    "alpha_abs_reference_deg": 0.0,
+    "alpha_park_deg": null,
+    "box_w_mm": 34.0,
+    "box_h_mm": 37.0,
+    "wall_link_mm": 2.8,
+    "wall_yoke_mm": 3.5,
+    "clevis_gap_mm": 2.0,
+    "clevis_arm_t_mm": 5.0,
+    "yaw_search_deg": [
+      -110.0,
+      90.0
+    ],
+    "q1_search_deg": [
+      -110.0,
+      115.0
+    ]
+  },
+  "body": {
+    "d_leg_long_mm": 175.0,
+    "hip_motor_center_x_mm": 36.7,
+    "hip_motor_center_z_mm": 3.3,
+    "frame_x_mm": 130.0,
+    "frame_end_allowance_mm": 75.0,
+    "frame_bottom_z_mm": -18.0,
+    "frame_beam_w_mm": 12.0,
+    "frame_beam_h_mm": 10.0,
+    "frame_beam_wall_mm": 2.4,
+    "frame_plate_bottom_z_mm": -15.0,
+    "frame_plate_t_mm": 2.0,
+    "cross_rib_t_mm": 2.4,
+    "deck_bottom_z_mm": 28.0,
+    "deck_t_mm": 2.0,
+    "camera_pitch_down_deg": 30.0
+  },
+  "material_preliminary": {
+    "PLA_density_g_cm3": 1.18,
+    "PLA_E_MPa": 3200.0,
+    "PLA_strength_MPa": 48.0,
+    "PLA_G_MPa": 1230.0,
+    "TPU_effective_density_g_cm3": 0.494
+  },
+  "validation": {
+    "support_tol_mm": 0.01,
+    "profile_convergence_mm": 0.05,
+    "CAD_axis_distance_mm": 0.05,
+    "axis_dot_abs_min": 0.9999,
+    "moving_leg_clearance_mm": 10.0,
+    "static_margin_target_mm": 80.0,
+    "mass_upper_candidate_kg": 4.75,
+    "design_factor": 1.5,
+    "structural_SF_target": 4.0,
+    "sector_deflection_target_mm": 0.53,
+    "link_twist_target_deg": 0.1
+  }
+}

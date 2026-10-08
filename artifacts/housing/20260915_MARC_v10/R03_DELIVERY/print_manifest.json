@@ -1,0 +1,104 @@
+[
+  {
+    "part": "R01 Rear smooth PLA chassis",
+    "filename": "R01_PLA_mm.stl",
+    "quantity": 1,
+    "orientation": "Lower planar face on bed",
+    "dimensions_mm": [
+      144.3913,
+      154.0,
+      40.5
+    ],
+    "fits_256mm": true,
+    "triangles": 8460,
+    "nonmanifold_edge_count": 0,
+    "mesh_volume_error_pct": 0.037842371191554314,
+    "native_lumps": 1,
+    "collinear_boundary_splits": 4
+  },
+  {
+    "part": "R02 Front smooth PLA chassis",
+    "filename": "R02_PLA_mm.stl",
+    "quantity": 1,
+    "orientation": "Lower planar face on bed",
+    "dimensions_mm": [
+      162.4587,
+      154.0,
+      81.5
+    ],
+    "fits_256mm": true,
+    "triangles": 10442,
+    "nonmanifold_edge_count": 0,
+    "mesh_volume_error_pct": 0.011019010529755846,
+    "native_lumps": 1,
+    "collinear_boundary_splits": 4
+  },
+  {
+    "part": "R03 Smooth PLA sensor cover",
+    "filename": "R03_PLA_mm.stl",
+    "quantity": 1,
+    "orientation": "Roof flat on bed, cover upside down",
+    "dimensions_mm": [
+      214.57036,
+      154.00196,
+      70.2
+    ],
+    "fits_256mm": true,
+    "triangles": 37796,
+    "nonmanifold_edge_count": 0,
+    "mesh_volume_error_pct": 0.025419899142398172,
+    "native_lumps": 1,
+    "collinear_boundary_splits": 0
+  },
+  {
+    "part": "P04 PLA electronics tray",
+    "filename": "P04_PLA_mm.stl",
+    "quantity": 1,
+    "orientation": "Lower planar face on bed",
+    "dimensions_mm": [
+      98.0,
+      128.0,
+      12.9
+    ],
+    "fits_256mm": true,
+    "triangles": 1082,
+    "nonmanifold_edge_count": 0,
+    "mesh_volume_error_pct": 0.0019496661655127312,
+    "native_lumps": 1,
+    "collinear_boundary_splits": 0
+  },
+  {
+    "part": "L01 normal PLA link",
+    "filename": "L01_PLA_mm.stl",
+    "quantity": 2,
+    "orientation": "Long side web on bed",
+    "dimensions_mm": [
+      123.75001,
+      38.5,
+      38.2
+    ],
+    "fits_256mm": true,
+    "triangles": 1480,
+    "nonmanifold_edge_count": 0,
+    "mesh_volume_error_pct": 0.047345333568782344,
+    "native_lumps": 1,
+    "collinear_boundary_splits": 0
+  },
+  {
+    "part": "L02 mirrored PLA link",
+    "filename": "L02_PLA_mm.stl",
+    "quantity": 2,
+    "orientation": "Long side web on bed",
+    "dimensions_mm": [
+      123.75001,
+      38.5,
+      38.20001
+    ],
+    "fits_256mm": true,
+    "triangles": 1480,
+    "nonmanifold_edge_count": 0,
+    "mesh_volume_error_pct": 0.04739126346937628,
+    "native_lumps": 1,
+    "collinear_boundary_splits": 0
+  }
+]

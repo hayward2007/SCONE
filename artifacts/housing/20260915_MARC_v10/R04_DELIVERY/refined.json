@@ -1,0 +1,18 @@
+{
+  "R01 Rear smooth PLA chassis": {
+    "lumps": 1,
+    "volume_cm3": 96.73163654235228
+  },
+  "R02 Front smooth PLA chassis": {
+    "lumps": 1,
+    "volume_cm3": 151.2137079288056
+  },
+  "R03 Smooth PLA sensor cover": {
+    "lumps": 1,
+    "volume_cm3": 165.56563451739066
+  },
+  "P04 PLA electronics tray": {
+    "lumps": 1,
+    "volume_cm3": 22.863793482290934
+  }
+}

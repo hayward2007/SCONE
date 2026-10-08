@@ -1,0 +1,89 @@
+{
+  "schema": 1,
+  "pilot": true,
+  "jobs": [
+    {
+      "id": 15,
+      "suite": "factorial",
+      "h": 0.1,
+      "d": 0.35,
+      "pose": 0,
+      "geometry": "decomposed-arc",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 17,
+      "suite": "factorial",
+      "h": 0.1,
+      "d": 0.35,
+      "pose": 0,
+      "geometry": "closed-wheel",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 45,
+      "suite": "factorial",
+      "h": 0.15,
+      "d": 0.35,
+      "pose": 0,
+      "geometry": "decomposed-arc",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 47,
+      "suite": "factorial",
+      "h": 0.15,
+      "d": 0.35,
+      "pose": 0,
+      "geometry": "closed-wheel",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 75,
+      "suite": "factorial",
+      "h": 0.2,
+      "d": 0.35,
+      "pose": 0,
+      "geometry": "decomposed-arc",
+      "control": "fixed",
+      "dt": 0.002
+    },
+    {
+      "id": 77,
+      "suite": "factorial",
+      "h": 0.2,
+      "d": 0.35,
+      "pose": 0,
+      "geometry": "closed-wheel",
+      "control": "fixed",
+      "dt": 0.002
+    }
+  ],
+  "poses_dy_m_yaw_deg": [
+    [
+      0.0,
+      0.0
+    ],
+    [
+      -0.03,
+      3.0
+    ],
+    [
+      0.03,
+      -3.0
+    ]
+  ],
+  "physics": {
+    "model_sha256": "9a45b402e66944df600387cffa68d7b15b612956810eee4b0f0726fe9255b701",
+    "mujoco_version": "3.10.0"
+  },
+  "git_revision": "c706117241c0da2e099b5d8375d3210d87888f14",
+  "git_dirty": true,
+  "development": "195 deg, 90 deg, 200 velocity units selected using 12 earlier nominal exploratory runs; frozen grid is sensitivity evidence.",
+  "endpoint": "All six tire centers beyond last riser plus radius, >=3 distinct tire bodies >1 N on top-height contacts; upright >=0.5. Stop phase. Within 2 s achieve 0.5 s of same support with root speed <0.05 m/s and angular speed <0.2 rad/s, sampled at 50 Hz. Tilt below 0.5 at any physics step terminates ascent/hold.",
+  "timing": "20 s ascent plus up to 2 s halt; separately include scripted side-pose acquisition and 4+4 s brace/phase acquisition. Initial pose offsets applied before these 8 s; zero initial velocity."
+}

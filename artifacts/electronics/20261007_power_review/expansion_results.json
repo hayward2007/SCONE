@@ -1,0 +1,77 @@
+{
+  "version": 63,
+  "modified": false,
+  "assumptions": "original battery, B3/B4 guides, P1/P2 removed for clearance calculation only; other visible geometry retained; no CAD edits",
+  "cases": [
+    {
+      "height_mm": 80,
+      "length_mm": 185.98,
+      "max_width_static_mm": 46.98,
+      "blocking_bodies": [
+        {
+          "path": "base_link:1+BODY:1+SHELL (BODY REAR + BODY FRONT):1",
+          "body": "BODY REAR (PLA)"
+        }
+      ]
+    },
+    {
+      "height_mm": 90,
+      "length_mm": 185.98,
+      "max_width_static_mm": 46.98,
+      "blocking_bodies": [
+        {
+          "path": "base_link:1+BODY:1+SHELL (BODY REAR + BODY FRONT):1",
+          "body": "BODY REAR (PLA)"
+        }
+      ]
+    },
+    {
+      "height_mm": 100,
+      "length_mm": 185.98,
+      "max_width_static_mm": 46.98,
+      "blocking_bodies": [
+        {
+          "path": "base_link:1+BODY:1+SHELL (BODY REAR + BODY FRONT):1",
+          "body": "BODY REAR (PLA)"
+        }
+      ]
+    },
+    {
+      "height_mm": 110,
+      "length_mm": 185.98,
+      "max_width_static_mm": 46.98,
+      "blocking_bodies": [
+        {
+          "path": "base_link:1+BODY:1+SHELL (BODY REAR + BODY FRONT):1",
+          "body": "BODY REAR (PLA)"
+        }
+      ]
+    }
+  ],
+  "checks_46mm": [
+    {
+      "size": [
+        185.98,
+        46,
+        90
+      ],
+      "collisions": []
+    },
+    {
+      "size": [
+        185.98,
+        46,
+        100
+      ],
+      "collisions": []
+    },
+    {
+      "size": [
+        185.98,
+        46,
+        110
+      ],
+      "collisions": []
+    }
+  ]
+}

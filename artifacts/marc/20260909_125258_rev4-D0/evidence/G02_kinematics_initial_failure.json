@@ -1,0 +1,251 @@
+{
+  "step_id": "G02-CAD",
+  "status": "FAIL",
+  "reference_transforms": [
+    {
+      "instance_id": "FL_YAW",
+      "max_matrix_error": 0.0
+    },
+    {
+      "instance_id": "FL_LINK",
+      "max_matrix_error": 0.0
+    },
+    {
+      "instance_id": "FL_SPIN",
+      "max_matrix_error": 0.0
+    },
+    {
+      "instance_id": "FR_YAW",
+      "max_matrix_error": 0.0
+    },
+    {
+      "instance_id": "FR_LINK",
+      "max_matrix_error": 0.0
+    },
+    {
+      "instance_id": "FR_SPIN",
+      "max_matrix_error": 0.0
+    },
+    {
+      "instance_id": "RL_YAW",
+      "max_matrix_error": 0.0
+    },
+    {
+      "instance_id": "RL_LINK",
+      "max_matrix_error": 0.0
+    },
+    {
+      "instance_id": "RL_SPIN",
+      "max_matrix_error": 0.0
+    },
+    {
+      "instance_id": "RR_YAW",
+      "max_matrix_error": 0.0
+    },
+    {
+      "instance_id": "RR_LINK",
+      "max_matrix_error": 0.0
+    },
+    {
+      "instance_id": "RR_SPIN",
+      "max_matrix_error": 0.0
+    }
+  ],
+  "positive_direction_checks": [
+    {
+      "joint_id": "M01",
+      "increment_deg": 1,
+      "origin_error_mm": 0.0,
+      "basis_dot_min": 0.9998476951563913,
+      "axis_vector_api": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "status": "FAIL"
+    },
+    {
+      "joint_id": "M02",
+      "increment_deg": 1,
+      "origin_error_mm": 0.0,
+      "basis_dot_min": 0.9998476951563913,
+      "axis_vector_api": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "status": "FAIL"
+    },
+    {
+      "joint_id": "M03",
+      "increment_deg": 1,
+      "origin_error_mm": 0.0,
+      "basis_dot_min": 0.9998476951563913,
+      "axis_vector_api": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "status": "FAIL"
+    },
+    {
+      "joint_id": "M04",
+      "increment_deg": 1,
+      "origin_error_mm": 0.0,
+      "basis_dot_min": 0.9998476951563913,
+      "axis_vector_api": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "status": "FAIL"
+    },
+    {
+      "joint_id": "M05",
+      "increment_deg": 1,
+      "origin_error_mm": 0.0,
+      "basis_dot_min": 0.9998476951563913,
+      "axis_vector_api": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "status": "FAIL"
+    },
+    {
+      "joint_id": "M06",
+      "increment_deg": 1,
+      "origin_error_mm": 0.0,
+      "basis_dot_min": 0.9998476951563913,
+      "axis_vector_api": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "status": "FAIL"
+    },
+    {
+      "joint_id": "M07",
+      "increment_deg": 1,
+      "origin_error_mm": 5.551115123125783e-16,
+      "basis_dot_min": 0.9998476951563913,
+      "axis_vector_api": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "status": "FAIL"
+    },
+    {
+      "joint_id": "M08",
+      "increment_deg": 1,
+      "origin_error_mm": 5.551115123125783e-16,
+      "basis_dot_min": 0.9998476951563913,
+      "axis_vector_api": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "status": "FAIL"
+    },
+    {
+      "joint_id": "M09",
+      "increment_deg": 1,
+      "origin_error_mm": 0.0,
+      "basis_dot_min": 0.9998476951563913,
+      "axis_vector_api": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "status": "FAIL"
+    },
+    {
+      "joint_id": "M10",
+      "increment_deg": 1,
+      "origin_error_mm": 0.0,
+      "basis_dot_min": 0.9998476951563913,
+      "axis_vector_api": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "status": "FAIL"
+    },
+    {
+      "joint_id": "M11",
+      "increment_deg": 1,
+      "origin_error_mm": 0.0,
+      "basis_dot_min": 0.9998476951563913,
+      "axis_vector_api": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "status": "FAIL"
+    },
+    {
+      "joint_id": "M12",
+      "increment_deg": 1,
+      "origin_error_mm": 0.0,
+      "basis_dot_min": 0.9998476951563913,
+      "axis_vector_api": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "status": "FAIL"
+    }
+  ],
+  "restored_transforms": [
+    {
+      "instance_id": "FL_YAW",
+      "max_matrix_error": 0.0
+    },
+    {
+      "instance_id": "FL_LINK",
+      "max_matrix_error": 0.0
+    },
+    {
+      "instance_id": "FL_SPIN",
+      "max_matrix_error": 0.0
+    },
+    {
+      "instance_id": "FR_YAW",
+      "max_matrix_error": 0.0
+    },
+    {
+      "instance_id": "FR_LINK",
+      "max_matrix_error": 0.0
+    },
+    {
+      "instance_id": "FR_SPIN",
+      "max_matrix_error": 0.0
+    },
+    {
+      "instance_id": "RL_YAW",
+      "max_matrix_error": 0.0
+    },
+    {
+      "instance_id": "RL_LINK",
+      "max_matrix_error": 0.0
+    },
+    {
+      "instance_id": "RL_SPIN",
+      "max_matrix_error": 0.0
+    },
+    {
+      "instance_id": "RR_YAW",
+      "max_matrix_error": 0.0
+    },
+    {
+      "instance_id": "RR_LINK",
+      "max_matrix_error": 0.0
+    },
+    {
+      "instance_id": "RR_SPIN",
+      "max_matrix_error": 0.0
+    }
+  ],
+  "hardware_status": "BLOCKED"
+}

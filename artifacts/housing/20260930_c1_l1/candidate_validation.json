@@ -1,0 +1,135 @@
+{
+  "source": "MARC v4 Body v5 BOX v36",
+  "modified": false,
+  "interferences": [],
+  "bolt_checks": [
+    {
+      "xy_mm": [
+        -80,
+        -35
+      ],
+      "shank_mm3": 0,
+      "head_mm3": 0,
+      "driver_mm3": 0,
+      "retained_web_mm": 2,
+      "counterbore_depth_mm": 3
+    },
+    {
+      "xy_mm": [
+        -80,
+        35
+      ],
+      "shank_mm3": 0,
+      "head_mm3": 0,
+      "driver_mm3": 0,
+      "retained_web_mm": 2,
+      "counterbore_depth_mm": 3
+    },
+    {
+      "xy_mm": [
+        -20,
+        -35
+      ],
+      "shank_mm3": 0,
+      "head_mm3": 0,
+      "driver_mm3": 0,
+      "retained_web_mm": 2,
+      "counterbore_depth_mm": 3
+    },
+    {
+      "xy_mm": [
+        -20,
+        35
+      ],
+      "shank_mm3": 0,
+      "head_mm3": 0,
+      "driver_mm3": 0,
+      "retained_web_mm": 2,
+      "counterbore_depth_mm": 3
+    },
+    {
+      "xy_mm": [
+        80,
+        -35
+      ],
+      "shank_mm3": 0,
+      "head_mm3": 0,
+      "driver_mm3": 0,
+      "retained_web_mm": 2,
+      "counterbore_depth_mm": 3
+    },
+    {
+      "xy_mm": [
+        80,
+        35
+      ],
+      "shank_mm3": 0,
+      "head_mm3": 0,
+      "driver_mm3": 0,
+      "retained_web_mm": 2,
+      "counterbore_depth_mm": 3
+    }
+  ],
+  "cable_checks": [
+    {
+      "diameter_mm": 5,
+      "center_y_mm": -9,
+      "solid_overlap_mm3": 0
+    },
+    {
+      "diameter_mm": 5,
+      "center_y_mm": -3,
+      "solid_overlap_mm3": 0
+    },
+    {
+      "diameter_mm": 5,
+      "center_y_mm": 3,
+      "solid_overlap_mm3": 0
+    },
+    {
+      "diameter_mm": 5,
+      "center_y_mm": 9,
+      "solid_overlap_mm3": 0
+    }
+  ],
+  "protected_checks": {
+    "L1_removed_outside_feet_mm3": 0,
+    "L1_added_mm3": 0
+  },
+  "bodies": {
+    "L1 frame": {
+      "bounds_mm": [
+        [
+          -97.4,
+          -41.0,
+          145.5
+        ],
+        [
+          -6.0,
+          41.0,
+          185.0
+        ]
+      ],
+      "solid": true,
+      "lumps": 1,
+      "volume_mm3": 33376.43010522376
+    },
+    "C1 USB cable guide": {
+      "bounds_mm": [
+        [
+          -12.0,
+          -41.0,
+          145.5
+        ],
+        [
+          85.5,
+          41.0,
+          163.1
+        ]
+      ],
+      "solid": true,
+      "lumps": 1,
+      "volume_mm3": 9946.05194475496
+    }
+  }
+}

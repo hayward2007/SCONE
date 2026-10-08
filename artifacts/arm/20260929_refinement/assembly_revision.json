@@ -1,0 +1,9 @@
+{
+  "J6_mounting": "4 side M2.5x8 socket screws at x=9.25/31.25, z=-16, y=+/-24.8; D5.4 x2.6 CB; 3.0mm web to relief",
+  "assembly_order": [
+    "mount A5 empty cradle to J5 horn from the open +X side",
+    "lower J6 from +Z into cradle, install 4 side screws",
+    "install moving jaw on J6 horn, then TPU pads and camera cover"
+  ],
+  "obsolete_rear_J6_holes": "filled; no inaccessible rear fasteners"
+}

@@ -9,7 +9,7 @@ from typing import Protocol
 import numpy as np
 
 from src.hardware import Actuator
-from src.locomotion import SconeGait, TripodGait, VelocityCommand
+from src.locomotion import SconeGait, SconeGaitV2, SconeGaitV2Config, TripodGait, VelocityCommand
 from src.simulation.core.cli_bridge import (
     SCONE_GAIT_SIMULATION_CONFIG,
     TRIPOD_GAIT_SIMULATION_CONFIG,
@@ -28,6 +28,13 @@ CONTROLLER_CHOICES = (
     "matched-articulated",
     "matched-distal-only",
     "matched-coordinated",
+    "role-split-scone",
+    "rewind-budget-scone",
+    "rewind-distance-scone",
+    "role-split-no-roll",
+    "role-split-superposition",
+    "role-split-no-reindex",
+    "role-split-periodic",
 )
 
 MATCHED_CONTROLLER_CHOICES = (
@@ -384,12 +391,45 @@ class MatchedArticulatedController:
         self.gait.update(VelocityCommand(), dt=0.02, send=True)
 
 
+ROLE_CONFIGS = {
+    "role-split-scone": SconeGaitV2Config(),
+    "rewind-budget-scone": SconeGaitV2Config(limit_reindex_rate=True, anticipate_reindex_budget=True),
+    "rewind-distance-scone": SconeGaitV2Config(limit_reindex_rate=True),
+    "role-split-no-roll": SconeGaitV2Config(roll_legs=(), limit_reindex_rate=True),
+    "role-split-superposition": SconeGaitV2Config(subtract_rolling_travel=False, limit_reindex_rate=True, anticipate_reindex_budget=True),
+    "role-split-no-reindex": SconeGaitV2Config(rolling_swing_policy="disabled", limit_reindex_rate=True),
+    "role-split-periodic": SconeGaitV2Config(rolling_swing_policy="periodic", limit_reindex_rate=True),
+}
+
+
+class RoleSplitController:
+    """Public simulation adapter using the controller's centered nominal pose."""
+
+    def __init__(self, trial: SimulationTrial, name: str, phase: float) -> None:
+        self.name = name
+        self.gait = SconeGaitV2(trial.controller, trial.robot.profile, config=ROLE_CONFIGS[name])
+        self.gait.reset(phase=phase)
+
+    def prepare(self, trial: SimulationTrial, *, recorder: MetricsRecorder | None = None) -> None:
+        del recorder
+        configure_model_gait_controller(trial.controller)
+        trial.controller.set_positions({i + 1: float(v) for i, v in enumerate(self.gait.nominal_motor_degrees)})
+
+    def update(self, command: VelocityCommand, dt: float) -> ControlDiagnostics:
+        return _diagnostics(self.gait.update(command, dt=dt, send=True))
+
+    def stop(self) -> None:
+        self.gait.update(VelocityCommand(), dt=0.02, send=True)
+
+
 def make_controller(
     name: str,
     trial: SimulationTrial,
     *,
     phase: float = 0.0,
 ) -> BenchmarkController:
+    if name in ROLE_CONFIGS:
+        return RoleSplitController(trial, name, phase)
     if name == "articulated-walk":
         return ArticulatedWalkController(trial, phase=phase)
     if name == "distal-only-roll":

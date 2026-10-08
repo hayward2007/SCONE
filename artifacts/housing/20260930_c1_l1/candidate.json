@@ -1,0 +1,41 @@
+{
+  "source": "MARC v4 Body v5 BOX v36",
+  "source_modified": false,
+  "dimensions": {
+    "L1 frame": [
+      [
+        -97.4,
+        -41.0,
+        145.5
+      ],
+      [
+        -6.0,
+        41.0,
+        185.0
+      ]
+    ],
+    "C1 USB cable guide": [
+      [
+        -12.0,
+        -41.0,
+        145.5
+      ],
+      [
+        85.5,
+        41.0,
+        163.1
+      ]
+    ]
+  },
+  "L1_outside_four_regions_removed_mm3": 0,
+  "L1_added_mm3": 0,
+  "C1_transition_fillet_edges": 12,
+  "preview_bodies": [
+    "L1 frame",
+    "C1 USB cable guide",
+    "CONTEXT L2 lidar plate",
+    "CONTEXT LID-R",
+    "CONTEXT LID-F",
+    "CONTEXT H2 handle + arm rest"
+  ]
+}

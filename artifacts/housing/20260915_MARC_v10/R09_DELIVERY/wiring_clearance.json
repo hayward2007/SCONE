@@ -1,0 +1,317 @@
+{
+  "routes": [
+    {
+      "name": "TTL trunk -1",
+      "centerline_mm": [
+        [
+          34,
+          -35,
+          34.3
+        ],
+        [
+          137,
+          -35,
+          34.3
+        ]
+      ],
+      "reserve_diameter_mm": 3.2,
+      "hits": []
+    },
+    {
+      "name": "rear TTL branch -1",
+      "centerline_mm": [
+        [
+          34,
+          -35,
+          34.3
+        ],
+        [
+          34,
+          -30,
+          34.3
+        ],
+        [
+          25,
+          -30,
+          30
+        ],
+        [
+          -15,
+          -18,
+          23
+        ],
+        [
+          -41.891297,
+          -24,
+          16
+        ]
+      ],
+      "reserve_diameter_mm": 3.2,
+      "hits": []
+    },
+    {
+      "name": "front TTL branch -1",
+      "centerline_mm": [
+        [
+          137,
+          -35,
+          34.3
+        ],
+        [
+          141,
+          -33,
+          34.3
+        ],
+        [
+          169,
+          -33,
+          25
+        ],
+        [
+          186,
+          -33,
+          25
+        ],
+        [
+          194,
+          -18,
+          23
+        ],
+        [
+          208.108703,
+          -24,
+          16
+        ]
+      ],
+      "reserve_diameter_mm": 3.2,
+      "hits": []
+    },
+    {
+      "name": "MX feedthrough [-41.891297, -1]",
+      "centerline_mm": [
+        [
+          -41.891297,
+          -24,
+          16
+        ],
+        [
+          -41.891297,
+          -22,
+          8
+        ],
+        [
+          -41.891297,
+          -22,
+          -8
+        ],
+        [
+          -41.891297,
+          -40,
+          -8
+        ]
+      ],
+      "reserve_diameter_mm": 3.2,
+      "hits": []
+    },
+    {
+      "name": "MX feedthrough [208.108703, -1]",
+      "centerline_mm": [
+        [
+          208.108703,
+          -24,
+          16
+        ],
+        [
+          208.108703,
+          -22,
+          8
+        ],
+        [
+          208.108703,
+          -22,
+          -8
+        ],
+        [
+          208.108703,
+          -40,
+          -8
+        ]
+      ],
+      "reserve_diameter_mm": 3.2,
+      "hits": []
+    },
+    {
+      "name": "TTL trunk 1",
+      "centerline_mm": [
+        [
+          34,
+          35,
+          34.3
+        ],
+        [
+          137,
+          35,
+          34.3
+        ]
+      ],
+      "reserve_diameter_mm": 3.2,
+      "hits": []
+    },
+    {
+      "name": "rear TTL branch 1",
+      "centerline_mm": [
+        [
+          34,
+          35,
+          34.3
+        ],
+        [
+          34,
+          30,
+          34.3
+        ],
+        [
+          25,
+          30,
+          30
+        ],
+        [
+          -15,
+          18,
+          23
+        ],
+        [
+          -41.891297,
+          24,
+          16
+        ]
+      ],
+      "reserve_diameter_mm": 3.2,
+      "hits": []
+    },
+    {
+      "name": "front TTL branch 1",
+      "centerline_mm": [
+        [
+          137,
+          35,
+          34.3
+        ],
+        [
+          141,
+          33,
+          34.3
+        ],
+        [
+          169,
+          33,
+          25
+        ],
+        [
+          186,
+          33,
+          25
+        ],
+        [
+          194,
+          18,
+          23
+        ],
+        [
+          208.108703,
+          24,
+          16
+        ]
+      ],
+      "reserve_diameter_mm": 3.2,
+      "hits": []
+    },
+    {
+      "name": "MX feedthrough [-41.891297, 1]",
+      "centerline_mm": [
+        [
+          -41.891297,
+          24,
+          16
+        ],
+        [
+          -41.891297,
+          22,
+          8
+        ],
+        [
+          -41.891297,
+          22,
+          -8
+        ],
+        [
+          -41.891297,
+          40,
+          -8
+        ]
+      ],
+      "reserve_diameter_mm": 3.2,
+      "hits": []
+    },
+    {
+      "name": "MX feedthrough [208.108703, 1]",
+      "centerline_mm": [
+        [
+          208.108703,
+          24,
+          16
+        ],
+        [
+          208.108703,
+          22,
+          8
+        ],
+        [
+          208.108703,
+          22,
+          -8
+        ],
+        [
+          208.108703,
+          40,
+          -8
+        ]
+      ],
+      "reserve_diameter_mm": 3.2,
+      "hits": []
+    },
+    {
+      "name": "U2D2 signal to distribution",
+      "centerline_mm": [
+        [
+          13,
+          0,
+          18
+        ],
+        [
+          20,
+          0,
+          25
+        ],
+        [
+          28,
+          25,
+          34.3
+        ],
+        [
+          135,
+          25,
+          34.3
+        ],
+        [
+          139,
+          0,
+          25
+        ]
+      ],
+      "reserve_diameter_mm": 3.2,
+      "hits": []
+    }
+  ],
+  "limitations": "Fixed corridor only; physical cable harness and moving service loops remain to validate."
+}

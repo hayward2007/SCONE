@@ -1,0 +1,1855 @@
+{
+  "10.1177/02783640122067570": {
+    "title": [
+      "RHex: A Simple and Highly Mobile Hexapod Robot"
+    ],
+    "author": [
+      {
+        "given": "Uluc",
+        "family": "Saranli",
+        "sequence": "first",
+        "affiliation": [
+          {
+            "name": "Department of Electrical Engineering and Computer Science, University of                         Michigan, Ann Arbor, MI 48109-2110, USA"
+          }
+        ],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      },
+      {
+        "given": "Martin",
+        "family": "Buehler",
+        "sequence": "additional",
+        "affiliation": [
+          {
+            "name": "Center for Intelligent Machines, McGill University, Montreal,                         Québec, Canada, H3A 2A7"
+          }
+        ],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      },
+      {
+        "given": "Daniel E.",
+        "family": "Koditschek",
+        "sequence": "additional",
+        "affiliation": [
+          {
+            "name": "Department of Electrical Engineering and Computer Science, University of                         Michigan, Ann Arbor, MI 48109-2110, USA"
+          }
+        ],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      }
+    ],
+    "container-title": [
+      "The International Journal of Robotics Research"
+    ],
+    "volume": "20",
+    "issue": "7",
+    "page": "616-631",
+    "published": {
+      "date-parts": [
+        [
+          2001,
+          7
+        ]
+      ]
+    },
+    "DOI": "10.1177/02783640122067570",
+    "URL": "https://doi.org/10.1177/02783640122067570"
+  },
+  "10.1109/LRA.2019.2899750": {
+    "title": [
+      "Keep Rollin’—Whole-Body Motion Control and Planning for Wheeled Quadrupedal Robots"
+    ],
+    "author": [
+      {
+        "ORCID": "https://orcid.org/0000-0002-9123-3920",
+        "authenticated-orcid": false,
+        "given": "Marko",
+        "family": "Bjelonic",
+        "sequence": "first",
+        "affiliation": [
+          {
+            "name": "Robotic Systems Lab, ETH Z&#x00FC;rich, Z&#x00FC;rich, Switzerland"
+          }
+        ],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      },
+      {
+        "ORCID": "https://orcid.org/0000-0003-3856-0735",
+        "authenticated-orcid": false,
+        "given": "C. Dario",
+        "family": "Bellicoso",
+        "sequence": "additional",
+        "affiliation": [
+          {
+            "name": "Robotic Systems Lab, ETH Z&#x00FC;rich, Z&#x00FC;rich, Switzerland"
+          }
+        ],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      },
+      {
+        "ORCID": "https://orcid.org/0000-0002-2854-5171",
+        "authenticated-orcid": false,
+        "given": "Yvain",
+        "family": "de Viragh",
+        "sequence": "additional",
+        "affiliation": [
+          {
+            "name": "Robotic Systems Lab, ETH Z&#x00FC;rich, Z&#x00FC;rich, Switzerland"
+          }
+        ],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      },
+      {
+        "given": "Dhionis",
+        "family": "Sako",
+        "sequence": "additional",
+        "affiliation": [
+          {
+            "name": "Robotic Systems Lab, ETH Z&#x00FC;rich, Z&#x00FC;rich, Switzerland"
+          }
+        ],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      },
+      {
+        "given": "F. Dante",
+        "family": "Tresoldi",
+        "sequence": "additional",
+        "affiliation": [
+          {
+            "name": "Robotic Systems Lab, ETH Z&#x00FC;rich, Z&#x00FC;rich, Switzerland"
+          }
+        ],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      },
+      {
+        "ORCID": "https://orcid.org/0000-0003-1851-2875",
+        "authenticated-orcid": false,
+        "given": "Fabian",
+        "family": "Jenelten",
+        "sequence": "additional",
+        "affiliation": [
+          {
+            "name": "Robotic Systems Lab, ETH Z&#x00FC;rich, Z&#x00FC;rich, Switzerland"
+          }
+        ],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      },
+      {
+        "ORCID": "https://orcid.org/0000-0002-4285-4990",
+        "authenticated-orcid": false,
+        "given": "Marco",
+        "family": "Hutter",
+        "sequence": "additional",
+        "affiliation": [
+          {
+            "name": "Robotic Systems Lab, ETH Z&#x00FC;rich, Z&#x00FC;rich, Switzerland"
+          }
+        ],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      }
+    ],
+    "container-title": [
+      "IEEE Robotics and Automation Letters"
+    ],
+    "volume": "4",
+    "issue": "2",
+    "page": "2116-2123",
+    "published": {
+      "date-parts": [
+        [
+          2019,
+          4
+        ]
+      ]
+    },
+    "DOI": "10.1109/lra.2019.2899750",
+    "URL": "https://doi.org/10.1109/lra.2019.2899750"
+  },
+  "10.1002/rob.22186": {
+    "title": [
+      "Q‐Whex: A simple and highly mobile quasi‐wheeled hexapod robot"
+    ],
+    "author": [
+      {
+        "ORCID": "https://orcid.org/0000-0001-5772-6441",
+        "authenticated-orcid": false,
+        "given": "Guoteng",
+        "family": "Zhang",
+        "sequence": "first",
+        "affiliation": [
+          {
+            "name": "School of Control Science and Engineering Shandong University Jinan China"
+          }
+        ],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      },
+      {
+        "given": "Shugen",
+        "family": "Ma",
+        "sequence": "additional",
+        "affiliation": [
+          {
+            "name": "Department of Robotics Ritsumeikan University Shiga Japan"
+          }
+        ],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      },
+      {
+        "given": "Jinguo",
+        "family": "Liu",
+        "sequence": "additional",
+        "affiliation": [
+          {
+            "name": "State Key Laboratory of Robotics, Shenyang Institute of Automation Chinese Academy of Sciences Shenyang China"
+          }
+        ],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      },
+      {
+        "given": "Xianwu",
+        "family": "Zeng",
+        "sequence": "additional",
+        "affiliation": [
+          {
+            "name": "School of Control Science and Engineering Shandong University Jinan China"
+          }
+        ],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      },
+      {
+        "given": "Lingyu",
+        "family": "Kong",
+        "sequence": "additional",
+        "affiliation": [
+          {
+            "name": "Intelligent Robot Research Centre Zhejiang Lab Hangzhou China"
+          }
+        ],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      },
+      {
+        "given": "Yibin",
+        "family": "Li",
+        "sequence": "additional",
+        "affiliation": [
+          {
+            "name": "School of Control Science and Engineering Shandong University Jinan China"
+          }
+        ],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      }
+    ],
+    "container-title": [
+      "Journal of Field Robotics"
+    ],
+    "volume": "40",
+    "issue": "6",
+    "page": "1444-1459",
+    "published": {
+      "date-parts": [
+        [
+          2023,
+          4,
+          20
+        ]
+      ]
+    },
+    "DOI": "10.1002/rob.22186",
+    "URL": "https://doi.org/10.1002/rob.22186"
+  },
+  "10.1109/IROS.2012.6386109": {
+    "title": [
+      "MuJoCo: A physics engine for model-based control"
+    ],
+    "author": [
+      {
+        "given": "Emanuel",
+        "family": "Todorov",
+        "sequence": "first",
+        "affiliation": [],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      },
+      {
+        "given": "Tom",
+        "family": "Erez",
+        "sequence": "additional",
+        "affiliation": [],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      },
+      {
+        "given": "Yuval",
+        "family": "Tassa",
+        "sequence": "additional",
+        "affiliation": [],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      }
+    ],
+    "container-title": [
+      "2012 IEEE/RSJ International Conference on Intelligent Robots and Systems"
+    ],
+    "volume": null,
+    "issue": null,
+    "page": "5026-5033",
+    "published": {
+      "date-parts": [
+        [
+          2012,
+          10
+        ]
+      ]
+    },
+    "DOI": "10.1109/iros.2012.6386109",
+    "URL": "https://doi.org/10.1109/iros.2012.6386109"
+  },
+  "10.20965/jrm.2008.p0403": {
+    "title": [
+      "Hybrid Locomotion of Leg-Wheel ASTERISK H"
+    ],
+    "author": [
+      {
+        "given": "Takenobu",
+        "family": "Yoshioka",
+        "sequence": "first",
+        "affiliation": [],
+        "role": [
+          {
+            "role": "author",
+            "vocabulary": "crossref"
+          }
+        ]
+      },
+      {
+        "name": "Department of Systems Innovation,  Graduate School of Engineering Science, Osaka University, 1-3, Machikaneyama, Toyonaka, Osaka 560-8531, Japan",
+        "sequence": "first",
+        "affiliation": [],
+        "role": [
+          {
+            "role": "author",
+            "vocabulary": "crossref"
+          }
+        ]
+      },
+      {
+        "given": "Tomohito",
+        "family": "Takubo",
+        "sequence": "additional",
+        "affiliation": [],
+        "role": [
+          {
+            "role": "author",
+            "vocabulary": "crossref"
+          }
+        ]
+      },
+      {
+        "given": "Tatsuo",
+        "family": "Arai",
+        "sequence": "additional",
+        "affiliation": [],
+        "role": [
+          {
+            "role": "author",
+            "vocabulary": "crossref"
+          }
+        ]
+      },
+      {
+        "given": "Kenji",
+        "family": "Inoue",
+        "sequence": "additional",
+        "affiliation": [],
+        "role": [
+          {
+            "role": "author",
+            "vocabulary": "crossref"
+          }
+        ]
+      },
+      {
+        "name": "Department of Bio-System Engineering, Faculty of Engineering, Yamagata University, 4-3-16 Jounan, Yonezawa, Yamagata 922-8510, Japan",
+        "sequence": "additional",
+        "affiliation": [],
+        "role": [
+          {
+            "role": "author",
+            "vocabulary": "crossref"
+          }
+        ]
+      }
+    ],
+    "container-title": [
+      "Journal of Robotics and Mechatronics"
+    ],
+    "volume": "20",
+    "issue": "3",
+    "page": "403-412",
+    "published": {
+      "date-parts": [
+        [
+          2008,
+          6,
+          20
+        ]
+      ]
+    },
+    "DOI": "10.20965/jrm.2008.p0403",
+    "URL": "https://doi.org/10.20965/jrm.2008.p0403"
+  },
+  "10.3390/app11062513": {
+    "title": [
+      "C-Legged Hexapod Robot Design Guidelines Based on Energy Analysis"
+    ],
+    "author": [
+      {
+        "given": "Andres",
+        "family": "Vina",
+        "sequence": "first",
+        "affiliation": [
+          {
+            "name": "Centro de Automática y Robótica (UPM-CSIC), Universidad Politécnica de Madrid, 28006 Madrid, Spain"
+          }
+        ],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      },
+      {
+        "ORCID": "https://orcid.org/0000-0003-1691-3907",
+        "authenticated-orcid": false,
+        "given": "Antonio",
+        "family": "Barrientos",
+        "sequence": "additional",
+        "affiliation": [
+          {
+            "name": "Centro de Automática y Robótica (UPM-CSIC), Universidad Politécnica de Madrid, 28006 Madrid, Spain"
+          }
+        ],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      }
+    ],
+    "container-title": [
+      "Applied Sciences"
+    ],
+    "volume": "11",
+    "issue": "6",
+    "page": "2513",
+    "published": {
+      "date-parts": [
+        [
+          2021,
+          3,
+          11
+        ]
+      ]
+    },
+    "DOI": "10.3390/app11062513",
+    "URL": "https://doi.org/10.3390/app11062513"
+  },
+  "10.1109/TMECH.2013.2253615": {
+    "title": [
+      "Quattroped: A Leg--Wheel Transformable Robot"
+    ],
+    "author": [
+      {
+        "given": "Shen-Chiang",
+        "family": "Chen",
+        "sequence": "first",
+        "affiliation": [
+          {
+            "name": "Department of Mechanical Engineering , National Taiwan University, Taipei, Taiwan"
+          }
+        ],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      },
+      {
+        "given": "Ke-Jung",
+        "family": "Huang",
+        "sequence": "additional",
+        "affiliation": [
+          {
+            "name": "Department of Mechanical Engineering , National Taiwan University, Taipei, Taiwan"
+          }
+        ],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      },
+      {
+        "given": "Wei-Hsi",
+        "family": "Chen",
+        "sequence": "additional",
+        "affiliation": [
+          {
+            "name": "Department of Mechanical Engineering , National Taiwan University, Taipei, Taiwan"
+          }
+        ],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      },
+      {
+        "given": "Shuan-Yu",
+        "family": "Shen",
+        "sequence": "additional",
+        "affiliation": [
+          {
+            "name": "Department of Mechanical Engineering , National Taiwan University, Taipei, Taiwan"
+          }
+        ],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      },
+      {
+        "given": "Cheng-Hsin",
+        "family": "Li",
+        "sequence": "additional",
+        "affiliation": [
+          {
+            "name": "Department of Mechanical Engineering , National Taiwan University, Taipei, Taiwan"
+          }
+        ],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      },
+      {
+        "given": "Pei-Chun",
+        "family": "Lin",
+        "sequence": "additional",
+        "affiliation": [
+          {
+            "name": "Department of Mechanical Engineering , National Taiwan University, Taipei, Taiwan"
+          }
+        ],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      }
+    ],
+    "container-title": [
+      "IEEE/ASME Transactions on Mechatronics"
+    ],
+    "volume": "19",
+    "issue": "2",
+    "page": "730-742",
+    "published": {
+      "date-parts": [
+        [
+          2014,
+          4
+        ]
+      ]
+    },
+    "DOI": "10.1109/tmech.2013.2253615",
+    "URL": "https://doi.org/10.1109/tmech.2013.2253615"
+  },
+  "10.1109/TRO.2017.2696022": {
+    "title": [
+      "TurboQuad: A Novel Leg–Wheel Transformable Robot With Smooth and Fast Behavioral Transitions"
+    ],
+    "author": [
+      {
+        "given": "Wei-Hsi",
+        "family": "Chen",
+        "sequence": "first",
+        "affiliation": [],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      },
+      {
+        "given": "Hung-Sheng",
+        "family": "Lin",
+        "sequence": "additional",
+        "affiliation": [],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      },
+      {
+        "given": "Yun-Meng",
+        "family": "Lin",
+        "sequence": "additional",
+        "affiliation": [],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      },
+      {
+        "given": "Pei-Chun",
+        "family": "Lin",
+        "sequence": "additional",
+        "affiliation": [],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      }
+    ],
+    "container-title": [
+      "IEEE Transactions on Robotics"
+    ],
+    "volume": "33",
+    "issue": "5",
+    "page": "1025-1040",
+    "published": {
+      "date-parts": [
+        [
+          2017,
+          10
+        ]
+      ]
+    },
+    "DOI": "10.1109/tro.2017.2696022",
+    "URL": "https://doi.org/10.1109/tro.2017.2696022"
+  },
+  "10.1109/IROS51168.2021.9636371": {
+    "error": "429 Client Error: Too Many Requests for url: https://api.crossref.org/works/10.1109/IROS51168.2021.9636371"
+  },
+  "10.1109/LRA.2026.3675839": {
+    "title": [
+      "RL-Augmented MPC for Non-Gaited Legged and Hybrid Locomotion"
+    ],
+    "author": [
+      {
+        "ORCID": "https://orcid.org/0000-0002-5571-3716",
+        "authenticated-orcid": false,
+        "given": "Andrea",
+        "family": "Patrizi",
+        "sequence": "first",
+        "affiliation": [
+          {
+            "name": "Humanoids and Human-Centred Mechatronics (HHCM) Lab, Istituto Italiano di Tecnologia (IIT), Genova, Italy"
+          }
+        ],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      },
+      {
+        "ORCID": "https://orcid.org/0009-0007-0118-5384",
+        "authenticated-orcid": false,
+        "given": "Carlo",
+        "family": "Rizzardo",
+        "sequence": "additional",
+        "affiliation": [
+          {
+            "name": "Humanoids and Human-Centred Mechatronics (HHCM) Lab, Istituto Italiano di Tecnologia (IIT), Genova, Italy"
+          }
+        ],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      },
+      {
+        "ORCID": "https://orcid.org/0000-0002-9065-1266",
+        "authenticated-orcid": false,
+        "given": "Arturo",
+        "family": "Laurenzi",
+        "sequence": "additional",
+        "affiliation": [
+          {
+            "name": "Humanoids and Human-Centred Mechatronics (HHCM) Lab, Istituto Italiano di Tecnologia (IIT), Genova, Italy"
+          }
+        ],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      },
+      {
+        "ORCID": "https://orcid.org/0000-0002-4936-8389",
+        "authenticated-orcid": false,
+        "given": "Francesco",
+        "family": "Ruscelli",
+        "sequence": "additional",
+        "affiliation": [
+          {
+            "name": "Humanoids and Human-Centred Mechatronics (HHCM) Lab, Istituto Italiano di Tecnologia (IIT), Genova, Italy"
+          }
+        ],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      },
+      {
+        "ORCID": "https://orcid.org/0000-0002-2114-3823",
+        "authenticated-orcid": false,
+        "given": "Luca",
+        "family": "Rossini",
+        "sequence": "additional",
+        "affiliation": [
+          {
+            "name": "Humanoids and Human-Centred Mechatronics (HHCM) Lab, Istituto Italiano di Tecnologia (IIT), Genova, Italy"
+          }
+        ],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      },
+      {
+        "ORCID": "https://orcid.org/0000-0002-9877-8237",
+        "authenticated-orcid": false,
+        "given": "Nikos G.",
+        "family": "Tsagarakis",
+        "sequence": "additional",
+        "affiliation": [
+          {
+            "name": "Humanoids and Human-Centred Mechatronics (HHCM) Lab, Istituto Italiano di Tecnologia (IIT), Genova, Italy"
+          }
+        ],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      }
+    ],
+    "container-title": [
+      "IEEE Robotics and Automation Letters"
+    ],
+    "volume": "11",
+    "issue": "5",
+    "page": "5797-5804",
+    "published": {
+      "date-parts": [
+        [
+          2026,
+          5
+        ]
+      ]
+    },
+    "DOI": "10.1109/lra.2026.3675839",
+    "URL": "https://doi.org/10.1109/lra.2026.3675839"
+  },
+  "10.3390/biomimetics10070435": {
+    "title": [
+      "Rolling vs. Swing: A Strategy for Enhancing Locomotion Speed and Stability in Legged Robots"
+    ],
+    "author": [
+      {
+        "ORCID": "https://orcid.org/0000-0002-3487-0309",
+        "authenticated-orcid": false,
+        "given": "Yongjiang",
+        "family": "Xue",
+        "sequence": "first",
+        "affiliation": [
+          {
+            "name": "School of Computer Science and Technology, Tiangong University, Tianjin 300387, China"
+          }
+        ],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      },
+      {
+        "given": "Wei",
+        "family": "Wang",
+        "sequence": "additional",
+        "affiliation": [
+          {
+            "name": "Department of Electronic Information and Engineering, Tiangong University, Tianjin 300387, China"
+          }
+        ],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      },
+      {
+        "given": "Mingyu",
+        "family": "Duan",
+        "sequence": "additional",
+        "affiliation": [
+          {
+            "name": "Department of Electronic Information and Engineering, Tiangong University, Tianjin 300387, China"
+          }
+        ],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      },
+      {
+        "given": "Nanqing",
+        "family": "Jiang",
+        "sequence": "additional",
+        "affiliation": [
+          {
+            "name": "School of Computer Science and Technology, Tiangong University, Tianjin 300387, China"
+          }
+        ],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      },
+      {
+        "given": "Shaoshi",
+        "family": "Zhang",
+        "sequence": "additional",
+        "affiliation": [
+          {
+            "name": "School of Control Science and Engineering, Tiangong University, Tianjin 300387, China"
+          }
+        ],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      },
+      {
+        "given": "Xuan",
+        "family": "Xiao",
+        "sequence": "additional",
+        "affiliation": [
+          {
+            "name": "School of Computer Science and Technology, Tiangong University, Tianjin 300387, China"
+          },
+          {
+            "name": "Tianjin Key Laboratory of Autonomous Intelligence Technology and Systems, Tianjin 300387, China"
+          }
+        ],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      }
+    ],
+    "container-title": [
+      "Biomimetics"
+    ],
+    "volume": "10",
+    "issue": "7",
+    "page": "435",
+    "published": {
+      "date-parts": [
+        [
+          2025,
+          7,
+          2
+        ]
+      ]
+    },
+    "DOI": "10.3390/biomimetics10070435",
+    "URL": "https://doi.org/10.3390/biomimetics10070435"
+  },
+  "10.3390/s24051636": {
+    "title": [
+      "Kinematic Analysis and Application to Control Logic Development for RHex Robot Locomotion"
+    ],
+    "author": [
+      {
+        "given": "Piotr",
+        "family": "Burzyński",
+        "sequence": "first",
+        "affiliation": [
+          {
+            "name": "Department of Industrial Process Automation, Faculty of Mechanical Engineering, Bialystok University of Technology, Wiejska 45C, 15-351 Bialystok, Poland"
+          }
+        ],
+        "role": [
+          {
+            "role": "author",
+            "vocabulary": "crossref"
+          }
+        ]
+      },
+      {
+        "ORCID": "https://orcid.org/0000-0002-3297-7970",
+        "authenticated-orcid": false,
+        "given": "Ewa",
+        "family": "Pawłuszewicz",
+        "sequence": "additional",
+        "affiliation": [
+          {
+            "name": "Department of Industrial Process Automation, Faculty of Mechanical Engineering, Bialystok University of Technology, Wiejska 45C, 15-351 Bialystok, Poland"
+          }
+        ],
+        "role": [
+          {
+            "role": "author",
+            "vocabulary": "crossref"
+          }
+        ]
+      },
+      {
+        "ORCID": "https://orcid.org/0000-0001-7612-768X",
+        "authenticated-orcid": false,
+        "given": "Leszek",
+        "family": "Ambroziak",
+        "sequence": "additional",
+        "affiliation": [
+          {
+            "name": "Department of Industrial Process Automation, Faculty of Mechanical Engineering, Bialystok University of Technology, Wiejska 45C, 15-351 Bialystok, Poland"
+          }
+        ],
+        "role": [
+          {
+            "role": "author",
+            "vocabulary": "crossref"
+          }
+        ]
+      },
+      {
+        "ORCID": "https://orcid.org/0000-0001-7534-6848",
+        "authenticated-orcid": false,
+        "given": "Suryansh",
+        "family": "Sharma",
+        "sequence": "additional",
+        "affiliation": [
+          {
+            "name": "Networked Systems Group, Delft University of Technology, Building 28, Van Mourik Broekmanweg 6, 2628 XE Delft, The Netherlands"
+          }
+        ],
+        "role": [
+          {
+            "role": "author",
+            "vocabulary": "crossref"
+          }
+        ]
+      }
+    ],
+    "container-title": [
+      "Sensors"
+    ],
+    "volume": "24",
+    "issue": "5",
+    "page": "1636",
+    "published": {
+      "date-parts": [
+        [
+          2024,
+          3,
+          2
+        ]
+      ]
+    },
+    "DOI": "10.3390/s24051636",
+    "URL": "https://doi.org/10.3390/s24051636"
+  },
+  "10.1115/1.4070596": {
+    "indexed": {
+      "date-parts": [
+        [
+          2026,
+          7,
+          30
+        ]
+      ],
+      "date-time": "2026-07-30T15:09:32Z",
+      "timestamp": 1785424172927,
+      "version": "3.56.0"
+    },
+    "reference-count": 54,
+    "publisher": "ASME International",
+    "issue": "3",
+    "license": [
+      {
+        "start": {
+          "date-parts": [
+            [
+              2026,
+              1,
+              14
+            ]
+          ],
+          "date-time": "2026-01-14T00:00:00Z",
+          "timestamp": 1768348800000
+        },
+        "content-version": "vor",
+        "delay-in-days": 0,
+        "URL": "https://www.asme.org/publications-submissions/publishing-information/legal-policies"
+      }
+    ],
+    "funder": [
+      {
+        "DOI": "10.13039/501100001868",
+        "name": "National Science Council",
+        "doi-asserted-by": "publisher",
+        "award": [
+          "110-2221-E-002-111-MY3"
+        ],
+        "award-info": [
+          {
+            "award-number": [
+              "110-2221-E-002-111-MY3"
+            ]
+          }
+        ],
+        "id": [
+          {
+            "id": "10.13039/501100001868",
+            "id-type": "DOI",
+            "asserted-by": "publisher"
+          }
+        ]
+      }
+    ],
+    "content-domain": {
+      "domain": [
+        "asmedigitalcollection.asme.org"
+      ],
+      "crossmark-restriction": true
+    },
+    "short-container-title": [],
+    "published-print": {
+      "date-parts": [
+        [
+          2026,
+          3,
+          1
+        ]
+      ]
+    },
+    "abstract": "<jats:title>Abstract</jats:title>\n                  <jats:p>It is desirable to operate the robot with all its possible driving mechanisms for energy-efficient locomotion. In this work, using a leg-wheel transformable robot as an example, we proposed a methodology to thoroughly explore the stride-level leg-wheel hybrid locomotion to fill the gap between pure legged mode that uses point contact and pure wheeled mode that rolls on the ground. The developed wheel-like walking motion/gait can be operated at a wide range of body heights and forward speeds while maintaining energy efficiency. A comprehensive kinematics analysis of the leg-wheel transformable mechanism was conducted, which explores all possible contact conditions of the mechanism. A generalized revolute-prismatic and reduced-order dynamic model that captures the inertia effect of the leg-wheel mechanism was proposed to model the torque required to drive the mechanism. In addition, leg-wheel's two repositioning methods in the aerial phase were developed. Combining all three, the constrained optimization was conducted for the energy-efficient motion/gait of the robot. To validate the proposed methodology, various experiments of the robot were conducted, and the results confirm that the proposed method is beneficial and fills the gap between the pure wheeled mode and the pure legged mode of the leg-wheel transformable robot.</jats:p>",
+    "DOI": "10.1115/1.4070596",
+    "type": "journal-article",
+    "created": {
+      "date-parts": [
+        [
+          2025,
+          12,
+          5
+        ]
+      ],
+      "date-time": "2025-12-05T13:20:54Z",
+      "timestamp": 1764940854000
+    },
+    "update-policy": "https://doi.org/10.1115/crossmarkpolicy-asme",
+    "source": "Crossref",
+    "is-referenced-by-count": 1,
+    "title": [
+      "Energy-Efficient and Stride-Level Hybrid Locomotion of a Leg-Wheel Transformable Robot"
+    ],
+    "prefix": "10.1115",
+    "volume": "18",
+    "author": [
+      {
+        "ORCID": "https://orcid.org/0000-0003-1770-1287",
+        "authenticated-orcid": false,
+        "given": "I-Chia",
+        "family": "Chang",
+        "sequence": "first",
+        "affiliation": [
+          {
+            "id": [
+              {
+                "id": "https://ror.org/05bqach95",
+                "id-type": "ROR",
+                "asserted-by": "publisher"
+              }
+            ],
+            "name": "National Taiwan University Department of Mechanical Engineering, ,   ,",
+            "place": [
+              "Taipei, Taiwan, 106"
+            ]
+          }
+        ],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      },
+      {
+        "ORCID": "https://orcid.org/0000-0001-9146-3817",
+        "authenticated-orcid": false,
+        "given": "Pei-Chun",
+        "family": "Lin",
+        "sequence": "additional",
+        "affiliation": [
+          {
+            "id": [
+              {
+                "id": "https://ror.org/05bqach95",
+                "id-type": "ROR",
+                "asserted-by": "publisher"
+              }
+            ],
+            "name": "National Taiwan University Department of Mechanical Engineering, ,   ,",
+            "place": [
+              "Taipei, Taiwan, 106"
+            ]
+          }
+        ],
+        "role": [
+          {
+            "vocabulary": "crossref",
+            "role": "author"
+          }
+        ]
+      }
+    ],
+    "member": "33",
+    "published-online": {
+      "date-parts": [
+        [
+          2026,
+          1,
+          14
+        ]
+      ]
+    },
+    "reference": [
+      {
+        "issue": "7",
+        "key": "2026011412543725900_CIT0001",
+        "doi-asserted-by": "publisher",
+        "first-page": "616",
+        "DOI": "10.1177/02783640122067570",
+        "article-title": "RHex: A Simple and Highly Mobile Hexapod Robot",
+        "volume": "20",
+        "author": "Saranli",
+        "year": "2001",
+        "journal-title": "Int. J. Robot. Res."
+      },
+      {
+        "issue": "4",
+        "key": "2026011412543725900_CIT0002",
+        "doi-asserted-by": "publisher",
+        "first-page": "046004",
+        "DOI": "10.1088/1748-3182/9/4/046004",
+        "article-title": "A Simple Running Model With Rolling Contact and Its Role as a Template for Dynamic Locomotion on a Hexapod Robot",
+        "volume": "9",
+        "author": "Huang",
+        "year": "2014",
+        "journal-title": "Bioinspir. Biomim."
+      },
+      {
+        "key": "2026011412543725900_CIT0003",
+        "first-page": "2568",
+        "article-title": "Toward a Vocabulary of Legged Leaping",
+        "author": "Johnson",
+        "year": "2013"
+      },
+      {
+        "issue": "1",
+        "key": "2026011412543725900_CIT0004",
+        "doi-asserted-by": "publisher",
+        "first-page": "40",
+        "DOI": "10.1109/TRO.2014.2376141",
+        "article-title": "Model-Based Development of Leaping in a Hexapod Robot",
+        "volume": "31",
+        "author": "Chou",
+        "year": "2015",
+        "journal-title": "IEEE Trans. Robot."
+      },
+      {
+        "issue": "3",
+        "key": "2026011412543725900_CIT0005",
+        "doi-asserted-by": "publisher",
+        "first-page": "036008",
+        "DOI": "10.1088/1748-3182/7/3/036008",
+        "article-title": "Bio-Inspired Step-Climbing in a Hexapod Robot",
+        "volume": "7",
+        "author": "Chou",
+        "year": "2012",
+        "journal-title": "Bioinspir. Biomim."
+      },
+      {
+        "key": "2026011412543725900_CIT0006",
+        "first-page": "3153",
+        "article-title": "Dynamic Compliant Quadruped Walking",
+        "author": "de Lasa",
+        "year": "2001"
+      },
+      {
+        "key": "2026011412543725900_CIT0007",
+        "author": "Battaglia"
+      },
+      {
+        "key": "2026011412543725900_CIT0008",
+        "first-page": "2595",
+        "article-title": "Experimentally Validated Bounding Models for the Scout II Quadrupedal Robot",
+        "author": "Poulakakis",
+        "year": "2004"
+      },
+      {
+        "key": "2026011412543725900_CIT0009",
+        "first-page": "1",
+        "article-title": "Dynamic Locomotion in the MIT Cheetah 3 Through Convex Model-Predictive Control",
+        "author": "Di Carlo",
+        "year": "2018"
+      },
+      {
+        "issue": "74",
+        "key": "2026011412543725900_CIT0010",
+        "doi-asserted-by": "publisher",
+        "first-page": "eade2256",
+        "DOI": "10.1126/scirobotics.ade2256",
+        "article-title": "Learning Quadrupedal Locomotion on Deformable Terrain",
+        "volume": "8",
+        "author": "Choi",
+        "year": "2023",
+        "journal-title": "Sci. Robot."
+      },
+      {
+        "key": "2026011412543725900_CIT0011",
+        "first-page": "8558",
+        "article-title": "Stair Climbing Using the Angular Momentum Linear Inverted Pendulum Model and Model Predictive Control",
+        "author": "Dosunmu-Ogunbi",
+        "year": "2023"
+      },
+      {
+        "issue": "4",
+        "key": "2026011412543725900_CIT0012",
+        "doi-asserted-by": "publisher",
+        "first-page": "4170",
+        "DOI": "10.1109/LRA.2019.2931284",
+        "article-title": "Dynamic Locomotion on Slippery Ground",
+        "volume": "4",
+        "author": "Jenelten",
+        "year": "2019",
+        "journal-title": "IEEE Robot. Autom. Lett."
+      },
+      {
+        "key": "2026011412543725900_CIT0013",
+        "author": "Gao",
+        "year": "2024"
+      },
+      {
+        "key": "2026011412543725900_CIT0014",
+        "author": "Stewart",
+        "year": "2024"
+      },
+      {
+        "issue": "1",
+        "key": "2026011412543725900_CIT0015",
+        "doi-asserted-by": "publisher",
+        "first-page": "26",
+        "DOI": "10.1108/IR-02-2013-330",
+        "article-title": "Mantis: Hybrid Leg-Wheel Ground Mobile Robot",
+        "volume": "41",
+        "author": "Bruzzone",
+        "year": "2014",
+        "journal-title": "Ind. Robot Int. J."
+      },
+      {
+        "key": "2026011412543725900_CIT0016",
+        "doi-asserted-by": "publisher",
+        "first-page": "1",
+        "DOI": "10.1109/TRO.2024.3362326",
+        "article-title": "Ringbot: Monocycle Robot With Legs",
+        "volume": "40",
+        "author": "Gim",
+        "year": "2024",
+        "journal-title": "IEEE Trans. Robot."
+      },
+      {
+        "issue": "2",
+        "key": "2026011412543725900_CIT0017",
+        "doi-asserted-by": "publisher",
+        "first-page": "2116",
+        "DOI": "10.1109/LRA.2019.2899750",
+        "article-title": "Keep Rollin’—Whole-Body Motion Control and Planning for Wheeled Quadrupedal Robots",
+        "volume": "4",
+        "author": "Bjelonic",
+        "year": "2019",
+        "journal-title": "IEEE Robot. Autom. Lett."
+      },
+      {
+        "issue": "6",
+        "key": "2026011412543725900_CIT0018",
+        "doi-asserted-by": "publisher",
+        "first-page": "061014",
+        "DOI": "10.1115/1.4063871",
+        "article-title": "Safe Trajectory Generation for Wheel-Leg Hybrid Mechanism Using Discrete Mechanics and Optimal Control",
+        "volume": "16",
+        "author": "Li",
+        "year": "2024",
+        "journal-title": "ASME J. Mech. Rob."
+      },
+      {
+        "key": "2026011412543725900_CIT0019",
+        "author": "Unitree",
+        "year": "2025"
+      },
+      {
+        "issue": "18",
+        "key": "2026011412543725900_CIT0020",
+        "doi-asserted-by": "publisher",
+        "first-page": "Art. no. 18",
+        "DOI": "10.3390/app12189239",
+        "article-title": "A Wheels-on-Knees Quadruped Assistive Robot to Carry Loads",
+        "volume": "12",
+        "author": "Li",
+        "year": "2022",
+        "journal-title": "Appl. Sci."
+      },
+      {
+        "issue": "4",
+        "key": "2026011412543725900_CIT0021",
+        "doi-asserted-by": "publisher",
+        "first-page": "4587",
+        "DOI": "10.1109/LRA.2019.2926661",
+        "article-title": "Whole-Body Locomotion and Posture Control on a Torque-Controlled Hydraulic Rover",
+        "volume": "4",
+        "author": "Hyon",
+        "year": "2019",
+        "journal-title": "IEEE Robot. Autom. Lett."
+      },
+      {
+        "key": "2026011412543725900_CIT0022",
+        "first-page": "4043",
+        "article-title": "PAW: A Hybrid Wheeled-Leg Robot",
+        "author": "Smith",
+        "year": "2006"
+      },
+      {
+        "key": "2026011412543725900_CIT0023",
+        "author": "Steeves"
+      },
+      {
+        "issue": "2",
+        "key": "2026011412543725900_CIT0024",
+        "doi-asserted-by": "publisher",
+        "first-page": "3626",
+        "DOI": "10.1109/LRA.2020.2979661",
+        "article-title": "Rolling in the Deep—Hybrid Locomotion for Wheeled-Legged Robots Using Online Trajectory Optimization",
+        "volume": "5",
+        "author": "Bjelonic",
+        "year": "2020",
+        "journal-title": "IEEE Robot. Autom. Lett."
+      },
+      {
+        "key": "2026011412543725900_CIT0025",
+        "first-page": "5596",
+        "article-title": "Actively Articulated Suspension for a Wheel-on-Leg Rover Operating on a Martian Analog Surface",
+        "author": "Reid",
+        "year": "2016"
+      },
+      {
+        "key": "2026011412543725900_CIT0026",
+        "first-page": "793",
+        "article-title": "Dynamic Hybrid Locomotion and Jumping for Wheeled-Legged Quadrupeds",
+        "author": "Hosseini",
+        "year": "2023"
+      },
+      {
+        "issue": "6",
+        "key": "2026011412543725900_CIT0027",
+        "doi-asserted-by": "publisher",
+        "first-page": "061015",
+        "DOI": "10.1115/1.4067482",
+        "article-title": "Design and Analysis of a Mobile Robot With Transformable Wheel-Legged Mechanism",
+        "volume": "17",
+        "author": "Li",
+        "year": "2025",
+        "journal-title": "ASME J. Mech. Rob."
+      },
+      {
+        "issue": "3",
+        "key": "2026011412543725900_CIT0028",
+        "doi-asserted-by": "publisher",
+        "first-page": "031008",
+        "DOI": "10.1115/1.4057069",
+        "article-title": "A Novel Transformable Leg-Wheel Mechanism",
+        "volume": "16",
+        "author": "Wei",
+        "year": "2024",
+        "journal-title": "ASME J. Mech. Rob."
+      },
+      {
+        "issue": "1",
+        "key": "2026011412543725900_CIT0029",
+        "doi-asserted-by": "publisher",
+        "first-page": "011002",
+        "DOI": "10.1115/1.4056711",
+        "article-title": "‘On the Edge’ Obstacle Surmounting Method Using Hybrid Locomotion",
+        "volume": "16",
+        "author": "Yeldan",
+        "year": "2023",
+        "journal-title": "ASME J. Mech. Rob."
+      },
+      {
+        "key": "2026011412543725900_CIT0030",
+        "doi-asserted-by": "crossref",
+        "DOI": "10.1109/ICRA48506.2021.9561128",
+        "article-title": "Lywal: A Leg-Wheel Transformable Quadruped Robot With Picking up and Transport Functions",
+        "author": "Xue",
+        "year": "2021"
+      },
+      {
+        "issue": "5",
+        "key": "2026011412543725900_CIT0031",
+        "doi-asserted-by": "publisher",
+        "first-page": "051001",
+        "DOI": "10.1115/1.4037018",
+        "article-title": "Design and Implementation of a Leg–Wheel Robot: Transleg",
+        "volume": "9",
+        "author": "Wei",
+        "year": "2017",
+        "journal-title": "ASME J. Mech. Rob."
+      },
+      {
+        "issue": "2",
+        "key": "2026011412543725900_CIT0032",
+        "doi-asserted-by": "publisher",
+        "first-page": "941",
+        "DOI": "10.1109/TRO.2022.3226114",
+        "article-title": "\\Mathbf\\Alpha -WaLTR: Adaptive Wheel-and-Leg Transformable Robot for Versatile Multiterrain Locomotion",
+        "volume": "39",
+        "author": "Zheng",
+        "year": "2023",
+        "journal-title": "IEEE Trans. Robot."
+      },
+      {
+        "key": "2026011412543725900_CIT0033",
+        "first-page": "5626",
+        "article-title": "OmniWheg: An Omnidirectional Wheel-Leg Transformable Robot",
+        "author": "Cao",
+        "year": "2022"
+      },
+      {
+        "issue": "5",
+        "key": "2026011412543725900_CIT0034",
+        "doi-asserted-by": "publisher",
+        "first-page": "1025",
+        "DOI": "10.1109/TRO.2017.2696022",
+        "article-title": "TurboQuad: A Novel Leg–Wheel Transformable Robot With Smooth and Fast Behavioral Transitions",
+        "volume": "33",
+        "author": "Chen",
+        "year": "2017",
+        "journal-title": "IEEE Trans. Robot."
+      },
+      {
+        "issue": "2",
+        "key": "2026011412543725900_CIT0035",
+        "doi-asserted-by": "publisher",
+        "first-page": "804",
+        "DOI": "10.1109/LRA.2017.2653363",
+        "article-title": "SLIP-Model-Based Dynamic Gait Generation in a Leg-Wheel Transformable Robot With Force Control",
+        "volume": "2",
+        "author": "Lin",
+        "year": "2017",
+        "journal-title": "IEEE Robot. Autom. Lett."
+      },
+      {
+        "issue": "2",
+        "key": "2026011412543725900_CIT0036",
+        "doi-asserted-by": "publisher",
+        "first-page": "730",
+        "DOI": "10.1109/TMECH.2013.2253615",
+        "article-title": "Quattroped: A Leg–Wheel Transformable Robot",
+        "volume": "19",
+        "author": "Chen",
+        "year": "2014",
+        "journal-title": "IEEE/ASME Trans. Mechatron."
+      },
+      {
+        "key": "2026011412543725900_CIT0037",
+        "first-page": "293",
+        "article-title": "A Wheel to Leg Transformation Strategy in a Leg-Wheel Transformable Robot",
+        "author": "Wang",
+        "year": "2023"
+      },
+      {
+        "key": "2026011412543725900_CIT0038",
+        "doi-asserted-by": "publisher",
+        "first-page": "104348",
+        "DOI": "10.1016/j.mechmachtheory.2021.104348",
+        "article-title": "Development of a Novel Leg-Wheel Module With Fast Transformation and Leaping Capability",
+        "volume": "163",
+        "author": "Chen",
+        "year": "2021",
+        "journal-title": "Mech. Mach. Theory"
+      },
+      {
+        "key": "2026011412543725900_CIT0039",
+        "doi-asserted-by": "publisher",
+        "first-page": "54369",
+        "DOI": "10.1109/ACCESS.2018.2870291",
+        "article-title": "Robot Leg Design: A Constructive Framework",
+        "volume": "6",
+        "author": "Rezazadeh",
+        "year": "2018",
+        "journal-title": "IEEE Access"
+      },
+      {
+        "key": "2026011412543725900_CIT0040",
+        "first-page": "1082",
+        "article-title": "Development of a Dynamic Model of the 11-Linkage and Closed-Chain Leg-Wheel Module",
+        "author": "Liu",
+        "year": "2022"
+      },
+      {
+        "key": "2026011412543725900_CIT0041",
+        "doi-asserted-by": "crossref",
+        "first-page": "275",
+        "DOI": "10.1007/978-3-030-23807-0_23",
+        "volume-title": "Towards Autonomous Robotic Systems",
+        "author": "Geisert",
+        "year": "2019"
+      },
+      {
+        "key": "2026011412543725900_CIT0042",
+        "doi-asserted-by": "crossref",
+        "DOI": "10.1109/ICRA57147.2024.10610114",
+        "article-title": "Body Velocity Estimation in a Leg–Wheel Transformable Robot Without a Priori Knowledge of Leg–Wheel Ground Contacts",
+        "author": "Huang",
+        "year": "2024"
+      },
+      {
+        "key": "2026011412543725900_CIT0043",
+        "first-page": "8051",
+        "article-title": "Convergent iLQR for Safe Trajectory Planning and Control of Legged Robots",
+        "author": "Zhu",
+        "year": "2024"
+      },
+      {
+        "issue": "3",
+        "key": "2026011412543725900_CIT0044",
+        "doi-asserted-by": "publisher",
+        "first-page": "1117",
+        "DOI": "10.1109/TMECH.2014.2339013",
+        "article-title": "Design Principles for Energy-Efficient Legged Locomotion and Implementation on the MIT Cheetah Robot",
+        "volume": "20",
+        "author": "Seok",
+        "year": "2015",
+        "journal-title": "IEEE/ASME Trans. Mechatron."
+      },
+      {
+        "key": "2026011412543725900_CIT0045",
+        "first-page": "7344",
+        "article-title": "Time-Varying Model Predictive Control for Highly Dynamic Motions of Quadrupedal Robots",
+        "author": "García",
+        "year": "2021"
+      },
+      {
+        "issue": "3",
+        "key": "2026011412543725900_CIT0046",
+        "doi-asserted-by": "publisher",
+        "first-page": "479",
+        "DOI": "10.1007/s11044-023-09893-w",
+        "article-title": "Kalman Filters Based on Multibody Models: Linking Simulation and Real World. A Comprehensive Review",
+        "volume": "58",
+        "author": "Naya",
+        "year": "2023",
+        "journal-title": "Multibody Syst. Dyn."
+      },
+      {
+        "key": "2026011412543725900_CIT0047",
+        "doi-asserted-by": "publisher",
+        "first-page": "210",
+        "DOI": "10.1016/j.ymssp.2017.12.041",
+        "article-title": "State and Force Observers Based on Multibody Models and the Indirect Kalman Filter",
+        "volume": "106",
+        "author": "Sanjurjo",
+        "year": "2018",
+        "journal-title": "Mech. Syst. Signal Process."
+      },
+      {
+        "key": "2026011412543725900_CIT0048",
+        "doi-asserted-by": "crossref",
+        "DOI": "10.1201/9780203026953",
+        "volume-title": "Robot Manipulator Control: Theory and Practice",
+        "author": "Lewis",
+        "year": "2003"
+      },
+      {
+        "key": "2026011412543725900_CIT0049",
+        "first-page": "5773",
+        "article-title": "Trajectory Optimization Strategy That Considers Body Tip-Over Stability, Limb Dynamics, and Motion Continuity in Legged Robots",
+        "author": "Lu",
+        "year": "2024"
+      },
+      {
+        "issue": "2",
+        "key": "2026011412543725900_CIT0050",
+        "doi-asserted-by": "publisher",
+        "first-page": "152",
+        "DOI": "10.1109/TRO.2004.835448",
+        "article-title": "Omnidirectional Static Walking of a Quadruped Robot",
+        "volume": "21",
+        "author": "Ma",
+        "year": "2005",
+        "journal-title": "IEEE Trans. Robot."
+      },
+      {
+        "issue": "10",
+        "key": "2026011412543725900_CIT0051",
+        "first-page": "775",
+        "article-title": "What Price Speed? Specific Power Required for Propulsion of Vehicles",
+        "volume": "133",
+        "author": "Giuseppi",
+        "year": "1950",
+        "journal-title": "Mech. Eng."
+      },
+      {
+        "issue": "3",
+        "key": "2026011412543725900_CIT0052",
+        "doi-asserted-by": "publisher",
+        "first-page": "036005",
+        "DOI": "10.1088/1748-3190/acc6ac",
+        "article-title": "Dynamic Turning and Running of a Hexapod Robot Using a Separated and Laterally Arranged Two-Leg Model",
+        "volume": "18",
+        "author": "Chang",
+        "year": "2023",
+        "journal-title": "Bioinspir. Biomim."
+      },
+      {
+        "key": "2026011412543725900_CIT0053",
+        "unstructured": "Katz, B. G.\n          , 2018, “A Low Cost Modular Actuator for Dynamic Robots,” thesis, Massachusetts Institute of Technology, Cambridge, MA, https://dspace.mit.edu/handle/1721.1/118671. Accessed June 15, 2024."
+      },
+      {
+        "key": "2026011412543725900_CIT0054",
+        "first-page": "780",
+        "article-title": "Design and Motion Guidelines for Quadrupedal Locomotion of Maximum Speed or Efficiency With Serial and Parallel Legs",
+        "author": "Machairas",
+        "year": "2023"
+      }
+    ],
+    "container-title": [
+      "Journal of Mechanisms and Robotics"
+    ],
+    "original-title": [],
+    "language": "en",
+    "link": [
+      {
+        "URL": "https://asmedigitalcollection.asme.org/mechanismsrobotics/article-pdf/doi/10.1115/1.4070596/7574311/jmr-25-1328.pdf",
+        "content-type": "application/pdf",
+        "content-version": "vor",
+        "intended-application": "syndication"
+      },
+      {
+        "URL": "https://asmedigitalcollection.asme.org/mechanismsrobotics/article-pdf/doi/10.1115/1.4070596/7574311/jmr-25-1328.pdf",
+        "content-type": "unspecified",
+        "content-version": "vor",
+        "intended-application": "similarity-checking"
+      }
+    ],
+    "deposited": {
+      "date-parts": [
+        [
+          2026,
+          1,
+          14
+        ]
+      ],
+      "date-time": "2026-01-14T17:54:46Z",
+      "timestamp": 1768413286000
+    },
+    "score": 1,
+    "resource": {
+      "primary": {
+        "URL": "https://asmedigitalcollection.asme.org/mechanismsrobotics/article/18/3/031003/1229090/Energy-Efficient-and-Stride-Level-Hybrid"
+      }
+    },
+    "subtitle": [],
+    "short-title": [],
+    "issued": {
+      "date-parts": [
+        [
+          2026,
+          1,
+          14
+        ]
+      ]
+    },
+    "references-count": 54,
+    "journal-issue": {
+      "issue": "3",
+      "published-print": {
+        "date-parts": [
+          [
+            2026,
+            3,
+            1
+          ]
+        ]
+      }
+    },
+    "URL": "https://doi.org/10.1115/1.4070596",
+    "relation": {},
+    "ISSN": [
+      "1942-4302",
+      "1942-4310"
+    ],
+    "issn-type": [
+      {
+        "value": "1942-4302",
+        "type": "print"
+      },
+      {
+        "value": "1942-4310",
+        "type": "electronic"
+      }
+    ],
+    "subject": [],
+    "published": {
+      "date-parts": [
+        [
+          2026,
+          1,
+          14
+        ]
+      ]
+    },
+    "article-number": "031003"
+  }
+}

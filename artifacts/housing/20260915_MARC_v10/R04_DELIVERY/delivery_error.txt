@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "<string>", line 54, in <module>
+  File "<string>", line 9, in run
+AssertionError: User leg pose changed

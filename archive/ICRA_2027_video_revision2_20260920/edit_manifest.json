@@ -1,0 +1,140 @@
+{
+  "edited_on": "2026-09-20",
+  "fps": 30,
+  "output": "SCONE_ICRA2027_Video.mp4",
+  "sha256": "02f1df0ca4a0660b9d6f05f2cbf9e47b66c554341ff776dec67bb8194bc6dc7c",
+  "duration_s": 96.433333,
+  "size_bytes": 17461862,
+  "width": 1280,
+  "height": 720,
+  "scan": "progressive",
+  "segments": [
+    {
+      "name": "v2_floor",
+      "file": "build/v2_floor.mp4",
+      "kind": "physical_v2",
+      "source": "archive/videos/SCONEv2.mp4",
+      "source_sha256": "649d2b194d4a8c80c5859c96b015b84f3af6dd4b57fadd2a2974cb790235ed19",
+      "source_start_s": 0,
+      "source_end_s": 31.9,
+      "complete_source": true,
+      "source_frames": 957,
+      "output_frames": 957,
+      "playback_speed": 1,
+      "spatial_crop": false,
+      "title": "SCONE v2 | Physical demonstration 1/2",
+      "subtitle": "Floor motion and posture changes | Complete source clip | 1x",
+      "footer": "Archival hardware footage; separate from the paper's controlled simulation experiments.",
+      "output_start_frame": 0,
+      "output_start_s": 0.0,
+      "output_end_s": 31.9
+    },
+    {
+      "name": "v2_stairs",
+      "file": "build/v2_stairs.mp4",
+      "kind": "physical_v2",
+      "source": "archive/videos/SCONEv2_stairs.mp4",
+      "source_sha256": "7b5af1ec88c7031bbfb90ada5d21d45106052ec53dbd2f6efbbb31474ca3d88a",
+      "source_start_s": 0,
+      "source_end_s": 37.7,
+      "complete_source": true,
+      "source_frames": 1131,
+      "output_frames": 1131,
+      "playback_speed": 1,
+      "spatial_crop": false,
+      "title": "SCONE v2 | Physical demonstration 2/2",
+      "subtitle": "Stair motion | Complete source clip | 1x",
+      "footer": "Archival hardware footage; separate from the paper's controlled simulation experiments.",
+      "output_start_frame": 957,
+      "output_start_s": 31.9,
+      "output_end_s": 69.6
+    },
+    {
+      "name": "simulation_intro",
+      "kind": "explanation",
+      "file": "build/simulation_intro.mp4",
+      "output_frames": 120,
+      "eyebrow": "SELECTED SIMULATION REPLAYS",
+      "title": "Two controls illustrated",
+      "lines": [
+        "1. Periodic flat-ground rolling / stepping",
+        "2. Fixed-posture ascent of 150 mm stairs",
+        "These are separate runs, not a continuous floor-to-stair sequence."
+      ],
+      "output_start_frame": 2088,
+      "output_start_s": 69.6,
+      "output_end_s": 73.6
+    },
+    {
+      "name": "simulation_flat",
+      "file": "build/simulation_flat.mp4",
+      "kind": "simulation",
+      "source": "archive/ICRA_2027_revision4_20260913/media/joint_P.mp4",
+      "source_sha256": "7931579cf770b8053cd3f8a83efbdd97283ade19519051c273e32259bf0366be",
+      "source_start_s": 0,
+      "source_end_s": 10,
+      "complete_source": false,
+      "source_frames": 500,
+      "output_frames": 300,
+      "playback_speed": 1,
+      "spatial_crop": false,
+      "title": "Simulation 1/2 | Periodic rolling / stepping",
+      "subtitle": "Flat-ground periodic reindexing | First 10 s of the recorded replay | 1x",
+      "footer": "Illustrates the simpler flat policy evaluated in the manuscript.",
+      "output_start_frame": 2208,
+      "output_start_s": 73.6,
+      "output_end_s": 83.6
+    },
+    {
+      "name": "simulation_stairs",
+      "file": "build/simulation_stairs.mp4",
+      "kind": "simulation",
+      "source": "archive/ICRA_2027_revision5_20260913/media/stair_45.mp4",
+      "source_sha256": "deeb70bd800c116cf4d9842b3c94a2c04b7b85e47e7d0c54eaf425d71fc55625",
+      "source_start_s": 0,
+      "source_end_s": 5.84,
+      "complete_source": true,
+      "source_frames": 146,
+      "output_frames": 175,
+      "playback_speed": 1,
+      "spatial_crop": false,
+      "title": "Simulation 2/2 | Fixed-posture stair ascent",
+      "subtitle": "150 mm risers | 350 mm treads | Common distal phase | 2 ms physics step | 1x",
+      "footer": "Starts after posture acquisition; includes rear-leg clearance and the supported halt.",
+      "output_start_frame": 2508,
+      "output_start_s": 83.6,
+      "output_end_s": 89.43333333333334
+    },
+    {
+      "name": "scope",
+      "kind": "explanation",
+      "file": "build/scope.mp4",
+      "output_frames": 210,
+      "eyebrow": "INTERPRETATION",
+      "title": "What the clips establish",
+      "lines": [
+        "The complete real recordings show the SCONE v2 hardware in motion.",
+        "They do not validate the exact controllers used in the simulation study.",
+        "Simulation limits: 200 mm transfer fails; wheel results depend on timestep."
+      ],
+      "output_start_frame": 2683,
+      "output_start_s": 89.43333333333334,
+      "output_end_s": 96.43333333333334
+    }
+  ],
+  "physical_v2_source_count": 2,
+  "physical_duration_s": 69.6,
+  "simulation_clip_count": 2,
+  "removed_from_previous_edit": [
+    {
+      "source": "stair_47.mp4",
+      "reason": "20 s closed-wheel comparison removed from short companion edit; result remains in the submitted paper."
+    },
+    {
+      "source": "stair_75.mp4",
+      "reason": "20 s incomplete 200 mm transfer removed from short companion edit; limitation remains on the closing card."
+    }
+  ],
+  "source_originals_modified": false,
+  "submitted_paper_modified": false
+}

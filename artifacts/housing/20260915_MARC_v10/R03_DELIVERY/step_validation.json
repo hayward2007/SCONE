@@ -1,0 +1,26 @@
+{
+  "R01": {
+    "solids": 1,
+    "valid": true
+  },
+  "R02": {
+    "solids": 1,
+    "valid": true
+  },
+  "R03": {
+    "solids": 1,
+    "valid": true
+  },
+  "P04": {
+    "solids": 1,
+    "valid": true
+  },
+  "L01": {
+    "solids": 1,
+    "valid": true
+  },
+  "L02": {
+    "solids": 1,
+    "valid": true
+  }
+}

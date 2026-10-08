@@ -1,0 +1,191 @@
+[
+  {
+    "code": "C195",
+    "h": 0.1,
+    "n": 6,
+    "ascent": 6,
+    "halt": 6,
+    "time": 4.036666666669753,
+    "time_range": [
+      3.7400000000027234,
+      4.420000000003554
+    ],
+    "work": 75.57437404120765,
+    "total_time": 35.76666666666441
+  },
+  {
+    "code": "C195",
+    "h": 0.15,
+    "n": 6,
+    "ascent": 6,
+    "halt": 6,
+    "time": 5.406666666671427,
+    "time_range": [
+      5.160000000004459,
+      5.540000000004923
+    ],
+    "work": 105.31183992542334,
+    "total_time": 37.10666666666605
+  },
+  {
+    "code": "C195",
+    "h": 0.2,
+    "n": 6,
+    "ascent": 0,
+    "halt": 0,
+    "time": null,
+    "time_range": null,
+    "work": null,
+    "total_time": null
+  },
+  {
+    "code": "C180",
+    "h": 0.1,
+    "n": 6,
+    "ascent": 6,
+    "halt": 6,
+    "time": 4.080000000003139,
+    "time_range": [
+      3.8000000000027967,
+      4.40000000000353
+    ],
+    "work": 76.34766479225708,
+    "total_time": 35.753333333331064
+  },
+  {
+    "code": "C180",
+    "h": 0.15,
+    "n": 6,
+    "ascent": 6,
+    "halt": 6,
+    "time": 6.4100000000059865,
+    "time_range": [
+      5.500000000004874,
+      8.100000000008052
+    ],
+    "work": 119.27149604265782,
+    "total_time": 38.11333333333395
+  },
+  {
+    "code": "C180",
+    "h": 0.2,
+    "n": 6,
+    "ascent": 0,
+    "halt": 0,
+    "time": null,
+    "time_range": null,
+    "work": null,
+    "total_time": null
+  },
+  {
+    "code": "CL",
+    "h": 0.1,
+    "n": 6,
+    "ascent": 6,
+    "halt": 6,
+    "time": 3.41000000000232,
+    "time_range": [
+      3.1200000000019656,
+      4.04000000000309
+    ],
+    "work": 63.492040432300605,
+    "total_time": 35.32999999999721
+  },
+  {
+    "code": "CL",
+    "h": 0.15,
+    "n": 6,
+    "ascent": 6,
+    "halt": 6,
+    "time": 5.290000000004618,
+    "time_range": [
+      5.060000000004337,
+      5.4200000000047766
+    ],
+    "work": 96.39506360603838,
+    "total_time": 36.96999999999922
+  },
+  {
+    "code": "CL",
+    "h": 0.2,
+    "n": 6,
+    "ascent": 0,
+    "halt": 0,
+    "time": null,
+    "time_range": null,
+    "work": null,
+    "total_time": null
+  },
+  {
+    "code": "W195",
+    "h": 0.1,
+    "n": 6,
+    "ascent": 5,
+    "halt": 5,
+    "time": 3.3960000000023207,
+    "time_range": [
+      3.140000000002008,
+      3.7600000000027656
+    ],
+    "work": 52.09665734481714,
+    "total_time": 35.13799999999698
+  },
+  {
+    "code": "W195",
+    "h": 0.15,
+    "n": 6,
+    "ascent": 0,
+    "halt": 0,
+    "time": null,
+    "time_range": null,
+    "work": null,
+    "total_time": null
+  },
+  {
+    "code": "W195",
+    "h": 0.2,
+    "n": 6,
+    "ascent": 0,
+    "halt": 0,
+    "time": null,
+    "time_range": null,
+    "work": null,
+    "total_time": null
+  },
+  {
+    "code": "W180",
+    "h": 0.1,
+    "n": 6,
+    "ascent": 5,
+    "halt": 5,
+    "time": 3.4320000000023647,
+    "time_range": [
+      3.06000000000191,
+      3.9000000000029367
+    ],
+    "work": 51.72856525668389,
+    "total_time": 35.16199999999701
+  },
+  {
+    "code": "W180",
+    "h": 0.15,
+    "n": 6,
+    "ascent": 0,
+    "halt": 0,
+    "time": null,
+    "time_range": null,
+    "work": null,
+    "total_time": null
+  },
+  {
+    "code": "W180",
+    "h": 0.2,
+    "n": 6,
+    "ascent": 0,
+    "halt": 0,
+    "time": null,
+    "time_range": null,
+    "work": null,
+    "total_time": null
+  }
+]

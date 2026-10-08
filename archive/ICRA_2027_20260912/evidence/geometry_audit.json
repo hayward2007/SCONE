@@ -1,0 +1,33 @@
+{
+  "nbody_including_world": 57,
+  "nu": 18,
+  "nq": 25,
+  "nv": 24,
+  "mass_kg": 4.16095234368,
+  "hinge_count": 18,
+  "limited_hinges": 0,
+  "active_collision_geoms": [
+    "simulation_floor",
+    "UPPER_BODY_1_geom",
+    "TIRE_1_geom",
+    "TIRE_3_geom",
+    "TIRE_5_geom",
+    "TIRE_2_geom",
+    "TIRE_4_geom",
+    "TIRE_6_geom",
+    "LOWER_BODY_1_geom"
+  ],
+  "tire_geoms_per_leg": 1,
+  "tire_mesh_vertex_count": 314,
+  "tire_axis_centre_in_convex_hull": true,
+  "axis_centre_max_hull_equation_m": -0.021999999880790558,
+  "closed_variant_mass_equal": true,
+  "closed_variant_inertia_equal": true,
+  "tire_geom_contype": 1,
+  "tire_geom_conaffinity": 1,
+  "tire_geom_solref": [
+    0.03,
+    1.0
+  ],
+  "interpretation": "One convex mesh collision proxy per tire fills the interior concavity. Missing circular cap remains; this is not a full circle. It cannot establish inner-arc hooking."
+}

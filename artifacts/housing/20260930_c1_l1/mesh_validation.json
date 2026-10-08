@@ -1,0 +1,38 @@
+{
+  "C1_USB_guide_print.stl": {
+    "triangles": 5048,
+    "watertight_edge_incidence": true,
+    "nonmanifold_edges": 0,
+    "signed_volume_mm3": 9945.169790020847,
+    "bounds_mm": [
+      [
+        1.7763568394002505e-14,
+        -41.0,
+        0.0
+      ],
+      [
+        17.600000381469727,
+        41.0,
+        97.5
+      ]
+    ]
+  },
+  "L1_frame_print.stl": {
+    "triangles": 56308,
+    "watertight_edge_incidence": true,
+    "nonmanifold_edges": 0,
+    "signed_volume_mm3": 33376.61015760139,
+    "bounds_mm": [
+      [
+        1.7763568394002505e-14,
+        -41.0,
+        -0.0014481544494628906
+      ],
+      [
+        91.4000015258789,
+        41.0,
+        39.5
+      ]
+    ]
+  }
+}

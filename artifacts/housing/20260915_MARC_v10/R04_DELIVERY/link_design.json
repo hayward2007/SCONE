@@ -1,0 +1,32 @@
+[
+  {
+    "component": "LINK",
+    "window_mm": [
+      28,
+      14
+    ],
+    "corner_radius_mm": 4,
+    "thickness_mm": 5,
+    "plates_per_leg": 2,
+    "volume_cm3": [
+      17.369150483266026,
+      17.369150483266026
+    ],
+    "motor_centers_unchanged": true
+  },
+  {
+    "component": "LINK(\ubbf8\ub7ec)",
+    "window_mm": [
+      28,
+      14
+    ],
+    "corner_radius_mm": 4,
+    "thickness_mm": 5,
+    "plates_per_leg": 2,
+    "volume_cm3": [
+      17.369150483266022,
+      17.36915048326603
+    ],
+    "motor_centers_unchanged": true
+  }
+]

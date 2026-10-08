@@ -1,0 +1,8 @@
+{
+  "content": [
+    {
+      "text": "{\n    \"error\": \"Traceback (most recent call last):\\n  File \\\"<string>\\\", line 37, in <module>\\n  File \\\"<string>\\\", line 35, in run\\n  File \\\"/Users/hayward_kim/Developer/SCONE/tools/marc/build_03_sector.py\\\", line 14, in run\\n    app,doc,d,folder,p=guard(ctx); g=p['geometry']\\n                       ~~~~~^^^^^\\n  File \\\"/Users/hayward_kim/Developer/SCONE/tools/marc/fusion_common.py\\\", line 23, in guard\\n    assert doc.creationId == ctx['creation_id'], 'Active document is not owned by this run'\\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\nAssertionError: Active document is not owned by this run\\n\",\n    \"success\": false\n}",
+      "type": "text"
+    }
+  ]
+}

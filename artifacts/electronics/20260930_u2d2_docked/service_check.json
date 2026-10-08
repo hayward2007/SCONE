@@ -1,0 +1,58 @@
+{
+  "lift_collisions": [],
+  "fastener_collisions": [
+    [
+      115,
+      "M2.5 nut envelope",
+      "MARC v4 Body v5 BOX:1/Body v5 FRONT",
+      55.419
+    ],
+    [
+      115,
+      "M2.5 bolt shank",
+      "MARC v4 Body v5 BOX:1/Body v5 FRONT",
+      13.65708
+    ],
+    [
+      125,
+      "M2.5 nut envelope",
+      "MARC v4 Body v5 BOX:1/Body v5 FRONT",
+      55.419
+    ],
+    [
+      125,
+      "M2.5 bolt shank",
+      "MARC v4 Body v5 BOX:1/Body v5 FRONT",
+      13.65708
+    ],
+    [
+      225,
+      "M2.5 nut envelope",
+      "MARC v4 Body v5 BOX:1/Body v5 FRONT",
+      55.419
+    ],
+    [
+      225,
+      "M2.5 bolt shank",
+      "MARC v4 Body v5 BOX:1/Body v5 FRONT",
+      13.65708
+    ],
+    [
+      235,
+      "M2.5 nut envelope",
+      "MARC v4 Body v5 BOX:1/Body v5 FRONT",
+      55.419
+    ],
+    [
+      235,
+      "M2.5 bolt shank",
+      "MARC v4 Body v5 BOX:1/Body v5 FRONT",
+      13.65708
+    ]
+  ],
+  "driver_collisions": [],
+  "dock_face_gap_mm": 0.0,
+  "PHB_pose_preserved": true,
+  "fasteners": "4x M2.5x12 with underside nuts in existing body rail D2.6 holes (115/125/225/235,52), body z75..81. Original motor foot removed. Existing Jetson M3x12 x2 retained.",
+  "service": "Remove front lid with arm attached and carry handle, disconnect external cables, then lift the cassette."
+}

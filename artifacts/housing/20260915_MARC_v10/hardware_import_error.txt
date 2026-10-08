@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "<string>", line 27, in <module>
+  File "<string>", line 24, in run
+  File "/Users/hayward_kim/Library/Application Support/Autodesk/webdeploy/production/127ae56f1790f40cf393bcc73875a1a281e20234/Autodesk Fusion.app/Contents/Frameworks/Python.framework/Versions/Current/lib/python3.14/pathlib/__init__.py", line 815, in write_text
+    return f.write(data)
+           ~~~~~~~^^^^^^
+UnicodeEncodeError: 'ascii' codec can't encode characters in position 11523-11524: ordinal not in range(128)

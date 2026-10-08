@@ -1,0 +1,50 @@
+[
+  {
+    "part": "LINK/R08 plate 1",
+    "window_middle_mm": [
+      28,
+      14
+    ],
+    "thickness_mm": 5,
+    "removed_cm3": 0.008351710353782238,
+    "fillet_radius_mm": 0.5,
+    "outer_bounds_unchanged": true,
+    "motor_holes_unchanged": true
+  },
+  {
+    "part": "LINK/R08 plate 2",
+    "window_middle_mm": [
+      28,
+      14
+    ],
+    "thickness_mm": 5,
+    "removed_cm3": 0.008351710353778685,
+    "fillet_radius_mm": 0.5,
+    "outer_bounds_unchanged": true,
+    "motor_holes_unchanged": true
+  },
+  {
+    "part": "LINK(\ubbf8\ub7ec)/R08 plate 1",
+    "window_middle_mm": [
+      28,
+      14
+    ],
+    "thickness_mm": 5,
+    "removed_cm3": 0.008351710353789343,
+    "fillet_radius_mm": 0.5,
+    "outer_bounds_unchanged": true,
+    "motor_holes_unchanged": true
+  },
+  {
+    "part": "LINK(\ubbf8\ub7ec)/R08 plate 2",
+    "window_middle_mm": [
+      28,
+      14
+    ],
+    "thickness_mm": 5,
+    "removed_cm3": 0.008351710353789343,
+    "fillet_radius_mm": 0.5,
+    "outer_bounds_unchanged": true,
+    "motor_holes_unchanged": true
+  }
+]

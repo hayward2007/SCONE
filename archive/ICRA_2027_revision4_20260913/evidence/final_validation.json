@@ -1,0 +1,59 @@
+{
+  "SCONE_ICRA2027_Manuscript_EN.pdf": {
+    "pages": 8,
+    "size_bytes": 564938,
+    "sha256": "495204baab3e2130897fd9793c5241ddfbe4c6dfa7994c92ca3ce370e9973a8c",
+    "all_fonts_embedded": true,
+    "metadata": {
+      "/Producer": "Tectonic",
+      "/Title": "Rewind-Aware Rolling Allocation for an Articulated Arc-Leg Hexapod",
+      "/Author": "",
+      "/Subject": "Anonymous ICRA 2027 manuscript",
+      "/Creator": "LaTeX"
+    }
+  },
+  "SCONE_ICRA2027_Review_KO.pdf": {
+    "pages": 4,
+    "size_bytes": 269389,
+    "sha256": "c712baa77c40d4d8eab31174838b1c5d71f845bff5d739ca894f8f8d1587fb12",
+    "all_fonts_embedded": true,
+    "metadata": {
+      "/Author": "",
+      "/CreationDate": "D:20260913163255+09'00'",
+      "/Creator": "(unspecified)",
+      "/Keywords": "",
+      "/ModDate": "D:20260913163255+09'00'",
+      "/Producer": "ReportLab PDF Library - (opensource)",
+      "/Subject": "(unspecified)",
+      "/Title": "SCONE ICRA 2027 제출 전 검토",
+      "/Trapped": "/False"
+    }
+  },
+  "figures": 6,
+  "tables": 3,
+  "cited_references": 19,
+  "raw_rows": 176,
+  "bounded_trials": 128,
+  "tests_passed": 283,
+  "source_matches_frozen": true,
+  "prior_inputs_unchanged": true,
+  "no_overfull_or_missing_references": true,
+  "score": 68,
+  "recommendation": "C (3.0)",
+  "video": {
+    "size_bytes": 9747928,
+    "duration_s": 114.0,
+    "width": 1280,
+    "height": 720,
+    "frame_rate": "25/1",
+    "field_order": "progressive",
+    "audio": false,
+    "segments": [
+      "0-74 s: prior labeled archival and baseline simulation",
+      "74-94 s: B, H 0.8, simulated 1x",
+      "94-114 s: P, H 0.8, simulated 1x"
+    ]
+  },
+  "reviewed_visual_pages": "8 English and 4 Korean; affected pages rechecked after final layout changes",
+  "replay_visual_adjustment": "The rendering context uses an enlarged finite display footprint for the same infinite plane. Model plane size is restored before physics. Metrics match original records."
+}

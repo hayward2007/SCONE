@@ -1,0 +1,137 @@
+{
+  "I01": {
+    "label": "모터 ID·모델·펌웨어·영점·부호·모드",
+    "value": null,
+    "unit": null,
+    "source": null,
+    "revision": null,
+    "method": null,
+    "measured_at": null,
+    "uncertainty": null,
+    "status": "BLOCKED",
+    "candidate_evidence": [
+      "evidence/design_plan_snapshot.md"
+    ],
+    "reason": "문서 후보값은 보유품 도면/측정 완료를 대신하지 않는다."
+  },
+  "I02": {
+    "label": "혼·포크·베어링·스터브 인터페이스",
+    "value": null,
+    "unit": null,
+    "source": null,
+    "revision": null,
+    "method": null,
+    "measured_at": null,
+    "uncertainty": null,
+    "status": "BLOCKED",
+    "candidate_evidence": [
+      "evidence/design_plan_snapshot.md"
+    ],
+    "reason": "문서 후보값은 보유품 도면/측정 완료를 대신하지 않는다."
+  },
+  "I03": {
+    "label": "실제 타이어 셀·밀도·고정 방식",
+    "value": null,
+    "unit": null,
+    "source": null,
+    "revision": null,
+    "method": null,
+    "measured_at": null,
+    "uncertainty": null,
+    "status": "BLOCKED",
+    "candidate_evidence": [
+      "evidence/design_plan_snapshot.md"
+    ],
+    "reason": "문서 후보값은 보유품 도면/측정 완료를 대신하지 않는다."
+  },
+  "I04": {
+    "label": "출력 공정·공차·강도·크리프",
+    "value": null,
+    "unit": null,
+    "source": null,
+    "revision": null,
+    "method": null,
+    "measured_at": null,
+    "uncertainty": null,
+    "status": "BLOCKED",
+    "candidate_evidence": [
+      "evidence/design_plan_snapshot.md"
+    ],
+    "reason": "문서 후보값은 보유품 도면/측정 완료를 대신하지 않는다."
+  },
+  "I05": {
+    "label": "센서·Jetson·U2D2 도면과 광학 변환",
+    "value": null,
+    "unit": null,
+    "source": null,
+    "revision": null,
+    "method": null,
+    "measured_at": null,
+    "uncertainty": null,
+    "status": "BLOCKED",
+    "candidate_evidence": [
+      "evidence/design_plan_snapshot.md"
+    ],
+    "reason": "문서 후보값은 보유품 도면/측정 완료를 대신하지 않는다."
+  },
+  "I06": {
+    "label": "배터리·전원 회로·보호 조건",
+    "value": null,
+    "unit": null,
+    "source": null,
+    "revision": null,
+    "method": null,
+    "measured_at": null,
+    "uncertainty": null,
+    "status": "BLOCKED",
+    "candidate_evidence": [
+      "evidence/design_plan_snapshot.md"
+    ],
+    "reason": "문서 후보값은 보유품 도면/측정 완료를 대신하지 않는다."
+  },
+  "I07": {
+    "label": "실제 모터 운전 한계",
+    "value": null,
+    "unit": null,
+    "source": null,
+    "revision": null,
+    "method": null,
+    "measured_at": null,
+    "uncertainty": null,
+    "status": "BLOCKED",
+    "candidate_evidence": [
+      "evidence/design_plan_snapshot.md"
+    ],
+    "reason": "문서 후보값은 보유품 도면/측정 완료를 대신하지 않는다."
+  },
+  "I08": {
+    "label": "케이블·커넥터·교체 경로",
+    "value": null,
+    "unit": null,
+    "source": null,
+    "revision": null,
+    "method": null,
+    "measured_at": null,
+    "uncertainty": null,
+    "status": "BLOCKED",
+    "candidate_evidence": [
+      "evidence/design_plan_snapshot.md"
+    ],
+    "reason": "문서 후보값은 보유품 도면/측정 완료를 대신하지 않는다."
+  },
+  "I09": {
+    "label": "시스템 성공 조건과 실제 환경",
+    "value": null,
+    "unit": null,
+    "source": null,
+    "revision": null,
+    "method": null,
+    "measured_at": null,
+    "uncertainty": null,
+    "status": "BLOCKED",
+    "candidate_evidence": [
+      "evidence/design_plan_snapshot.md"
+    ],
+    "reason": "문서 후보값은 보유품 도면/측정 완료를 대신하지 않는다."
+  }
+}
