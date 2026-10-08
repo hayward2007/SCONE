@@ -1,0 +1,216 @@
+{
+  "ref": "SCONEv2_old",
+  "commit": "86c3a0fa789a1975f3c7f5229c0613187a04eeb9",
+  "excluded": [
+    "docs/.DS_Store",
+    "docs/SCONEv1.mp4",
+    "docs/SCONEv2.mp4"
+  ],
+  "files": [
+    {
+      "original_path": ".gitignore",
+      "snapshot_path": ".gitignore",
+      "mode": "100644",
+      "git_blob": "68bc17f9ff2104a9d7b6777058bb4c343ca72609",
+      "size": 3078,
+      "sha256": "5e2c671ddc9e301dafc241ad1a7c07aa85a91fef560a17721b41977b9eddba17"
+    },
+    {
+      "original_path": "LICENSE",
+      "snapshot_path": "LICENSE",
+      "mode": "100644",
+      "git_blob": "22d3220d4bcb103d045d42d07bd0cc2496dac1ff",
+      "size": 1066,
+      "sha256": "469a7986d58772d6cfa776ac7ba1551f4a8426c9f2cd1640800d60dc49bb4131"
+    },
+    {
+      "original_path": "README.md",
+      "snapshot_path": "README.original.md",
+      "mode": "100644",
+      "git_blob": "dfb6f581a19274d54976289b31b5a90201238024",
+      "size": 345,
+      "sha256": "11e9eb35e5370292aa8ee003da0e00425b3244894ccf86dfcb877931f0bd8d7d"
+    },
+    {
+      "original_path": "docs/Eco-friendly deliver SCONE Paper.pdf",
+      "snapshot_path": "docs/Eco-friendly deliver SCONE Paper.pdf",
+      "mode": "100644",
+      "git_blob": "058f4b9ac3eaa04a92168ea9b156099c16d05f8e",
+      "size": 711047,
+      "sha256": "92c4a046fca556a355aa168ed009aca33a674ddd90c922dc177c03aa5cc07873"
+    },
+    {
+      "original_path": "docs/Eco-friendly deliver SCONE Poster.jpg",
+      "snapshot_path": "docs/Eco-friendly deliver SCONE Poster.jpg",
+      "mode": "100644",
+      "git_blob": "4670cb8f154ae8feee2d7e27b54521b1ab836001",
+      "size": 35702763,
+      "sha256": "8d54f7a9530ca47cfecf2da5dc5ec13c17f1281b8301495ee55bda0852a42df7"
+    },
+    {
+      "original_path": "docs/Eco-friendly deliver SCONE Quad Chart.png",
+      "snapshot_path": "docs/Eco-friendly deliver SCONE Quad Chart.png",
+      "mode": "100644",
+      "git_blob": "ba503fd5c026fe25b87b7212db6056f914eba501",
+      "size": 2725585,
+      "sha256": "3c0f0804ccc7558034c2999907148fba821e395d79d676e51f90190682c9bd24"
+    },
+    {
+      "original_path": "docs/SCONEv1.mtl",
+      "snapshot_path": "docs/SCONEv1.mtl",
+      "mode": "100644",
+      "git_blob": "68afc6fea73439538b9caa0747a812a99c765ff6",
+      "size": 104,
+      "sha256": "a00b7030c9f7a5945c8f311a2d421bcbd97ec063c441a55d346a05e17072e3c0"
+    },
+    {
+      "original_path": "docs/SCONEv1.obj",
+      "snapshot_path": "docs/SCONEv1.obj",
+      "mode": "100644",
+      "git_blob": "be936e8611536ef775abe6916c2a904e8545ece5",
+      "size": 7779895,
+      "sha256": "0aadfc8776b7cd3c429c9618426bee9cea3db080915fe54129c5fd59a90a2d54"
+    },
+    {
+      "original_path": "docs/SCONEv1.py",
+      "snapshot_path": "docs/SCONEv1.py",
+      "mode": "100644",
+      "git_blob": "0ec316b4d48c6bd685da7be0b1f2dd7f12d0b50c",
+      "size": 11349,
+      "sha256": "176d57b90332233bcf4dca872ffc4ffba8854b986e0d5c839033202633bb1ca6"
+    },
+    {
+      "original_path": "docs/SCONEv2 Arc-Shaped Wheel.pdf",
+      "snapshot_path": "docs/SCONEv2 Arc-Shaped Wheel.pdf",
+      "mode": "100644",
+      "git_blob": "4dea8bc7a69c6c799670dc246d30e4d80c4daf3d",
+      "size": 106013,
+      "sha256": "e502997e25c587fc30c9f493666ac370f60faff058b8be7883c9a2b53f6b0917"
+    },
+    {
+      "original_path": "docs/SCONEv2.mtl",
+      "snapshot_path": "docs/SCONEv2.mtl",
+      "mode": "100644",
+      "git_blob": "68afc6fea73439538b9caa0747a812a99c765ff6",
+      "size": 104,
+      "sha256": "a00b7030c9f7a5945c8f311a2d421bcbd97ec063c441a55d346a05e17072e3c0"
+    },
+    {
+      "original_path": "docs/SCONEv2.obj",
+      "snapshot_path": "docs/SCONEv2.obj",
+      "mode": "100644",
+      "git_blob": "7e654cc10ede1ff70bd46ccb09c6a8f17420cffb",
+      "size": 12292379,
+      "sha256": "7e1f59ce140763ea10675caecd5c080068d907b41ca132e6ccf59b2428a3f731"
+    },
+    {
+      "original_path": "docs/대한민국_한국디지털미디어고등학교_김형석_논문.pdf",
+      "snapshot_path": "docs/대한민국_한국디지털미디어고등학교_김형석_논문.pdf",
+      "mode": "100644",
+      "git_blob": "524eeff997ea0f0af06e78219529290b333f36db",
+      "size": 4785255,
+      "sha256": "5c78c5a05bc7fcd31fcbf14c15e1a267594fd68c34401ec3f4e245b5c4687222"
+    },
+    {
+      "original_path": "main.py",
+      "snapshot_path": "main.py",
+      "mode": "100644",
+      "git_blob": "d44ab18a819c1d0c19efa008ae61c63a22f57d6a",
+      "size": 72,
+      "sha256": "6fae699123615a92367ee678ed33eef8e23984eeead7b474dbaebf81fd97da36"
+    },
+    {
+      "original_path": "src/SCONE.py",
+      "snapshot_path": "src/SCONE.py",
+      "mode": "100644",
+      "git_blob": "9eb9de9b452c97aca0608b671edf1aa387624a23",
+      "size": 12037,
+      "sha256": "18f9cc93e517134d9ca470699a00eaccd88510d508a009c98a8045534b580ecc"
+    },
+    {
+      "original_path": "src/__init__.py",
+      "snapshot_path": "src/__init__.py",
+      "mode": "100644",
+      "git_blob": "d7e3b176f21320feec2073381506f06a3fd07e83",
+      "size": 34,
+      "sha256": "85fc778de4ddf75cb34f23a4abf4b62a41c07dcc71df45200dfd88b40c507e8d"
+    },
+    {
+      "original_path": "src/assets/yolov10n.pt",
+      "snapshot_path": "src/assets/yolov10n.pt",
+      "mode": "100644",
+      "git_blob": "b1ca1e69b67491a5dddcf9ddbdaf039dfb902819",
+      "size": 11448431,
+      "sha256": "61b91ffc99b284792dca49bf40216945833cc2a515e1a742954e6e9327cfc19e"
+    },
+    {
+      "original_path": "src/core/__init__.py",
+      "snapshot_path": "src/core/__init__.py",
+      "mode": "100644",
+      "git_blob": "67625eb10c27501b9444d560b6d043f17e4e876f",
+      "size": 203,
+      "sha256": "e1065b8d684ca6c5f8037d14764a3a8ca5776fd4c56224aba3847a8c4b9339d8"
+    },
+    {
+      "original_path": "src/core/actuator.py",
+      "snapshot_path": "src/core/actuator.py",
+      "mode": "100644",
+      "git_blob": "3669499669350b6fe1f9a419475680967c9786ff",
+      "size": 1827,
+      "sha256": "51ebfd8b1479c0d6417f791cc1e72f815664eacffe784faf2691bea83b118458"
+    },
+    {
+      "original_path": "src/core/controller.py",
+      "snapshot_path": "src/core/controller.py",
+      "mode": "100644",
+      "git_blob": "e6d814120fe1a3fe977af3e74eb87c0156bd0df3",
+      "size": 5006,
+      "sha256": "52467fd9d4795b35ee7422bbfd6828d07c411d5398da04ec98c8259f4266aa99"
+    },
+    {
+      "original_path": "src/provider/__init__.py",
+      "snapshot_path": "src/provider/__init__.py",
+      "mode": "100644",
+      "git_blob": "a2d35aa4b2dff9f5f311a60ba1ac6a427fa07ff5",
+      "size": 219,
+      "sha256": "b826f62f0d3214093f01841ded3848a44dad81d8119df0ed92c159ee407beb35"
+    },
+    {
+      "original_path": "src/provider/climb.py",
+      "snapshot_path": "src/provider/climb.py",
+      "mode": "100644",
+      "git_blob": "f611c5977d1434a40b2ee5e547ae6c2394707781",
+      "size": 3909,
+      "sha256": "d83acd2a245073f1f2e121611dcfa2d6ac65657f95a0fde36f78ac4443864b96"
+    },
+    {
+      "original_path": "src/provider/drive.py",
+      "snapshot_path": "src/provider/drive.py",
+      "mode": "100644",
+      "git_blob": "2a269b0fa9aa2b0c94240e715b2b97cd777fe9f6",
+      "size": 1516,
+      "sha256": "46d12bd75cddb70a2e879b09f59948803cb6f425cbbe843b3dfa246e38468b0c"
+    },
+    {
+      "original_path": "src/provider/mode.py",
+      "snapshot_path": "src/provider/mode.py",
+      "mode": "100644",
+      "git_blob": "b7fe6b0d30dd117560e4f0f343369cadebb04fe0",
+      "size": 726,
+      "sha256": "c54670b75010b12a1586c3a1cafddb5482fb68367a8d22f8199d55ac90842d64"
+    },
+    {
+      "original_path": "src/provider/walk.py",
+      "snapshot_path": "src/provider/walk.py",
+      "mode": "100644",
+      "git_blob": "38ba98d80a2a5b72fbbc72ac7883e376c458d1a6",
+      "size": 7121,
+      "sha256": "7b44b1fc10deeba8ae5047a4f06e511acc1e733beb2461e7ba6b5cc294ffd08c"
+    }
+  ],
+  "video_policy": "No additional original video uploads. Use the existing compressed videos in archive/videos; original history remains in existing Git history and the local recovery bundle.",
+  "compressed_videos": [
+    "../videos/SCONEv1.mp4",
+    "../videos/SCONEv2.mp4"
+  ]
+}

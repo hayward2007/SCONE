@@ -1,0 +1,86 @@
+{
+  "date": "2026-10-09",
+  "final_branch": "main",
+  "checks": {
+    "existing_files": {
+      "files_checked": 1630,
+      "intentional_edits": [
+        ".gitattributes",
+        "README.md",
+        "docs/31-project-archive.md",
+        "docs/README.md",
+        "docs/archive/2026-10-09/README.md"
+      ],
+      "unexpected_changes": 0,
+      "runtime_and_test_files_unchanged": true
+    },
+    "archive/scone_v2": {
+      "files_verified": 25,
+      "byte_identical_to_original_commit": true
+    },
+    "archive/experiments/scone_gait_v2": {
+      "files_verified": 13,
+      "byte_identical_to_original_commit": true
+    },
+    "maintained_document_links": {
+      "files_checked": 8,
+      "local_links_checked": 181,
+      "broken_links": 0,
+      "scope": "maintained entry points; original historical documents retain their original relative references"
+    },
+    "separate_worktrees": {
+      "count": 2,
+      "files_verified": 88,
+      "same_heads_and_uncommitted_status": true,
+      "file_changes": 0,
+      "mode": "detached HEAD"
+    },
+    "published_main_merge": {
+      "strategy": "ort",
+      "unique_commits": 4,
+      "unique_changes_from_shared_base": 0,
+      "tree_changed_by_merge": false,
+      "merged_commit": "2884d7972982d4583f75a0871493ce39d527ad10"
+    },
+    "dynamixel_package": {
+      "all_original_files_match_final_package": true
+    },
+    "baseline_tests": {
+      "tests": 287,
+      "status": "OK",
+      "log": "../2026-10-09/tests.log",
+      "rerun": false,
+      "reason": "existing runtime and test files were verified unchanged"
+    },
+    "backup_bundle": {
+      "file": "archive/project-closeout/20261009-branch-cleanup/pre-media-cleanup-20260830.bundle",
+      "published": false,
+      "reason": "large original videos are preserved locally only",
+      "size": 464018475,
+      "sha256": "9daf76074322bd871318e94eee964264e6290702f34bc1889a1a8e5d234ab8ab",
+      "original_commit": "f2801d24ad865311ad5041c3312cca4649c9a441",
+      "prerequisite": "444f7442195c3eaaeb17f68da881d20cf121c7e7",
+      "bundle_verify": "PASS",
+      "restore_smoke": "PASS",
+      "restored_commit_and_tree_match": true,
+      "restored_original_video_blob_bytes": 253261568
+    },
+    "video_upload_policy": {
+      "additional_videos_staged": 0,
+      "original_video_bundles_staged": 0,
+      "existing_compressed_videos_unchanged": true
+    },
+    "staged_assets": {
+      "files_added_or_changed": 52,
+      "regular_blobs_over_100_MiB": 0,
+      "new_LFS_objects_to_upload": 1,
+      "new_LFS_bytes": 11448431,
+      "new_LFS_files": [
+        "archive/scone_v2/src/assets/yolov10n.pt"
+      ],
+      "new_video_uploads": 0,
+      "LFS_fsck": "PASS",
+      "diff_check": "PASS; original SCONE v2 whitespace preserved via archive attributes"
+    }
+  }
+}

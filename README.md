@@ -192,6 +192,9 @@ MARC names the continuing arc-wheel robot family; the later four-legged designs 
 
 | 기록 / Record | 보관 위치 / Archive |
 | --- | --- |
+| 브랜치 정리·이전 시스템 / Branch consolidation and historical systems | [`main` 및 보관 이력 / Main and archived history](archive/branch_history/README.md) |
+| 원래 SCONE v2 제어 시스템 / Original SCONE v2 control system | [소스·포스터·논문·압축 영상 / Source, poster, papers and compressed footage](archive/scone_v2/README.md) |
+| 이전 역할 분리 실험 / Earlier role-split experiments | [실험 스냅샷과 전체 이력 / Experiment snapshot and complete history](archive/experiments/scone_gait_v2/README.md) |
 | 전체 기술·개발 문서 / Technical documentation and development history | [문서 색인 / Documentation index](docs/README.md) |
 | 굴림·보행 역할 분리와 두 다리 구동 / Rolling/stepping roles and two-leg rolling | [역할 분리 / Role split](docs/28-scone-gait-v2-role-split-rolling.md) · [두 다리 구동 / Two-leg rolling](docs/29-two-leg-sector-drive.md) |
 | MARC 설계 계보와 검증 명세 / MARC lineage and verification plan | [설계 명세 / Design plan](docs/30-scone-v3-design-plan.md) |

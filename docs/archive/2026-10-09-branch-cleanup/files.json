@@ -1,0 +1,358 @@
+{
+  "date": "2026-10-09",
+  "base_content_commit": "7c3bdc88278b968e298f9ec47f0e409378e53de7",
+  "scope": "files added or changed by the final branch cleanup; excludes this manifest and validation.json to avoid self-reference",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "size": 605,
+      "sha256": "db7cdc1c4811f639dd5a59bb870f05a10bc7c9a5f78bcbdd9b8642cb8725d55f",
+      "git_blob": "15dc433a9b46a553444671545f296fb8e59c3e5e",
+      "git_blob_size": 605
+    },
+    {
+      "path": "README.md",
+      "size": 40784,
+      "sha256": "e5813098dacea9c9d9ff247cb8e174f1baffc95bfed02504e7657ab542bef4a1",
+      "git_blob": "0c4cd7309e75a66b9e1697cd4aedc94ff94b8402",
+      "git_blob_size": 40784
+    },
+    {
+      "path": "archive/branch_history/README.md",
+      "size": 3544,
+      "sha256": "1cb0e7051d7c1ad32f3d00e7a55542c2af22b9c5a5d4ef065ecd9cdcc9a65ddc",
+      "git_blob": "3d4da1399aa5803c2eddfaa8f75bbbdc358d4c27",
+      "git_blob_size": 3544
+    },
+    {
+      "path": "archive/branch_history/branches.json",
+      "size": 6036,
+      "sha256": "c1aae282a1861d625e3ebb4727919f6a56aa89cdb21964f64e5fe2798b4ccb69",
+      "git_blob": "6ab583885465f9b79ef09c1a0a6fda3a46894328",
+      "git_blob_size": 6036
+    },
+    {
+      "path": "archive/experiments/scone_gait_v2/README.md",
+      "size": 1175,
+      "sha256": "8945054b6defec10085448d8ca6a13cd1ecf8ad898e49874d3dbfd942a111840",
+      "git_blob": "2f073e12ccf2e1fb4c22b2ccd0d7a217dacb262c",
+      "git_blob_size": 1175
+    },
+    {
+      "path": "archive/experiments/scone_gait_v2/benchmark/controllers.py",
+      "size": 18067,
+      "sha256": "5b959e1bcd628557117865cc25bad2af9cbe5f3f13da8da3a1381b8b61b55e6c",
+      "git_blob": "5501f12d93688dc05aaf1f25c44bedd006d94456",
+      "git_blob_size": 18067
+    },
+    {
+      "path": "archive/experiments/scone_gait_v2/benchmark/leg_usage.py",
+      "size": 10300,
+      "sha256": "756330ba8b348c72398b00a6208d6ac829fe206711733c83d51b7f0ade181a32",
+      "git_blob": "19b89ad488046b3a2b6cb78ab9b5917dde050ca1",
+      "git_blob_size": 10300
+    },
+    {
+      "path": "archive/experiments/scone_gait_v2/docs/28-scone-gait-v2-role-split-rolling.md",
+      "size": 21510,
+      "sha256": "6d403ad75a88396bdc95f25adad944dc2b08c2027e776bc154675804f0f9e0ec",
+      "git_blob": "8c76affd96e17ecbfea3710cfb019ed558c2d239",
+      "git_blob_size": 21510
+    },
+    {
+      "path": "archive/experiments/scone_gait_v2/docs/29-two-leg-sector-drive.md",
+      "size": 9095,
+      "sha256": "1c977f22ef526db9fc422d7c45d33fdba1f0787d4edc1740d6aa73877ddcc5d7",
+      "git_blob": "fd6ec2cb6de31306582643b0d3410c2f47b4ddf2",
+      "git_blob_size": 9095
+    },
+    {
+      "path": "archive/experiments/scone_gait_v2/docs/README.md",
+      "size": 10417,
+      "sha256": "786f572bcf6efb8f333fb7b9f9e4135142b03124e87a1b25a85a1b7ded04dcf5",
+      "git_blob": "e99166a7215cd6b1b30b90342623e0a9e38f7127",
+      "git_blob_size": 10417
+    },
+    {
+      "path": "archive/experiments/scone_gait_v2/source_manifest.json",
+      "size": 2364,
+      "sha256": "fa76e203b7641a1ac357ee32d61a463404be64440f3fc0ad2a05ebc67924f433",
+      "git_blob": "b3a9d154326cb48e9316aef0ed1eeea75269ed26",
+      "git_blob_size": 2364
+    },
+    {
+      "path": "archive/experiments/scone_gait_v2/src/cli.py",
+      "size": 34713,
+      "sha256": "5d7f94fc340c8d21c9cad5fdc09b34c31e3b3147c7652eab2dd8d63f6aabed12",
+      "git_blob": "5681a9d49f84920014da27cdea399467490ab37d",
+      "git_blob_size": 34713
+    },
+    {
+      "path": "archive/experiments/scone_gait_v2/src/locomotion/__init__.py",
+      "size": 1650,
+      "sha256": "1226798fa3a4f596ed4de3fbd68858e3bb6eebfd110ab1e68009659bf0e51fcd",
+      "git_blob": "22cab5bec5780ec5b280698aaf259bb02f452980",
+      "git_blob_size": 1650
+    },
+    {
+      "path": "archive/experiments/scone_gait_v2/src/locomotion/scone_gait_v2.py",
+      "size": 33201,
+      "sha256": "cf3869aeb8c3011815ddc80980c335bb1c956c6f365b040092638178e610e0f0",
+      "git_blob": "baba5d37c21f30eae2afdecacfa89051b8923026",
+      "git_blob_size": 33201
+    },
+    {
+      "path": "archive/experiments/scone_gait_v2/src/locomotion/sector_wheel.py",
+      "size": 12854,
+      "sha256": "06db5851a39e2f5cffbda5fd0c4f3662028527974399cdb957cd2ae3d483f059",
+      "git_blob": "ab8bd249f0e00daa336b7e827ce99252ca958503",
+      "git_blob_size": 12854
+    },
+    {
+      "path": "archive/experiments/scone_gait_v2/src/simulation/core/cli_bridge.py",
+      "size": 10776,
+      "sha256": "26e297155767e70a0cce61524db0de937fd0669858dd7bd22b3f2a96e1d4e2e1",
+      "git_blob": "c670478095a28348112d3c2b3e20b684b7f14062",
+      "git_blob_size": 10776
+    },
+    {
+      "path": "archive/experiments/scone_gait_v2/src/simulation/core/simulator_cli.py",
+      "size": 15116,
+      "sha256": "dd9544a9b02bfaba4ade8648d01d62be10c5d370e31940431c4e9e5fe3d0c5a8",
+      "git_blob": "21598721606339dc2f4372b09e20ab0174a97b8a",
+      "git_blob_size": 15116
+    },
+    {
+      "path": "archive/experiments/scone_gait_v2/tests/test_benchmark.py",
+      "size": 9345,
+      "sha256": "d8a894507f983d6720d6f0f6605138d36db64dc1eb87014da40b9ee1ab1d29c6",
+      "git_blob": "4eb993aaaa94a19a39a6ddb66c64783488c285fa",
+      "git_blob_size": 9345
+    },
+    {
+      "path": "archive/experiments/scone_gait_v2/tests/test_scone_gait_v2.py",
+      "size": 12216,
+      "sha256": "b9ca1f80a98c30234f814ed341413aa99f42afc4d6f925745f8ce23c6b3113b7",
+      "git_blob": "000a01fa451d3d63dac40f56b05e928422c32434",
+      "git_blob_size": 12216
+    },
+    {
+      "path": "archive/scone_v2/.gitignore",
+      "size": 3078,
+      "sha256": "5e2c671ddc9e301dafc241ad1a7c07aa85a91fef560a17721b41977b9eddba17",
+      "git_blob": "68bc17f9ff2104a9d7b6777058bb4c343ca72609",
+      "git_blob_size": 3078
+    },
+    {
+      "path": "archive/scone_v2/LICENSE",
+      "size": 1066,
+      "sha256": "469a7986d58772d6cfa776ac7ba1551f4a8426c9f2cd1640800d60dc49bb4131",
+      "git_blob": "22d3220d4bcb103d045d42d07bd0cc2496dac1ff",
+      "git_blob_size": 1066
+    },
+    {
+      "path": "archive/scone_v2/README.md",
+      "size": 2267,
+      "sha256": "a5ccf4c31fbdfc137af98f67bad2b6242b68635ac64baebd45f31eca285c24c1",
+      "git_blob": "f3d4c16a2ce4283527232c3d267f65f40811edb2",
+      "git_blob_size": 2267
+    },
+    {
+      "path": "archive/scone_v2/README.original.md",
+      "size": 345,
+      "sha256": "11e9eb35e5370292aa8ee003da0e00425b3244894ccf86dfcb877931f0bd8d7d",
+      "git_blob": "dfb6f581a19274d54976289b31b5a90201238024",
+      "git_blob_size": 345
+    },
+    {
+      "path": "archive/scone_v2/docs/Eco-friendly deliver SCONE Paper.pdf",
+      "size": 711047,
+      "sha256": "92c4a046fca556a355aa168ed009aca33a674ddd90c922dc177c03aa5cc07873",
+      "git_blob": "058f4b9ac3eaa04a92168ea9b156099c16d05f8e",
+      "git_blob_size": 711047
+    },
+    {
+      "path": "archive/scone_v2/docs/Eco-friendly deliver SCONE Poster.jpg",
+      "size": 35702763,
+      "sha256": "8d54f7a9530ca47cfecf2da5dc5ec13c17f1281b8301495ee55bda0852a42df7",
+      "git_blob": "4670cb8f154ae8feee2d7e27b54521b1ab836001",
+      "git_blob_size": 35702763
+    },
+    {
+      "path": "archive/scone_v2/docs/Eco-friendly deliver SCONE Quad Chart.png",
+      "size": 2725585,
+      "sha256": "3c0f0804ccc7558034c2999907148fba821e395d79d676e51f90190682c9bd24",
+      "git_blob": "ba503fd5c026fe25b87b7212db6056f914eba501",
+      "git_blob_size": 2725585
+    },
+    {
+      "path": "archive/scone_v2/docs/SCONEv1.mtl",
+      "size": 104,
+      "sha256": "a00b7030c9f7a5945c8f311a2d421bcbd97ec063c441a55d346a05e17072e3c0",
+      "git_blob": "68afc6fea73439538b9caa0747a812a99c765ff6",
+      "git_blob_size": 104
+    },
+    {
+      "path": "archive/scone_v2/docs/SCONEv1.obj",
+      "size": 7779895,
+      "sha256": "0aadfc8776b7cd3c429c9618426bee9cea3db080915fe54129c5fd59a90a2d54",
+      "git_blob": "be936e8611536ef775abe6916c2a904e8545ece5",
+      "git_blob_size": 7779895
+    },
+    {
+      "path": "archive/scone_v2/docs/SCONEv1.py",
+      "size": 11349,
+      "sha256": "176d57b90332233bcf4dca872ffc4ffba8854b986e0d5c839033202633bb1ca6",
+      "git_blob": "0ec316b4d48c6bd685da7be0b1f2dd7f12d0b50c",
+      "git_blob_size": 11349
+    },
+    {
+      "path": "archive/scone_v2/docs/SCONEv2 Arc-Shaped Wheel.pdf",
+      "size": 106013,
+      "sha256": "e502997e25c587fc30c9f493666ac370f60faff058b8be7883c9a2b53f6b0917",
+      "git_blob": "4dea8bc7a69c6c799670dc246d30e4d80c4daf3d",
+      "git_blob_size": 106013
+    },
+    {
+      "path": "archive/scone_v2/docs/SCONEv2.mtl",
+      "size": 104,
+      "sha256": "a00b7030c9f7a5945c8f311a2d421bcbd97ec063c441a55d346a05e17072e3c0",
+      "git_blob": "68afc6fea73439538b9caa0747a812a99c765ff6",
+      "git_blob_size": 104
+    },
+    {
+      "path": "archive/scone_v2/docs/SCONEv2.obj",
+      "size": 12292379,
+      "sha256": "7e1f59ce140763ea10675caecd5c080068d907b41ca132e6ccf59b2428a3f731",
+      "git_blob": "7e654cc10ede1ff70bd46ccb09c6a8f17420cffb",
+      "git_blob_size": 12292379
+    },
+    {
+      "path": "archive/scone_v2/docs/대한민국_한국디지털미디어고등학교_김형석_논문.pdf",
+      "size": 4785255,
+      "sha256": "5c78c5a05bc7fcd31fcbf14c15e1a267594fd68c34401ec3f4e245b5c4687222",
+      "git_blob": "524eeff997ea0f0af06e78219529290b333f36db",
+      "git_blob_size": 4785255
+    },
+    {
+      "path": "archive/scone_v2/main.py",
+      "size": 72,
+      "sha256": "6fae699123615a92367ee678ed33eef8e23984eeead7b474dbaebf81fd97da36",
+      "git_blob": "d44ab18a819c1d0c19efa008ae61c63a22f57d6a",
+      "git_blob_size": 72
+    },
+    {
+      "path": "archive/scone_v2/source_manifest.json",
+      "size": 8028,
+      "sha256": "d19fcb390f4d526992c6fbb0cd6216340a224a5769730d9acff96498a38f1051",
+      "git_blob": "37a2dc46e1bfa8e722ddf67ececca8a5527fb1d6",
+      "git_blob_size": 8028
+    },
+    {
+      "path": "archive/scone_v2/src/SCONE.py",
+      "size": 12037,
+      "sha256": "18f9cc93e517134d9ca470699a00eaccd88510d508a009c98a8045534b580ecc",
+      "git_blob": "9eb9de9b452c97aca0608b671edf1aa387624a23",
+      "git_blob_size": 12037
+    },
+    {
+      "path": "archive/scone_v2/src/__init__.py",
+      "size": 34,
+      "sha256": "85fc778de4ddf75cb34f23a4abf4b62a41c07dcc71df45200dfd88b40c507e8d",
+      "git_blob": "d7e3b176f21320feec2073381506f06a3fd07e83",
+      "git_blob_size": 34
+    },
+    {
+      "path": "archive/scone_v2/src/assets/yolov10n.pt",
+      "size": 11448431,
+      "sha256": "61b91ffc99b284792dca49bf40216945833cc2a515e1a742954e6e9327cfc19e",
+      "git_blob": "78e2c526c719ca4331d40c4238ab3f901f1988df",
+      "git_blob_size": 133,
+      "lfs_oid": "61b91ffc99b284792dca49bf40216945833cc2a515e1a742954e6e9327cfc19e"
+    },
+    {
+      "path": "archive/scone_v2/src/core/__init__.py",
+      "size": 203,
+      "sha256": "e1065b8d684ca6c5f8037d14764a3a8ca5776fd4c56224aba3847a8c4b9339d8",
+      "git_blob": "67625eb10c27501b9444d560b6d043f17e4e876f",
+      "git_blob_size": 203
+    },
+    {
+      "path": "archive/scone_v2/src/core/actuator.py",
+      "size": 1827,
+      "sha256": "51ebfd8b1479c0d6417f791cc1e72f815664eacffe784faf2691bea83b118458",
+      "git_blob": "3669499669350b6fe1f9a419475680967c9786ff",
+      "git_blob_size": 1827
+    },
+    {
+      "path": "archive/scone_v2/src/core/controller.py",
+      "size": 5006,
+      "sha256": "52467fd9d4795b35ee7422bbfd6828d07c411d5398da04ec98c8259f4266aa99",
+      "git_blob": "e6d814120fe1a3fe977af3e74eb87c0156bd0df3",
+      "git_blob_size": 5006
+    },
+    {
+      "path": "archive/scone_v2/src/provider/__init__.py",
+      "size": 219,
+      "sha256": "b826f62f0d3214093f01841ded3848a44dad81d8119df0ed92c159ee407beb35",
+      "git_blob": "a2d35aa4b2dff9f5f311a60ba1ac6a427fa07ff5",
+      "git_blob_size": 219
+    },
+    {
+      "path": "archive/scone_v2/src/provider/climb.py",
+      "size": 3909,
+      "sha256": "d83acd2a245073f1f2e121611dcfa2d6ac65657f95a0fde36f78ac4443864b96",
+      "git_blob": "f611c5977d1434a40b2ee5e547ae6c2394707781",
+      "git_blob_size": 3909
+    },
+    {
+      "path": "archive/scone_v2/src/provider/drive.py",
+      "size": 1516,
+      "sha256": "46d12bd75cddb70a2e879b09f59948803cb6f425cbbe843b3dfa246e38468b0c",
+      "git_blob": "2a269b0fa9aa2b0c94240e715b2b97cd777fe9f6",
+      "git_blob_size": 1516
+    },
+    {
+      "path": "archive/scone_v2/src/provider/mode.py",
+      "size": 726,
+      "sha256": "c54670b75010b12a1586c3a1cafddb5482fb68367a8d22f8199d55ac90842d64",
+      "git_blob": "b7fe6b0d30dd117560e4f0f343369cadebb04fe0",
+      "git_blob_size": 726
+    },
+    {
+      "path": "archive/scone_v2/src/provider/walk.py",
+      "size": 7121,
+      "sha256": "7b44b1fc10deeba8ae5047a4f06e511acc1e733beb2461e7ba6b5cc294ffd08c",
+      "git_blob": "38ba98d80a2a5b72fbbc72ac7883e376c458d1a6",
+      "git_blob_size": 7121
+    },
+    {
+      "path": "docs/31-project-archive.md",
+      "size": 12823,
+      "sha256": "a7bd51d2adb6a40d19d3e0537b55d79d89bc1ef14d9aca5f377872dcb81e127f",
+      "git_blob": "387959504b18769d13630eaffea568f61df73c94",
+      "git_blob_size": 12823
+    },
+    {
+      "path": "docs/README.md",
+      "size": 10613,
+      "sha256": "7e17d0495de8b0e2e9213a1c7903ebd87162160d72fa8b3ed4dcbcfb0a51a195",
+      "git_blob": "f41cabc330c71215abaebc6a7d459e28accdbfa9",
+      "git_blob_size": 10613
+    },
+    {
+      "path": "docs/archive/2026-10-09-branch-cleanup/README.md",
+      "size": 1242,
+      "sha256": "ab22a04de469a7b337c70136bfb7bdb07e0eb38cd341222546083797377d63c2",
+      "git_blob": "57bf7949c099bc7163a8d941753f0f3589b11545",
+      "git_blob_size": 1242
+    },
+    {
+      "path": "docs/archive/2026-10-09/README.md",
+      "size": 1340,
+      "sha256": "92b47e7af9429f44c46c92cc3f4523c283ee2b6221b1ffe5ac0929f96642bc79",
+      "git_blob": "a8c5cd7ada99c21dd8ddbe888c485665b1dcfc50",
+      "git_blob_size": 1340
+    }
+  ]
+}

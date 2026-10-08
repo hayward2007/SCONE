@@ -1,0 +1,172 @@
+{
+  "date": "2026-10-09",
+  "final_branch": "main",
+  "published_branches_before": [
+    "SCONEv2_old",
+    "feature/scone-gait-v2",
+    "main",
+    "rl"
+  ],
+  "stale_remote_tracking_refs": [
+    "origin/develop"
+  ],
+  "refs": [
+    {
+      "ref": "refs/heads/backup/pre-media-cleanup-20260830",
+      "commit": "f2801d24ad865311ad5041c3312cca4649c9a441",
+      "counts": "45\t2",
+      "merge_base": "444f7442195c3eaaeb17f68da881d20cf121c7e7",
+      "unique_commits": [
+        "f2801d2 chore: compressed video files",
+        "d4cd21c modify: modified RL reward fucntion & refactored archive file structure"
+      ],
+      "preservation": {
+        "local_bundle": "archive/project-closeout/20261009-branch-cleanup/pre-media-cleanup-20260830.bundle",
+        "prerequisite_commit": "444f7442195c3eaaeb17f68da881d20cf121c7e7",
+        "published": false,
+        "reason": "Original large videos are kept locally; existing compressed videos remain on GitHub."
+      }
+    },
+    {
+      "ref": "refs/heads/dynamixel-mujoco",
+      "commit": "20387a6483138d89e77b5f59c1615aba0e019c69",
+      "counts": "198\t1",
+      "merge_base": null,
+      "unique_commits": [
+        "20387a6 feat(model): model gear backlash, and split the Dynamixel work into a package"
+      ],
+      "preservation": {
+        "tag": "archive/dynamixel_mujoco"
+      }
+    },
+    {
+      "ref": "refs/heads/feature/scone-gait-v2",
+      "commit": "7c3bdc88278b968e298f9ec47f0e409378e53de7",
+      "counts": "0\t0",
+      "merge_base": "7c3bdc88278b968e298f9ec47f0e409378e53de7",
+      "unique_commits": [],
+      "preservation": {
+        "final_main_history": true
+      }
+    },
+    {
+      "ref": "refs/heads/main",
+      "commit": "b353bc54b45c8bd953cc3212999e2d03a98b8acc",
+      "counts": "43\t0",
+      "merge_base": "b353bc54b45c8bd953cc3212999e2d03a98b8acc",
+      "unique_commits": [],
+      "preservation": {
+        "final_main_history": true
+      }
+    },
+    {
+      "ref": "refs/heads/rl",
+      "commit": "6cff44785a1003a94811f91c957d753115fc8fff",
+      "counts": "4\t0",
+      "merge_base": "6cff44785a1003a94811f91c957d753115fc8fff",
+      "unique_commits": [],
+      "preservation": {
+        "final_main_history": true
+      }
+    },
+    {
+      "ref": "refs/heads/scone-gait-v2",
+      "commit": "ad0fdae54db814c0ebb071f17b95997ccc72236b",
+      "counts": "4\t9",
+      "merge_base": "6cff44785a1003a94811f91c957d753115fc8fff",
+      "unique_commits": [
+        "ad0fdae docs(locomotion): which two legs are idle, and whether rolling them beats walking",
+        "e4491ef feat(benchmark): add the two-leg drives and their matched walking controls",
+        "788309b feat(locomotion): let scone-gait-v2 be told which legs may roll",
+        "ab8184b feat(benchmark): account for support and propulsion leg by leg",
+        "617c013 docs(locomotion): record what the physics changed about the v2 design",
+        "bbb522e fix(locomotion): stop scone-gait-v2 climbing its own legs, and centre the stance",
+        "dce7e9b feat(sim): route scone-gait-v2 through the simulator CLI and the flat benchmark",
+        "aacf3a7 feat(locomotion): add scone-gait-v2, a role-split steer-and-roll gait",
+        "68cee21 docs(locomotion): measure why scone-gait cannot roll, and specify v2"
+      ],
+      "preservation": {
+        "tag": "archive/role_split_gait",
+        "source_snapshot": "../experiments/scone_gait_v2/"
+      }
+    },
+    {
+      "ref": "refs/heads/worktree-wf_619614a6-1b7-5",
+      "commit": "86c3a0fa789a1975f3c7f5229c0613187a04eeb9",
+      "counts": "46\t0",
+      "merge_base": "86c3a0fa789a1975f3c7f5229c0613187a04eeb9",
+      "unique_commits": [],
+      "preservation": {
+        "tag": "archive/scone_v2",
+        "uncommitted_changes": "../development_snapshots/20261009/wf_619614a6-1b7-5/"
+      }
+    },
+    {
+      "ref": "refs/heads/worktree-wf_619614a6-1b7-6",
+      "commit": "86c3a0fa789a1975f3c7f5229c0613187a04eeb9",
+      "counts": "46\t0",
+      "merge_base": "86c3a0fa789a1975f3c7f5229c0613187a04eeb9",
+      "unique_commits": [],
+      "preservation": {
+        "tag": "archive/scone_v2",
+        "uncommitted_changes": "../development_snapshots/20261009/wf_619614a6-1b7-6/"
+      }
+    },
+    {
+      "ref": "refs/remotes/origin/SCONEv2_old",
+      "commit": "86c3a0fa789a1975f3c7f5229c0613187a04eeb9",
+      "counts": "46\t0",
+      "merge_base": "86c3a0fa789a1975f3c7f5229c0613187a04eeb9",
+      "unique_commits": [],
+      "preservation": {
+        "tag": "archive/scone_v2",
+        "source_snapshot": "../scone_v2/"
+      }
+    },
+    {
+      "ref": "refs/remotes/origin/develop",
+      "commit": "86c3a0fa789a1975f3c7f5229c0613187a04eeb9",
+      "counts": "46\t0",
+      "merge_base": "86c3a0fa789a1975f3c7f5229c0613187a04eeb9",
+      "unique_commits": [],
+      "preservation": {
+        "tag": "archive/scone_v2"
+      }
+    },
+    {
+      "ref": "refs/remotes/origin/feature/scone-gait-v2",
+      "commit": "7c3bdc88278b968e298f9ec47f0e409378e53de7",
+      "counts": "0\t0",
+      "merge_base": "7c3bdc88278b968e298f9ec47f0e409378e53de7",
+      "unique_commits": [],
+      "preservation": {
+        "final_main_history": true
+      }
+    },
+    {
+      "ref": "refs/remotes/origin/main",
+      "commit": "8e6682b76af4d419453a24191debee47dd99f94d",
+      "counts": "20\t4",
+      "merge_base": "dae19d10ce4aba02ed49ede28bf954fdac05007b",
+      "unique_commits": [
+        "8e6682b Merge pull request #24 from hayward2007/rl",
+        "7156c8e Merge pull request #23 from hayward2007/rl",
+        "819fe20 Merge pull request #22 from hayward2007/rl",
+        "dc2c758 Merge pull request #21 from hayward2007/rl"
+      ],
+      "preservation": {
+        "tag": "archive/main_before_cleanup"
+      }
+    },
+    {
+      "ref": "refs/remotes/origin/rl",
+      "commit": "c706117241c0da2e099b5d8375d3210d87888f14",
+      "counts": "2\t0",
+      "merge_base": "c706117241c0da2e099b5d8375d3210d87888f14",
+      "unique_commits": [],
+      "preservation": {
+        "tag": "archive/rl"
+      }
+    }
+  ]
+}

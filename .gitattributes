@@ -9,3 +9,5 @@
 *.tar.gz filter=lfs diff=lfs merge=lfs -text
 *.npz filter=lfs diff=lfs merge=lfs -text
 *.pt filter=lfs diff=lfs merge=lfs -text
+# Preserve the original formatting of the historical SCONE v2 source.
+archive/scone_v2/** -whitespace

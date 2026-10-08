@@ -81,13 +81,19 @@ SCONE은 DYNAMIXEL 실물 제어와 MuJoCo 시뮬레이션을 같은 고수준 A
 ## 보관 방식과 원본 보존
 
 - 주 작업 트리의 기존 변경 전체와 미추적 코드·설계·논문·영상 자료를 한 번의 최종 커밋에 담는다.
-- 기존 원격 `main`과 현재 개발 이력이 분기되어 있어 강제 덮어쓰지 않는다.
-  최종 개발 브랜치 **`feature/scone-gait-v2`**를 업로드하고 저장소의 기본 브랜치로 지정한다.
-  기존 원격 브랜치와 과거 커밋은 유지한다.
+- 최종 소스·자료와 기존 원격 `main`의 PR 병합 이력을 **`main` 하나**에 통합했다.
+  기존 원격 `main`의 별도 4개 커밋에는 고유한 코드 변경이 없음을 확인한 뒤 정상 병합했다.
+  강제 푸시 없이 `main`을 기본 브랜치로 지정하고 나머지 개발 브랜치를 정리했다.
+- SCONE v2는 [`archive/scone_v2/`](../archive/scone_v2/README.md)에 원래 소스·모델·논문·포스터를 보존했다.
+  영상은 사용자가 이미 압축한 `archive/videos/`를 연결하고, 대용량 원본과 정리 전 영상이 담긴 bundle은 로컬에만 남겼다.
+  이전 보행 실험은 [별도 스냅샷](../archive/experiments/scone_gait_v2/README.md)에 보존했다.
+  [브랜치별 보관 안내](../archive/branch_history/README.md)에 원래 커밋, 태그와 bundle 복원 방법이 있다.
+  `archive/` 태그는 이전 이력을 가리키며 추가 개발 브랜치는 아니다.
 - 큰 CAD·메시·영상·압축파일·체크포인트는 Git LFS로 보관한다.
   `.gitattributes`가 포인터와 실제 원본의 관계를 정의한다. 일반 ZIP 다운로드에 바이너리 원본이 포함되는지 추정하지 않는다.
 - 별도 worktree의 미커밋 파일과 stash는 `archive/development_snapshots/20261009/`에 패치와 압축본으로 저장한다.
   주 구현에 합치거나 원래 worktree·stash를 삭제하지 않는다.
+  별도 worktree는 같은 커밋의 detached HEAD로 유지하여 파일 변경 없이 브랜치 이름만 정리했다.
 - 학습 checkpoint와 평가 파일은 `training/runs.tar.gz` 및 해시 목록으로 보존한다.
   개인 원격 작업 연결 정보와 미완성 `.part`는 로컬 복구본에만 보존한다.
 - 가상환경·캐시·개인 실행 연결 정보와 원본 경로가 필요한 임시 기록은 Git 커밋 대상에서 제외한다.
@@ -101,7 +107,7 @@ Git과 Git LFS를 설치한 환경에서 다음 순서로 복원한다.
 
 ```bash
 git lfs install
-git clone --branch feature/scone-gait-v2 https://github.com/hayward2007/SCONE.git
+git clone --branch main https://github.com/hayward2007/SCONE.git
 cd SCONE
 git lfs pull
 git lfs fsck
@@ -131,3 +137,7 @@ GitHub 아카이브 해제 후 변경하거나 복제본에서 새 개발을 시
 최종 파일 스냅샷, 전체 Git refs의 bundle, 변경 전 상태 및 해시를 보관한다.
 로컬 자료에는 원격 작업 연결 정보와 절대 경로가 포함될 수 있으므로 이 묶음을 공개 GitHub 파일로 올리지 않았다.
 복원은 빈 폴더에서 수행하고 파일별 해시 및 Git bundle 검증을 먼저 확인한다.
+
+브랜치 정리 후의 상태와 추가 복구 bundle은 `archive/project-closeout/20261009-branch-cleanup/`에 별도로 보관했다.
+최초 종료 기록과 파일 목록은 당시 커밋의 기록으로 유지하며, 이후 README와 브랜치 정리를 반영한
+검증 결과는 [브랜치 정리 기록](archive/2026-10-09-branch-cleanup/README.md)에서 확인한다.

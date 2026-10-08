@@ -1,0 +1,72 @@
+{
+  "commit": "ad0fdae54db814c0ebb071f17b95997ccc72236b",
+  "base_commit": "6cff44785a1003a94811f91c957d753115fc8fff",
+  "scope": "all files changed by the nine experimental commits; complete checkout preserved by archive/role_split_gait tag",
+  "files": [
+    {
+      "path": "benchmark/controllers.py",
+      "size": 18067,
+      "sha256": "5b959e1bcd628557117865cc25bad2af9cbe5f3f13da8da3a1381b8b61b55e6c"
+    },
+    {
+      "path": "benchmark/leg_usage.py",
+      "size": 10300,
+      "sha256": "756330ba8b348c72398b00a6208d6ac829fe206711733c83d51b7f0ade181a32"
+    },
+    {
+      "path": "docs/28-scone-gait-v2-role-split-rolling.md",
+      "size": 21510,
+      "sha256": "6d403ad75a88396bdc95f25adad944dc2b08c2027e776bc154675804f0f9e0ec"
+    },
+    {
+      "path": "docs/29-two-leg-sector-drive.md",
+      "size": 9095,
+      "sha256": "1c977f22ef526db9fc422d7c45d33fdba1f0787d4edc1740d6aa73877ddcc5d7"
+    },
+    {
+      "path": "docs/README.md",
+      "size": 10417,
+      "sha256": "786f572bcf6efb8f333fb7b9f9e4135142b03124e87a1b25a85a1b7ded04dcf5"
+    },
+    {
+      "path": "src/cli.py",
+      "size": 34713,
+      "sha256": "5d7f94fc340c8d21c9cad5fdc09b34c31e3b3147c7652eab2dd8d63f6aabed12"
+    },
+    {
+      "path": "src/locomotion/__init__.py",
+      "size": 1650,
+      "sha256": "1226798fa3a4f596ed4de3fbd68858e3bb6eebfd110ab1e68009659bf0e51fcd"
+    },
+    {
+      "path": "src/locomotion/scone_gait_v2.py",
+      "size": 33201,
+      "sha256": "cf3869aeb8c3011815ddc80980c335bb1c956c6f365b040092638178e610e0f0"
+    },
+    {
+      "path": "src/locomotion/sector_wheel.py",
+      "size": 12854,
+      "sha256": "06db5851a39e2f5cffbda5fd0c4f3662028527974399cdb957cd2ae3d483f059"
+    },
+    {
+      "path": "src/simulation/core/cli_bridge.py",
+      "size": 10776,
+      "sha256": "26e297155767e70a0cce61524db0de937fd0669858dd7bd22b3f2a96e1d4e2e1"
+    },
+    {
+      "path": "src/simulation/core/simulator_cli.py",
+      "size": 15116,
+      "sha256": "dd9544a9b02bfaba4ade8648d01d62be10c5d370e31940431c4e9e5fe3d0c5a8"
+    },
+    {
+      "path": "tests/test_benchmark.py",
+      "size": 9345,
+      "sha256": "d8a894507f983d6720d6f0f6605138d36db64dc1eb87014da40b9ee1ab1d29c6"
+    },
+    {
+      "path": "tests/test_scone_gait_v2.py",
+      "size": 12216,
+      "sha256": "b9ca1f80a98c30234f814ed341413aa99f42afc4d6f925745f8ce23c6b3113b7"
+    }
+  ]
+}
